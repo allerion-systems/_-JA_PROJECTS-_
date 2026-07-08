@@ -1,59 +1,87 @@
 /**
  * globe.js
- * Renders the 3D globe using globe.gl (a Three.js-based globe helper loaded via CDN).
- * globe.gl was chosen over raw Three.js scene setup because it ships a ready-made
- * WebGL globe + point-layer + camera/controls combo, so pins-on-a-sphere works
- * reliably without hand-rolling geo-to-3D projection math or lighting/orbit controls.
+ * Renders the interactive 3D map using CesiumJS — same engine/CDN pattern
+ * (version) as the Allerion-Digital-Twin repo, so this can later layer in
+ * richer patterns from that repo (Ion terrain, tilesets) without a
+ * rendering-engine swap. Starting simple: OSM base imagery (no Ion account
+ * required) + pins + click/hover. Set window.CESIUM_ION_TOKEN before this
+ * script loads to opt into Ion World Imagery/Terrain — every Ion feature
+ * requires a real account-linked token (Cesium ships no public/shared demo
+ * token as of 2026), so there's no fake/placeholder value baked in here.
  */
 
 const PortfolioGlobe = (() => {
-  let globeInstance = null;
+  let viewer = null;
 
-  function pointColor(d) {
-    return d.__isHover ? "#ffb24f" : "#4fa3ff";
+  function pointColor(isHover) {
+    return isHover ? Cesium.Color.fromCssColorString('#ffb24f') : Cesium.Color.fromCssColorString('#4fa3ff');
   }
 
   function init(containerEl, projects, { onPointClick, onPointHover }) {
-    const points = projects.map((p) => ({
-      lat: p.lat,
-      lng: p.lng,
-      id: p.id,
-      project: p.project,
-      employer: p.employer,
-      size: 0.55,
-    }));
+    const ionToken = window.CESIUM_ION_TOKEN || null;
+    if (ionToken) Cesium.Ion.defaultAccessToken = ionToken;
 
-    globeInstance = Globe()(containerEl)
-      .globeImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg")
-      .bumpImageUrl("https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png")
-      .backgroundColor("#000000")
-      .pointsData(points)
-      .pointLat("lat")
-      .pointLng("lng")
-      .pointColor(pointColor)
-      .pointAltitude(0.02)
-      .pointRadius("size")
-      .pointLabel((d) => `<b>${d.project}</b><br/>${d.employer}`)
-      .onPointClick((d) => onPointClick && onPointClick(d.id))
-      .onPointHover((d) => onPointHover && onPointHover(d));
+    viewer = new Cesium.Viewer(containerEl, {
+      animation: false,
+      timeline: false,
+      homeButton: true,
+      sceneModePicker: false,
+      baseLayerPicker: false,
+      navigationHelpButton: false,
+      geocoder: false,
+      fullscreenButton: false,
+      infoBox: false,
+      selectionIndicator: false,
+      // No Ion token by default: use OSM imagery (no account needed) instead
+      // of Cesium's Ion-backed default, so the globe renders out of the box.
+      baseLayer: ionToken
+        ? undefined
+        : new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' })),
+    });
+    viewer.scene.globe.enableLighting = false;
 
-    globeInstance.controls().autoRotate = true;
-    globeInstance.controls().autoRotateSpeed = 0.35;
-    globeInstance.controls().enableDamping = true;
+    projects.forEach((p) => {
+      viewer.entities.add({
+        id: p.id,
+        position: Cesium.Cartesian3.fromDegrees(p.lng, p.lat),
+        point: {
+          pixelSize: 10,
+          color: pointColor(false),
+          outlineColor: Cesium.Color.fromCssColorString('#0b1220'),
+          outlineWidth: 2,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        __project: p,
+      });
+    });
 
-    // US-centric default view since nearly all projects are KY/IN/IL/TN.
-    globeInstance.pointOfView({ lat: 38.0, lng: -86.5, altitude: 1.8 }, 0);
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(-86.5, 38.0, 1_800_000),
+      duration: 0,
+    });
 
-    fitToContainer(containerEl);
-    window.addEventListener("resize", () => fitToContainer(containerEl));
+    const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    let hovered = null;
 
-    return globeInstance;
-  }
+    handler.setInputAction((movement) => {
+      const picked = viewer.scene.pick(movement.endPosition);
+      const entity = picked && picked.id;
+      if (entity !== hovered) {
+        if (hovered && hovered.point) hovered.point.color = pointColor(false);
+        hovered = entity && entity.__project ? entity : null;
+        if (hovered && hovered.point) hovered.point.color = pointColor(true);
+        onPointHover && onPointHover(hovered ? hovered.__project : null);
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-  function fitToContainer(containerEl) {
-    if (!globeInstance) return;
-    const { clientWidth, clientHeight } = containerEl;
-    globeInstance.width(clientWidth).height(clientHeight);
+    handler.setInputAction((click) => {
+      const picked = viewer.scene.pick(click.position);
+      const entity = picked && picked.id;
+      if (entity && entity.__project && onPointClick) onPointClick(entity.__project.id);
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    return viewer;
   }
 
   return { init };
