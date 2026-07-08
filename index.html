@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>James "Joey" Allee — Construction Estimator &amp; Project Manager</title>
+  <meta name="description" content="Portfolio of construction estimating and project management work across industrial, pharmaceutical, distillery, government, and commercial roofing/build-out projects." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-text">
+        <h1 id="person-name">James "Joey" Allee</h1>
+        <p class="titles" id="person-titles"></p>
+        <p class="location" id="person-location"></p>
+        <p class="summary" id="person-summary"></p>
+      </div>
+      <div class="header-actions">
+        <a id="linkedin-link" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">
+          View LinkedIn Profile
+        </a>
+        <div class="stat-row" id="stat-row"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="globe-section" aria-label="Interactive project map">
+      <div class="globe-hint">Click any pin to open the project case study. Drag to rotate, scroll to zoom.</div>
+      <div id="globe-container"></div>
+      <div id="globe-loading" class="globe-loading">Loading globe…</div>
+      <div id="hover-tooltip" class="hover-tooltip" hidden></div>
+    </section>
+
+    <section class="project-list-section" aria-label="All projects">
+      <h2>All Projects <span id="project-count" class="count-badge"></span></h2>
+      <div id="project-list" class="project-list"></div>
+    </section>
+  </main>
+
+  <div id="case-study-overlay" class="overlay" hidden>
+    <div class="case-study-panel" role="dialog" aria-modal="true" aria-labelledby="cs-title">
+      <button id="cs-close" class="cs-close" aria-label="Close case study">&times;</button>
+      <div id="cs-content" class="cs-content"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="footer-year"></span> James "Joey" Allee. Built as a static site — no build step, hosted on GitHub Pages.</p>
+  </footer>
+
+  <!-- Three.js (required by globe.gl) -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <!-- globe.gl: Three.js-based WebGL globe with point/label layers -->
+  <script src="https://unpkg.com/globe.gl@2.32.2/dist/globe.gl.min.js"></script>
+
+  <script src="js/data.js"></script>
+  <script src="js/globe.js"></script>
+  <script src="js/case-study.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
