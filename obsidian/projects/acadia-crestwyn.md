@@ -10,3 +10,7 @@ status: ""
 - **Year:** [[../years/2023|2023]]
 - **Location:** Memphis, TN
 - **Budget:** $13,036,666
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/acadia-crestwyn|LSSBB write-up]].

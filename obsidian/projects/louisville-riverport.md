@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Facility Support & Emergency Response
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/louisville-riverport|LSSBB write-up]].

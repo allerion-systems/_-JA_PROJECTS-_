@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Tasting Room & Production Building
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/owl-creek-tasting-room|LSSBB write-up]].

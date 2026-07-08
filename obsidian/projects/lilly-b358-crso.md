@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Cleanroom/CRSO Upgrades
 - **Role:** Project Engineer
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/lilly-b358-crso|LSSBB write-up]].

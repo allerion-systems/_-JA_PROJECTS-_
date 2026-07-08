@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Pump Lab Upgrade
 - **Role:** Project Engineer
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/lilly-b328-pump-lab|LSSBB write-up]].

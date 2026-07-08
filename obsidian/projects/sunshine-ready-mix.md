@@ -13,3 +13,7 @@ status: "Proposal Accepted (Pending Completion)"
 - **Scope:** Replace 24 MAC valves, system test
 - **Role:** Estimator / PM
 - **Status:** Proposal Accepted (Pending Completion)
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/sunshine-ready-mix|LSSBB write-up]].

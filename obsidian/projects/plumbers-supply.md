@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $160,518
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/plumbers-supply|LSSBB write-up]].

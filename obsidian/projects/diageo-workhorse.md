@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $709,619
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/diageo-workhorse|LSSBB write-up]].

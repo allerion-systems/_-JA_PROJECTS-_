@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $1,538,564
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/poe-dixie|LSSBB write-up]].

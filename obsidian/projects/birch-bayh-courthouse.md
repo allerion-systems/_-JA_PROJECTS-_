@@ -10,3 +10,7 @@ status: ""
 - **Year:** [[../years/2024|2024]]
 - **Location:** Indianapolis, IN
 - **Budget:** $1,300,000
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/birch-bayh-courthouse|LSSBB write-up]].

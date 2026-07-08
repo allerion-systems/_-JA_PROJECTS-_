@@ -13,3 +13,7 @@ status: "Complete"
 - **Scope:** Engineering Support Services Contract
 - **Role:** Engineering Technologist
 - **Status:** Complete
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/kytc-row-utilities-rail|LSSBB write-up]].

@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Selective Demo + SBS Roof
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/kcpc-luther-luckett|LSSBB write-up]].

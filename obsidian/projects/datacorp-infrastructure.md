@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Infrastructure Improvements
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/datacorp-infrastructure|LSSBB write-up]].

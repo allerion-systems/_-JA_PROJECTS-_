@@ -10,3 +10,7 @@ status: ""
 - **Year:** [[../years/2023|2023]]
 - **Location:** Henry County, KY
 - **Budget:** $12,337,922
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/rabbit-hole-loading-dock|LSSBB write-up]].

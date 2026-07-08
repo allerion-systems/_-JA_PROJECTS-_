@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $3,566,509
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/msd-central-maintenance|LSSBB write-up]].

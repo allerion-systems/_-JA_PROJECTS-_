@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $189,676
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/gosser-fine-arts|LSSBB write-up]].

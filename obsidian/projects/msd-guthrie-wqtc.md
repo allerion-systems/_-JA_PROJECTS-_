@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $278,235
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/msd-guthrie-wqtc|LSSBB write-up]].

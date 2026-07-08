@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $210,000
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/bardstown-bourbon-ferm|LSSBB write-up]].

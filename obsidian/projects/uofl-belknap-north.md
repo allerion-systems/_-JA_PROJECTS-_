@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $335,568
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/uofl-belknap-north|LSSBB write-up]].

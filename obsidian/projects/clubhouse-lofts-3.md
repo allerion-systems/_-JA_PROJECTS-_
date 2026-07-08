@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Thermal & Moisture Remediation
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/clubhouse-lofts-3|LSSBB write-up]].

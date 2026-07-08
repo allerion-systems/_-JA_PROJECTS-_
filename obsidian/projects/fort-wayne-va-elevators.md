@@ -12,3 +12,7 @@ status: "Pending / Proposal"
 - **Budget:** $3,800,000
 - **Scope:** Elevator modernization; has an existing Polycam 3D model
 - **Status:** Pending / Proposal
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/fort-wayne-va-elevators|LSSBB write-up]].

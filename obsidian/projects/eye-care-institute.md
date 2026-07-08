@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $35,419
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/eye-care-institute|LSSBB write-up]].

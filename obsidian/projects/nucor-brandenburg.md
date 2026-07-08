@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $178,232
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/nucor-brandenburg|LSSBB write-up]].

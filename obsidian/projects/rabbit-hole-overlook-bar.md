@@ -10,3 +10,7 @@ status: ""
 - **Year:** [[../years/2023|2023]]
 - **Location:** Louisville, KY
 - **Budget:** $813,750
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/rabbit-hole-overlook-bar|LSSBB write-up]].

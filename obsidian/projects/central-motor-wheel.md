@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $50,369
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/central-motor-wheel|LSSBB write-up]].

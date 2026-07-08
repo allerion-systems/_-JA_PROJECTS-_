@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $440,050
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/myriad-hotel|LSSBB write-up]].

@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $36,548
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/northeast-family-ymca|LSSBB write-up]].

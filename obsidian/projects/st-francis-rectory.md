@@ -12,3 +12,7 @@ status: "Completed"
 - **Budget:** $318,566
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/st-francis-rectory|LSSBB write-up]].

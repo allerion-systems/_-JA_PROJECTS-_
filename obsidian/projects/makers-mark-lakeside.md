@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Green Roof
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/makers-mark-lakeside|LSSBB write-up]].

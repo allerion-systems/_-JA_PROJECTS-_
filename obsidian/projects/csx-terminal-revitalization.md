@@ -13,3 +13,7 @@ status: "Completed"
 - **Scope:** Terminal Revitalization
 - **Role:** Estimator / PM
 - **Status:** Completed
+
+## Lean Six Sigma Black Belt Case Study
+
+See [[../lssbb/csx-terminal-revitalization|LSSBB write-up]].
