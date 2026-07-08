@@ -1,0 +1,42 @@
+# MSD Derek R. Guthrie WQTC — Lean Six Sigma Black Belt Case Study
+
+**Year:** 2022  **Employer:** American Roofing & Metal, Inc  **Location:** 11601 Lower River Rd, Louisville, KY 40272  **Budget:** $278,235  **Role:** Estimator / PM  **Status:** Completed
+
+## Define
+MSD Derek R. Guthrie WQTC was a commercial roofing engagement delivered by American
+Roofing & Metal, Inc. at 11601 Lower River Rd, Louisville, KY 40272, awarded at a contract value of
+$278,235 in 2022. As Estimator/PM, Joey scoped and/or
+priced the work and managed it from award through closeout. The recorded scope is limited to the project name (Derek R. Guthrie Water Quality Treatment Center); the source log does not detail the specific roofing system beyond this being an operating Louisville MSD water-treatment facility on Lower River Rd. The
+project charter for this job class centers on an operating public-utility asset where uptime, chemical-storage proximity, and restricted-access security protocols govern the work, not the roofing system itself: replace or
+remediate the roofing system, protect the building interior and its
+occupants or operations from water intrusion throughout construction, and
+close out within the awarded contract value. The customer-defined
+critical-to-quality requirements are consistent across ARM's commercial
+book: a fully watertight, code-compliant roof system, delivery inside the
+contracted schedule window, and no unapproved cost growth against the
+signed contract.
+
+## Measure
+None of the classic Six Sigma quantitative baselines — defect rate, DPMO, cost of poor quality, or a measured schedule-variance percentage — exist for this project in the source log (`James_Allee_Master_Project_Log`). The log captures year, employer, location, budget, scope, role, and status only. The metrics a PM/estimator in this role would typically baseline and track on a job of this type are: bid-to-award accuracy (estimated vs. contracted value), submittal approval turnaround, RFI cycle time, schedule variance against the baseline (weather/delay days), change-order count and dollar value as a percentage of contract value, and punch-list item count at substantial completion. These are flagged as placeholders below, not facts:
+
+- [QUANTIFY: bid value vs. final contract/change-order total]
+- [QUANTIFY: schedule duration — baseline vs. actual]
+- [QUANTIFY: RFI count and average response time]
+- [QUANTIFY: change-order count / dollar value as % of contract]
+- [QUANTIFY: punch-list item count and days to closeout]
+
+## Analyze
+The dominant root causes on an operating water/wastewater treatment facility are process-safety coordination near chemical storage and treatment operations, restricted-access and security-badge protocols that slow daily crew mobilization compared with an open commercial site, and the owner's requirement that the facility never lose weather protection over process-critical equipment, which drives more conservative phased dry-in than a typical commercial job would use.
+
+## Improve
+A site-access and safety-orientation protocol agreed with the utility's operations team before mobilization, phased dry-in sized conservatively around process-critical equipment locations, and a single point of contact with the facility's operations staff for daily coordination instead of routing through multiple contacts.
+
+## Control
+The closeout package for this project (warranty documentation, as-built
+roof plan, submittal log) would typically feed ARM's standard
+commercial-roofing project template, so the site-logistics and coordination
+lessons from this job are available as a starting checklist on the next
+utility-type job rather than being re-learned from scratch.
+[QUANTIFY: warranty callback count or punch-list reopens in the year
+following closeout] would be the control metric that confirms the fix
+held over time, not just at substantial completion.
