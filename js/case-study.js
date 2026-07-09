@@ -31,6 +31,64 @@ const CaseStudy = (() => {
     }
   }
 
+  function escapeHtml(s) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  // Lightweight markdown -> HTML for the LSSBB write-ups: headers, bold,
+  // bullet lists, paragraphs, and [QUANTIFY:.../CONFIRM WITH JOEY:...]
+  // placeholders get a distinct style so they read as open items, not fact.
+  function renderMarkdownLite(md) {
+    const lines = md.split("\n");
+    let html = "";
+    let inList = false;
+
+    function closeList() {
+      if (inList) {
+        html += "</ul>";
+        inList = false;
+      }
+    }
+
+    function inline(text) {
+      let t = escapeHtml(text);
+      t = t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      t = t.replace(/\[(QUANTIFY|CONFIRM WITH JOEY):(.*?)\]/g, '<span class="quantify">[$1:$2]</span>');
+      return t;
+    }
+
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line) {
+        closeList();
+        continue;
+      }
+      const h = /^(#{1,3})\s+(.*)$/.exec(line);
+      if (h) {
+        closeList();
+        const level = Math.min(h[1].length + 1, 4); // ## -> h3, ### -> h4
+        html += `<h${level}>${inline(h[2])}</h${level}>`;
+        continue;
+      }
+      const li = /^[-*]\s+(.*)$/.exec(line);
+      if (li) {
+        if (!inList) {
+          html += "<ul>";
+          inList = true;
+        }
+        html += `<li>${inline(li[1])}</li>`;
+        continue;
+      }
+      closeList();
+      html += `<p>${inline(line)}</p>`;
+    }
+    closeList();
+    return html;
+  }
+
   async function render(data, id) {
     const project = PortfolioData.findById(data, id);
     const contentEl = document.getElementById("cs-content");
@@ -57,11 +115,8 @@ const CaseStudy = (() => {
         slot.innerHTML = `
           <div class="lssbb-section">
             <h3>Lean Six Sigma Black Belt Case Study</h3>
-            <div class="lssbb-body"></div>
+            <div class="lssbb-body">${renderMarkdownLite(md)}</div>
           </div>`;
-        // textContent, not innerHTML: markdown is rendered as pre-wrapped
-        // plain text (see .lssbb-body CSS), so raw text can't inject HTML.
-        slot.querySelector(".lssbb-body").textContent = md;
       }
     }
   }
