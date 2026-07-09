@@ -98,6 +98,7 @@ const CaseStudy = (() => {
     }
 
     contentEl.innerHTML = `
+      <div class="cs-id">${project.id}</div>
       <h2 id="cs-title">${project.project}</h2>
       <div class="cs-employer">${project.employer}</div>
       <div class="cs-year">${project.year} — ${project.location}</div>

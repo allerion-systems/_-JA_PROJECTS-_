@@ -26,18 +26,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   `;
   document.getElementById("project-count").textContent = `(${projects.length})`;
 
+  function isPendingStatus(status) {
+    if (!status) return false;
+    const s = status.toLowerCase();
+    return s.includes("pending") || s.includes("proposal");
+  }
+
   const listEl = document.getElementById("project-list");
   listEl.innerHTML = projects
     .slice()
     .sort((a, b) => b.year - a.year)
-    .map(
-      (p) => `
-      <button class="project-card" data-id="${p.id}">
-        <div class="pc-name">${p.project}</div>
+    .map((p, i) => {
+      const pending = isPendingStatus(p.status);
+      return `
+      <button class="project-card" data-id="${p.id}" style="animation-delay:${Math.min(i * 25, 400)}ms">
+        <div class="pc-top">
+          <div class="pc-name">${p.project}</div>
+          <div class="pc-status${pending ? " pending" : ""}">${pending ? "Pending" : "Complete"}</div>
+        </div>
         <div class="pc-meta">${p.year} · ${p.employer}</div>
+        <div class="pc-coords">${p.lat.toFixed(3)}, ${p.lng.toFixed(3)}</div>
         <div class="pc-budget">${PortfolioData.formatBudgetShort(p.budget)}</div>
-      </button>`
-    )
+      </button>`;
+    })
     .join("");
   listEl.querySelectorAll(".project-card").forEach((card) => {
     card.addEventListener("click", () => openCaseStudy(card.dataset.id));
