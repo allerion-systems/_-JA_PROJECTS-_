@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>James "Joey" Allee — Construction Estimator &amp; Project Manager</title>
-  <meta name="description" content="Portfolio of construction estimating and project management work across industrial, pharmaceutical, distillery, government, and commercial roofing/build-out projects." />
+  <meta name="description" content="Digital twin of a construction estimating and project management portfolio — every project plotted on an interactive 3D map with a searchable project assistant." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -13,51 +13,40 @@
 </head>
 <body>
 
-  <header class="site-header">
-    <div class="header-bg" aria-hidden="true">
-      <div class="glow glow-1"></div>
-      <div class="glow glow-2"></div>
-      <div class="glow glow-3"></div>
-    </div>
-    <div class="header-inner">
-      <div class="header-text">
-        <p class="eyebrow"><span class="eyebrow-tag">Available for work</span> Construction Estimating &amp; Project Management</p>
-        <h1 id="person-name">James "Joey" Allee</h1>
-        <p class="titles" id="person-titles"></p>
-        <p class="location" id="person-location"></p>
-        <p class="summary" id="person-summary"></p>
-        <div class="header-cta">
-          <a id="linkedin-link" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">
-            View LinkedIn Profile
-          </a>
-          <a class="btn btn-ghost" href="#project-list-section">Browse Projects ↓</a>
-        </div>
-      </div>
-      <div class="stat-row" id="stat-row"></div>
-    </div>
-  </header>
+  <!-- Full-viewport map is the base layer; everything else floats above it. -->
+  <div id="globe-container"></div>
+  <div id="globe-loading" class="globe-loading">Loading globe…</div>
+  <div id="hover-tooltip" class="hover-tooltip" hidden></div>
 
-  <main>
-    <section class="globe-section" aria-label="Interactive project map">
-      <div class="section-heading">
-        <h2>Projects, Mapped</h2>
-        <p class="globe-hint">Click any pin to open the project case study. Drag to rotate, scroll to zoom.</p>
-      </div>
-      <div class="globe-frame">
-        <div id="globe-container"></div>
-        <div id="globe-loading" class="globe-loading">Loading globe…</div>
-        <div id="hover-tooltip" class="hover-tooltip" hidden></div>
-      </div>
-    </section>
+  <div class="identity-badge glass-panel">
+    <div class="identity-text">
+      <span id="person-name" class="identity-name"></span>
+      <span id="person-titles" class="identity-titles"></span>
+    </div>
+    <a id="linkedin-link" class="btn btn-primary btn-sm" href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  </div>
 
-    <section class="project-list-section" id="project-list-section" aria-label="All projects">
-      <div class="section-heading">
-        <h2>All Projects <span id="project-count" class="count-badge"></span></h2>
-        <p class="section-subhead">Every project links to its full case study — including a Lean Six Sigma Black Belt (DMAIC) write-up where available.</p>
+  <div class="stats-strip glass-panel" id="stat-row"></div>
+
+  <aside class="search-panel glass-panel" id="search-panel">
+    <div class="search-panel-header">
+      <div class="search-panel-title">
+        <span class="assistant-dot"></span>
+        Project Assistant
       </div>
+      <button id="search-panel-toggle" class="panel-toggle" aria-label="Collapse panel">&#8250;</button>
+    </div>
+    <div class="search-panel-body" id="search-panel-body">
+      <p class="search-panel-hint">Search by location, employer, year, or budget — e.g. "Louisville over $1M" or "2021 American Roofing".</p>
+      <input id="search-input" class="search-input" type="text" placeholder="Search projects…" autocomplete="off" />
+      <p id="search-summary" class="search-summary"></p>
       <div id="project-list" class="project-list"></div>
-    </section>
-  </main>
+    </div>
+  </aside>
+
+  <button id="search-panel-reopen" class="panel-reopen glass-panel" hidden aria-label="Open project assistant">
+    <span class="assistant-dot"></span> Project Assistant
+  </button>
 
   <div id="case-study-overlay" class="overlay" hidden>
     <div class="case-study-panel" role="dialog" aria-modal="true" aria-labelledby="cs-title">
@@ -66,16 +55,14 @@
     </div>
   </div>
 
-  <footer class="site-footer">
-    <p>&copy; <span id="footer-year"></span> James "Joey" Allee</p>
-    <p class="footer-meta">Static site, no build step · <a href="https://github.com/allerion-systems/_-JA_PROJECTS-_" target="_blank" rel="noopener noreferrer">Source on GitHub</a></p>
-  </footer>
+  <a class="source-credit" href="https://github.com/allerion-systems/_-JA_PROJECTS-_" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
 
   <!-- CesiumJS: same engine/CDN pattern as the Allerion-Digital-Twin repo -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.139/Build/Cesium/Cesium.js"></script>
 
   <script src="js/data.js"></script>
   <script src="js/globe.js"></script>
+  <script src="js/assistant.js"></script>
   <script src="js/case-study.js"></script>
   <script src="js/app.js"></script>
 </body>

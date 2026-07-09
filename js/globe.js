@@ -12,9 +12,16 @@
 
 const PortfolioGlobe = (() => {
   let viewer = null;
+  let selectedId = null;
 
-  function pointColor(isHover) {
-    return isHover ? Cesium.Color.fromCssColorString('#ffb24f') : Cesium.Color.fromCssColorString('#4fa3ff');
+  function pointColor(isHover, isSelected) {
+    if (isSelected) return Cesium.Color.fromCssColorString('#ff9fce');
+    return isHover ? Cesium.Color.fromCssColorString('#9c6bf0') : Cesium.Color.fromCssColorString('#7c9cff');
+  }
+
+  function refreshPointColor(entity) {
+    if (!entity || !entity.point) return;
+    entity.point.color = pointColor(false, entity.id === selectedId);
   }
 
   function init(containerEl, projects, { onPointClick, onPointHover }) {
@@ -46,8 +53,8 @@ const PortfolioGlobe = (() => {
         position: Cesium.Cartesian3.fromDegrees(p.lng, p.lat),
         point: {
           pixelSize: 10,
-          color: pointColor(false),
-          outlineColor: Cesium.Color.fromCssColorString('#0b1220'),
+          color: pointColor(false, false),
+          outlineColor: Cesium.Color.fromCssColorString('#08090f'),
           outlineWidth: 2,
           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
           disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -68,9 +75,9 @@ const PortfolioGlobe = (() => {
       const picked = viewer.scene.pick(movement.endPosition);
       const entity = picked && picked.id;
       if (entity !== hovered) {
-        if (hovered && hovered.point) hovered.point.color = pointColor(false);
+        refreshPointColor(hovered);
         hovered = entity && entity.__project ? entity : null;
-        if (hovered && hovered.point) hovered.point.color = pointColor(true);
+        if (hovered && hovered.point) hovered.point.color = pointColor(true, hovered.id === selectedId);
         onPointHover && onPointHover(hovered ? hovered.__project : null);
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -84,5 +91,28 @@ const PortfolioGlobe = (() => {
     return viewer;
   }
 
-  return { init };
+  // Flies the camera to a project's pin and marks it selected (distinct pin
+  // color) until the next selection — used by both pin clicks and the search
+  // panel's project list, so both entry points land in the same visual state.
+  function flyToProject(project) {
+    if (!viewer || !project) return;
+    const prevSelected = selectedId;
+    selectedId = project.id;
+    const prevEntity = viewer.entities.getById(prevSelected);
+    if (prevEntity) refreshPointColor(prevEntity);
+    const entity = viewer.entities.getById(project.id);
+    if (entity) refreshPointColor(entity);
+
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(project.lng, project.lat, 120_000),
+      duration: 1.4,
+    });
+  }
+
+  function resize(containerEl) {
+    if (!viewer) return;
+    viewer.resize();
+  }
+
+  return { init, flyToProject, resize };
 })();
