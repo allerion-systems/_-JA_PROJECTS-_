@@ -1,9 +1,9 @@
 /* ---------- Base / reset ---------- */
 :root {
-  --glass: rgba(20, 20, 30, 0.55);
-  --glass-strong: rgba(28, 28, 40, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.09);
-  --glass-border-strong: rgba(255, 255, 255, 0.16);
+  --glass: rgba(14, 15, 23, 0.72);
+  --glass-strong: rgba(20, 21, 32, 0.86);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-strong: rgba(255, 255, 255, 0.18);
   --text: #f3f4f9;
   --text-dim: #9ba0b4;
   --text-faint: #6b7086;
@@ -49,6 +49,17 @@ button { font-family: inherit; }
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- Scrim (keeps floating UI legible over bright/varied satellite imagery) ---------- */
+.map-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(3, 4, 8, 0.55) 0%, rgba(3, 4, 8, 0) 18%, rgba(3, 4, 8, 0) 82%, rgba(3, 4, 8, 0.45) 100%),
+    linear-gradient(90deg, rgba(3, 4, 8, 0.42) 0%, rgba(3, 4, 8, 0) 32%);
 }
 
 /* ---------- Base map layer (full viewport) ---------- */

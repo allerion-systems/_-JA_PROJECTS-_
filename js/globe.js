@@ -3,11 +3,13 @@
  * Renders the interactive 3D map using CesiumJS — same engine/CDN pattern
  * (version) as the Allerion-Digital-Twin repo, so this can later layer in
  * richer patterns from that repo (Ion terrain, tilesets) without a
- * rendering-engine swap. Starting simple: OSM base imagery (no Ion account
- * required) + pins + click/hover. Set window.CESIUM_ION_TOKEN before this
- * script loads to opt into Ion World Imagery/Terrain — every Ion feature
- * requires a real account-linked token (Cesium ships no public/shared demo
- * token as of 2026), so there's no fake/placeholder value baked in here.
+ * rendering-engine swap. Base imagery is Esri World Imagery (free, no
+ * account/token — real aerial/satellite photography, the "Google Earth"
+ * look) with OSM as an instant-paint fallback while it loads/if it fails.
+ * Set window.CESIUM_ION_TOKEN before this script loads to opt into Ion
+ * World Imagery/Terrain instead — every Ion feature requires a real
+ * account-linked token (Cesium ships no public/shared demo token as of
+ * 2026), so there's no fake/placeholder value baked in here.
  */
 
 const PortfolioGlobe = (() => {
@@ -22,6 +24,23 @@ const PortfolioGlobe = (() => {
   function refreshPointColor(entity) {
     if (!entity || !entity.point) return;
     entity.point.color = pointColor(false, entity.id === selectedId);
+  }
+
+  // Esri World Imagery is real aerial/satellite photography, free, no
+  // account/token — the actual "Google Earth" look the OSM street-map
+  // fallback can't give. Loaded async and swapped in after first paint so
+  // the globe never sits blank while a slower tile source loads; if this
+  // fails (network hiccup, provider outage) the OSM baseLayer just stays.
+  async function upgradeToSatelliteImagery(viewer) {
+    try {
+      const provider = await Cesium.ArcGisMapServerImageryProvider.fromUrl(
+        'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+      );
+      viewer.imageryLayers.removeAll();
+      viewer.imageryLayers.addImageryProvider(provider);
+    } catch (err) {
+      console.error('Satellite imagery failed to load, keeping OSM fallback:', err);
+    }
   }
 
   function init(containerEl, projects, { onPointClick, onPointHover }) {
@@ -46,6 +65,8 @@ const PortfolioGlobe = (() => {
         : new Cesium.ImageryLayer(new Cesium.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' })),
     });
     viewer.scene.globe.enableLighting = false;
+
+    if (!ionToken) upgradeToSatelliteImagery(viewer);
 
     projects.forEach((p) => {
       viewer.entities.add({
