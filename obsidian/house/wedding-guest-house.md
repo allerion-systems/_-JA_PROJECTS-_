@@ -1,6 +1,6 @@
 # Wedding Guest House Plan
 
-> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $790 incl. walls + real doors
+> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $895 incl. paneled walls + real doors
 > Live one-page app with interactive 3D: kept in this repo at [`house/wedding-house-plan.html`](../../house/wedding-house-plan.html)
 
 The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the wedding weekend, doubling as the Airbnb side-hustle test run (2-year lease).
@@ -43,8 +43,8 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 
 ### Basement — 11×22, my floor (existing conditions per drawing)
 - Room is a clean rectangle; **3' opening 16' down the corridor wall** (3–6 ft from the bottom corner), two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside that wall. **Windows confirmed: two 12"×24" hoppers at the ceiling on the exterior wall, each 2 ft in from the corners** — one lands in BR-A, one in the entry zone; BR-B is windowless (fan + lamp). Hoppers aren't egress size → on paper these are den/flex rooms; smoke alarm in each is non-negotiable.
-- **THE WALLS (two assemblies, ~23 lin ft, ≈ $330):** Wall A straight (~8 ft) + Wall B L-shaped (~8 ft + 7-ft return along the hallway). A **3-ft hallway stays open along the corridor-side wall** — BR-B's door is in Wall B's return leg facing the hallway; BR-A's door is the hallway's end. Both 32" ROs. Studs 24" OC (20 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. Drywall the bedroom sides (6 sheets ½"). **Doors: buy 2 used 30" PREHUNGS first** (FB Marketplace / Habitat ReStore, $20–50 each) and frame each RO to the actual unit +½" — prehung = easiest install: tip unit into RO, shim behind hinges, screw through jamb, ~30–45 min each. Wall positions ±1 ft, same lumber.
-- **Zones:** entry/dressing (~11×8, desk) → 3-ft hallway along the corridor wall → BR-B (~8×7, twin, own door off the hallway) → BR-A (~11×7 full width, mine, door at the hallway end). Two walls, two doors, zero walk-through.
+- **THE WALLS — corner stack (three straight runs, ~32 lin ft, ≈ $430):** two 8×8 bedrooms stacked in the far/window corner, each borrowing TWO existing walls. One 16-ft NS wall (carries BOTH 32" ROs, prehung doors facing the 3-ft hallway) + an 8-ft divider + an 8-ft bottom wall. No corners to frame. **Skin = 4×8 wall paneling, not drywall** (~10 sheets): zero mud/tape/paint, glue + brads, matches the pine mid level. Frame the divider ~6" toward BR-B so BR-A's interior clears 97" for the 96" couch-bed. Studs 24" OC (20 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. Drywall the bedroom sides (6 sheets ½"). **Doors: buy 2 used 30" PREHUNGS first** (FB Marketplace / Habitat ReStore, $20–50 each) and frame each RO to the actual unit +½" — prehung = easiest install: tip unit into RO, shim behind hinges, screw through jamb, ~30–45 min each. Wall positions ±1 ft, same lumber.
+- **Zones:** open entry/flex (~11×6, desk, 3' opening lands here) → 3-ft hallway → BR-B (~8×7, twin, windowless, own door) → BR-A (~8×8+, window corner, mine, hopper window inside). Three straight runs, two doors, zero walk-through.
 - **My bed:** two 4×4 modular couch sections tight to the far + left walls = 8×4 sleeping surface, topper over the seam. Rack on the right wall (3.5-ft dressing strip), lamp at the bed's foot corner. King stays upstairs.
 - Dehumidifier for a week first if musty. Battery smoke alarm inside every partitioned sleeping space.
 
@@ -53,16 +53,16 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **3×5 metal shed** (assemble on 2–4 pavers) = fuel + chemicals, separated from machines and house.
 - House rule: **no fuel or gas engines stored indoors** — the basement is a bedroom now.
 
-## Lean shopping list ≈ $790
+## Lean shopping list ≈ $895
 
-Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · 2×4 walls ×2 (20 studs, 4 plates, 6 drywall sheets, mud, fasteners) $320 · 2 used 30" prehung doors $40–80 · entry-opening curtain $15 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
-Upgrades later (Airbnb money): drywall the entry side of both walls $60–80 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
+Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · walls: 28 studs, 6 plates, 10 sheets wall paneling (no mud/paint), fasteners $430 · 2 used 30" prehung doors $40–80 · entry-opening curtain $15 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
+Upgrades later (Airbnb money): panel the hallway/entry wall faces $75–100 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
 
 ## 55-day timeline
 
 1. **This week:** order rod/panels/velcro; assemble the 3×5 shed on pavers.
 2. **Weeks 2–3:** yard gear → sheds; declutter basement + mid level; front-room curtain wall up.
-3. **Weeks 4–5:** frame + rock both basement walls (a weekend with a helper); RO/entry curtains + speakeasy pod curtains; twin into BR-B; futon up to the pod; couch-bed built; bar staged; dart board hung; blackout all sleeping windows.
+3. **Weeks 4–5:** frame all three straight runs + panel the bedroom faces — no mud, no paint (a weekend with a helper); RO/entry curtains + speakeasy pod curtains; twin into BR-B; futon up to the pod; couch-bed built; bar staged; dart board hung; blackout all sleeping windows.
 4. **Day 40:** everything installed; test-sleep every spot (find the dead outlet before guests do).
 5. **Day 14:** fix what the test nights surfaced; wash all bedding.
 6. **Day 7:** stage rooms, towels on beds, wifi cards out; **photograph everything** — future Airbnb listing gallery.
