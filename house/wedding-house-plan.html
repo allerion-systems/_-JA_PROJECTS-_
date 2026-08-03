@@ -324,9 +324,10 @@
       <text x="277" y="50" text-anchor="middle" fill="var(--muted)" font-size="11">11'</text>
       <text x="374" y="262" text-anchor="middle" fill="var(--muted)" font-size="11" transform="rotate(90 374 262)">22'</text>
       <!-- 3' opening, bottom-left, two steps off the stairs -->
-      <line x1="200" y1="408" x2="200" y2="450" stroke="var(--ground)" stroke-width="5"/>
-      <line x1="200" y1="408" x2="200" y2="450" stroke="var(--blue)" stroke-dasharray="4 3" stroke-width="2"/>
-      <text x="188" y="432" text-anchor="middle" fill="var(--blue)" font-size="8" transform="rotate(-90 188 432)">3' opening</text>
+      <line x1="200" y1="354" x2="200" y2="409" stroke="var(--ground)" stroke-width="5"/>
+      <line x1="200" y1="354" x2="200" y2="409" stroke="var(--blue)" stroke-dasharray="4 3" stroke-width="2"/>
+      <text x="188" y="382" text-anchor="middle" fill="var(--blue)" font-size="8" transform="rotate(-90 188 382)">3' opening</text>
+      <text x="192" y="200" text-anchor="middle" fill="var(--muted)" font-size="8" transform="rotate(-90 192 200)">16'</text>
       <!-- NEW WORK: two framed 2x4 walls with 32in ROs on the east side -->
       <rect x="200" y="316" width="112" height="7" fill="var(--pine)"/>
       <rect x="347" y="316" width="7" height="7" fill="var(--pine)"/>
@@ -350,12 +351,14 @@
       <text x="320" y="376" text-anchor="middle" fill="var(--muted)" font-size="8">desk</text>
       <text x="262" y="430" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="bold">ENTRY ZONE</text>
       <text x="262" y="444" text-anchor="middle" fill="var(--muted)" font-size="8">dressing + hall to both rooms</text>
-      <!-- windows (exterior east wall, positions assumed) -->
-      <rect x="351" y="120" width="6" height="42" fill="var(--blue)"/>
-      <rect x="351" y="255" width="6" height="42" fill="var(--blue)"/>
+      <!-- windows: 12x24 hoppers at the ceiling, 2 ft in from each corner (confirmed) -->
+      <rect x="351" y="97" width="6" height="37" fill="var(--blue)"/>
+      <rect x="351" y="390" width="6" height="37" fill="var(--blue)"/>
+      <text x="368" y="116" text-anchor="middle" fill="var(--blue)" font-size="7" transform="rotate(90 368 116)">12"×24"</text>
+      <text x="368" y="409" text-anchor="middle" fill="var(--blue)" font-size="7" transform="rotate(90 368 409)">12"×24"</text>
     </svg>
-    <p class="maplegend">Black = existing conditions per your drawing · tan = the two NEW 2×4 walls · dashed = door openings · blue = windows (positions assumed) + the 3' entry.</p>
-    <p class="note"><b>Only assumption left:</b> window positions on the exterior wall. Stairs, landing, laundry, and storage placement are now per your annotation.</p>
+    <p class="maplegend">Black = existing conditions per your drawing · tan = the two NEW 2×4 walls · dashed = door openings · blue = the 3' entry + the two 12"×24" hopper windows (at the ceiling, 2 ft in from each corner).</p>
+    <p class="note"><b>Nothing is assumed anymore.</b> Room 11×22, opening 16' down the wall, hoppers 2' off the corners, corridor/laundry/storage — all per your drawings. Where the windows land with the walls as drawn: <b>one in BR-A, one in the entry zone — BR-B has no window.</b> Fine for the overflow room (fan + lamp), and blackout is one small shade in BR-A. Straight talk since these are 12"×24" hoppers: that's not egress size, so on paper these are "den/flex rooms," not code bedrooms — which is exactly why the battery smoke alarm in each room is non-negotiable.</p>
     <p class="maplegend">▲ Spin the full 3D model at the top of this page.</p>
     <div class="card">
       <h3>The speakeasy — "Living Room 3" on your scan · 12'4.6" × 10'4.8" · $0 for the wedding</h3>
@@ -612,10 +615,11 @@
     [-135, -85, -3, 130, 395, 3, 'floor'],                    // corridor/laundry/storage slab
     [132, -5, 0, 5, 274, 84, 'wall'],
     [-5, -5, 0, 142, 5, 84, 'wall'], [-5, 264, 0, 142, 5, 84, 'wall'],
-    // west wall split by the 36in room opening at Y 6-42 (bottom-left, two steps off the stairs)
-    [-5, -5, 0, 5, 11, 84, 'wall'], [-5, 42, 0, 5, 222, 84, 'wall'],
-    [-3, 6, 2, 2, 36, 78, 'curtain'],                         // entry curtain
-    [130, 60, 40, 3, 36, 30, 'glow'], [130, 205, 40, 3, 36, 30, 'glow'],
+    // west wall split by the 36in room opening, 3-6 ft up from the bottom corner (16 ft of wall above it)
+    [-5, -5, 0, 5, 41, 84, 'wall'], [-5, 72, 0, 5, 192, 84, 'wall'],
+    [-3, 36, 2, 2, 36, 78, 'curtain'],                        // entry curtain
+    // two 12x24 hopper windows at the ceiling, 2 ft in from each corner of the exterior wall
+    [130, 24, 68, 3, 24, 12, 'glow'], [130, 216, 68, 3, 24, 12, 'glow'],
   ].concat(ctxSteps, [
     // laundry: W/D pushed tight against the wall, up in the corner (user-corrected)
     [-105, 60, 0, 4, 100, 84, 'wall'],

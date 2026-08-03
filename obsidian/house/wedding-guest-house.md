@@ -23,7 +23,7 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - Speakeasy = **"Living Room 3"** on the scan: **12'4.6" × 10'4.8"** (112 ft²).
 - **"Other 2"** (48.8 ft², vanity) = bathroom; upstairs has the second full bath → 2 showers for 11 people.
 - **"Closet 1" / hallway cluster** = head of the basement stairs.
-- Basement adjacencies confirmed by annotation: stairs → landing → laundry → storage along one side, outside the room. Only remaining assumption: window positions. The 10×10 storage room is full and off-limits.
+- Basement adjacencies + windows all confirmed by annotation — nothing assumed. The 10×10 storage room is full and off-limits.
 
 ## Room specs (build-day detail)
 
@@ -42,7 +42,7 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **Dart board:** bullseye 68", oche taped at 7'9¼", lane down the walk strip between sectional back and pod curtain, pine wall behind the board, plywood backer ring. No darts while anyone's asleep in the pod.
 
 ### Basement — 11×22, my floor (existing conditions per drawing)
-- Room is a clean rectangle; **3' opening bottom-left** two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside the left wall. Windows on the exterior wall — positions are the only remaining assumption.
+- Room is a clean rectangle; **3' opening 16' down the corridor wall** (3–6 ft from the bottom corner), two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside that wall. **Windows confirmed: two 12"×24" hoppers at the ceiling on the exterior wall, each 2 ft in from the corners** — one lands in BR-A, one in the entry zone; BR-B is windowless (fan + lamp). Hoppers aren't egress size → on paper these are den/flex rooms; smoke alarm in each is non-negotiable.
 - **THE WALLS (two framed 2×4 partitions, ≈ $320 total):** Wall B at ~8 ft, Wall A at ~15 ft, both 11-ft runs with 32" ROs stacked on the window side. Studs 24" OC (20 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. Drywall the bedroom sides (6 sheets ½"), curtains in the ROs until used slab doors appear. Positions ±1 ft, same lumber.
 - **Zones:** entry/dressing (~11×8, desk lives here) → BR-B (~11×7, twin against the corridor-side wall, own door) → BR-A (~11×7, mine). Both bedrooms open onto the entry zone — no walk-through.
 - **My bed:** two 4×4 modular couch sections tight to the far + left walls = 8×4 sleeping surface, topper over the seam. Rack on the right wall (3.5-ft dressing strip), lamp at the bed's foot corner. King stays upstairs.
