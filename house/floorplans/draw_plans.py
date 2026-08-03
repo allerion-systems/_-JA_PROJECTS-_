@@ -107,10 +107,17 @@ def dim_h(ax, y, x0, x1, label, above=True):
             va="bottom" if above else "top", zorder=8)
 
 
-def pillows(ax, by):
-    """Two pillows at the EAST (head/window) end of a 60-tall queen starting at y=by."""
+def pillows(ax, by, x=114):
+    """Two pillows at the head end of a 60-tall queen starting at y=by."""
     for dy in (6, 32):
-        ax.add_patch(Rectangle((114, by + dy), 14, 22, fc="#f6f1e4", ec=FURN_E, lw=0.7, zorder=4))
+        ax.add_patch(Rectangle((x, by + dy), 14, 22, fc="#f6f1e4", ec=FURN_E, lw=0.7, zorder=4))
+
+
+def nightstand(ax, x, y):
+    """Small 16x15 nightstand."""
+    ax.add_patch(Rectangle((x, y), 16, 15, fc="#efe9da", ec=FURN_E, lw=0.8, zorder=4))
+    ax.text(x + 8, y + 7.5, "NS", fontsize=5.2, family="monospace", color="#6d675b",
+            ha="center", va="center", zorder=4)
 
 
 def furn(ax, x, y, w, h, label, rot=0, dashed=False):
@@ -424,15 +431,19 @@ def option_f():
     squiggle(ax, 38, 177, 38, 207)
     door_swing(ax, 40, 178, 30, 0, 90, 45)
     dim_v(ax, 52, 176, 208, '32" RO', side=1)
-    # QUEENS head-EAST: 80 long toward the window wall, pillows at the head
-    furn(ax, 52, 78, 80, 60, "QUEEN 60x80\nHEAD EAST")
-    pillows(ax, 78)
-    furn(ax, 52, 202, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
-    pillows(ax, 202)
+    # QUEENS head-EAST, floated for a nightstand each side (16" per side)
+    furn(ax, 52, 92, 80, 60, "QUEEN 60x80\nHEAD EAST")
+    pillows(ax, 92)
+    nightstand(ax, 114, 76)
+    nightstand(ax, 114, 153)
+    furn(ax, 52, 188, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
+    pillows(ax, 188)
+    nightstand(ax, 114, 172)
+    nightstand(ax, 114, 249)
     furn(ax, 8, 10, 48, 48, "COUCH\n4x4")
     furn(ax, 60, 10, 48, 48, "COUCH\n4x4")
-    room_label(ax, 86, 152, "BR-B", "7'-8\"x7'-8\" - NO WINDOW - QUEEN FITS")
-    room_label(ax, 86, 188, "BR-A", "7'-8\"x7'-8\" + WINDOW - QUEEN FITS")
+    room_label(ax, 86, 158, "BR-B", "7'-8\"x7'-8\" - NO WINDOW - QUEEN + 2 NS")
+    room_label(ax, 86, 180, "BR-A", "7'-8\"x7'-8\" + WINDOW - QUEEN + 2 NS")
     room_label(ax, 18, 160, "HALL", "3'x16'")
     room_label(ax, 66, 40, "ENTRY / LOUNGE", "11'x6'")
     dim_v(ax, -22, 0, 72, ftin(72), side=-1)
@@ -453,27 +464,32 @@ def option_g():
     take a queen with a 32-inch aisle AND both hoppers land inside bedrooms."""
     fig, ax = new_ax()
     shell_and_context(ax)
-    # NS wall X36, full length, ROs flanking the divider at Y88-120 and Y140-172
-    wall(ax, 36, 0, 4, 88, new=True)
-    wall(ax, 36, 120, 4, 20, new=True)
-    wall(ax, 36, 172, 4, 92, new=True)
+    # NS wall X36, full length, doors at OPPOSITE ends: BR-B at the entry corner,
+    # BR-A just past the divider — both swings clear the floated beds
+    wall(ax, 36, 0, 4, 6, new=True)
+    wall(ax, 36, 38, 4, 98, new=True)
+    wall(ax, 36, 168, 4, 96, new=True)
     # divider Y128
     wall(ax, 40, 128, 92, 4, new=True)
-    # BR-B door — two steps down the corridor from the existing 3' opening
-    squiggle(ax, 38, 89, 38, 119)
-    door_swing(ax, 40, 90, 30, 0, 90, 45)
-    dim_v(ax, 52, 88, 120, '32" RO', side=1)
+    # BR-B door — right at the south corner, two steps from the 3' opening
+    squiggle(ax, 38, 7, 38, 37)
+    door_swing(ax, 40, 36, 30, 270, 360, 315)
+    dim_v(ax, 52, 6, 38, '32" RO', side=1)
     # BR-A door
-    squiggle(ax, 38, 141, 38, 171)
-    door_swing(ax, 40, 170, 30, 270, 360, 315)
-    dim_v(ax, 52, 140, 172, '32" RO', side=1)
-    # QUEENS head-EAST: pillows under the hoppers, 60" of open floor at each door
-    furn(ax, 52, 8, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
-    pillows(ax, 8)
-    furn(ax, 52, 196, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
-    pillows(ax, 196)
-    room_label(ax, 80, 100, "BR-B", "7'-8\"x10'-8\" + WINDOW - QUEEN FITS")
-    room_label(ax, 80, 152, "BR-A", "7'-8\"x11'-0\" + WINDOW - QUEEN FITS")
+    squiggle(ax, 38, 137, 38, 167)
+    door_swing(ax, 40, 166, 30, 270, 360, 315)
+    dim_v(ax, 52, 136, 168, '32" RO', side=1)
+    # QUEENS head-EAST, floated: pillows under the hoppers + a nightstand EACH side
+    furn(ax, 52, 26, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
+    pillows(ax, 26)
+    nightstand(ax, 114, 9)
+    nightstand(ax, 114, 88)
+    furn(ax, 52, 186, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
+    pillows(ax, 186)
+    nightstand(ax, 114, 169)
+    nightstand(ax, 114, 248)
+    room_label(ax, 80, 116, "BR-B", "7'-8\"x10'-8\" + WINDOW - QUEEN + 2 NS")
+    room_label(ax, 80, 152, "BR-A", "7'-8\"x11'-0\" + WINDOW - QUEEN + 2 NS")
     ax.text(18, 150, "3' CORRIDOR", fontsize=7, family="monospace", color=DIMC,
             rotation=90, va="center", ha="center")
     dim_v(ax, -22, 0, 128, ftin(128), side=-1)
@@ -487,6 +503,55 @@ def option_g():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------- OPTION H
+def option_h():
+    """User's flip: bedrooms on the WEST side, doors on the OPPOSITE (east) side
+    off a 3' gallery along the window wall. Queens float with a nightstand each
+    side, heads west. Cost of the flip: neither bedroom has a window."""
+    fig, ax = new_ax()
+    shell_and_context(ax)
+    # BR-B south wall + full-height NS wall at X92 (ROs Y100-132 and Y196-228) + divider
+    wall(ax, 0, 72, 92, 4, new=True)
+    wall(ax, 92, 72, 4, 28, new=True)
+    wall(ax, 92, 132, 4, 64, new=True)
+    wall(ax, 92, 228, 4, 36, new=True)
+    wall(ax, 0, 168, 92, 4, new=True)
+    # doors open west into the rooms, hinged clear of the beds
+    squiggle(ax, 94, 101, 94, 131)
+    door_swing(ax, 92, 102, 30, 180, 270, 225)
+    dim_v(ax, 104, 100, 132, '32" RO', side=1)
+    squiggle(ax, 94, 197, 94, 227)
+    door_swing(ax, 92, 198, 30, 180, 270, 225)
+    dim_v(ax, 104, 196, 228, '32" RO', side=1)
+    # QUEENS head-WEST, floated, nightstand each side
+    furn(ax, 2, 92, 80, 60, "QUEEN 60x80\nHEAD WEST")
+    pillows(ax, 92, x=6)
+    nightstand(ax, 4, 76)
+    nightstand(ax, 4, 153)
+    furn(ax, 2, 188, 80, 60, "QUEEN 60x80\nHEAD WEST")
+    pillows(ax, 188, x=6)
+    nightstand(ax, 4, 172)
+    nightstand(ax, 4, 249)
+    room_label(ax, 46, 122, "BR-B", "7'-8\"x7'-8\" - NO WINDOW - QUEEN + 2 NS")
+    room_label(ax, 46, 218, "BR-A", "7'-8\"x7'-8\" - NO WINDOW - QUEEN + 2 NS")
+    ax.text(116, 160, "3' GALLERY", fontsize=7, family="monospace", color=DIMC,
+            rotation=90, va="center", ha="center")
+    ax.text(66, 62, "LOUNGE / ENTRY 11'x6' + WINDOW", fontsize=7.5,
+            family="monospace", color=INK, ha="center", va="center")
+    furn(ax, 8, 8, 48, 48, "COUCH\n4x4")
+    furn(ax, 60, 8, 48, 48, "COUCH\n4x4")
+    dim_v(ax, -22, 0, 72, ftin(72), side=-1)
+    dim_v(ax, -22, 76, 168, ftin(92), side=-1)
+    dim_v(ax, -22, 172, 264, ftin(92), side=-1)
+    dim_h(ax, -20, 0, 92, ftin(92), above=False)
+    dim_h(ax, -20, 96, 132, ftin(36), above=False)
+    stamp(ax, "WINDOWS LAND IN THE HALL", x=62, y=170, fs=12, rot=10)
+    title_block(ax, "H", "WEST BEDROOMS + EAST WINDOW GALLERY",
+                "3 WALLS - 32 LF - ~$430 - QUEEN + 2 STANDS EACH - NO BR WINDOWS", "A-108")
+    fig.savefig(os.path.join(OUT, "option-h.png"), dpi=170)
+    plt.close(fig)
+
+
 option_a()
 option_b()
 option_c()
@@ -494,4 +559,5 @@ option_d()
 option_e()
 option_f()
 option_g()
+option_h()
 print("done:", sorted(f for f in os.listdir(OUT) if f.endswith(".png")))
