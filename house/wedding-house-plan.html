@@ -296,7 +296,7 @@
   <section>
     <div class="eyebrow">Part 3</div>
     <h2>Build 2 — the basement (your floor) + the mid-level speakeasy</h2>
-    <p>Existing conditions per your drawing: the basement room is a <b>clean 11 × 22 rectangle</b> with a <b>3' opening at the bottom-left</b>, two steps off the stairs; the corridor runs up its left side with the laundry door mid-way (W/D pushed tight into the corner) and the storage room top-left. <b>New work: TWO framed 2×4 walls</b> — Wall B at ~8 ft and Wall A at ~15 ft, both with 32" door openings stacked on the window side — making <b>BR-B (guest, twin)</b> in the middle and <b>BR-A (yours, couch-bed)</b> at the far end, with an entry/dressing zone inside the opening. Both bedrooms open onto the entry zone — nobody walks through anyone's room. Speakeasy + bar + darts live upstairs on the mid level.</p>
+    <p>Existing conditions per your drawing: the basement room is a <b>clean 11 × 22 rectangle</b> with a <b>3' opening at the bottom-left</b>, two steps off the stairs; the corridor runs up its left side with the laundry door mid-way (W/D pushed tight into the corner) and the storage room top-left. <b>New work: two wall assemblies, two doors, and a 3-ft HALLWAY that stays open along the corridor side.</b> Wall A (straight, ~8 ft) and Wall B (L-shaped: ~8 ft + a 7-ft return along the hallway) leave a 3-ft lane running from the entry zone up the corridor-side wall — <b>BR-B's door faces the hallway, BR-A's door is the hallway's end.</b> Nobody walks through anyone's room, and it's still just two walls and two doors. Speakeasy + bar + darts live upstairs on the mid level.</p>
     <svg viewBox="0 0 430 600" role="img" aria-label="Basement plan matching the existing-conditions drawing: stairs bottom, corridor and laundry left, storage top-left, 11 by 22 room right with two new framed walls" style="max-width:430px;width:100%;height:auto;display:block;margin:0 auto;">
       <!-- EXISTING: left column -->
       <rect x="40" y="40" width="150" height="120" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
@@ -328,25 +328,31 @@
       <line x1="200" y1="354" x2="200" y2="409" stroke="var(--blue)" stroke-dasharray="4 3" stroke-width="2"/>
       <text x="188" y="382" text-anchor="middle" fill="var(--blue)" font-size="8" transform="rotate(-90 188 382)">3' opening</text>
       <text x="192" y="200" text-anchor="middle" fill="var(--muted)" font-size="8" transform="rotate(-90 192 200)">16'</text>
-      <!-- NEW WORK: two framed 2x4 walls with 32in ROs on the east side -->
-      <rect x="200" y="316" width="112" height="7" fill="var(--pine)"/>
-      <rect x="347" y="316" width="7" height="7" fill="var(--pine)"/>
-      <line x1="312" y1="319" x2="347" y2="319" stroke="var(--pine)" stroke-dasharray="4 3" stroke-width="2"/>
-      <text x="256" y="311" text-anchor="middle" fill="var(--pine)" font-size="8" font-weight="bold">NEW WALL B · 32" RO</text>
-      <rect x="200" y="188" width="112" height="7" fill="var(--pine)"/>
-      <rect x="347" y="188" width="7" height="7" fill="var(--pine)"/>
-      <line x1="312" y1="191" x2="347" y2="191" stroke="var(--pine)" stroke-dasharray="4 3" stroke-width="2"/>
-      <text x="256" y="183" text-anchor="middle" fill="var(--pine)" font-size="8" font-weight="bold">NEW WALL A · 32" RO</text>
+      <!-- NEW WORK: Wall A (straight) + Wall B (L) with doors facing the hallway -->
+      <rect x="242" y="335" width="112" height="7" fill="var(--pine)"/>
+      <line x1="200" y1="338" x2="242" y2="338" stroke="var(--pine)" stroke-dasharray="4 3" stroke-width="2"/>
+      <path d="M 242 338 A 40 40 0 0 0 202 378" fill="none" stroke="var(--muted)" stroke-width="1"/>
+      <text x="298" y="330" text-anchor="middle" fill="var(--pine)" font-size="8" font-weight="bold">NEW WALL B (L) · EW LEG</text>
+      <rect x="242" y="216" width="7" height="126" fill="var(--pine)"/>
+      <line x1="245" y1="252" x2="245" y2="297" stroke="var(--ground)" stroke-width="7"/>
+      <line x1="245" y1="252" x2="245" y2="297" stroke="var(--pine)" stroke-dasharray="4 3" stroke-width="2"/>
+      <path d="M 245 297 A 45 45 0 0 0 200 252" fill="none" stroke="var(--muted)" stroke-width="1" transform="rotate(180 222.5 274.5)"/>
+      <text x="234" y="275" text-anchor="middle" fill="var(--pine)" font-size="7" transform="rotate(-90 234 275)">BR-B door</text>
+      <rect x="242" y="209" width="112" height="7" fill="var(--pine)"/>
+      <line x1="200" y1="212" x2="242" y2="212" stroke="var(--pine)" stroke-dasharray="4 3" stroke-width="2"/>
+      <text x="298" y="204" text-anchor="middle" fill="var(--pine)" font-size="8" font-weight="bold">NEW WALL A</text>
+      <text x="221" y="177" text-anchor="middle" fill="var(--pine)" font-size="7">BR-A door</text>
+      <text x="221" y="290" text-anchor="middle" fill="var(--muted)" font-size="8" transform="rotate(-90 221 290)">HALLWAY 3'</text>
       <!-- zones + furniture -->
       <rect x="206" y="66" width="112" height="56" rx="4" fill="var(--panel)" stroke="var(--pine)"/>
       <text x="262" y="90" text-anchor="middle" fill="var(--ink)" font-size="9" font-weight="bold">couch-bed 8'×4'</text>
       <text x="262" y="103" text-anchor="middle" fill="var(--muted)" font-size="8">2 modular 4×4s + topper</text>
       <text x="262" y="150" text-anchor="middle" fill="var(--ink)" font-size="11" font-weight="bold">BR-A · you</text>
       <text x="262" y="164" text-anchor="middle" fill="var(--muted)" font-size="8">≈ 11' × 7'</text>
-      <rect x="206" y="210" width="46" height="88" rx="4" fill="var(--panel)" stroke="var(--sage)"/>
-      <text x="229" y="256" text-anchor="middle" fill="var(--ink)" font-size="9" font-weight="bold">twin</text>
-      <text x="290" y="250" text-anchor="middle" fill="var(--ink)" font-size="11" font-weight="bold">BR-B</text>
-      <text x="290" y="264" text-anchor="middle" fill="var(--muted)" font-size="8">guest/overflow · ≈ 11' × 7'</text>
+      <rect x="300" y="216" width="46" height="88" rx="4" fill="var(--panel)" stroke="var(--sage)"/>
+      <text x="323" y="262" text-anchor="middle" fill="var(--ink)" font-size="9" font-weight="bold">twin</text>
+      <text x="272" y="256" text-anchor="middle" fill="var(--ink)" font-size="11" font-weight="bold">BR-B</text>
+      <text x="272" y="270" text-anchor="middle" fill="var(--muted)" font-size="8">≈ 8' × 7' · own door</text>
       <rect x="300" y="345" width="40" height="56" rx="2" fill="var(--panel)" stroke="var(--muted)"/>
       <text x="320" y="376" text-anchor="middle" fill="var(--muted)" font-size="8">desk</text>
       <text x="262" y="430" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="bold">ENTRY ZONE</text>
@@ -372,7 +378,7 @@
       </ul>
     </div>
     <div class="card">
-      <h3>The walls — two 11-ft runs of 2×4s, ≈ $320, two real bedrooms</h3>
+      <h3>The walls — two assemblies (~23 lin ft of 2×4), ≈ $330, two bedrooms + a hallway</h3>
       <svg viewBox="0 0 540 250" role="img" aria-label="Framing elevation: 12-ft 2x4 wall, studs 24 inches on center, 32-inch door rough opening with flat header" style="max-width:540px;width:100%;height:auto;display:block;margin:.25rem auto;">
         <rect x="18" y="12" width="504" height="10" fill="var(--pine)"/>
         <rect x="18" y="200" width="504" height="10" fill="var(--sage)"/>
@@ -395,9 +401,9 @@
       <ul>
         <li><b>Cut list, both walls:</b> 20 precut 92⅝" studs (~$80) · 4× 2×4×12 plates, bottoms pressure-treated (~$42) · 6 sheets ½" drywall, bedroom sides (~$70) · mud + tape + screws + Tapcons (~$90). <b>≈ $320 total, $160 a wall</b> + used doors below.</li>
         <li><b>Doors: hunt 2 used 30" PREHUNGS first</b> (Marketplace / Habitat ReStore, $20–50 each), <b>then frame each RO to the actual unit +½"</b> — nominal 32"×82", but the door in hand sets the number. Prehung = <b>easiest install there is</b>: the door comes already hung in its jamb — tip the unit into the RO, shim behind the hinges, screw through the jamb, ~30–45 min each. No hinge mortising, no fitting.</li>
-        <li>Studs 24" OC, king + jack each side, flat header, no cripples; both doors on the window side for stacked circulation.</li>
+        <li>Studs 24" OC, king + jack each side, flat headers, no cripples. <b>Both doors face the hallway:</b> BR-B's in Wall B's return leg, BR-A's at the hallway's end — the lane along the corridor-side wall is the circulation, not the bedrooms.</li>
         <li><b>Drop-ceiling detail:</b> pull the tile row along each line, run the top plates to the underside of the joists (blocking if a wall lands parallel to the joist run), let the grid die into the walls. Measure slab-to-joist before cutting — precuts + plates land ≈ 97⅛".</li>
-        <li><b>Positions per your drawing:</b> Wall B ≈ 8 ft from the entry wall, Wall A ≈ 15 ft — BR-B and BR-A each land ≈ 11×7 with an 11×8 entry/dressing zone. Slide either ±1 ft, same lumber.</li>
+        <li><b>Zones this makes:</b> entry/dressing ≈ 11×8 → hallway 3' wide along the corridor wall → <b>BR-B ≈ 8×7</b> (east of the hallway) → <b>BR-A ≈ 11×7 full width</b> at the far end. Slide the wall lines ±1 ft, same lumber.</li>
         <li>Frame flat on the floor, tilt up, shim, fasten, rock the bedroom sides — a weekend with one helper.</li>
       </ul>
     </div>
@@ -410,9 +416,9 @@
       </ul>
     </div>
     <div class="card">
-      <h3>BR-B — the middle bedroom (~11 × 7), real framed walls</h3>
+      <h3>BR-B — the middle bedroom (~8 × 7), real framed walls</h3>
       <ul>
-        <li>Sits between the two new walls; <b>its own 32" door off the entry zone</b> — no walking through anyone's room, in either direction.</li>
+        <li>Sits between the two new walls, east of the hallway; <b>its own door opens off the hallway</b> — no walking through anyone's room, in either direction.</li>
         <li><b>The existing twin is its bed</b>, against the corridor-side wall. Solo guest by default; with real walls it takes a couple in a pinch.</li>
         <li>Desk lives in the entry zone outside both doors — office by day without bothering either room.</li>
         <li>Airbnb era: "private lower-level 2-bedroom suite + speakeasy lounge upstairs" is the whole listing pitch.</li>
@@ -630,16 +636,19 @@
     [-125, 195, 0, 80, 4, 84, 'wall'], [-125, 199, 0, 4, 106, 84, 'wall'],
     [-125, 305, 0, 114, 4, 84, 'wall'], [-15, 199, 0, 4, 106, 84, 'wall'],
     [-105, 220, 0, 60, 40, 48, 'rack'],
-    // ENTRY ZONE (Y 0-96): desk + dressing, hall to both bedrooms along the east side
+    // ENTRY ZONE (Y 0-96): desk + dressing; 3-ft HALLWAY runs north along the west wall
     [106, 30, 0, 24, 48, 30, 'dark'], [84, 42, 0, 18, 18, 18, 'rack'],
-    // Wall B at 8 ft: solid run + 32in RO at the east end + header + RO curtain
-    [0, 96, 0, 96, 4, 84, 'wallSolid'], [128, 96, 0, 4, 4, 84, 'wallSolid'],
-    [96, 96, 82, 32, 4, 2, 'wallSolid'], [97, 97.5, 2, 30, 1.5, 78, 'curtain'],
-    // BR-B (Y 100-180): twin along the west wall
-    [4, 108, 0, 38, 75, 18, 'navy'], [4, 108, 18, 38, 75, 4, 'linen'],
-    // Wall A at 15 ft: same spec
-    [0, 180, 0, 96, 4, 84, 'wallSolid'], [128, 180, 0, 4, 4, 84, 'wallSolid'],
-    [96, 180, 82, 32, 4, 2, 'wallSolid'], [97, 181.5, 2, 30, 1.5, 78, 'curtain'],
+    // Wall B (L-shaped): EW leg at 8 ft from X 36 to the east wall + NS return along the hallway
+    [36, 96, 0, 96, 4, 84, 'wallSolid'],
+    [36, 100, 0, 4, 20, 84, 'wallSolid'], [36, 152, 0, 4, 28, 84, 'wallSolid'],
+    [36, 120, 82, 4, 32, 2, 'wallSolid'],
+    [36.5, 121, 0, 1.5, 30, 80, 'pine'],                      // BR-B prehung door, faces the hallway
+    // BR-B (X 40-132, Y 100-180): twin along the east wall
+    [92, 100, 0, 38, 75, 18, 'navy'], [92, 100, 18, 38, 75, 4, 'linen'],
+    // Wall A at 15 ft from X 36 to the east wall; hallway terminates at BR-A's doorway (X 0-36)
+    [36, 180, 0, 96, 4, 84, 'wallSolid'],
+    [0, 180, 82, 36, 4, 2, 'wallSolid'],
+    [2, 180.5, 0, 30, 1.5, 80, 'pine'],                       // BR-A prehung door at the hallway's end
     // BR-A (Y 184-264): couch-bed along the far wall, rack, lamp
     [2, 212, 0, 48, 48, 16, 'sofa'], [50, 212, 0, 48, 48, 16, 'sofa'],
     [2, 212, 16, 96, 48, 5, 'linen'],
@@ -807,7 +816,7 @@
 
   const CAPTIONS = {
     house: 'Whole house — basement + speakeasy stacked as layers.',
-    basement: 'Basement 11×22 — 3′ entry · entry zone (desk) · two NEW 2×4 walls · BR-B (twin) · BR-A (couch-bed). Corridor/laundry/storage outside.',
+    basement: 'Basement 11×22 — 3′ entry · entry zone · 3′ hallway (corridor side) · BR-B (twin, door off hallway) · BR-A (couch-bed, door at hallway end).',
     speakeasy: 'Speakeasy (12′4.6″ × 10′4.8″) — stove · sectional · bar · dart board · futon pod in the window corner.',
   };
   const cap = document.getElementById('v3dcap');
