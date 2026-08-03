@@ -1,6 +1,6 @@
 # Wedding Guest House Plan
 
-> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $575 incl. the 2×4 wall
+> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $735 incl. both 2×4 walls
 > Live one-page app with interactive 3D: kept in this repo at [`house/wedding-house-plan.html`](../../house/wedding-house-plan.html)
 
 The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the wedding weekend, doubling as the Airbnb side-hustle test run (2-year lease).
@@ -14,12 +14,12 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 | Guest bedroom 2 | Double | Clay + Lexi |
 | Front room (kitchen level, curtain wall) | Pullout couch — queen already in it | Plus-one couple A |
 | Speakeasy pod (mid level, pine window corner) | Futon (moves up from basement) | Plus-one couple B |
-| Basement BR-A, far end (behind the new 2×4 wall) | Couch-bed: 2 modular 4×4 sections + topper | Me |
-| Basement BR-B, middle (closable, walk-through to BR-A) | Twin (already there) | Overflow +1 — never a couple's room |
+| Basement BR-A, far end (framed 2×4 walls) | Couch-bed: 2 modular 4×4 sections + topper | Me |
+| Basement BR-B, middle (framed 2×4 walls, own door) | Twin (already there) | Overflow +1 — takes a couple in a pinch |
 
 ## Scan mappings (confirmed)
 
-- Basement footprint = **Dining + Kitchen combined** (≈12.5' × 22') → basement modeled 12×21.
+- Basement room = **11' × 22'** per the user's existing-conditions drawing (3' opening bottom-left off the stairs; corridor with laundry door on its left, W/D tight in the corner; storage room top-left with its own door).
 - Speakeasy = **"Living Room 3"** on the scan: **12'4.6" × 10'4.8"** (112 ft²).
 - **"Other 2"** (48.8 ft², vanity) = bathroom; upstairs has the second full bath → 2 showers for 11 people.
 - **"Closet 1" / hallway cluster** = head of the basement stairs.
@@ -41,11 +41,10 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - Bathroom (Other 2) is right across the hallway.
 - **Dart board:** bullseye 68", oche taped at 7'9¼", lane down the walk strip between sectional back and pod curtain, pine wall behind the board, plywood backer ring. No darts while anyone's asleep in the pod.
 
-### Basement — 12×21, my floor
-- **The room is a clean rectangle — stairs are OUTSIDE it** (Polycam-confirmed): down the stairs → 2 steps through the landing → room doorway on the RIGHT → 2 more steps → laundry on the LEFT → 10×10 storage at the corridor's end. Windows on the opposite (exterior) long wall — positions are the only remaining assumption.
-- **Twin bed stays**, inside BR-B against the corridor-side wall near the door.
-- **THE WALL (one wall = two bedrooms, ≈ $160):** 12-ft 2×4 partition at 14 ft from the stair end. Studs 24" OC (10 precut 92⅝"), single top plate run to the joists above the drop-ceiling grid (pull one tile row; blocking if parallel to joists), PT bottom plate Tapconned through the carpet into the slab. 32" door RO on the window side: king + jack each side, flat 2×4 header, no cripples. Drywall the bedroom side (3 sheets ½"), curtain in the RO until a used slab door appears. Position options: 10.5 (even split) / **14 (rec)** / 15 ft.
-- **BR-B (~$25):** the entry side (clean 12×14 up to the wall) becomes the second bedroom — curtain rod in the room's own 36" doorway; the twin is its bed; desk stays in here. Walk-through to BR-A, so it's the overflow/solo room, never a couple's.
+### Basement — 11×22, my floor (existing conditions per drawing)
+- Room is a clean rectangle; **3' opening bottom-left** two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside the left wall. Windows on the exterior wall — positions are the only remaining assumption.
+- **THE WALLS (two framed 2×4 partitions, ≈ $320 total):** Wall B at ~8 ft, Wall A at ~15 ft, both 11-ft runs with 32" ROs stacked on the window side. Studs 24" OC (20 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. Drywall the bedroom sides (6 sheets ½"), curtains in the ROs until used slab doors appear. Positions ±1 ft, same lumber.
+- **Zones:** entry/dressing (~11×8, desk lives here) → BR-B (~11×7, twin against the corridor-side wall, own door) → BR-A (~11×7, mine). Both bedrooms open onto the entry zone — no walk-through.
 - **My bed:** two 4×4 modular couch sections tight to the far + left walls = 8×4 sleeping surface, topper over the seam. Rack on the right wall (3.5-ft dressing strip), lamp at the bed's foot corner. King stays upstairs.
 - Dehumidifier for a week first if musty. Battery smoke alarm inside every partitioned sleeping space.
 
@@ -54,16 +53,16 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **3×5 metal shed** (assemble on 2–4 pavers) = fuel + chemicals, separated from machines and house.
 - House rule: **no fuel or gas engines stored indoors** — the basement is a bedroom now.
 
-## Lean shopping list ≈ $575
+## Lean shopping list ≈ $735
 
-Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · 2×4 wall (studs, plates, drywall, mud, fasteners) $160 · BR-B stair curtain rod + panel $25 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
-Upgrades later (Airbnb money): drywall the office side + used slab door $80–120 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
+Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · 2×4 walls ×2 (20 studs, 4 plates, 6 drywall sheets, mud, fasteners) $320 · curtains for both ROs + entry $25 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
+Upgrades later (Airbnb money): drywall the entry side of both walls + two used slab doors $160–240 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
 
 ## 55-day timeline
 
 1. **This week:** order rod/panels/velcro; assemble the 3×5 shed on pavers.
 2. **Weeks 2–3:** yard gear → sheds; declutter basement + mid level; front-room curtain wall up.
-3. **Weeks 4–5:** frame + rock the basement wall (two people, one afternoon); BR-B stair curtain + speakeasy pod curtains; futon up to the pod; couch-bed built; bar staged; dart board hung; blackout all sleeping windows.
+3. **Weeks 4–5:** frame + rock both basement walls (a weekend with a helper); RO/entry curtains + speakeasy pod curtains; twin into BR-B; futon up to the pod; couch-bed built; bar staged; dart board hung; blackout all sleeping windows.
 4. **Day 40:** everything installed; test-sleep every spot (find the dead outlet before guests do).
 5. **Day 14:** fix what the test nights surfaced; wash all bedding.
 6. **Day 7:** stage rooms, towels on beds, wifi cards out; **photograph everything** — future Airbnb listing gallery.
