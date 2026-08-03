@@ -1,6 +1,6 @@
 # Wedding Guest House Plan
 
-> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $735 incl. both 2×4 walls
+> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $790 incl. walls + real doors
 > Live one-page app with interactive 3D: kept in this repo at [`house/wedding-house-plan.html`](../../house/wedding-house-plan.html)
 
 The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the wedding weekend, doubling as the Airbnb side-hustle test run (2-year lease).
@@ -43,7 +43,7 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 
 ### Basement — 11×22, my floor (existing conditions per drawing)
 - Room is a clean rectangle; **3' opening 16' down the corridor wall** (3–6 ft from the bottom corner), two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside that wall. **Windows confirmed: two 12"×24" hoppers at the ceiling on the exterior wall, each 2 ft in from the corners** — one lands in BR-A, one in the entry zone; BR-B is windowless (fan + lamp). Hoppers aren't egress size → on paper these are den/flex rooms; smoke alarm in each is non-negotiable.
-- **THE WALLS (two framed 2×4 partitions, ≈ $320 total):** Wall B at ~8 ft, Wall A at ~15 ft, both 11-ft runs with 32" ROs stacked on the window side. Studs 24" OC (20 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. Drywall the bedroom sides (6 sheets ½"), curtains in the ROs until used slab doors appear. Positions ±1 ft, same lumber.
+- **THE WALLS (two framed 2×4 partitions, ≈ $320 total):** Wall B at ~8 ft, Wall A at ~15 ft, both 11-ft runs with 32" ROs stacked on the window side. Studs 24" OC (20 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. Drywall the bedroom sides (6 sheets ½"). **Doors: buy 2 used 30" PREHUNGS first** (FB Marketplace / Habitat ReStore, $20–50 each) and frame each RO to the actual unit +½" — prehung = easiest install: tip unit into RO, shim behind hinges, screw through jamb, ~30–45 min each. Wall positions ±1 ft, same lumber.
 - **Zones:** entry/dressing (~11×8, desk lives here) → BR-B (~11×7, twin against the corridor-side wall, own door) → BR-A (~11×7, mine). Both bedrooms open onto the entry zone — no walk-through.
 - **My bed:** two 4×4 modular couch sections tight to the far + left walls = 8×4 sleeping surface, topper over the seam. Rack on the right wall (3.5-ft dressing strip), lamp at the bed's foot corner. King stays upstairs.
 - Dehumidifier for a week first if musty. Battery smoke alarm inside every partitioned sleeping space.
@@ -53,10 +53,10 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **3×5 metal shed** (assemble on 2–4 pavers) = fuel + chemicals, separated from machines and house.
 - House rule: **no fuel or gas engines stored indoors** — the basement is a bedroom now.
 
-## Lean shopping list ≈ $735
+## Lean shopping list ≈ $790
 
-Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · 2×4 walls ×2 (20 studs, 4 plates, 6 drywall sheets, mud, fasteners) $320 · curtains for both ROs + entry $25 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
-Upgrades later (Airbnb money): drywall the entry side of both walls + two used slab doors $160–240 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
+Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · 2×4 walls ×2 (20 studs, 4 plates, 6 drywall sheets, mud, fasteners) $320 · 2 used 30" prehung doors $40–80 · entry-opening curtain $15 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
+Upgrades later (Airbnb money): drywall the entry side of both walls $60–80 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
 
 ## 55-day timeline
 
