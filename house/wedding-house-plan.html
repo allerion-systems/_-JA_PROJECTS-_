@@ -1,0 +1,758 @@
+<title>55 Days Out — Wedding Weekend House Plan</title>
+<style>
+  :root {
+    --ground: #FCFAF5;
+    --panel: #F4EEE2;
+    --ink: #3B3128;
+    --muted: #7A6E5F;
+    --pine: #A9743E;
+    --blue: #5E7CA0;
+    --sage: #75855F;
+    --line: #E4DACA;
+    --check: #75855F;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #211B15;
+      --panel: #2B241C;
+      --ink: #EDE3D3;
+      --muted: #A79A87;
+      --pine: #C99459;
+      --blue: #8FA8C8;
+      --sage: #97A681;
+      --line: #3C332A;
+      --check: #97A681;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #211B15;
+    --panel: #2B241C;
+    --ink: #EDE3D3;
+    --muted: #A79A87;
+    --pine: #C99459;
+    --blue: #8FA8C8;
+    --sage: #97A681;
+    --line: #3C332A;
+    --check: #97A681;
+  }
+  :root[data-theme="light"] {
+    --ground: #FCFAF5;
+    --panel: #F4EEE2;
+    --ink: #3B3128;
+    --muted: #7A6E5F;
+    --pine: #A9743E;
+    --blue: #5E7CA0;
+    --sage: #75855F;
+    --line: #E4DACA;
+    --check: #75855F;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    margin: 0;
+    padding: 2.5rem 1.25rem 5rem;
+  }
+  main { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 3rem; }
+
+  h1, h2, h3 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    line-height: 1.15;
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 { font-size: 2.1rem; font-weight: 600; }
+  h2 { font-size: 1.45rem; font-weight: 600; margin-bottom: .25rem; }
+  h3 { font-size: 1.05rem; font-weight: 600; }
+  p { margin: .5rem 0; }
+
+  .eyebrow {
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: .35rem;
+  }
+  header .eyebrow { color: var(--pine); }
+  .sub { color: var(--muted); max-width: 55ch; }
+
+  section { display: flex; flex-direction: column; gap: .75rem; }
+  .rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+  .tablewrap { overflow-x: auto; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: .95rem;
+  }
+  th {
+    text-align: left;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    padding: .5rem .75rem .4rem 0;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  td {
+    padding: .55rem .75rem .55rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  td.num, th.num { text-align: right; padding-right: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .who { font-weight: 600; }
+  .why { color: var(--muted); font-size: .88rem; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1.1rem 1.25rem;
+  }
+  .card + .card { margin-top: .75rem; }
+  .card h3 { margin-bottom: .3rem; }
+  .spec {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: .85rem;
+    color: var(--pine);
+    font-weight: 600;
+  }
+  ul, ol { margin: .4rem 0 .2rem; padding-left: 1.2rem; }
+  li { margin: .3rem 0; }
+  li::marker { color: var(--pine); }
+
+  /* zone map */
+  .map {
+    display: grid;
+    grid-template-columns: 1.1fr 1.6fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 6px;
+    font-size: .78rem;
+    line-height: 1.3;
+  }
+  .zone {
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    padding: .6rem .65rem;
+    min-height: 5.5rem;
+  }
+  .zone b { display: block; font-size: .82rem; margin-bottom: .15rem; }
+  .zone small { color: var(--muted); }
+  .z-you { grid-row: 1 / 3; border-color: var(--blue); border-style: solid; background: color-mix(in srgb, var(--blue) 8%, transparent); }
+  .z-lounge { grid-column: 2; grid-row: 1 / 3; }
+  .z-pod { grid-row: 1 / 3; border-color: var(--sage); background: color-mix(in srgb, var(--sage) 8%, transparent); }
+  .maplegend { color: var(--muted); font-size: .8rem; margin-top: .35rem; }
+
+  /* checklist */
+  .buy { list-style: none; padding: 0; margin: 0; }
+  .buy li {
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+    padding: .45rem 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0;
+  }
+  .buy input[type="checkbox"] {
+    width: 1rem; height: 1rem;
+    accent-color: var(--check);
+    flex: none;
+    position: relative;
+    top: .15rem;
+  }
+  .buy label { flex: 1; cursor: pointer; }
+  .buy .price {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: .85rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .buy input:checked + label { color: var(--muted); text-decoration: line-through; }
+  .total {
+    display: flex; justify-content: space-between;
+    padding-top: .7rem;
+    font-weight: 600;
+  }
+  .total span:last-child { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+  .timeline { list-style: none; padding: 0; margin: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    padding: .55rem 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0;
+  }
+  .when {
+    font-size: .78rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--pine);
+    font-weight: 600;
+    padding-top: .15rem;
+  }
+
+  .note {
+    border-left: 3px solid var(--pine);
+    padding: .2rem 0 .2rem 1rem;
+    color: var(--muted);
+    font-size: .92rem;
+  }
+  .note b { color: var(--ink); }
+
+  footer { color: var(--muted); font-size: .85rem; text-align: center; }
+
+  .v3d-controls { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem; }
+  .v3d-btn {
+    font: inherit; font-size: .78rem; letter-spacing: .07em; text-transform: uppercase;
+    padding: .45rem .95rem; border: 1px solid var(--line); background: var(--panel);
+    color: var(--ink); border-radius: 4px; cursor: pointer;
+  }
+  .v3d-btn.active { border-color: var(--blue); color: var(--blue); font-weight: 600; }
+  #v3d {
+    display: block; width: 100%; height: min(72vh, 640px); min-height: 380px;
+    touch-action: none; cursor: grab;
+    border: 1px solid var(--line); border-radius: 6px; background: transparent;
+  }
+  @media (max-width: 480px) {
+    .timeline li { grid-template-columns: 1fr; gap: .15rem; }
+    h1 { font-size: 1.7rem; }
+  }
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow">55 days out · sleeps 11 (+1 twin) · lean build ≈ $420</div>
+    <h1>The Wedding Weekend House Plan</h1>
+    <p class="sub">One page for the whole operation across all four levels of the split-level: who sleeps where, the curtain-wall builds, what to buy, and when to do it — doubling as the dry run for the Airbnb side hustle.</p>
+  </header>
+
+  <section>
+    <div class="v3d-controls">
+      <button type="button" data-level="house" class="v3d-btn active">Whole house</button>
+      <button type="button" data-level="basement" class="v3d-btn">Basement</button>
+      <button type="button" data-level="speakeasy" class="v3d-btn">Speakeasy</button>
+    </div>
+    <canvas id="v3d"></canvas>
+    <p class="maplegend">Drag to spin · scroll / pinch to zoom · translucent = perimeter walls &amp; curtains · rendered in-page, zero apps, zero dependencies.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">The house</div>
+    <h2>Four levels, one couple per layer</h2>
+    <ul class="timeline">
+      <li><span class="when">Top — bedrooms</span><span>King (Kennon + sister) · Double (Brandon + wife) · Double (Clay + Lexi)</span></li>
+      <li><span class="when">Kitchen level</span><span>Kitchen, second front door, and the front room → curtain-wall guest room (plus-one couple A)</span></li>
+      <li><span class="when">Mid level</span><span>The wood-paneled room becomes the <b>speakeasy</b>: sectional + wood stove + bar from owned furniture, plus the pine window-corner bed pod (plus-one couple B)</span></li>
+      <li><span class="when">Basement</span><span>Your bedroom at the far end + the existing twin by the stairs — the build below</span></li>
+    </ul>
+    <p class="why">Nobody shares a floor with a couple they'd rather not hear. The lounge sits between the two plus-one couples as a buffer.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 1</div>
+    <h2>Who sleeps where</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Space</th><th>Bed</th><th>Guests</th></tr></thead>
+        <tbody>
+          <tr><td>King room (upstairs)</td><td>King</td><td><span class="who">Kennon + your sister</span><br><span class="why">Also official dress-guard headquarters</span></td></tr>
+          <tr><td>Guest bedroom 1</td><td>Double</td><td><span class="who">Brandon + his wife</span></td></tr>
+          <tr><td>Guest bedroom 2</td><td>Double</td><td><span class="who">Clay + Lexi</span></td></tr>
+          <tr><td>Front room · kitchen level · curtain wall</td><td><b>Pullout couch — queen's already in it</b></td><td><span class="who">Jackson + plus one</span> <em>or</em> <span class="who">Carter + plus one</span><br><span class="why">Whoever's most chill about a curtain door</span></td></tr>
+          <tr><td>Mid-level speakeasy pod · pine window corner</td><td>Futon (moves up from the basement)</td><td><span class="who">The other plus-one couple</span><br><span class="why">Cabin corner of the speakeasy, curtained off</span></td></tr>
+          <tr><td>Basement · far end</td><td>Couch-bed: 2 modular 4×4 sections + topper, back-left</td><td><span class="who">You</span></td></tr>
+          <tr><td>Basement twin · by the stairs</td><td>Twin — already there</td><td><span class="who">Overflow</span><br><span class="why">Solo guest or late-night crasher, free +1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 2</div>
+    <h2>Build 1 — the front room curtain wall</h2>
+    <p>Opening measures <span class="spec">60&Prime; wide × ~82&Prime; tall</span> — too wide for one door, perfect for a curtain wall. Zero holes, 20-minute install.</p>
+    <div class="card">
+      <ol>
+        <li>Heavy-duty tension rod rated for ~36–66&Prime; — at 60&Prime; even a mid-grade rod won't sag.</li>
+        <li>Two standard <b>52&Prime; × 84&Prime; blackout panels</b>: 104&Prime; of fabric over a 60&Prime; gap is ~1.7× fullness, so it drapes like a wall instead of stretching like a bedsheet.</li>
+        <li>Mount the rod ~1&Prime; below the top of the casing — 84&Prime; panels just kiss the floor, no hemming.</li>
+        <li>Velcro dots or magnets where the panels meet; one Command hook per side to tie panels back during the day.</li>
+      </ol>
+    </div>
+    <p class="note"><b>The bed's already in there:</b> the pullout couch has a queen inside — pull it out, topper + white bedding, done. $0. <b>Placement check:</b> a queen pullout needs ~7 ft of clear floor when open — orient the couch so it opens away from the curtain line, keep the console table as the nightstand, luggage stools on the front-door side.</p>
+    <p class="note"><b>Front-door logistics:</b> that room <i>is</i> the entryway. Sign on the front door, everyone uses the side/back door all weekend, and frost film or a mini-curtain over the door's fan window.</p>
+    <p class="note"><b>Upgrade path:</b> 60&Prime; = exactly two 30&Prime; bifold or French doors (~$130) if the Airbnb era wants a hard door later. Curtain first.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 3</div>
+    <h2>Build 2 — the basement (your floor) + the mid-level speakeasy</h2>
+    <p>Basement is <b>12 × 21 ft</b>, drop-tile ceiling, finished floor. <b>No bar down here</b> — the speakeasy lives on the mid level in the wood-paneled room. Basement program: stairs come down along one wall, the <b>existing twin bed</b> stays at the bottom of the stairs (bonus overflow spot), desk zone in the middle, <b>one curtain wall</b>, and your bedroom at the quiet far end. The 10×10 storage room stays untouched.</p>
+    <svg viewBox="0 0 330 505" role="img" aria-label="Basement floor plan: stairs, twin bed, desk zone, your bedroom" style="max-width:330px;width:100%;height:auto;display:block;margin:0 auto;">
+      <rect x="40" y="40" width="240" height="420" fill="none" stroke="var(--ink)" stroke-width="3"/>
+      <text x="160" y="30" text-anchor="middle" fill="var(--muted)" font-size="11">12'0"</text>
+      <text x="24" y="253" text-anchor="middle" fill="var(--muted)" font-size="11" transform="rotate(-90 24 253)">21'0"</text>
+      <!-- windows -->
+      <rect x="277" y="60" width="6" height="60" fill="var(--blue)"/>
+      <rect x="277" y="370" width="6" height="60" fill="var(--blue)"/>
+      <text x="296" y="93" fill="var(--blue)" font-size="9" transform="rotate(90 296 93)">window</text>
+      <text x="296" y="402" fill="var(--blue)" font-size="9" transform="rotate(90 296 402)">window</text>
+      <!-- stairs along the left wall, coming down from the top end -->
+      <rect x="43" y="40" width="60" height="183" fill="var(--panel)" stroke="var(--muted)"/>
+      <line x1="43" y1="58" x2="103" y2="58" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="76" x2="103" y2="76" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="94" x2="103" y2="94" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="112" x2="103" y2="112" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="130" x2="103" y2="130" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="148" x2="103" y2="148" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="166" x2="103" y2="166" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="184" x2="103" y2="184" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="43" y1="202" x2="103" y2="202" stroke="var(--muted)" stroke-width="1"/>
+      <text x="76" y="135" text-anchor="middle" fill="var(--muted)" font-size="9" transform="rotate(-90 76 135)">stairs dn ↓</text>
+      <rect x="103" y="40" width="5" height="183" fill="var(--ink)"/>
+      <line x1="43" y1="225" x2="103" y2="225" stroke="var(--muted)" stroke-dasharray="3 3" stroke-width="2"/>
+      <text x="112" y="238" fill="var(--muted)" font-size="9">entrance</text>
+      <!-- twin bed at the bottom of the stairs (existing) -->
+      <rect x="122" y="47" width="125" height="62" rx="4" fill="var(--panel)" stroke="var(--sage)"/>
+      <text x="184" y="74" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="bold">twin bed</text>
+      <text x="184" y="87" text-anchor="middle" fill="var(--muted)" font-size="9">already here · overflow spot</text>
+      <!-- appliance (unconfirmed) -->
+      <rect x="232" y="120" width="45" height="45" rx="2" fill="var(--ground)" stroke="var(--muted)"/>
+      <text x="254" y="145" text-anchor="middle" fill="var(--muted)" font-size="8">W/D?</text>
+      <!-- desk zone -->
+      <rect x="237" y="207" width="40" height="80" rx="2" fill="var(--panel)" stroke="var(--muted)"/>
+      <text x="257" y="250" text-anchor="middle" fill="var(--muted)" font-size="9" transform="rotate(-90 257 250)">desk</text>
+      <text x="150" y="260" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="bold">OFFICE / DRESSING ZONE</text>
+      <!-- curtain wall with doorway gap on the right -->
+      <rect x="40" y="323" width="180" height="5" fill="var(--blue)"/>
+      <line x1="220" y1="325" x2="280" y2="325" stroke="var(--blue)" stroke-dasharray="4 4" stroke-width="2"/>
+      <!-- your bedroom -->
+      <rect x="43" y="377" width="160" height="80" rx="4" fill="var(--panel)" stroke="var(--pine)"/>
+      <text x="123" y="411" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="bold">couch-bed</text>
+      <text x="123" y="424" text-anchor="middle" fill="var(--muted)" font-size="9">2 modular 4×4 sections · back-left</text>
+      <rect x="240" y="333" width="37" height="70" rx="2" fill="var(--panel)" stroke="var(--muted)"/>
+      <text x="258" y="372" text-anchor="middle" fill="var(--muted)" font-size="8">rack</text>
+      <text x="240" y="443" text-anchor="middle" fill="var(--ink)" font-size="10" font-weight="bold">YOU</text>
+    </svg>
+    <p class="maplegend">Solid blue = the one curtain wall (lean build: double-layer curtains on ceiling track; upgrade: frosted polycarb) · dashed = openings · W/D? = white appliance, washer-or-freezer unconfirmed.</p>
+    <p class="note"><b>Still assumed (correct me):</b> window positions, the appliance, and where the 10×10 storage room door is. A scan of this level (same app as your upstairs floor plan) makes it exact.</p>
+    <p class="maplegend">▲ Spin the full 3D model at the top of this page.</p>
+    <div class="card">
+      <h3>The speakeasy — "Living Room 3" on your scan · 12'4.6" × 10'4.8" · $0 for the wedding</h3>
+      <ul>
+        <li><b>Futon pod, window corner (couple B):</b> futon (75×54) against the window wall, head to the corner. Curtain track runs <b>~62" off the window wall</b> across 7'4", plus a ~5'3" return down to the wall — closes the corner with a 22" entry gap. Blackout the window inside the pod; fan on the floor at the foot.</li>
+        <li><b>Stove wall:</b> hearth + wood stove stay exactly where they are — mark a <b>3-ft no-fabric, no-sleeping radius</b> with how you place everything else. The pod curtain line above sits ~5 ft clear of it.</li>
+        <li><b>Sectional:</b> along the wall opposite the stove, the ~8-ft run that's left after the pod — it faces the fire, which is the whole speakeasy point.</li>
+        <li><b>Bar:</b> a dresser or table you own (~30×60 or smaller), on the door-side wall between the sectional and the pod, 2 stools in front. Tub of ice below, lamp on top, overheads off. The doorway to the hallway/stairs stays fully clear.</li>
+        <li>The bathroom ("Other 2" on your scan, 48.8 ft²) is right across the hallway — couple B has the shortest bathroom walk in the house.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Your room — far end of the basement (12 × ~7 ft)</h3>
+      <ul>
+        <li><b>Curtain wall at 14 ft from the stair end</b>, full 12-ft width: ceiling track screwed through the grid into joists, double-layer blackout panels, <b>36" doorway gap on the window side</b> with a tie-back hook.</li>
+        <li><b>Couch-bed, back-left corner:</b> two 4×4 sections tight to the far wall and the left wall → 8-ft × 4-ft sleeping surface. Topper over the seam, white bedding. Zero dollars, already owned.</li>
+        <li><b>Right side of the room:</b> clothes rack against the right wall (leaves a 3.5-ft dressing strip beside the bed), lamp at the bed's foot corner — the overhead light lands outside your curtain, so the lamp is your light.</li>
+        <li>Desk stays just outside the curtain in the middle zone (office by day, buffer from stair noise at night); the existing twin stays at the stair bottom as the free overflow bed.</li>
+        <li>Stairs land from the Closet-1/hallway spot above — the room's quiet end is as far from that as this floor gets. Run a dehumidifier for a week first if it smells even slightly musty.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Basement extras that cost nothing</h3>
+      <ul>
+        <li><b>The twin bed at the bottom of the stairs stays</b> — it's a free overflow spot for a solo guest or a late-night crasher, and the Airbnb listing later reads "sleeps +1."</li>
+        <li>The middle zone keeps your desk — office by day, dressing area at night, and it buffers your bedroom from stair noise.</li>
+        <li>For the Airbnb era, "private lower-level suite + speakeasy lounge upstairs" is the whole listing pitch.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Rules that matter</h3>
+      <ul>
+        <li><b>3-foot clearance</b> between the wood stove and any bed, curtain, or drape line. If anyone lights it, nothing fabric nearby, period.</li>
+        <li>The dress never sleeps in the basement — garment bag, king-room closet, guarded by Kennon and your sister.</li>
+        <li>Get ready upstairs on the morning: bedroom-level light is what your makeup needs.</li>
+        <li>Test-sleep your room two weeks early. Damp, musty, or a rumbling water heater gets fixed on your schedule, not two nights before the wedding.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 4</div>
+    <h2>The modular wall upgrade — post-wedding, not wedding-budget</h2>
+    <p>For the wedding, the lean build is curtain walls. When Airbnb money is real, these are the upgrade paths. Commercial temp offices, NYC pressurized walls, and the demountable partitions the government buys all share one anatomy: <b>floor track + vertical posts + infill panels</b>, held by <b>compression</b> instead of screws into the building, gasketed so they demount without a trace, and stopped short of the ceiling for airflow:</p>
+    <div class="card">
+      <h3>A · Tension-pole walls <span class="spec">~$80–120 per wall · zero holes · zero wood</span></h3>
+      <ul>
+        <li>Floor-to-ceiling spring-tension divider poles every 4–5 ft, top rail between them.</li>
+        <li>Infill: blackout fabric, or clip white corrugated-plastic panels to the rail for a solid-wall look.</li>
+        <li><b>Best for: quick pods on floors with solid ceilings</b> (mid level, front room upgrades). Not for the basement — drop ceilings can't take compression.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>B · The basement build: steel-stud + frosted polycarbonate <span class="spec">~$350–450 for both 12-ft walls + hall wall · zero wood</span></h3>
+      <ul>
+        <li><b>Drop ceilings can't take compression</b> — so these walls are <b>end-anchored, not pressure-fit</b>: each 12-ft run terminates into the existing side walls with 2 screws into studs at each end. A handful of small, patchable holes — total damage.</li>
+        <li>25-gauge steel track top and bottom, steel studs every 24&Prime; — cut with aviation snips, assembled with pan-head screws. No saw, no sawdust.</li>
+        <li>Frame stops <b>4–6&Prime; below the ceiling grid</b>: HVAC keeps flowing, nothing touches the tiles.</li>
+        <li>Skin with twin-wall polycarbonate screwed to the studs with washers — the skin stiffens the wall (same job drywall does commercially) and glows like a frosted-glass office wall.</li>
+        <li>Leave one 36&Prime; bay as the doorway with a double-layer curtain inside the frame; upgrade later to a polycarb slider hung from the wall's own top track — never from the ceiling.</li>
+        <li>Demounts clean at lease-end; panels unscrew and reuse. The flagship of the future Airbnb photos.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>C · Used cubicle panels <span class="spec">~$10–40 per panel used · literally the government system</span></h3>
+      <ul>
+        <li>The modular partitions federal offices actually buy (Steelcase, Herman Miller) hit liquidators and Facebook Marketplace constantly when offices close.</li>
+        <li>Freestanding, acoustic-padded, walls in an hour, no build at all.</li>
+        <li><b>Best for: grab a cheap local set whenever one appears</b> — it beats building.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Rules the pros follow — copy these too</h3>
+      <ul>
+        <li>Stop walls 6–12&Prime; short of the ceiling: HVAC keeps flowing and nothing feels like a submarine.</li>
+        <li>Never block the path to stairs or exits.</li>
+        <li>$15 battery smoke alarm inside every partitioned sleeping space.</li>
+        <li>Nothing within 3 ft of the wood stove. Landlord heads-up before anything that looks structural.</li>
+        <li>The 60&Prime; front-room opening stays a curtain either way — a doorway used fifty times a day wants fabric, not panels.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 5</div>
+    <h2>Shopping list</h2>
+    <p class="why">Lean build first — it uses what you already own (futon, modular couch, backdrop stand). Upgrades come later, out of Airbnb money, not wedding money.</p>
+    <ul class="buy" id="buylist">
+      <li><input type="checkbox" id="b1"><label for="b1">Tension rod, heavy duty, fits 60&Prime; (front room)</label><span class="price">$15</span></li>
+      <li><input type="checkbox" id="b2"><label for="b2">2 blackout panels 52&Prime;×84&Prime; (front room)</label><span class="price">$30</span></li>
+      <li><input type="checkbox" id="b3"><label for="b3">Velcro dots / magnets + Command hooks</label><span class="price">$10</span></li>
+      <li><input type="checkbox" id="b4"><label for="b4">Front room bed: $0 — the pullout couch already has the queen in it</label><span class="price">$0</span></li>
+      <li><input type="checkbox" id="b5"><label for="b5">Basement curtain walls: ceiling track or wire, 3 runs</label><span class="price">$60</span></li>
+      <li><input type="checkbox" id="b6"><label for="b6">Blackout curtains for the runs — Walmart multi-pack or thrift</label><span class="price">$60</span></li>
+      <li><input type="checkbox" id="b7"><label for="b7">Blackout shades, both basement windows</label><span class="price">$20</span></li>
+      <li><input type="checkbox" id="b8"><label for="b8">Topper for the couch-bed + white futon cover</label><span class="price">$65</span></li>
+      <li><input type="checkbox" id="b9"><label for="b9">One white bedding set (rest comes from the closet)</label><span class="price">$40</span></li>
+      <li><input type="checkbox" id="b10"><label for="b10">Power strips + chargers within reach of every bed</label><span class="price">$25</span></li>
+      <li><input type="checkbox" id="b11"><label for="b11">3× battery smoke alarms (one per new sleeping space)</label><span class="price">$45</span></li>
+      <li><input type="checkbox" id="b12"><label for="b12">Shed rail-and-hook kit (yard tools go vertical)</label><span class="price">$30</span></li>
+      <li><input type="checkbox" id="b13"><label for="b13">Concrete pavers — base for the 3×5 metal shed</label><span class="price">$20</span></li>
+    </ul>
+    <div class="total"><span>Lean build total</span><span>≈ $420</span></div>
+    <p class="why"><b>Speakeasy costs $0 for the wedding:</b> a table or dresser you own is the bar; the room's pine + stove do the rest. <b>Upgrades later</b> (Airbnb money): frosted polycarb walls $350–450 · real bar cabinets + stools $150–300 · bifold doors on the front room $130.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 6</div>
+    <h2>The 55-day timeline</h2>
+    <ul class="timeline">
+      <li><span class="when">This week</span><span>Order rod, panels, velcro. Start the Facebook Marketplace queen hunt. Assemble the 3×5 metal shed on pavers.</span></li>
+      <li><span class="when">Weeks 2–3</span><span>Yard gear → sheds (mower + power washer into the 7×4, fuel + chemicals into the 3×5). Declutter the basement and mid level. Install the front-room curtain wall — the pullout queen is already in there.</span></li>
+      <li><span class="when">Weeks 4–5</span><span>Hang the basement curtain wall + the speakeasy pod curtains. Futon moves up to the pod, couch-bed built in your room. Stage the speakeasy bar. Blackout all sleeping windows.</span></li>
+      <li><span class="when">Day 40</span><span>Everything installed. Test-sleep your room, then one night in each guest spot — find the dead outlet before your guests do.</span></li>
+      <li><span class="when">Day 14</span><span>Fix whatever the test nights surfaced. Wash all bedding.</span></li>
+      <li><span class="when">Day 7</span><span>Stage every room, towels folded on beds, wifi cards out — and photograph everything. That's the future Airbnb listing gallery, free.</span></li>
+      <li><span class="when">Day 0</span><span>Side-door sign up, dress locked in the king closet, get married.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 7</div>
+    <h2>The perfect-guest-experience playbook</h2>
+    <p class="sub">Five couples in one house works when nobody has to ask for anything. Every item here kills a question before it gets asked.</p>
+    <div class="card">
+      <h3>Arrival</h3>
+      <ul>
+        <li>Text everyone a mini house map before they drive in: which door to use, which floor is theirs, where to park.</li>
+        <li>Name card on each room/pod — it makes a curtained corner feel official instead of improvised.</li>
+        <li>Towel set per couple, folded on their bed. Wifi card, water bottles, snack basket per room.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Mornings — the real bottleneck</h3>
+      <ul>
+        <li>Eleven people, <b>two showers</b> — back-door entry level + upstairs full bath. Post a loose order on each door: lower floors use the entry-level shower, bedroom floor uses upstairs. Wedding morning is bride-first upstairs, non-negotiable.</li>
+        <li>Coffee station on the kitchen level the night before: machine loaded, mugs out, creamer visible. First riser pushes one button.</li>
+        <li>Each bathroom stocked: spare toilet paper where guests can see it, hand towels, a plunger nobody has to ask for.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Nights</h3>
+      <ul>
+        <li>The mid-level lounge is the sanctioned afterparty room — that's a feature. White-noise fans in both fabric pods make it work.</li>
+        <li>Lamp-only light after 10pm on sleeping floors; the overheads stay off.</li>
+        <li>Phone charger + power strip within reach of every single bed. This is the cheapest five-star review there is.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>After — the Airbnb debrief</h3>
+      <ul>
+        <li>White duvet covers everywhere — looks hotel-clean, bleaches back to new.</li>
+        <li>Ask every couple for one honest gripe afterward — that's your review system, and it's more honest than real reviews.</li>
+        <li>Photograph every staged room before guests arrive: future listing gallery, free.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Part 8</div>
+    <h2>Yard &amp; shed system — where the mower goes</h2>
+    <p>The 10×10 storage room is full and off-limits, so the yard gear moves outside — which also gets fuel and engine fumes off a floor that's about to be a bedroom.</p>
+    <div class="card">
+      <h3>7×4 shed (the new one) — machine bay</h3>
+      <ul>
+        <li>Mower parked nose-in along the 7-ft axis, handle folded, one side of the door.</li>
+        <li>Power washer in the opposite front corner, hose coiled on a wall hook beside it.</li>
+        <li>Rail-and-hook kit on the back wall: shovels, rakes, trimmer hung vertically — floor stays drivable for the mower.</li>
+        <li>Small shelf up top: oil, trimmer string, gloves.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>3×5 metal shed (assemble it) — fuel + chemicals</h3>
+      <ul>
+        <li>Set it on 2–4 concrete pavers for a level, dry, rust-free base.</li>
+        <li>Gas cans, premix, fertilizer, garden chemicals — separated from the machines and the house.</li>
+        <li><b>House rule: no fuel and no gas engines stored indoors, ever.</b> That basement is a bedroom now.</li>
+      </ul>
+    </div>
+    <p class="note"><b>Wedding bonus:</b> a cleared yard and tidy sheds means the outside of the house is photo-ready the same weekend the inside is.</p>
+  </section>
+
+  <footer>Sleeps 11 · five couples + the bride · 55 days and counting</footer>
+</main>
+
+<script>
+  const boxes = document.querySelectorAll('#buylist input[type="checkbox"]');
+  boxes.forEach(b => {
+    try { b.checked = localStorage.getItem('wwp-' + b.id) === '1'; } catch (e) {}
+    b.addEventListener('change', () => {
+      try { localStorage.setItem('wwp-' + b.id, b.checked ? '1' : '0'); } catch (e) {}
+    });
+  });
+</script>
+<script>
+(function () {
+  const canvas = document.getElementById('v3d');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // [hexColor, alpha]
+  const C = {
+    floor:     ['#b6ada0', 1],    pinefloor: ['#a6743f', 1],
+    wall:      ['#e8e0d1', 0.22], pinewall:  ['#c89a62', 0.26],
+    wallSolid: ['#e3dbca', 0.95], curtain:   ['#efe9db', 0.55],
+    step:      ['#c6bfb4', 1],    sofa:      ['#8b9083', 1],
+    linen:     ['#f2efe6', 1],    navy:      ['#41506a', 1],
+    pine:      ['#b07a46', 1],    white:     ['#f2f2f0', 1],
+    rack:      ['#8a8a86', 1],    dark:      ['#5c5247', 1],
+    brick:     ['#96543f', 1],    black:     ['#2e2e30', 1],
+    gray:      ['#b3b2aa', 1],    glow:      ['#f6edc8', 0.95],
+  };
+
+  const steps = [];
+  for (let i = 0; i < 10; i++) steps.push([2, 11 * i, 0, 36, 11, 7.5 * (10 - i), 'step']);
+
+  // Basement 12x21 ft: stairs along W wall (enclosed, entrance at the bottom), twin by stairs,
+  // desk zone, one curtain wall, couch-bed bedroom at the far end.
+  const BASEMENT = [
+    [-5, -5, -3, 154, 262, 3, 'floor'],
+    [-5, -5, 0, 5, 262, 84, 'wall'], [144, -5, 0, 5, 262, 84, 'wall'],
+    [-5, -5, 0, 154, 5, 84, 'wall'], [-5, 252, 0, 154, 5, 84, 'wall'],
+    [142, 20, 40, 3, 36, 30, 'glow'], [142, 195, 40, 3, 36, 30, 'glow'],
+  ].concat(steps, [
+    [38, 0, 0, 5, 110, 84, 'wallSolid'],
+    [48, 2, 0, 75, 38, 18, 'navy'], [48, 2, 18, 75, 38, 4, 'linen'],
+    [115, 48, 0, 27, 27, 36, 'white'],
+    [118, 100, 0, 24, 48, 30, 'dark'], [96, 112, 0, 18, 18, 18, 'rack'],
+    [0, 170, 2, 108, 2, 80, 'curtain'],
+    [2, 202, 0, 48, 48, 16, 'sofa'], [50, 202, 0, 48, 48, 16, 'sofa'],
+    [2, 202, 16, 96, 48, 5, 'linen'],
+    [120, 176, 0, 22, 44, 64, 'rack'], [104, 236, 0, 10, 10, 52, 'pine'],
+  ]);
+
+  // Mid-level speakeasy — REAL dims from scan ("Living Room 3"): 12'4.6" x 10'4.8" = 148.6 x 124.8 in.
+  // Futon pod NW, hearth+stove W-south, sectional S-east, bar E-mid-north, door gap E-south to hallway.
+  const SPEAKEASY = [
+    [-5, -5, -3, 158.6, 134.8, 3, 'pinefloor'],
+    [-5, -5, 0, 5, 134.8, 90, 'pinewall'], [148.6, -5, 0, 5, 134.8, 90, 'pinewall'],
+    [-5, -5, 0, 158.6, 5, 90, 'pinewall'], [-5, 124.8, 0, 158.6, 5, 90, 'pinewall'],
+    [4, 8, 0, 40, 48, 4, 'brick'], [13, 20, 4, 22, 22, 30, 'black'], [20, 27, 34, 8, 8, 54, 'black'],
+    [48, 4, 0, 100, 38, 18, 'gray'], [48, 4, 18, 100, 12, 14, 'gray'],
+    [114, 64, 0, 34, 56, 40, 'dark'],
+    [98, 72, 0, 13, 13, 26, 'black'], [98, 98, 0, 13, 13, 26, 'black'],
+    [4, 66, 0, 75, 54, 18, 'navy'], [4, 66, 18, 75, 54, 4, 'linen'],
+    [0, 62, 2, 88, 2, 80, 'curtain'], [88, 62, 2, 2, 62.8, 80, 'curtain'],
+    [20, 122.8, 44, 36, 3, 30, 'glow'],
+  ];
+
+  function shift(list, dx, dy, dz) {
+    return list.map(b => [b[0] + dx, b[1] + dy, b[2] + dz, b[3], b[4], b[5], b[6]]);
+  }
+  const HOUSE = BASEMENT.concat(shift(SPEAKEASY, -2, 64, 135));
+
+  const LEVELS = {
+    basement:  { boxes: BASEMENT,  center: [72, 126, 40],   r: 420 },
+    speakeasy: { boxes: SPEAKEASY, center: [74, 62, 45],    r: 330 },
+    house:     { boxes: HOUSE,     center: [72, 126, 110],  r: 560 },
+  };
+
+  const FACES = [
+    { idx: [0, 3, 2, 1], n: [0, 0, -1] }, { idx: [4, 5, 6, 7], n: [0, 0, 1] },
+    { idx: [0, 1, 5, 4], n: [0, -1, 0] }, { idx: [1, 2, 6, 5], n: [1, 0, 0] },
+    { idx: [2, 3, 7, 6], n: [0, 1, 0] },  { idx: [3, 0, 4, 7], n: [-1, 0, 0] },
+  ];
+
+  const rgb = {};
+  Object.keys(C).forEach(k => {
+    const h = C[k][0];
+    rgb[k] = [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  });
+
+  let level = 'house', az = -0.9, el = 0.62, zoom = 1, spinning = true;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function darkTheme() {
+    const t = document.documentElement.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function render() {
+    const dpr = window.devicePixelRatio || 1;
+    const cw = canvas.clientWidth, ch = canvas.clientHeight;
+    if (canvas.width !== cw * dpr || canvas.height !== ch * dpr) {
+      canvas.width = cw * dpr; canvas.height = ch * dpr;
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cw, ch);
+
+    const L = LEVELS[level];
+    const R = L.r / zoom;
+    const ce = Math.cos(el), se = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+    const eye = [R * ce * ca, R * ce * sa, R * se];
+    const f = [-ce * ca, -ce * sa, -se];
+    const rt = [-sa, ca, 0];
+    const up = [-se * ca, -se * sa, ce];
+    const FL = 1.15 * Math.min(cw, ch);
+    const light = [0.45, -0.6, 0.66];
+    const stroke = darkTheme() ? 'rgba(240,235,225,0.18)' : 'rgba(50,42,32,0.28)';
+
+    const polys = [];
+    for (const b of L.boxes) {
+      const [x, y, z, w, d, h, key] = b;
+      const cx = L.center[0], cy = L.center[1], cz = L.center[2];
+      const corners = [
+        [x, y, z], [x + w, y, z], [x + w, y + d, z], [x, y + d, z],
+        [x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h],
+      ];
+      const proj = corners.map(p => {
+        const px = p[0] - cx - eye[0], py = p[1] - cy - eye[1], pz = p[2] - cz - eye[2];
+        const depth = px * f[0] + py * f[1] + pz * f[2];
+        const s = FL / Math.max(depth, 40);
+        return [
+          cw / 2 + (px * rt[0] + py * rt[1] + pz * rt[2]) * s,
+          ch / 2 - (px * up[0] + py * up[1] + pz * up[2]) * s,
+          depth,
+        ];
+      });
+      const alpha = C[key][1];
+      for (const face of FACES) {
+        const pts = face.idx.map(i => proj[i]);
+        const depth = (pts[0][2] + pts[1][2] + pts[2][2] + pts[3][2]) / 4;
+        const lam = Math.max(0, face.n[0] * light[0] + face.n[1] * light[1] + face.n[2] * light[2]);
+        const shade = 0.72 + 0.28 * lam;
+        const c = rgb[key];
+        polys.push({
+          pts, depth, alpha,
+          fill: 'rgb(' + (c[0] * shade | 0) + ',' + (c[1] * shade | 0) + ',' + (c[2] * shade | 0) + ')',
+        });
+      }
+    }
+    polys.sort((a, b) => b.depth - a.depth);
+    for (const p of polys) {
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.moveTo(p.pts[0][0], p.pts[0][1]);
+      for (let i = 1; i < 4; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]);
+      ctx.closePath();
+      ctx.fillStyle = p.fill;
+      ctx.fill();
+      ctx.globalAlpha = Math.min(1, p.alpha + 0.1);
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 0.75;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // interaction: drag orbit, wheel + pinch zoom
+  const pointers = new Map();
+  let lastPinch = 0;
+  canvas.addEventListener('pointerdown', e => {
+    spinning = false;
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, [e.clientX, e.clientY]);
+    canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId)) return;
+    const prev = pointers.get(e.pointerId);
+    pointers.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pointers.size === 1) {
+      az -= (e.clientX - prev[0]) * 0.008;
+      el = Math.min(1.35, Math.max(0.12, el + (e.clientY - prev[1]) * 0.006));
+      render();
+    } else if (pointers.size === 2) {
+      const pts = Array.from(pointers.values());
+      const dist = Math.hypot(pts[0][0] - pts[1][0], pts[0][1] - pts[1][1]);
+      if (lastPinch) {
+        zoom = Math.min(3, Math.max(0.45, zoom * (dist / lastPinch)));
+        render();
+      }
+      lastPinch = dist;
+    }
+  });
+  function endPointer(e) {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) lastPinch = 0;
+    if (pointers.size === 0) canvas.style.cursor = 'grab';
+  }
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    spinning = false;
+    zoom = Math.min(3, Math.max(0.45, zoom * (1 - e.deltaY * 0.0012)));
+    render();
+  }, { passive: false });
+
+  document.querySelectorAll('.v3d-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.v3d-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      level = btn.dataset.level;
+      render();
+    });
+  });
+
+  if (!reduced) {
+    (function spin() {
+      if (spinning) { az += 0.0035; render(); }
+      requestAnimationFrame(spin);
+    })();
+  }
+  window.addEventListener('resize', render);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  render();
+})();
+</script>
