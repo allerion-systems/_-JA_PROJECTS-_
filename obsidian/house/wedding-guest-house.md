@@ -1,6 +1,6 @@
 # Wedding Guest House Plan
 
-> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $855 incl. paneled walls + real doors
+> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $850 — beds + walls only, zero fluff
 > Live one-page app with interactive 3D: kept in this repo at [`house/wedding-house-plan.html`](../../house/wedding-house-plan.html)
 
 The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the wedding weekend, doubling as the Airbnb side-hustle test run (2-year lease).
@@ -14,7 +14,7 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 | Guest bedroom 2 | Double | Clay + Lexi |
 | Front room (kitchen level, curtain wall) | Pullout couch — queen already in it | Plus-one couple A |
 | Speakeasy pod (mid level, pine window corner) | Futon (moves up from basement) | Plus-one couple B |
-| Basement BR-A, far end (framed 2×4 walls) | Couch-bed: 2 modular 4×4 sections + topper | Me |
+| Basement BR-A, top end (framed walls + window) | Twin mattress | Me |
 | Basement BR-B, bottom end (framed walls, own door + window) | Twin (already there) | Overflow +1 — real windowed room, takes a couple |
 
 ## Scan mappings (confirmed)
@@ -43,9 +43,9 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 
 ### Basement — 11×22, my floor (existing conditions per drawing)
 - Room is a clean rectangle; **3' opening 16' down the corridor wall** (3–6 ft from the bottom corner), two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside that wall. **Windows confirmed: two 12"×24" hoppers at the ceiling on the exterior wall, each 2 ft in from the corners** — with Option A, one lands in EACH bedroom. Hoppers aren't egress size → on paper these are den/flex rooms; smoke alarm in each is non-negotiable.
-- **THE WALLS — Option A, end-to-end (three straight runs, ~27 lin ft, ≈ $390):** a WINDOWED bedroom at each end + lounge in the middle. BR-B west wall 8' (solid, makes the entry vestibule where the 3' opening lands) + BR-B north wall 8' (RO to lounge) + BR-A south wall 11' (RO to lounge). No corners to frame. **Skin = 4×8 wall paneling, not drywall** (~8 sheets): zero mud/tape/paint, glue + brads, matches the pine mid level. Studs 24" OC (~28 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. **Doors: buy 2 used 30" PREHUNGS first** (FB Marketplace / Habitat ReStore, $20–50 each) and frame each RO to the actual unit +½" — prehung = easiest install: tip unit into RO, shim behind hinges, screw through jamb, ~30–45 min each. Wall positions ±1 ft, same lumber.
-- **Zones:** entry vestibule 3×8 (3' opening + hooks) → **BR-B 8×8, OWN WINDOW**, twin, door to lounge → **lounge 11×5'6"** (desk, both doors open here) → **BR-A 11×8 full width, OWN WINDOW**, mine. Three straight runs, two doors, zero walk-through, both hoppers used.
-- **My bed:** two 4×4 modular couch sections end to end along the 11-ft top wall = 8×4 sleeping surface (128" of wall, no depth-juggling), topper over the seam. Rack by the door, lamp at the bed's foot. King stays upstairs.
+- **THE WALLS — Option A, end-to-end (three straight runs, ~27 lin ft, ≈ $390):** a WINDOWED bedroom at each end + lounge in the middle. BR-B west wall 8' (solid, makes the entry vestibule where the 3' opening lands) + BR-B north wall 8' (RO to lounge) + BR-A south wall 11' (RO to lounge). No corners to frame. **Skin = 4×8 wall paneling, not drywall** (~8 sheets): zero mud/tape/paint, glue + brads, matches the pine mid level. Studs 24" OC (~28 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. **Doors for now = tension rods + panels in both ROs + the entry (~$50 total).** Frame ROs standard 32"×82" anyway — used 30" prehungs ($20–50 each) tip straight in later. Wall positions ±1 ft, same lumber.
+- **Zones (stripped lean — beds + couch sections only, no dressers/desks/racks):** entry vestibule 3×8 → **BR-B 8×8, OWN WINDOW, twin** → **lounge 11×5'6"** (the 4×4 couch sections are the only furniture) → **BR-A 11×8 full width, OWN WINDOW, twin mattress** ($0 if a 2nd twin exists, else used ~$60). Three straight runs, zero walk-through, both hoppers used.
+- **My bed:** a twin mattress along the top wall — no frame needed to sleep. The couch sections go to the lounge as its seating. King stays upstairs.
 - Dehumidifier for a week first if musty. Battery smoke alarm inside every partitioned sleeping space.
 
 ### Yard / sheds
@@ -53,16 +53,16 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **3×5 metal shed** (assemble on 2–4 pavers) = fuel + chemicals, separated from machines and house.
 - House rule: **no fuel or gas engines stored indoors** — the basement is a bedroom now.
 
-## Lean shopping list ≈ $855
+## Lean shopping list ≈ $850 ($790 if a 2nd twin exists)
 
-Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · walls: 24 studs, 5 plates, 8 sheets wall paneling (no mud/paint), fasteners $390 · 2 used 30" prehung doors $40–80 · entry-opening curtain $15 · dart backer $15 · window shades ×2 $20 · couch-bed topper + futon cover $65 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
-Upgrades later (Airbnb money): panel the hallway/entry wall faces $75–100 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
+Tension rod $15 · 2 blackout panels (front room) $30 · velcro/hooks $10 · front-room bed $0 (pullout) · speakeasy pod curtain track + panels $75 · walls: 24 studs, 5 plates, 8 sheets wall paneling (no mud/paint), fasteners $390 · 3 tension rods + panels (ROs + entry) $50 · twin mattress for BR-A (used; $0 if one exists) $60 · dart backer $15 · window shades ×2 $20 · white futon cover $25 · white bedding set $40 · power strips/chargers $25 · 3× smoke alarms $45 · shed rail kit $30 · pavers $20.
+Upgrades later (Airbnb money): 2 used 30" prehung doors $40–80 (ROs pre-sized) · panel the lounge/entry wall faces $75–100 · bar cabinets + stools $150–300 · bifold doors on the front room $130.
 
 ## 55-day timeline
 
 1. **This week:** order rod/panels/velcro; assemble the 3×5 shed on pavers.
 2. **Weeks 2–3:** yard gear → sheds; declutter basement + mid level; front-room curtain wall up.
-3. **Weeks 4–5:** frame all three straight runs + panel the bedroom faces — no mud, no paint (a weekend with a helper); RO/entry curtains + speakeasy pod curtains; twin into BR-B; futon up to the pod; couch-bed built; bar staged; dart board hung; blackout all sleeping windows.
+3. **Weeks 4–5:** frame all three straight runs + panel the bedroom faces — no mud, no paint (a weekend with a helper); tension rods + panels in ROs and entry; twins into both bedrooms; couch sections into the lounge; futon up to the pod; bar staged; dart board hung; blackout all sleeping windows.
 4. **Day 40:** everything installed; test-sleep every spot (find the dead outlet before guests do).
 5. **Day 14:** fix what the test nights surfaced; wash all bedding.
 6. **Day 7:** stage rooms, towels on beds, wifi cards out; **photograph everything** — future Airbnb listing gallery.
