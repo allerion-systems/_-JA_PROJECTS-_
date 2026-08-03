@@ -1,6 +1,6 @@
 # Wedding Guest House Plan
 
-> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $420
+> 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $575 incl. the 2×4 wall
 > Live one-page app with interactive 3D: kept in this repo at [`house/wedding-house-plan.html`](../../house/wedding-house-plan.html)
 
 The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the wedding weekend, doubling as the Airbnb side-hustle test run (2-year lease).
