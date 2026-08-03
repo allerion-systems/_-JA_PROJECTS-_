@@ -556,6 +556,29 @@ def option_h():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------- AS-IS
+def option_asis():
+    """The room exactly as it is today: no new walls, the three-piece Ashley
+    row pushed together against the long wall, the twin already down here."""
+    fig, ax = new_ax()
+    shell_and_context(ax)
+    furn(ax, 82, 40, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 82, 88, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 82, 136, 48, 48, "ASHLEY\n4x4")
+    ax.text(70, 112, "3-PC ROW PUSHED TOGETHER\nAGAINST THE WALL", fontsize=7,
+            family="monospace", color=INK, rotation=90, ha="center", va="center")
+    furn(ax, 30, 222, 75, 38, "TWIN (already here)", dashed=True)
+    ax.text(66, 20, "OPEN FLOOR - NOTHING BUILT", fontsize=7.5,
+            family="monospace", color=DIMC, ha="center", va="center")
+    ax.text(66, -40, "If the row is on the OTHER long wall, say so - one-line fix.",
+            fontsize=6.8, family="monospace", color=DIMC, ha="center", va="center")
+    title_block(ax, "0", "AS-IS TODAY - EXISTING CONDITIONS ONLY",
+                "NO NEW WALLS - 3x ASHLEY 4x4 IN A 12' ROW - TWIN AT THE FAR END", "A-100")
+    fig.savefig(os.path.join(OUT, "option-asis.png"), dpi=170)
+    plt.close(fig)
+
+
+option_asis()
 option_a()
 option_b()
 option_c()
