@@ -578,7 +578,54 @@ def option_asis():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------- THE BUILD
+def option_j():
+    """As ordered: two 8x8 bedrooms, one at each end anchored to the window
+    wall so EACH gets a hopper. Futon in the south room, twin in the north
+    room, heads at the window. Couches out of the basement for now."""
+    fig, ax = new_ax()
+    shell_and_context(ax)
+    # south room: 8' west wall + 8' north wall (RO X44-76 to the middle zone)
+    wall(ax, 36, 0, 4, 96, new=True)
+    wall(ax, 36, 96, 8, 4, new=True)
+    wall(ax, 76, 96, 56, 4, new=True)
+    squiggle(ax, 45, 98, 75, 98)
+    door_swing(ax, 76, 100, 30, 90, 180, 135)
+    dim_h(ax, 88, 44, 76, '32" RO', above=False)
+    # north room: 8' west wall + 8' south wall (RO X44-76 to the middle zone)
+    wall(ax, 36, 168, 4, 96, new=True)
+    wall(ax, 36, 164, 8, 4, new=True)
+    wall(ax, 76, 164, 56, 4, new=True)
+    squiggle(ax, 45, 166, 75, 166)
+    door_swing(ax, 76, 164, 30, 180, 270, 225)
+    dim_h(ax, 158, 44, 76, '32" RO', above=False)
+    # FUTON (54x75) south room, head at the window
+    furn(ax, 57, 8, 75, 54, "FUTON 54x75\nHEAD @ WINDOW")
+    pillows(ax, 8)
+    # TWIN (38x75) north room, head at the window
+    furn(ax, 57, 209, 75, 38, "TWIN 38x75")
+    ax.add_patch(Rectangle((114, 217), 14, 22, fc="#f6f1e4", ec=FURN_E, lw=0.7, zorder=4))
+    # labels
+    room_label(ax, 86, 78, "BR-S", "7'-8\"x8'-0\" + WINDOW - FUTON")
+    room_label(ax, 86, 190, "BR-N", "7'-8\"x8'-0\" + WINDOW - TWIN")
+    room_label(ax, 18, 30, "VEST.", "3'x8'")
+    ax.text(66, 138, "OPEN MIDDLE 11'x5'-4\" - EMPTY FOR NOW (COUCHES OUT)",
+            fontsize=6.8, family="monospace", color=DIMC, ha="center", va="center")
+    # dims
+    dim_v(ax, -22, 0, 96, ftin(96), side=-1)
+    dim_v(ax, -22, 100, 164, ftin(64), side=-1)
+    dim_v(ax, -22, 168, 264, ftin(96), side=-1)
+    dim_h(ax, -20, 0, 36, ftin(36), above=False)
+    dim_h(ax, -20, 40, 132, ftin(92), above=False)
+    stamp(ax, "THE BUILD", x=66, y=130, fs=22, rot=12)
+    title_block(ax, "J", "TWO 8x8 WINDOW ROOMS - FUTON + TWIN",
+                "4x 8' RUNS - 32 LF - WALLS ~$430 - WINDOW IN EACH - NO COUCHES", "A-109")
+    fig.savefig(os.path.join(OUT, "option-j.png"), dpi=170)
+    plt.close(fig)
+
+
 option_asis()
+option_j()
 option_a()
 option_b()
 option_c()
