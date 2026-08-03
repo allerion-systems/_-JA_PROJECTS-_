@@ -234,13 +234,13 @@ def option_a():
     dim_h(ax, 158, 8, 40, '32" RO', above=False)
     # furniture
     furn(ax, 92, 8, 38, 75, "TWIN\n38x75", rot=90)
-    furn(ax, 36, 104, 48, 48, "COUCH\n4x4")
-    furn(ax, 84, 104, 48, 48, "COUCH\n4x4")
+    furn(ax, 36, 104, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 84, 104, 48, 48, "ASHLEY\n4x4")
     furn(ax, 28, 222, 75, 38, "TWIN 38x75")
     # labels
     room_label(ax, 18, 22, "VEST.", "3'x8'")
     room_label(ax, 86, 52, "BR-B", "8'x8' + WINDOW")
-    room_label(ax, 66, 150, "LOUNGE", "11'x5'-4\"")
+    room_label(ax, 66, 150, "LOUNGE", "11'x5'-4\" - 2 OF 3 ASHLEY")
     room_label(ax, 66, 196, "BR-A", "11'x8' + WINDOW")
     # dim chains
     dim_v(ax, -22, 0, 96, ftin(96), side=-1)
@@ -276,8 +276,8 @@ def option_b():
     # furniture
     furn(ax, 92, 84, 38, 75, "TWIN\n38x75", rot=90)
     furn(ax, 44, 222, 75, 38, "TWIN 38x75")
-    furn(ax, 8, 10, 48, 48, "COUCH\n4x4")
-    furn(ax, 60, 10, 48, 48, "COUCH\n4x4")
+    furn(ax, 8, 10, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 60, 10, 48, 48, "ASHLEY\n4x4")
     # labels
     room_label(ax, 86, 130, "BR-B", "7'-8\"x7'-8\" - NO WINDOW")
     room_label(ax, 86, 196, "BR-A", "7'-8\"x7'-8\" + WINDOW")
@@ -318,8 +318,8 @@ def option_c():
     # furniture
     furn(ax, 92, 102, 38, 75, "TWIN\n38x75", rot=90)
     furn(ax, 28, 222, 75, 38, "TWIN 38x75")
-    furn(ax, 8, 10, 48, 48, "COUCH\n4x4")
-    furn(ax, 60, 10, 48, 48, "COUCH\n4x4")
+    furn(ax, 8, 10, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 60, 10, 48, 48, "ASHLEY\n4x4")
     # labels
     room_label(ax, 86, 140, "BR-B", "7'-8\"x6'-8\" - NO WINDOW")
     room_label(ax, 66, 205, "BR-A", "11'x6'-8\" + WINDOW")
@@ -355,8 +355,9 @@ def option_d():
     # furniture
     furn(ax, 92, 8, 38, 75, "TWIN\n38x75", rot=90)
     furn(ax, 28, 222, 75, 38, "TWIN 38x75")
-    furn(ax, 8, 110, 48, 48, "COUCH\n4x4")
-    furn(ax, 8, 40, 48, 48, "COUCH\n4x4")
+    furn(ax, 8, 132, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 56, 132, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 8, 84, 48, 48, "ASHLEY\n4x4")
     # labels
     room_label(ax, 66, 205, "BR-A", "11'x6'-8\" + WINDOW")
     room_label(ax, 45, 145, "OPEN STUDIO", "11'x15'")
@@ -393,14 +394,17 @@ def option_e():
     # furniture: a twin in each pocket room, couches in the big south lounge
     furn(ax, 13, 187, 38, 75, "TWIN\n38x75", rot=90)
     furn(ax, 90, 187, 38, 75, "TWIN\n38x75", rot=90)
-    furn(ax, 8, 96, 48, 48, "COUCH\n4x4")
-    furn(ax, 60, 96, 48, 48, "COUCH\n4x4")
+    # the ACTUAL couch: three Ashley 4x4 sections in a straight 12' row,
+    # pushed against the east wall exactly as it sits today
+    furn(ax, 82, 16, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 82, 64, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 82, 112, 48, 48, "ASHLEY\n4x4")
     # labels
     room_label(ax, 32, 244, "BR-W", "5'-4\"x6'-8\" - NO WINDOW")
     room_label(ax, 100, 250, "BR-E", "5'-4\"x6'-8\" + WINDOW")
     ax.text(32, 224, "FAN + LOUVER", fontsize=6.2, family="monospace",
             color=DIMC, ha="center", va="center")
-    room_label(ax, 66, 44, "LOUNGE / ENTRY", "11'x15' - COUCHES + WINDOW")
+    room_label(ax, 44, 44, "LOUNGE / ENTRY", "11'x15' - 3-PC ROW AS-IS")
     # dims
     dim_v(ax, -22, 0, 180, ftin(180), side=-1)
     dim_v(ax, -22, 184, 264, ftin(80), side=-1)
@@ -440,12 +444,12 @@ def option_f():
     pillows(ax, 188)
     nightstand(ax, 114, 172)
     nightstand(ax, 114, 249)
-    furn(ax, 8, 10, 48, 48, "COUCH\n4x4")
-    furn(ax, 60, 10, 48, 48, "COUCH\n4x4")
+    furn(ax, 8, 10, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 60, 10, 48, 48, "ASHLEY\n4x4")
     room_label(ax, 86, 158, "BR-B", "7'-8\"x7'-8\" - NO WINDOW - QUEEN + 2 NS")
     room_label(ax, 86, 180, "BR-A", "7'-8\"x7'-8\" + WINDOW - QUEEN + 2 NS")
     room_label(ax, 18, 160, "HALL", "3'x16'")
-    room_label(ax, 66, 40, "ENTRY / LOUNGE", "11'x6'")
+    room_label(ax, 66, 40, "ENTRY / LOUNGE", "11'x6' - 2 OF 3 ASHLEY, 3RD UPSTAIRS")
     dim_v(ax, -22, 0, 72, ftin(72), side=-1)
     dim_v(ax, -22, 76, 168, ftin(92), side=-1)
     dim_v(ax, -22, 172, 264, ftin(92), side=-1)
@@ -536,10 +540,10 @@ def option_h():
     room_label(ax, 46, 218, "BR-A", "7'-8\"x7'-8\" - NO WINDOW - QUEEN + 2 NS")
     ax.text(116, 160, "3' GALLERY", fontsize=7, family="monospace", color=DIMC,
             rotation=90, va="center", ha="center")
-    ax.text(66, 62, "LOUNGE / ENTRY 11'x6' + WINDOW", fontsize=7.5,
-            family="monospace", color=INK, ha="center", va="center")
-    furn(ax, 8, 8, 48, 48, "COUCH\n4x4")
-    furn(ax, 60, 8, 48, 48, "COUCH\n4x4")
+    ax.text(66, 62, "LOUNGE 11'x6' + WINDOW - 2 OF 3 ASHLEY, 3RD UPSTAIRS",
+            fontsize=6.8, family="monospace", color=INK, ha="center", va="center")
+    furn(ax, 8, 8, 48, 48, "ASHLEY\n4x4")
+    furn(ax, 60, 8, 48, 48, "ASHLEY\n4x4")
     dim_v(ax, -22, 0, 72, ftin(72), side=-1)
     dim_v(ax, -22, 76, 168, ftin(92), side=-1)
     dim_v(ax, -22, 172, 264, ftin(92), side=-1)
