@@ -107,6 +107,12 @@ def dim_h(ax, y, x0, x1, label, above=True):
             va="bottom" if above else "top", zorder=8)
 
 
+def pillows(ax, by):
+    """Two pillows at the EAST (head/window) end of a 60-tall queen starting at y=by."""
+    for dy in (6, 32):
+        ax.add_patch(Rectangle((114, by + dy), 14, 22, fc="#f6f1e4", ec=FURN_E, lw=0.7, zorder=4))
+
+
 def furn(ax, x, y, w, h, label, rot=0, dashed=False):
     ax.add_patch(Rectangle((x, y), w, h, fc=FURN_F, ec=FURN_E, lw=1.0,
                            ls=(0, (2, 2)) if dashed else "solid", zorder=3))
@@ -406,25 +412,27 @@ def option_f():
     each, west corridor for circulation, entry/lounge zone at the bottom."""
     fig, ax = new_ax()
     shell_and_context(ax)
-    wall(ax, 36, 72, 4, 32, new=True)
-    wall(ax, 36, 136, 4, 64, new=True)
-    wall(ax, 36, 232, 4, 32, new=True)
+    wall(ax, 36, 72, 4, 60, new=True)
+    wall(ax, 36, 164, 4, 12, new=True)
+    wall(ax, 36, 208, 4, 56, new=True)
     wall(ax, 40, 72, 92, 4, new=True)
     wall(ax, 40, 168, 92, 4, new=True)
-    # doors off the west corridor
-    squiggle(ax, 38, 105, 38, 135)
-    door_swing(ax, 40, 134, 30, 270, 360, 315)
-    dim_v(ax, 52, 104, 136, '32" RO', side=1)
-    squiggle(ax, 38, 201, 38, 231)
-    door_swing(ax, 40, 230, 30, 270, 360, 315)
-    dim_v(ax, 52, 200, 232, '32" RO', side=1)
-    # QUEENS (60x80) against the east wall, 32" aisle at the door side
-    furn(ax, 72, 82, 60, 80, "QUEEN\n60x80")
-    furn(ax, 72, 178, 60, 80, "QUEEN\n60x80")
+    # doors off the west corridor, flanking the divider (never facing a bed foot)
+    squiggle(ax, 38, 133, 38, 163)
+    door_swing(ax, 40, 162, 30, 270, 360, 315)
+    dim_v(ax, 52, 132, 164, '32" RO', side=1)
+    squiggle(ax, 38, 177, 38, 207)
+    door_swing(ax, 40, 178, 30, 0, 90, 45)
+    dim_v(ax, 52, 176, 208, '32" RO', side=1)
+    # QUEENS head-EAST: 80 long toward the window wall, pillows at the head
+    furn(ax, 52, 78, 80, 60, "QUEEN 60x80\nHEAD EAST")
+    pillows(ax, 78)
+    furn(ax, 52, 202, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
+    pillows(ax, 202)
     furn(ax, 8, 10, 48, 48, "COUCH\n4x4")
     furn(ax, 60, 10, 48, 48, "COUCH\n4x4")
-    room_label(ax, 86, 130, "BR-B", "7'-8\"x7'-8\" - NO WINDOW - QUEEN FITS")
-    room_label(ax, 86, 196, "BR-A", "7'-8\"x7'-8\" + WINDOW - QUEEN FITS")
+    room_label(ax, 86, 152, "BR-B", "7'-8\"x7'-8\" - NO WINDOW - QUEEN FITS")
+    room_label(ax, 86, 188, "BR-A", "7'-8\"x7'-8\" + WINDOW - QUEEN FITS")
     room_label(ax, 18, 160, "HALL", "3'x16'")
     room_label(ax, 66, 40, "ENTRY / LOUNGE", "11'x6'")
     dim_v(ax, -22, 0, 72, ftin(72), side=-1)
@@ -445,23 +453,25 @@ def option_g():
     take a queen with a 32-inch aisle AND both hoppers land inside bedrooms."""
     fig, ax = new_ax()
     shell_and_context(ax)
-    # NS wall X36, full length, ROs at Y36-68 (lines up with the entry) and Y196-228
-    wall(ax, 36, 0, 4, 36, new=True)
-    wall(ax, 36, 68, 4, 128, new=True)
-    wall(ax, 36, 228, 4, 36, new=True)
+    # NS wall X36, full length, ROs flanking the divider at Y88-120 and Y140-172
+    wall(ax, 36, 0, 4, 88, new=True)
+    wall(ax, 36, 120, 4, 20, new=True)
+    wall(ax, 36, 172, 4, 92, new=True)
     # divider Y128
     wall(ax, 40, 128, 92, 4, new=True)
-    # BR-B door — straight across from the existing 3' opening
-    squiggle(ax, 38, 37, 38, 67)
-    door_swing(ax, 40, 66, 30, 270, 360, 315)
-    dim_v(ax, 52, 36, 68, '32" RO', side=1)
+    # BR-B door — two steps down the corridor from the existing 3' opening
+    squiggle(ax, 38, 89, 38, 119)
+    door_swing(ax, 40, 90, 30, 0, 90, 45)
+    dim_v(ax, 52, 88, 120, '32" RO', side=1)
     # BR-A door
-    squiggle(ax, 38, 197, 38, 227)
-    door_swing(ax, 40, 226, 30, 270, 360, 315)
-    dim_v(ax, 52, 196, 228, '32" RO', side=1)
-    # QUEENS against the east wall, 32" aisle along the door side
-    furn(ax, 72, 8, 60, 80, "QUEEN\n60x80")
-    furn(ax, 72, 176, 60, 80, "QUEEN\n60x80")
+    squiggle(ax, 38, 141, 38, 171)
+    door_swing(ax, 40, 170, 30, 270, 360, 315)
+    dim_v(ax, 52, 140, 172, '32" RO', side=1)
+    # QUEENS head-EAST: pillows under the hoppers, 60" of open floor at each door
+    furn(ax, 52, 8, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
+    pillows(ax, 8)
+    furn(ax, 52, 196, 80, 60, "QUEEN 60x80\nHEAD @ WINDOW")
+    pillows(ax, 196)
     room_label(ax, 80, 100, "BR-B", "7'-8\"x10'-8\" + WINDOW - QUEEN FITS")
     room_label(ax, 80, 152, "BR-A", "7'-8\"x11'-0\" + WINDOW - QUEEN FITS")
     ax.text(18, 150, "3' CORRIDOR", fontsize=7, family="monospace", color=DIMC,
