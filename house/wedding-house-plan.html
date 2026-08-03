@@ -242,7 +242,7 @@
       <button type="button" data-level="speakeasy" class="v3d-btn">Speakeasy</button>
     </div>
     <canvas id="v3d"></canvas>
-    <p class="maplegend">Drag to spin · scroll / pinch to zoom · translucent = perimeter walls &amp; curtains · rendered in-page, zero apps, zero dependencies.</p>
+    <p class="maplegend"><b id="v3dcap">Whole house — basement + speakeasy stacked as layers.</b><br>Drag to spin · scroll / pinch to zoom · double-tap to reset view · translucent = perimeter walls &amp; curtains · rendered in-page, zero apps, zero dependencies.</p>
   </section>
 
   <section>
@@ -398,9 +398,9 @@
       </ul>
     </div>
     <div class="card">
-      <h3>B · The basement build: steel-stud + frosted polycarbonate <span class="spec">~$350–450 for both 12-ft walls + hall wall · zero wood</span></h3>
+      <h3>B · The basement upgrade: steel-stud + frosted polycarbonate <span class="spec">~$180–220 for the one 12-ft wall · zero wood</span></h3>
       <ul>
-        <li><b>Drop ceilings can't take compression</b> — so these walls are <b>end-anchored, not pressure-fit</b>: each 12-ft run terminates into the existing side walls with 2 screws into studs at each end. A handful of small, patchable holes — total damage.</li>
+        <li><b>Drop ceilings can't take compression</b> — so this wall is <b>end-anchored, not pressure-fit</b>: the 12-ft run terminates into the existing side walls with 2 screws into studs at each end. Four small, patchable holes — total damage.</li>
         <li>25-gauge steel track top and bottom, steel studs every 24&Prime; — cut with aviation snips, assembled with pan-head screws. No saw, no sawdust.</li>
         <li>Frame stops <b>4–6&Prime; below the ceiling grid</b>: HVAC keeps flowing, nothing touches the tiles.</li>
         <li>Skin with twin-wall polycarbonate screwed to the studs with washers — the skin stiffens the wall (same job drywall does commercially) and glows like a frosted-glass office wall.</li>
@@ -437,7 +437,7 @@
       <li><input type="checkbox" id="b2"><label for="b2">2 blackout panels 52&Prime;×84&Prime; (front room)</label><span class="price">$30</span></li>
       <li><input type="checkbox" id="b3"><label for="b3">Velcro dots / magnets + Command hooks</label><span class="price">$10</span></li>
       <li><input type="checkbox" id="b4"><label for="b4">Front room bed: $0 — the pullout couch already has the queen in it</label><span class="price">$0</span></li>
-      <li><input type="checkbox" id="b5"><label for="b5">Basement curtain walls: ceiling track or wire, 3 runs</label><span class="price">$60</span></li>
+      <li><input type="checkbox" id="b5"><label for="b5">Curtain track/wire: basement wall + speakeasy pod (3 short runs)</label><span class="price">$60</span></li>
       <li><input type="checkbox" id="b6"><label for="b6">Blackout curtains for the runs — Walmart multi-pack or thrift</label><span class="price">$60</span></li>
       <li><input type="checkbox" id="b7"><label for="b7">Blackout shades, both basement windows</label><span class="price">$20</span></li>
       <li><input type="checkbox" id="b8"><label for="b8">Topper for the couch-bed + white futon cover</label><span class="price">$65</span></li>
@@ -448,7 +448,7 @@
       <li><input type="checkbox" id="b13"><label for="b13">Concrete pavers — base for the 3×5 metal shed</label><span class="price">$20</span></li>
     </ul>
     <div class="total"><span>Lean build total</span><span>≈ $420</span></div>
-    <p class="why"><b>Speakeasy costs $0 for the wedding:</b> a table or dresser you own is the bar; the room's pine + stove do the rest. <b>Upgrades later</b> (Airbnb money): frosted polycarb walls $350–450 · real bar cabinets + stools $150–300 · bifold doors on the front room $130.</p>
+    <p class="why"><b>Speakeasy costs $0 for the wedding:</b> a table or dresser you own is the bar; the room's pine + stove do the rest. <b>Upgrades later</b> (Airbnb money): frosted polycarb basement wall $180–220 · real bar cabinets + stools $150–300 · bifold doors on the front room $130.</p>
   </section>
 
   <section>
@@ -735,14 +735,26 @@
     render();
   }, { passive: false });
 
+  const CAPTIONS = {
+    house: 'Whole house — basement + speakeasy stacked as layers.',
+    basement: 'Basement — stairs · twin bed · office zone · curtain wall · your couch-bed room.',
+    speakeasy: 'Speakeasy (12′4.6″ × 10′4.8″) — stove · sectional · bar · futon pod in the window corner.',
+  };
+  const cap = document.getElementById('v3dcap');
+  function resetView() {
+    az = -0.9; el = 0.62; zoom = 1;
+    render();
+  }
   document.querySelectorAll('.v3d-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.v3d-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       level = btn.dataset.level;
-      render();
+      if (cap && CAPTIONS[level]) cap.textContent = CAPTIONS[level];
+      resetView();
     });
   });
+  canvas.addEventListener('dblclick', e => { e.preventDefault(); resetView(); });
 
   if (!reduced) {
     (function spin() {
