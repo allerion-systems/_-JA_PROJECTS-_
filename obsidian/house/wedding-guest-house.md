@@ -2,6 +2,7 @@
 
 > 55 days out (as of 2026-08-03) · sleeps 11 + 1 twin overflow · lean build ≈ $850 — beds + walls only, zero fluff
 > Live one-page app with interactive 3D: kept in this repo at [`house/wedding-house-plan.html`](../../house/wedding-house-plan.html)
+> To-scale floor-plan drawing set (5 basement options, PNG + one-page artifact): [`house/floorplans/`](../../house/floorplans/)
 
 The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the wedding weekend, doubling as the Airbnb side-hustle test run (2-year lease).
 
@@ -42,6 +43,7 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **Dart board:** bullseye 68", oche taped at 7'9¼", lane down the walk strip between sectional back and pod curtain, pine wall behind the board, plywood backer ring. No darts while anyone's asleep in the pod.
 
 ### Basement — 11×22, my floor (existing conditions per drawing)
+> [!WARNING] Layout under review (2026-08-03). Asked to scratch the middle lounge and get to ≤3 walls, cheapest possible, windowless BR acceptable. **Option E** drawn and proposed: both bedrooms stacked at the far end split by one 6'-8" divider — **2 walls, 18 lin ft, ≈ $260**, lounge moves to the entry end (11×15, keeps a window), west room windowless (fan + louver). Option A below stays the documented build until a pick is made. Sheets in `house/floorplans/`.
 - Room is a clean rectangle; **3' opening 16' down the corridor wall** (3–6 ft from the bottom corner), two steps off the stairs; corridor/laundry (W/D in the corner)/storage all outside that wall. **Windows confirmed: two 12"×24" hoppers at the ceiling on the exterior wall, each 2 ft in from the corners** — with Option A, one lands in EACH bedroom. Hoppers aren't egress size → on paper these are den/flex rooms; smoke alarm in each is non-negotiable.
 - **THE WALLS — Option A, end-to-end (three straight runs, ~27 lin ft, ≈ $390):** a WINDOWED bedroom at each end + lounge in the middle. BR-B west wall 8' (solid, makes the entry vestibule where the 3' opening lands) + BR-B north wall 8' (RO to lounge) + BR-A south wall 11' (RO to lounge). No corners to frame. **Skin = 4×8 wall paneling, not drywall** (~8 sheets): zero mud/tape/paint, glue + brads, matches the pine mid level. Studs 24" OC (~28 precut 92⅝"), single top plates to the joists above the grid (pull a tile row per wall; blocking if parallel), PT bottom plates Tapconned through carpet into slab, flat headers, no cripples. **Doors for now = tension rods + panels in both ROs + the entry (~$50 total).** Frame ROs standard 32"×82" anyway — used 30" prehungs ($20–50 each) tip straight in later. Wall positions ±1 ft, same lumber.
 - **Zones (stripped lean — beds + couch sections only, no dressers/desks/racks):** entry vestibule 3×8 → **BR-B 8×8, OWN WINDOW, twin** → **lounge 11×5'6"** (the 4×4 couch sections are the only furniture) → **BR-A 11×8 full width, OWN WINDOW, twin mattress** ($0 if a 2nd twin exists, else used ~$60). Three straight runs, zero walk-through, both hoppers used.
