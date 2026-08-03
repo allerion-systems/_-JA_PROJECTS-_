@@ -23,7 +23,7 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - Speakeasy = **"Living Room 3"** on the scan: **12'4.6" × 10'4.8"** (112 ft²).
 - **"Other 2"** (48.8 ft², vanity) = bathroom; upstairs has the second full bath → 2 showers for 11 people.
 - **"Closet 1" / hallway cluster** = head of the basement stairs.
-- Still assumed: basement window positions, white appliance (washer vs freezer), 10×10 storage door location. The 10×10 storage room is full and off-limits.
+- Basement adjacencies confirmed by annotation: stairs → landing → laundry → storage along one side, outside the room. Only remaining assumption: window positions. The 10×10 storage room is full and off-limits.
 
 ## Room specs (build-day detail)
 
@@ -42,10 +42,10 @@ The house is a 4-level split-level. Goal: sleep 5 couples + the bride for the we
 - **Dart board:** bullseye 68", oche taped at 7'9¼", lane down the walk strip between sectional back and pod curtain, pine wall behind the board, plywood backer ring. No darts while anyone's asleep in the pod.
 
 ### Basement — 12×21, my floor
-- Stairs enter from the Closet-1/hallway point above; enclosed run along one long wall, entrance at the bottom. **Twin bed at the stair bottom stays** (overflow spot).
-- Middle zone: desk/office (day) + dressing area; white appliance corner flagged until confirmed.
-- **THE WALL (one wall = two bedrooms, ≈ $160):** 12-ft 2×4 partition at 14 ft from the stair end. Studs 24" OC (10 precut 92⅝"), single top plate run to the joists above the drop-ceiling grid (pull one tile row; blocking if parallel to joists), PT bottom plate Tapconned through the carpet into the slab. 32" door RO on the window side: king + jack each side, flat 2×4 header, no cripples. Drywall the bedroom side (3 sheets ½"), curtain in the RO until a used slab door appears. Position options: 13 / **14 (rec)** / 15 ft.
-- **BR-B (~$25):** the middle zone becomes the second bedroom — curtain rod across the stair-landing entrance; the twin is its bed; desk stays in here.
+- **The room is a clean rectangle — stairs are OUTSIDE it** (Polycam-confirmed): down the stairs → 2 steps through the landing → room doorway on the RIGHT → 2 more steps → laundry on the LEFT → 10×10 storage at the corridor's end. Windows on the opposite (exterior) long wall — positions are the only remaining assumption.
+- **Twin bed stays**, inside BR-B against the corridor-side wall near the door.
+- **THE WALL (one wall = two bedrooms, ≈ $160):** 12-ft 2×4 partition at 14 ft from the stair end. Studs 24" OC (10 precut 92⅝"), single top plate run to the joists above the drop-ceiling grid (pull one tile row; blocking if parallel to joists), PT bottom plate Tapconned through the carpet into the slab. 32" door RO on the window side: king + jack each side, flat 2×4 header, no cripples. Drywall the bedroom side (3 sheets ½"), curtain in the RO until a used slab door appears. Position options: 10.5 (even split) / **14 (rec)** / 15 ft.
+- **BR-B (~$25):** the entry side (clean 12×14 up to the wall) becomes the second bedroom — curtain rod in the room's own 36" doorway; the twin is its bed; desk stays in here. Walk-through to BR-A, so it's the overflow/solo room, never a couple's.
 - **My bed:** two 4×4 modular couch sections tight to the far + left walls = 8×4 sleeping surface, topper over the seam. Rack on the right wall (3.5-ft dressing strip), lamp at the bed's foot corner. King stays upstairs.
 - Dehumidifier for a week first if musty. Battery smoke alarm inside every partitioned sleeping space.
 
