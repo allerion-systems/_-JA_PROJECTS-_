@@ -1,58 +1,54 @@
-# 508 Foxwick Court — Deck Framing BOM (Lowe's pickup)
+# 508 Foxwick Court — Deck Framing BOM (Lowe's pickup — TODAY)
 
-**For:** Will Hernandez — lumber pickup at Lowe's
-**Prepared:** 2026-08-04 · **Deck:** 36'-0" × 16'-0" elevated composite deck (per design intake / HOVER model)
-**Layout basis:** Ledger at house · drop beam at 14' with 2' cantilever · 2x10 SYP joists @ 16" OC · 7 posts on beam line + 2 stair posts = 9 footings (matches the 20-bag concrete count at 12" dia × 24" frost depth)
+**For:** Will Hernandez · **Basis:** S-101 Foundation Plan + S-102 Deck Framing Plan (07 JUL 2026, "J. Allee / Claude") + A-3 v04 overlay (07-14)
+**Plan set:** Drive → `508 Foxwick Court - For Review - 7.7.26/v2/` (`508 Foxwick - Porch & Deck Plan Set - V01.html` + `Sheets (PNG)/`)
+**Copies of S-101 + S-102 committed alongside this file.**
 
-> ⚠️ **Verify member sizes against Joey's permit drawings (structure sheet, "page 12") before checkout.** If the drawings call different joist/beam sizes, the drawings win. This list is deck framing only — porch roof framing (shed roof, gable, timber truss, cedar T&G) and the Trex/railing orders are separate.
+All lumber **PT SYP No. 2, ground-contact**. Member sizes per S-102 (preliminary — confirm per final engineering / V.I.F.).
 
-## Lumber (all pressure-treated, ground-contact rated)
+## Lumber
 
-| Qty | Item | Use |
+| Qty | Item | Use (sheet ref) |
 |---|---|---|
-| 30 | 2x10 × 16' | Joists (28 @ 16" OC across 36') + doubles at stair opening |
-| 9 | 2x10 × 12' | Beam — 3-ply × 36', joints staggered over posts |
-| 3 | 2x10 × 12' | Ledger (36 LF) |
-| 3 | 2x10 × 12' | Rim/band at cantilever end (36 LF) |
-| 3 | 2x10 × 12' | Mid-span blocking row (36 LF) |
-| 8 | 6x6 × 10' | Posts — 7 beam + 1 spare (stair posts cut from drops) |
-| 8 | 2x12 × 8' | Stair stringers — 6'-wide center stair, ~7 risers, stringers @ 12" OC |
+| 36 | 2x12 × 16' | J1 joists @ 16" OC (28 field + doubled outside joists, DBL stair trimmers, DBL chimney-frame joists + headers, bay-projection doubles) |
+| 20 | 2x12 × 12' | B1 (3)-ply drop beam spliced over posts (9) · L1 ledger (3) · west-bay flush beam (2)2x12 (2) · rim (3) · blocking under porch columns / picture-frame perimeter (3) |
+| 16 | 2x12 × 12' | Stair stringers @ ~14" OC — A-3 v04 grand stair 16'-6" W, 9R @ ±7-1/8" (15 + 1 spare) |
+| 8 | 6x6 × 10' | Posts, continuous footing-to-beam (7 on F1 + 1 spare); porch columns align over posts |
 
-**2x10×12' total = 18 pcs** (beam 9 + ledger 3 + rim 3 + blocking 3).
+## Hardware (Simpson or equal, ZMAX/G185 exterior)
 
-## Hardware & fasteners
+| Qty | Item | Ref |
+|---|---|---|
+| 40 | LUS212 joist hangers | S-102 note 2 |
+| 4 | LUS212-2 double hangers | trimmers/headers |
+| 30 | **H2.5A hurricane ties** — joists-to-beam | S-102 note 2 ⚠️ *voice note said skip ties; the stamped-set note requires them — drawing wins, confirm w/ Joey* |
+| 7 | ABU66Z galvanized standoff post bases | S-101 note 3 — no wood in ground contact |
+| 8 | BC6Z / AC6Z post caps at B1 | S-102 note 3 |
+| 10 | DTT2Z tension ties + (20) 1/2"Ø galv thru-bolts | guard posts per S-102 note 4 / IRC R507.10 — V.I.F. against aluminum-rail post detail |
+| 16 | LSCZ adjustable stringer connectors | stair |
+| 60 | LedgerLOK 1/2"Ø (or equal) | L1 — (2) rows @ 16" OC staggered, S-102 plan callout |
+| 3 | 500-ct Simpson SD9 1-1/2" structural screws | hanger + tie fastening (no deck screws in hangers) |
+| 1 | Large box GRK #10 × 3-1/2" | beam ply lamination, blocking |
+| 5 lb | 16d HDG framing nails | general |
 
-| Qty | Item |
-|---|---|
-| 30 | Simpson LUS210 joist hangers (2x10, single) |
-| 2 | Simpson LUS210-2 double hangers (stair-opening doubles) |
-| 9 | Simpson ABU66Z standoff post bases (set in wet footings) |
-| 7 | Simpson AC6Z / BC6 post-to-beam caps |
-| 2 | Simpson SD9112 structural screws, 500-ct (hanger fastening — no deck screws in hangers) |
-| 60 | LedgerLOK or GRK RSS 5/8" ledger screws (2 rows @ 16" OC, staggered) |
-| 1 | GRK #10 × 3½" screws, large box (beam ply lamination, blocking) |
-| 5 lb | 16d HDG framing nails (general) |
-| 1 | Concrete: **20 bags 80 lb** high-strength (locked in per J) |
-| 10 | 0.5-cu-ft bags all-purpose gravel (2–3" base per footing) — optional but cheap insurance |
+## Concrete & flashing
 
-## Flashing & membrane
+| Qty | Item | Note |
+|---|---|---|
+| **30** | 80-lb bags concrete (3,000 PSI min per S-101 note 2) | **The "20 bags" from the voice note is short.** (7) F1 @ 20"Ø×12" ≈ 15.3 cf + (3) F2 12"Ø ≈ 2.4–4.7 cf ⇒ ~18–20 cf ≈ 30 bags. Footings bottom min 24" below grade on undisturbed soil — verify at open hole. |
+| — | ~~F3 chimney pad~~ | 6'-0"×4'-0"×12" reinforced (#4 @ 12" EW) ≈ 0.9 yd³ — **separate engineered pour, NOT bag mix, NOT in this order** |
+| 36 LF | Ledger Z-flashing / drip cap | L1 flashing cont., 2/A-501 |
+| 2 | Peel-and-stick flashing tape 4" × 75' | ledger + bay wraps ("maintain flashing continuity") |
+| 4 | Joist butyl tape 1-5/8" × 50' | under composite decking |
 
-| Qty | Item |
-|---|---|
-| 36 LF | Ledger flashing / Z-drip cap |
-| 2 | Peel-and-stick flashing tape 4" × 75' (behind + over ledger) |
-| 4 | Joist/beam butyl tape 1⅝" × 50' (top of joists & beam under Trex — warranty saver) |
+## Excluded from this order
+- Trex decking / fascia / hidden fasteners + 36" black aluminum guard — separate orders (colors TBC w/ client)
+- Porch roof structure: columns, porch beams (16'-6" & 12'-6" clear spans — **size per PE**), king-post truss, cedar T&G, shingles — separate
+- F3 chimney pad + stone/masonry (newel piers, column piers, fireplace) — masonry scope
+- Post hole digger (owned) · Sonotubes (not used)
 
-## Explicitly NOT in this order (per J / separate)
-- Sonotubes — **no**
-- Post hole digger — already owned
-- Hurricane ties — not on deck joists per J (*re-check for roof rafters when that scope orders*)
-- Trex decking, fascia, hidden fasteners — separate order pending line/color confirm with client
-- Black aluminum railing system — separate order pending linear-ft + brand
-- Shingles/roof + porch framing — separate order; must match existing asphalt
-
-## Assumptions to verify (60-second field check)
-1. Joist direction: spanning the 16' depth (house → beam). If drawings run them the other way, this list changes.
-2. Drop beam at 14' + 2' cantilever (2x10 @ 16" OC is good for 14'0" span, cantilever ≤ span/4 ✓).
-3. Deck height ≈ 4–6' → 6x6 × 10' posts have cut-off margin. If walk-out-basement height (8'+), bump to 6x6 × 12'.
-4. Stairs: one 6'-wide center run, ~7 risers. Wider stair or taller deck → more stringers/2x12 length.
+## Open flags (60-second confirm with Joey before checkout)
+1. **H2.5A hurricane ties** — S-102 requires; voice note said no. Buying them costs ~$30 — recommend buy.
+2. **Concrete 30 vs 20 bags** — S-101 footing sizes need ~30.
+3. **Stair width** — S-102 v1 shows (8) stringers; A-3 v04 grand stair (16'-6" W) needs ~15. List follows A-3 v04 (newer).
+4. S-102 note 7: ledger must land on solid band — never through brick veneer / bay cantilevers; if backing inadequate at demo, porch goes free-standing w/ added post row (changes order).
