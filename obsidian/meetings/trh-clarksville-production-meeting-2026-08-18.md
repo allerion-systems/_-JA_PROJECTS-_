@@ -19,7 +19,12 @@ The paper trail, in order:
 | — | **Kyle never replied. That thread has exactly one message.** |
 | 8/11 | You tell Zach + Kathryn the panels deliver Wednesday 8/20 from Metal Sales' Pennsylvania plant. |
 
-Everything after 8/6 is verbal. No order acknowledgment, no ship date, no BOL, no tracking — nothing from Kyle or Metal Sales in email. Kyle's only emails since 8/6 are about other projects (Crossvine 8/11–8/12) and the QXO statement dispute. Teams chats couldn't be searched and texts aren't reachable from here, so if he confirmed, it was by phone or text and it is not in writing anywhere.
+Everything after 8/6 is verbal. No order acknowledgment, no ship date, no BOL, no tracking — nothing from Kyle or Metal Sales in email.
+
+Sources checked and ruled out:
+- **Email** — every Kyle Raymer thread, all dates. Only Crossvine (8/11–8/12) and the QXO statement dispute since 8/6.
+- **Teams** — Kyle Raymer is not in any chat; he's not a member of the TRH Clarksville production meeting chat. (A *different* Kyle — Kyle Richardson, kyle@jrconstruct4u.com — is in that chat. Don't confuse them.) The TRH chat itself contains only bot notices and call start/end events, no substantive messages.
+- **Texts/iMessage** — no connector installed on this account, so unreadable from here. If Kyle confirmed 8/20, it was by phone or text and exists nowhere in writing.
 
 Note: the R.S. Crowder order confirmations (7/27, 7/31 — "TEXAS ROADHOUSE # CLARKS") are **Duro-Last** membrane/parapet items, not the Metal Sales 5V panels. Don't mistake those for panel confirmation.
 
