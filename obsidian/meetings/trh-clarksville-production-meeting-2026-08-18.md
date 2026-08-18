@@ -2,81 +2,70 @@
 
 **Meeting:** Buffalo Construction weekly production meeting (Teams)
 **Buffalo side:** Zach Fields (Superintendent), Kathryn Bell (PM), Mindy Montfort (accounting)
-**Last update sent:** Tue 8/11 email to Zach, cc Kathryn — "TRH Clarksville — R&B Roofing 4-Week Lookahead Update"
 
 ---
 
-## 30-second opening (say this first)
+## Delivery confirmation status — searched 8/18 AM
 
-> "Panels are still tracking for Wednesday the 20th out of the Pennsylvania plant. I'm chasing the written confirmation from Metal Sales today and will forward it the moment it hits my inbox. Crew is staged — install starts as soon as panels land. On Kathryn's two questions: coping cap status is [FILL IN after fab call], ship date week of 8/24, installs within two days of arrival. And the gutters — agreed, not punch items. Replacement sections are being cut at Sellersburg; I'll have the pickup date by [DAY], and the rework will be complete before paint."
+**Nothing from Kyle confirming the 8/20 delivery.** Checked all Kyle Raymer (QXO) email from the last 45 days — his only recent threads are the Highgates-Crossvine quote, the QXO statement/terms issue, and two residential deliveries. Nothing from Metal Sales directly either, and nothing referencing Sellersburg or the delivery date beyond your own 8/11 email. Teams messages couldn't be searched (Microsoft rate limit) and texts/iMessages aren't reachable — but no written confirmation has hit email.
+
+**Call Kyle before the meeting:** Kyle Raymer, QXO — O: 502-635-6059, M: 502-565-5170. Get the 8/20 confirmation in writing (even a one-line email), plus the ready date on the gutter replacement metal being cut at Sellersburg.
 
 ---
 
-## Open commitments from the 8/11 email — status going into the meeting
+## This week's update — same format as last Tuesday's (send to Zach, cc Kathryn, before or right after the meeting)
 
-| Commitment | Status 8/18 AM |
-|---|---|
-| Written delivery confirmation from Metal Sales for the 8/20 panel delivery | **NOT received** — nothing from Metal Sales in the inbox. Call them BEFORE the meeting. |
-| Written coping cap fab/ship date | **NOT received.** Kathryn specifically asked "why is fabrication not complete?" — unanswered since 8/11. |
-| Coordinate truck access/staging with Zach ahead of 8/20 (new blacktop, sidewalk pours) | Not yet locked. Propose it live in this meeting. |
+> Zach,
+>
+> R&B Roofing update — week of 8/17:
+>
+> THIS WEEK (8/17)
+> - 5V metal roof panels (back roof section) remain on schedule to deliver Wednesday, August 20 from Metal Sales' Pennsylvania plant. Written confirmation is [attached / being pushed today — I'm on the phone with the supplier and will forward it the moment I have it].
+> - Crew is staged on site — installation starts the day panels land.
+> - Delivery logistics: per the new blacktop and sidewalk pours, tell me your preferred window and truck path for Wednesday and we'll stage exactly where you want us. Trucks stay off the fresh asphalt.
+>
+> KATHRYN'S ITEMS
+> - Gutters: agreed — these are not punch items. Replacement sections (six-plus pieces, including the creased run on the front) are being cut at Metal Sales' Sellersburg shop. I'll have the pickup date by [DAY]. Rework, including re-securing the loose section and the extension at the dumpster enclosure, will be complete before paint.
+> - Coping cap: [one honest sentence on why fab isn't complete — e.g., profile released to fab after field-verifying parapet dimensions]. Ship date is targeted for the week of 8/24 — confirming in writing today. Coping installs within two days of arrival.
+>
+> WEEK OF 8/24
+> - Panel installation wraps early that week.
+> - Coping cap delivers and installs.
+>
+> WEEK OF 8/31
+> - Punch and closeout. Duralast final warranty inspection being scheduled now so it lands in this window.
+>
+> Still targeting full exterior completion by end of month, freight holding. If either material date moves, you'll hear it from me the day I know — not the day it lands.
+>
+> Thanks,
+> Joey Allee
+> Chief Estimator, R&B Roofing and Remodeling
+> (502) 938-2771
 
-## Kathryn's 8/11 reply — answer these head-on (she has NOT gotten a response)
+---
 
-1. **Gutters are NOT punch items — must be fixed before paint.**
-   - From the 8/7 site walk with her: 6+ gutter sections need full replacement (front crease is unrepairable), one section not properly secured, minor dents repairable on site, plus new gutter extension needed at the dumpster enclosure.
-   - Replacement metal is being cut at Sellersburg — you're waiting on the supplier callback for a ready/pickup date. Get that date before the meeting if possible; otherwise commit to a date for the date.
-2. **"Why is the coping cap fabrication not complete?"**
-   - Have a real answer ready (fab queue / field-verified parapet dimensions / release date). Don't restate "in fabrication" without a ship date — that's what triggered the question.
+## Before the call — 15 minutes of phone work
 
-## Pre-meeting checklist (this morning)
+- [ ] **Kyle (QXO)** — written 8/20 confirmation + Sellersburg gutter-metal ready date
+- [ ] **Coping fabricator** — written ship date for week of 8/24
+- [ ] Fill the two brackets in the draft above, send it, then walk into the meeting having already answered Kathryn
 
-- [ ] Call Metal Sales — written confirmation of Wed 8/20 delivery (PA plant) → forward to Zach + Kathryn
-- [ ] Same call: ready date for gutter replacement metal at Sellersburg + plan crew pickup
-- [ ] Call coping fabricator — written ship date for week of 8/24
-- [ ] Reply to Kathryn's 8/11 email BEFORE the meeting (draft below) so you walk in already on record
-- [ ] Confirm Donna/Crystal actually sent the updated COI to Mindy (Kathryn requested 8/7) so July payment isn't held on it
+## In the meeting — quick hits
 
-## Staging plan to propose to Zach (8/20 delivery)
+- **Don't oversell 8/20** if the written confirmation isn't in hand: "confirmed verbally, written confirmation expected today, I'll forward it."
+- **Kathryn has been waiting since 8/11** for answers on gutters + coping — lead with them, don't wait to be asked.
+- **Staging:** get Zach's delivery window and truck path on record for Wednesday.
+- **Deltas 6, 7 & 8** (issued 8/12): confirm whether any roofing/sheet-metal scope changed before recommitting schedule; flag CO if coping/gutter profiles are affected.
 
-- Ask for his preferred delivery window and truck path
-- Commit: trucks stay off fresh asphalt, clear of sidewalk pours; offload/staging location per his direction; plates/protection if crossing new work
+## Money (know it, don't fight about it here)
 
-## Money (know it, but don't fight about it in a production meeting)
-
-- June pay app: **released 8/11** — two joint checks, $23,445.97 + $51,872.09 ($75,318.06 total)
-- July: Mindy 8/11 — owner funding not received; pays ~30 days after owner billing on the 25th → expect ~late Aug
-- Lee Street Golf Facility payment also raised with Mindy 8/11 — she didn't recognize the project; follow up separately
+- June: **paid 8/11** — joint checks $23,445.97 + $51,872.09 ($75,318.06)
+- July: owner funding not received; pays ~30 days after owner billing (25th) → late Aug
+- QXO side: Scott raised the 60-day vs 30-day commercial terms issue with Kyle 8/5 ("haven't been paid a dollar for the Texas Roadhouse"); Kyle was "working on it" 8/6 — worth a status check on the same call
+- Lee Street Golf: Mindy didn't recognize the project — follow up separately with the Buffalo PM on that job
 
 ## If oil canning comes up (26ga standing seam)
 
-- Metal Sales rep (has supplied ~26 TRH projects): oil canning on long 26-gauge runs is inherent to the product and shows on **every** TRH; install quality confirmed normal-or-better
-- Position: product characteristic, not an install defect — direct Buffalo/TRH to Metal Sales for official written confirmation (get that letter in writing regardless)
-- Note: ~3 panels were reportedly damaged by others moving them on a Saturday — keep that documented, don't lead with it
-
-## Other items to keep on radar
-
-- **Deltas 6, 7 & 8** issued 8/12 (Kathryn forwarded via Procore) — confirm whether any roofing/sheet-metal scope changed before recommitting the schedule; flag CO if coping/gutter profiles affected
-- **Duralast/Duramax final warranty inspection** — was to be scheduled within 2 weeks of 8/7; mention you're scheduling it so it lands inside the week-of-8/31 punch window
-
-## Schedule you're on record for (don't move it verbally without written backup)
-
-- **Wk 8/17:** panels deliver Wed 8/20, install starts immediately
-- **Wk 8/24:** panel install wraps early week; coping delivers + installs within ~2 days
-- **Wk 8/31:** punch & closeout — full exterior complete by end of month, freight holding
-
----
-
-## Draft reply to Kathryn (send before the meeting)
-
-> Kathryn,
->
-> Following up on your note — you're right on both counts.
->
-> Gutters: agreed, these are not punch items. The replacement sections (six-plus pieces, including the creased run on the front) are being cut at Metal Sales' Sellersburg shop now. I'm getting the ready date today and will have the rework, including the section that needs re-securing and the extension at the dumpster enclosure, complete before paint.
->
-> Coping cap: [one-sentence honest reason it's still in fab — e.g., profile released to fab after field-verifying parapet dimensions]. Ship date is targeted for the week of 8/24 and I'm getting that confirmed in writing today; it installs within two days of arrival.
->
-> Panels remain on for Wednesday 8/20 out of the Pennsylvania plant — written confirmation to follow today as well.
->
-> Thanks,
-> Joey
+- Metal Sales rep (~26 TRH projects supplied): oil canning on long 26-gauge runs is inherent and shows on every TRH; install quality confirmed normal-or-better
+- Position: product characteristic, not install defect — direct Buffalo/TRH to Metal Sales for official written confirmation; get that letter regardless
+- ~3 panels reportedly damaged by others moving them on a Saturday — documented, but don't lead with it
