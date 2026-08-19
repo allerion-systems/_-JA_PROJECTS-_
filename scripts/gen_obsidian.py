@@ -47,7 +47,15 @@ def main():
         path = os.path.join(VAULT, "employers", f"{slugify(emp)}.md")
         with open(path, "w") as f:
             f.write(f"# {emp}\n\n")
-            f.write(f"{len(emp_projects)} project(s), ${total:,.0f} combined budget.\n\n")
+            # Don't let projects with no disclosed budget read as $0 of work.
+            undisclosed = sum(1 for p in emp_projects if p["budget"] is None)
+            if undisclosed == len(emp_projects):
+                line = f"{len(emp_projects)} project(s), no budget disclosed yet"
+            else:
+                line = f"{len(emp_projects)} project(s), ${total:,.0f} combined budget"
+                if undisclosed:
+                    line += f" across the {len(emp_projects) - undisclosed} with a disclosed value"
+            f.write(line + ".\n\n")
             f.write("## Projects\n\n")
             for p in sorted(emp_projects, key=lambda x: x["year"]):
                 f.write(f"- [[../projects/{p['id']}|{p['project']} ({p['year']})]]\n")

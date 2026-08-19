@@ -6,7 +6,7 @@ status: "Bidding – proposal due 2026-08-20"
 
 # Gustavo's – Louisville
 
-- **Employer:** [[../employers/Cordia Property Solutions LLC|Cordia Property Solutions, LLC]]
+- **Employer:** [[../employers/RB|R&B]]
 - **Year:** [[../years/2026|2026]]
 - **Location:** Louisville, KY
 - **Budget:** Not disclosed
