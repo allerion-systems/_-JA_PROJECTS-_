@@ -70,7 +70,7 @@ def main():
         with open(path, "w") as f:
             f.write("---\n")
             f.write(f"year: {p['year']}\n")
-            f.write(f"budget: {p['budget']}\n")
+            f.write(f"budget: {p['budget'] if p['budget'] is not None else 'null'}\n")
             f.write(f"status: \"{p['status'] or ''}\"\n")
             f.write("---\n\n")
             f.write(f"# {p['project']}\n\n")
