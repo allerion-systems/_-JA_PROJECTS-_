@@ -136,3 +136,49 @@ Manufacturer rep (if present): ______________  Date: __________
 **He is letting you fix it.** "Before any correcting of the roof is performed" assumes R&B does the correcting. He set hold points; he did not fire anyone, mention a lawyer, or ask for money back. That is a client protecting his house, not one building a case.
 
 **He handed you the acceptance criteria.** Meeting, weld inspection, better decking finish. Most defect fights never tell you what "done" looks like. You already know.
+
+---
+
+# ADDENDUM — after Ben Easterday's call, night of 8/18
+
+## What Ben confirmed — this is good
+
+- **Scott is not requiring the roofing to be torn off.** He'll allow the seams to be welded with the membrane in place. That holds the scope to a seam repair instead of a re-roof. Protect that concession.
+- **Scott is bringing a pick to probe the seams.** He knows the standard test. Good — it means the acceptance criteria are objective, not aesthetic.
+- Ben plans to walk it and correct it immediately after.
+
+## Three gaps to close before 8 AM
+
+### 1. The decking complaint is unowned
+
+Ben's words: *"you didn't mention anything about the decking installation to me. I don't know where that's coming from."*
+
+The phone agreement covered **welds only**. Scott's second text was about decking quality, and it's the one he attached the $133/sf to — that's what he's angriest about. If nobody addresses it tomorrow, he'll walk away feeling unheard on his main grievance.
+
+**Own that item yourself.** Take the list from Scott on the walk, item by item, into Section B of the tally sheet. Do not let it get argued or waved off on the roof. Ben is the installer whose work is being criticized — he has an interest, and his first reaction was surprise. That's exactly the item where you need to be the one taking notes, not defending.
+
+### 2. Ben plans to be there during the adjuster meeting
+
+That puts the adjuster, Scott Jacobs, Ben, and you in one conversation about R&B's own workmanship. **Break that up.** Adjuster meeting first and separate; defect walk after, without the adjuster present. Tell Ben tonight so he doesn't show up expecting one combined meeting.
+
+### 3. Scott Waldman can't get on the roof
+
+Per Ben, Waldman can't manage the ladder or the stairs, so it's you and Ben up there. That means **you are the senior R&B person on that roof.**
+
+Use it deliberately: Waldman is still on site, just at ground level. Anything material — cost, scope beyond the welds, schedule commitments — you go down and confer before agreeing. *"Let me go down and talk to Scott before I commit to that"* is a clean, professional line, and it keeps decisions off your shoulders alone.
+
+## The technical point that makes Ben's plan work
+
+Ben's instinct to keep the membrane down is **right**, and it happens to line up with the correct repair.
+
+If the laps have adhesive between the plies, you can't clean and re-weld them — but a **heat-weldable cover strip welded over the existing lap** needs the membrane exactly where it is. Nothing gets pulled apart. Two fresh welds onto clean membrane on either side of the old lap.
+
+So the client's preferred approach and the manufacturer-correct approach are the same approach. The only thing that changes from what Ben told Scott is *how the seam gets made* — and that's a detail you can present as the manufacturer's spec rather than a reversal.
+
+**Still get it from Flex in writing before a board comes up.**
+
+## Expect the pick to open the seams — and welcome it
+
+If those laps were adhesive-bonded, Scott's pick will go through them. Expect that to happen in front of you.
+
+Do not dread it. **Say it first:** *"Probe them — that's the right test, and it's the test we'll use on the rework."* Him proving the condition with his own tool is better for you than you asserting it. It documents the defect, sets the repair scope by evidence instead of argument, and it puts you on the same side of the test.
