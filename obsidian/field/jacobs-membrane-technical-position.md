@@ -5,6 +5,11 @@
 
 ---
 
+> **⚠️ SUPERSEDED IN PART — see `jacobs-membrane-spec-comparison.md`.**
+> Flex's own data sheet states the 60 TPO Plus is *"Available in White, Gray or Tan."* Gray TPO exists.
+> The grey-means-PVC theory below is a **supplier stocking observation only**, not a manufacturer
+> constraint. Do not state it as the cause. Confirmed since: the installed membrane is Flex MF/R 60 PVC.
+
 ## 1. What almost certainly happened — and it is checkable
 
 Flex Membrane International makes **both** TPO and PVC in 60 mil reinforced (MF/R) sheet. Looking at what QXO actually stocks:
