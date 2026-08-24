@@ -10,3 +10,4 @@ build never reads this directory.
 | File | Project | Issued |
 | --- | --- | --- |
 | `lee-street-soffit-punch-closeout.html` | Lee Street canopy soffit — 1670 S. Floyd St. | 2026-08-24 |
+| `lee-street-cover-trim-research.html` | Lee Street — cover trim sourcing & fabrication research | 2026-08-24 |

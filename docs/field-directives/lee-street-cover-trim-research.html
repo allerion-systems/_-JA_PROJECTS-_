@@ -1,0 +1,494 @@
+<title>Slip-On Cover Trim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  :root {
+    --paper:      #E9EDF2;
+    --surface:    #FFFFFF;
+    --surface-2:  #F4F6F9;
+    --ink:        #151D26;
+    --ink-2:      #56636F;
+    --ink-3:      #7C8895;
+    --rule:       #C4CEDA;
+    --rule-soft:  #DDE3EA;
+    --cardinal:   #A81B2E;
+    --cardinal-w: #F6E7E9;
+    --amber:      #8A5A08;
+    --amber-w:    #F7EEDC;
+    --green:      #1C6248;
+    --green-w:    #E1EFE8;
+    --slate:      #3F5063;
+    --slate-w:    #E7ECF2;
+    --shadow:     0 1px 2px rgba(21,29,38,.06), 0 6px 20px -12px rgba(21,29,38,.28);
+
+    --f-head: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0F141A; --surface: #181F27; --surface-2: #1F2731;
+      --ink: #E2E8EF; --ink-2: #A2AEBB; --ink-3: #7E8B99;
+      --rule: #33404E; --rule-soft: #262F3A;
+      --cardinal: #F0798A; --cardinal-w: #3A1B21;
+      --amber: #E0AC5A; --amber-w: #362A16;
+      --green: #6DC7A2; --green-w: #163026;
+      --slate: #9FB0C2; --slate-w: #232E3A;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F141A; --surface: #181F27; --surface-2: #1F2731;
+    --ink: #E2E8EF; --ink-2: #A2AEBB; --ink-3: #7E8B99;
+    --rule: #33404E; --rule-soft: #262F3A;
+    --cardinal: #F0798A; --cardinal-w: #3A1B21;
+    --amber: #E0AC5A; --amber-w: #362A16;
+    --green: #6DC7A2; --green-w: #163026;
+    --slate: #9FB0C2; --slate-w: #232E3A;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px -12px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet { max-width: 860px; margin: 0 auto; padding: 0 20px 96px; }
+
+  /* ---- header ---- */
+  .titleblock {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--cardinal);
+    margin-top: 28px;
+    box-shadow: var(--shadow);
+    padding: 26px 28px 22px;
+  }
+  .eyebrow {
+    font-family: var(--f-mono); font-size: 11.5px; font-weight: 500;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: var(--cardinal); margin: 0;
+  }
+  h1 {
+    font-family: var(--f-head); font-weight: 700;
+    font-size: clamp(28px, 4.6vw, 40px); line-height: 1.05;
+    letter-spacing: -.02em; margin: 8px 0 0; text-wrap: balance;
+  }
+  .tb-sub { font-size: 16px; color: var(--ink-2); margin: 12px 0 0; max-width: 60ch; }
+  .runstats {
+    margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--rule-soft);
+    display: flex; flex-wrap: wrap; gap: 10px 30px;
+  }
+  .runstats div { min-width: 0; }
+  .runstats span {
+    display: block; font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px;
+  }
+  .runstats strong {
+    font-family: var(--f-head); font-weight: 600; font-size: 17px;
+    color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- sections ---- */
+  section { margin: 0 0 50px; }
+  .shead {
+    display: flex; align-items: baseline; gap: 12px;
+    border-bottom: 1px solid var(--rule); padding-bottom: 9px; margin: 46px 0 20px;
+  }
+  .shead .num {
+    font-family: var(--f-mono); font-size: 12px; font-weight: 600;
+    color: var(--cardinal); letter-spacing: .04em;
+  }
+  .shead h2 {
+    font-family: var(--f-head); font-weight: 600; font-size: 21px;
+    letter-spacing: -.01em; margin: 0;
+  }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .lede { font-size: 18.5px; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .m { font-family: var(--f-mono); font-size: .88em; font-weight: 500; }
+
+  /* ---- the position (brief) ---- */
+  .position {
+    background: var(--surface); border: 1px solid var(--rule);
+    border-left: 3px solid var(--cardinal); box-shadow: var(--shadow);
+    margin: 26px 0 0; padding: 4px 26px 22px;
+  }
+  .position h3 {
+    font-family: var(--f-head); font-weight: 600; font-size: 16px;
+    margin: 24px 0 6px; letter-spacing: -.005em;
+  }
+  .position h3:first-of-type { margin-top: 22px; }
+  .position p { margin-bottom: 0; max-width: 64ch; }
+  .position p + p { margin-top: 10px; }
+
+  .risks { list-style: none; margin: 14px 0 0; padding: 0; counter-reset: r; }
+  .risks li {
+    counter-increment: r; position: relative; padding: 0 0 14px 42px; max-width: 64ch;
+  }
+  .risks li::before {
+    content: counter(r); position: absolute; left: 0; top: 2px;
+    font-family: var(--f-mono); font-size: 11px; font-weight: 600;
+    color: var(--amber); background: var(--amber-w); border: 1px solid var(--amber);
+    width: 26px; height: 22px; display: grid; place-items: center;
+  }
+  .risks li b { font-family: var(--f-head); font-weight: 600; }
+
+  /* ---- findings ---- */
+  .finding {
+    background: var(--surface); border: 1px solid var(--rule);
+    box-shadow: var(--shadow); margin: 0 0 18px;
+  }
+  .f-head {
+    display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center;
+    padding: 11px 20px; border-bottom: 1px solid var(--rule-soft); background: var(--surface-2);
+  }
+  .f-id {
+    font-family: var(--f-mono); font-size: 11px; font-weight: 600;
+    color: var(--ink-3); letter-spacing: .08em;
+  }
+  .f-vote { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); margin-left: auto; }
+  .f-body { padding: 16px 20px 6px; }
+  .f-body .claim {
+    font-family: var(--f-head); font-size: 16px; font-weight: 600;
+    line-height: 1.42; margin: 0 0 12px; max-width: 64ch;
+  }
+  .f-body p { font-size: 15.5px; color: var(--ink-2); }
+  .f-body p.ev { border-left: 2px solid var(--rule); padding-left: 14px; }
+  .f-body q { font-style: italic; }
+  .f-src {
+    padding: 10px 20px 12px; border-top: 1px solid var(--rule-soft);
+    font-family: var(--f-mono); font-size: 11px; line-height: 1.6; color: var(--ink-3);
+    word-break: break-word;
+  }
+  .f-src a { color: var(--ink-2); text-decoration-color: var(--rule); }
+  .f-src a:hover, .f-src a:focus-visible { color: var(--cardinal); }
+
+  .chip {
+    display: inline-block; font-family: var(--f-mono); font-size: 9.5px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px 3px; border: 1px solid;
+  }
+  .chip.high    { color: var(--green);    border-color: var(--green);    background: var(--green-w); }
+  .chip.medium  { color: var(--amber);    border-color: var(--amber);    background: var(--amber-w); }
+  .chip.killed  { color: var(--cardinal); border-color: var(--cardinal); background: var(--cardinal-w); }
+  .chip.open    { color: var(--slate);    border-color: var(--slate);    background: var(--slate-w); }
+
+  /* ---- killed / open lists ---- */
+  .kill { border-bottom: 1px solid var(--rule-soft); padding: 15px 0 13px; max-width: 70ch; }
+  .kill:last-child { border-bottom: 0; }
+  .kill .t {
+    font-family: var(--f-head); font-weight: 600; font-size: 15.5px;
+    line-height: 1.4; display: block; margin: 0 0 5px;
+  }
+  .kill .t .chip { margin-right: 9px; vertical-align: 2px; }
+  .kill p { font-size: 15px; color: var(--ink-2); margin: 0; }
+
+  .callout {
+    border: 1px solid var(--rule); border-left: 3px solid var(--cardinal);
+    background: var(--surface); padding: 16px 20px; margin: 22px 0; box-shadow: var(--shadow);
+  }
+  .callout .label {
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--cardinal); display: block; margin-bottom: 6px;
+  }
+  .callout p { margin: 0; max-width: 62ch; }
+  .callout p + p { margin-top: 10px; }
+  .callout.warn { border-left-color: var(--amber); }
+  .callout.warn .label { color: var(--amber); }
+
+  /* ---- source table ---- */
+  .tablewrap {
+    overflow-x: auto; margin: 20px 0 0; border: 1px solid var(--rule);
+    background: var(--surface); box-shadow: var(--shadow);
+  }
+  table { border-collapse: collapse; width: 100%; font-family: var(--f-head); font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  th {
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; background: var(--surface-2);
+    border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td a { color: var(--ink); text-decoration-color: var(--rule); word-break: break-word; }
+  td a:hover, td a:focus-visible { color: var(--cardinal); }
+  td.q { white-space: nowrap; width: 1%; }
+  td.q .chip { font-size: 9px; }
+
+  a:focus-visible { outline: 2px solid var(--cardinal); outline-offset: 2px; }
+
+  footer {
+    margin-top: 46px; padding-top: 18px; border-top: 1px solid var(--rule);
+    font-family: var(--f-mono); font-size: 11.5px; line-height: 1.7;
+    color: var(--ink-3); max-width: 78ch;
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="titleblock">
+    <p class="eyebrow">Lee Street Soffit &middot; Backing Research</p>
+    <h1>Slip-On Cover Trim</h1>
+    <p class="tb-sub">Whether anyone already makes the piece, how the no&#8209;fastener versions actually grip, and what is most likely to make a shop&#8209;braked cap look worse than the defect it hides.</p>
+    <div class="runstats">
+      <div><span>Sources fetched</span><strong>23</strong></div>
+      <div><span>Claims extracted</span><strong>110</strong></div>
+      <div><span>Survived verification</span><strong>11</strong></div>
+      <div><span>Killed</span><strong>14</strong></div>
+      <div><span>Open questions</span><strong>5</strong></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="shead"><span class="num">01</span><h2>The position</h2></div>
+
+    <p class="lede">Brake it. Nobody sells the part, the no&#8209;fastener version is a bigger job than it looks, and the thing most likely to sink this is not the gap &mdash; it is a wide flat white face oil&#8209;canning overhead.</p>
+
+    <div class="position">
+      <h3>What to build</h3>
+      <p>A shop&#8209;braked shallow reverse&#8209;J / hat channel. Face as narrow as will still lap <span class="m">1&Prime;</span> past the widest reveal on each side; legs about <span class="m">1/2&Prime;&ndash;3/4&Prime;</span>; both edges hemmed <span class="m">180&deg;</span> at <span class="m">1/2&Prime;</span> minimum. The hem is not cosmetic &mdash; stiffening the piece against oil&#8209;canning is its published reason for existing.</p>
+
+      <h3>How it attaches</h3>
+      <p>Painted <span class="m">1/8&Prime;</span> blind rivets through the legs into the panel flats, never through the face. Western States <span class="m">STST43</span> is an off&#8209;the&#8209;shelf match: stainless body and mandrel, painted to stock whites, <span class="m">#30</span> drill, 420&#8239;lb shear. Do not rely on friction or snap alone &mdash; the manufacturers who ship true snap covers still require mechanical or adhesive securement on top of the snap.</p>
+
+      <h3>What kills it</h3>
+      <ol class="risks">
+        <li><b>Oil&#8209;canning the face.</b> A broad flat face, set to a string line, over a beam that is out of plane. This is the failure mode that would make the remedy read worse than the defect. Keep the face narrow; past about <span class="m">3&Prime;</span> break a shallow crown or light center vee into it.</li>
+        <li><b>Color and gloss.</b> Not the color name &mdash; the coating system and the weathering. A new PVDF white against an installed SMP white that has had a summer on it will not match, and metamerism means it can look right in the shop and wrong on the building.</li>
+        <li><b>Retention.</b> A shallow cap that depends on grip rather than fasteners migrates or drops. Overhead, that is not a punch item, it is a falling object.</li>
+      </ol>
+
+      <h3>What you cannot claim</h3>
+      <p>There is no citable acceptance standard here. We went after MCA, SMACNA, NRCA, AAMA and a real 07&nbsp;42&nbsp;13 section for a published reveal or alignment tolerance and came back with nothing that survived checking. The one standards&#8209;traceable number in this whole report is the <span class="m">1/2&Prime;</span> hem.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">02</span><h2>What held up</h2></div>
+
+    <p>Ten findings survived. Each was checked by three independent verifiers prompted to refute it; the vote is shown on each. <span class="chip high">High</span> means it came through clean and rests on manufacturer primary literature. <span class="chip medium">Medium</span> means it survived <span class="m">2&#8209;1</span>, or a supporting sub&#8209;claim was killed even though the core held.</p>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-01</span><span class="chip high">High</span><span class="f-vote">no stock part exists</span></div>
+      <div class="f-body">
+        <p class="claim">There is no off&#8209;the&#8209;shelf trim for this condition. A shop&#8209;braked profile is required.</p>
+        <p>Every stock &ldquo;cover&rdquo; product found is one of three things that do not apply: a batten cap running <em>parallel</em> to the ribs, a parapet coping, or a new&#8209;install splice detail that requires the panel ends to be cut into a receiver. This was the single most consistent result in the research &mdash; every verifier raised the relevance gap independently.</p>
+        <p class="ev">Berridge&rsquo;s cap is a raised 2&Prime;&nbsp;&times;&nbsp;1&#8209;3/4&Prime; batten running parallel to ribs. Metal Sales Mini&#8209;Batten is a 3:12&#8209;minimum roof system whose cap is a factory component of that panel, not a standalone joint cover. DMI BS15 caps run with the slope and engage two 1&#8209;1/2&Prime; vertical panel legs &mdash; they cannot lap flat over a ribbed face, and DMI warns <q>Install batten caps as the panels are installed; do not install the panels first then install batten caps.</q> Drexel Snap Coping&#8209;Max is ANSI/SPRI ES&#8209;1 parapet coping. Western States WS&#8209;1200/1201/1202 is a new&#8209;install end&#8209;splice detail. Tamlyn 2&#8209;piece is extruded siding trim for vertical joints.</p>
+      </div>
+      <div class="f-src">Berridge &middot; Metal Sales Mini-Batten CTR &middot; DMI BS15 &middot; Drexel Snap Coping-Max &middot; Western States WS-1200/1202 &middot; Tamlyn XtremeTrim</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-02</span><span class="chip high">High</span><span class="f-vote">3&#8209;0 on four makers, 2&#8209;1 on the fifth</span></div>
+      <div class="f-body">
+        <p class="claim">Backer&#8209;plus&#8209;cover is established manufacturer practice, not an improvisation &mdash; it is the standard way to retain a trim with no fasteners in the exposed face.</p>
+        <p>Confirmed across Metal Sales, Drexel, DMI, Tamlyn and Berridge. So the instinct behind &ldquo;a piece that slips up over it&rdquo; is sound; the question is only what it costs to build.</p>
+        <p class="ev">Drexel&rsquo;s guide lists a separately fastened cleat plus a snap flashing in 10&prime; lengths, with no face fastening called for anywhere in the document. DMI: <q>an advanced design non&#8209;structural snap&#8209;on&#8209;batten system &hellip; designed with two components: the panel and the batten cap.</q> Metal Sales Mini&#8209;Batten spec: <q>Side Lap: Snap&#8209;on batten cap / Attachment: Concealed clip designed for thermal movement.</q></p>
+      </div>
+      <div class="f-src">Drexel Snap Coping-Max install guide &middot; DMI BS15 cutsheet &middot; Metal Sales spec data sheet</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-03</span><span class="chip medium">Medium</span><span class="f-vote">2&#8209;1</span></div>
+      <div class="f-body">
+        <p class="claim">The &ldquo;snap&rdquo; in commercial systems is a hook&#8209;and&#8209;rotate mechanical interlock over two opposed kicks &mdash; not a friction fit.</p>
+        <p>This is the finding that decides whether the two&#8209;piece route is worth it. The cover&rsquo;s front leg hooks the front kick, the cover rotates over the substrate, and the rear leg is pushed down until it engages the rear kick. To get that with no fasteners you have to form matching kicks on <em>both</em> pieces &mdash; two profiles, not one channel.</p>
+        <p class="ev">Drexel STEP 3, verbatim: <q>Hook the front face of the coping flashing over the front kick of the Cleats, then rotate the coping flashing over the top of the parapet and push down the rear face of the coping flashing over the rear Cleat face to engage the rear kick.</q> The same hook&#8209;rotate&#8209;push sequence appears twice more in the same document. The dissenting verifier noted the guide places the front kick explicitly but only implies the rear kick&rsquo;s location.</p>
+      </div>
+      <div class="f-src">Drexel Snap Coping-Max install guide &middot; corroborated in DMI DynaClad and other continuous-cleat coping guides</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-04</span><span class="chip medium">Medium</span><span class="f-vote">2&#8209;1 on the spec; framing claim voted down separately</span></div>
+      <div class="f-body">
+        <p class="claim">Snap engagement alone is not treated as adequate retention. Thermal movement requires mechanical or adhesive securement on top of it.</p>
+        <p>Tamlyn publishes a screenable adhesive threshold, though see the caveat &mdash; it does not screen VHB tape.</p>
+        <p class="ev">Tamlyn catalog, verbatim: <q>due to the natural expansion and contraction of aluminum, all 2&#8209;Piece RVC caps must be secured by either adhesive or screw or pop rivet. Recommended adhesive needs to meet these requirements: Tensile Strength: ASTM D412 &mdash; 475 psi / Lap Shear Strength: ASTM D1002 &mdash; 550 psi.</q> Identical numbers appear on two other product pages, so it is a line&#8209;wide spec. Drexel likewise requires end caps <q>be restrained from moving by securing with fasteners.</q></p>
+      </div>
+      <div class="f-src">Tamlyn RVC catalog p.144, JMC34 p.151, COCR p.147 &middot; Drexel install guide</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-05</span><span class="chip medium">Medium</span><span class="f-vote">2&#8209;1 on Berridge; narrower dimensions killed as standalone claims</span></div>
+      <div class="f-body">
+        <p class="claim">Stock cover&#8209;cap faces are all too narrow to lap 1&Prime; past the defect on each side.</p>
+        <p>Berridge&rsquo;s <span class="m">2&Prime;</span> cap is the widest stock cover face found anywhere &mdash; and <span class="m">2&Prime;</span> barely covers a joint that already has slop in it. Metal Sales Mini&#8209;Batten caps read roughly <span class="m">0.81&Prime;</span> and <span class="m">1.35&Prime;</span>; Tamlyn 2&#8209;piece caps run about <span class="m">1/2&Prime;</span> to <span class="m">1&Prime;</span>. This is the arithmetic that forces a braked part.</p>
+        <p class="ev">Berridge: <q>2&quot; wide and 1 3/4&quot; high snap&#8209;on batten cap.</q> The Metal Sales figures were read off the CTR drawing but failed adversarial voting as standalone claims &mdash; confirm against a current cut sheet before relying on the exact numbers. The direction of the finding is not in doubt; the decimals are.</p>
+      </div>
+      <div class="f-src">Berridge data sheet + install sheet BI-1 &middot; Metal Sales Mini-Batten CTR &middot; Tamlyn 2-piece category (8 profiles, 6063-T5, .045&Prime;)</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-06</span><span class="chip high">High</span><span class="f-vote">3&#8209;0</span></div>
+      <div class="f-body">
+        <p class="claim">Hem the legs <span class="m">180&deg;</span> with a <span class="m">1/2&Prime;</span> minimum return &mdash; and the published rationale is exactly this job&rsquo;s problem.</p>
+        <p>Both the manufacturer shop standard and the SMACNA&#8209;derived spec norm. Worth noting this is the only figure anywhere in the report that traces back to a published standard.</p>
+        <p class="ev">McElroy, verbatim: <q>Hems are created by folding the material to 180 degrees. Our standard is 1/2&Prime; minimum, but we can do longer if requested.</q> Their stated reasons: reducing oil&#8209;canning, stiffening the piece for handling, eliminating sharp edges. Independently corroborated by multiple public 07&nbsp;62&nbsp;00 specs derived from the SMACNA Architectural Sheet Metal Manual calling for a <q>13 mm (1/2 inch) hem on the concealed side.</q></p>
+      </div>
+      <div class="f-src">McElroy Metal trim details &middot; multiple SMACNA-derived 07 62 00 sheet-metal specs</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-07</span><span class="chip medium">Medium</span><span class="f-vote">3&#8209;0 on the 40&prime; figure; a competing length claim failed 1&#8209;2</span></div>
+      <div class="f-body">
+        <p class="claim">Run the longest continuous piece you can get. Where a splice is unavoidable, the manufacturer answer is a concealed backer plate &mdash; not a butt joint.</p>
+        <p>This corrects the lap&#8209;splice guidance on the field sheet. Note the qualification: <span class="m">40&prime;</span> applies to roll&#8209;formed system componentry, not to a custom shop&#8209;braked trim, which a conventional brake limits to roughly <span class="m">10&prime;&ndash;12&prime;</span>. And any long run then imports a thermal&#8209;movement problem of its own.</p>
+        <p class="ev">Berridge: <q>The Deep Vee&#8209;Panel, snap&#8209;on batten cap, and the batten seam inner rib are available from the factory in continuous lengths to a maximum of 40&prime;.</q> The same figure recurs across six Berridge lines, indicating a standard freight length rather than a cherry&#8209;picked number.</p>
+      </div>
+      <div class="f-src">Berridge product literature</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-08</span><span class="chip high">High</span><span class="f-vote">3&#8209;0</span></div>
+      <div class="f-body">
+        <p class="claim">A color&#8209;matched fastener is available off the shelf, with published strength numbers.</p>
+        <p>Western States <span class="m">STST43</span>: <span class="m">1/8&Prime;</span> nominal painted blind rivet, stainless body <em>and</em> stainless mandrel, dome head, <span class="m">#30</span> drill (.129&ndash;.133), grip range .126&ndash;.187, 420&#8239;lb min shear, 530&#8239;lb min tensile. Whites include Bone White and Regal White in PVDF, Polar White in SMP.</p>
+        <p class="ev">Not a single&#8209;vendor item &mdash; the painted stainless &ldquo;43&rdquo; rivet is an industry&#8209;standard SFS&#8209;family part with equivalents at Olander and Specialty Bolt, so it can be sourced through whoever the shop already buys from. The stainless mandrel matters overhead: a steel mandrel in an exterior rivet is a future rust streak down a white trim.</p>
+      </div>
+      <div class="f-src">Western States Metal Roofing blind rivet product data</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-09</span><span class="chip medium">Medium</span><span class="f-vote">3&#8209;0 on the underlying spec; the conclusion is synthesized</span></div>
+      <div class="f-body">
+        <p class="claim">If you go two&#8209;piece, the backer must be <em>continuous</em> &mdash; a segmented cleat cannot hold a straight line over a crooked beam.</p>
+        <p>This is the finding that matters most if anyone pushes for the concealed&#8209;fastener version. With a segmented cleat, the cover&rsquo;s own stiffness has to carry the line between supports, which on a crooked substrate is exactly the thing you cannot rely on. Run a continuous braked backer, shim it to the string, and let the backer &mdash; not the beam and not the cap &mdash; define straight.</p>
+        <p class="ev">Drexel Snap Coping&#8209;Max uses 12&Prime;&#8209;wide cleat segments at up to 40&Prime; o.c. &mdash; roughly 30% coverage, with about 28&Prime; unsupported between cleats. Drexel&rsquo;s own continuous&#8209;cleat product is the correct analogue where the backer is expected to establish the line.</p>
+      </div>
+      <div class="f-src">Drexel Snap Coping-Max install guide &middot; Drexel Spring-Tite continuous-cleat coping</div>
+    </div>
+
+    <div class="finding">
+      <div class="f-head"><span class="f-id">F-10</span><span class="chip killed">Negative</span><span class="f-vote">both candidate spec claims refuted 0&#8209;3</span></div>
+      <div class="f-body">
+        <p class="claim">No published tolerance or acceptance standard survived verification, and no published guidance authorizing cover&#8209;over&#8209;defect remediation survived either.</p>
+        <p>This is a real result, not a gap in the searching. The single source that would have supplied published precedent for the <span class="m">1&Prime;</span>&#8209;lap cover&#8209;patch approach &mdash; an institutional 07&nbsp;62&nbsp;00 spec &mdash; had both of its relevant claims voted down unanimously.</p>
+        <p class="ev">The practical consequence: the <span class="m">1&Prime;</span> lap and the string&#8209;line criterion are defensible engineering judgment and should be presented that way. Do not represent the remedy to the client as meeting a published standard. If a citable standard is genuinely needed for the acceptance conversation, someone has to buy the SMACNA manual or the MCA bulletin and read it directly &mdash; it is not available secondhand on the open web.</p>
+      </div>
+      <div class="f-src">Verification outcome across all angle-5 sources</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">03</span><h2>What got killed</h2></div>
+
+    <p>Fourteen claims were refuted in verification. These are worth reading &mdash; several are things that sound authoritative and would have been convenient to believe, including the two that would have been the most useful findings in the whole report.</p>
+
+    <div class="kill">
+      <span class="t"><span class="chip killed">0&#8209;3</span>The published precedent for a 1&Prime;&#8209;lap riveted cover patch</span>
+      <p>An institutional sheet&#8209;metal spec appeared to authorize repairing damaged flashing with a matching piece lapped a minimum of one inch onto each side of the defect, secured by pop rivets &mdash; near&#8209;perfect precedent for our approach. It did not survive checking. This is why the position above says the <span class="m">1&Prime;</span> rule is judgment.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip killed">0&#8209;3</span>A spec prescribing a &ldquo;spring tight&rdquo; snap&#8209;fit receiver</span>
+      <p>Would have been direct published support for a backer&#8209;plus&#8209;snap&#8209;cover trim. Also refuted from the same document.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip killed">0&#8209;3</span>Berridge caps are retained by snap engagement alone</span>
+      <p>The zero&#8209;exposed&#8209;fastener reading of the Berridge cap did not hold.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip killed">0&#8209;3</span>Western States sells a stock two&#8209;piece soffit end&#8209;splice cover</span>
+      <p>WS&#8209;1202 + WS&#8209;1201 looked like a purchasable answer. It is a new&#8209;install detail whose bill of materials requires the panel ends inserted into C&#8209;trims &mdash; not applicable to a finished soffit.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip killed">0&#8209;3</span>Fabricate the cover 1/2&Prime; wider than measured to absorb substrate variance</span>
+      <p>Would have been a manufacturer&#8209;sanctioned oversize allowance for exactly our problem. Refuted.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip killed">0&#8209;3</span>Specific stock cap face dimensions and Metal Sales&rsquo; sanctioned rivet size</span>
+      <p>The <span class="m">0.81&Prime;</span>/<span class="m">1.35&Prime;</span> Mini&#8209;Batten faces, the Tamlyn profile dimension list, and a claimed two&#8209;fastener Metal Sales spec all failed as standalone claims. The <em>direction</em> survives in F&#8209;05; the decimals need a current cut sheet.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip killed">1&#8209;2</span>McElroy&rsquo;s practical maximum fabricated trim length is 20&prime;3&Prime;</span>
+      <p>Did not carry. Treat conventional brake capacity as the real constraint.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">04</span><h2>Still open</h2></div>
+
+    <div class="kill">
+      <span class="t"><span class="chip open">Open</span>At what face width does a flat cover start to oil&#8209;can overhead?</span>
+      <p>No source addressed maximum unsupported face width, or whether a ~<span class="m">3&Prime;</span> face in 24ga/26ga steel or .032/.040 aluminum needs a center break, slight crown, or striation rather than a dead&#8209;flat face. This is the gap that matters most, because it is the failure mode most likely to make the remedy read worse than the defect. Treat the crown as cheap insurance rather than waiting for an answer.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip open">Open</span>Can a matching white actually be obtained?</span>
+      <p>Unresolved: whether the installed trim is SMP or PVDF, its original color name and gloss, and whether the coil supplier can still run it. A nominal color&#8209;name match will not resolve gloss difference or metamerism against weathered material. This is a phone call to the rep, not a research question &mdash; but it should happen before the brake runs, not after.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip open">Open</span>Is adhesive&#8209;only attachment ever acceptable overhead?</span>
+      <p>Whether a sealant&#8209;adhesive with a published TDS meeting the Tamlyn thresholds is rated for continuous overhead tensile load. Absent that, rivet it.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip open">Open</span>One&#8209;piece riveted, or two&#8209;piece over a continuous backer?</span>
+      <p>No source compares the two for a remedial application. For Wednesday, riveted one&#8209;piece is the lower&#8209;risk call.</p>
+    </div>
+    <div class="kill">
+      <span class="t"><span class="chip open">Open</span>The whole of research angle 5</span>
+      <p>Published tolerance for reveal, joint&#8209;width variation and alignment in architectural metal soffit work. SMACNA&rsquo;s manual, MCA bulletins and a real 07&nbsp;42&nbsp;13 section were not obtained. See F&#8209;10.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">05</span><h2>How to read this</h2></div>
+
+    <div class="callout warn">
+      <span class="label">The dominant caveat</span>
+      <p>Every verifier independently flagged the same thing: these products are precedent for the <em>mechanism</em> only, never a usable part. Berridge, Metal Sales and DMI caps run parallel to ribs; Drexel is parapet coping; Western States is a new&#8209;install detail; Tamlyn is siding trim. Do not let a verified part number read as something you can order for this joint.</p>
+    </div>
+
+    <div class="callout">
+      <span class="label">Source class</span>
+      <p>Every surviving claim rests on manufacturer primary literature. That is the right source class for product existence and dimensions, but it means this report is strong on what exists and weak on independent field performance. Nothing here verifies how a shallow cover actually behaves overhead over a crooked substrate &mdash; that part is still judgment and a dry&#8209;fit.</p>
+      <p>Two narrower notes: the Tamlyn adhesive thresholds use ASTM&nbsp;D412, an elastomer tension test, so they are usable for picking a gunnable sealant&#8209;adhesive but are <em>not</em> a valid basis for screening acrylic foam tape. And springback by gauge and alloy, minimum inside bend radius, brake bend order, and rivet spacing all returned nothing verified &mdash; the hem standard and the rivet spec are the only fabrication items with sources behind them.</p>
+    </div>
+
+    <p>All product pages were live as of 24 August 2026, and no discontinuations were found. Trim profiles, hem standards and rivet specs are stable, so this does not go stale quickly.</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">Source</th><th scope="col">Class</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://www.berridge.com/products/alternative-systems/batten-seam-panel/">Berridge &mdash; Batten Seam Panel</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.metalsales.us.com/wp-content/uploads/2023/06/Mini-Batten-CTR-2023.pdf">Metal Sales &mdash; Mini-Batten CTR drawing</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://dmimetals.com/product/bs15/">DMI Metals &mdash; Batten-Seam BS15</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://drexmet.com/wp-content/uploads/2023/06/Snap-Coping-Max-Install-Guide.pdf">Drexel Metals &mdash; Snap Coping-Max install guide</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.mcelroymetal.com/metal-roofing-accessories/trim-details">McElroy Metal &mdash; trim details &amp; hem standard</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.westernstatesmetalroofing.com/blind-rivet">Western States &mdash; blind rivet data (STST43)</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.westernstatesmetalroofing.com/board-batten-metal-soffit-end-splice-reveal-trim-ws-1202">Western States &mdash; WS-1202 soffit end splice</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.westernstatesmetalroofing.com/board-batten-metal-soffit-end-splice-ws-1200">Western States &mdash; WS-1200 end splice</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://tamlyn.com/product-category/xtremetrim/2-piece-profiles/">Tamlyn &mdash; XtremeTrim 2-piece profiles</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.atas.com/wp-content/uploads/2019/07/Preformed-Metal-Panel-Installation-Guidelines.pdf">ATAS &mdash; preformed metal panel installation guidelines</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.metalconstruction.org/view/download.php/online-education/education-materials/walls-educational-files/materials/visual-acceptance-for-single-skin-architectural-metal-wall-panels">MCA &mdash; visual acceptance for single-skin metal wall panels</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://designguidelines.nycha.info/wp-content/uploads/2024/02/07-62-00-2-sheet-metal-flashing-and-trim.pdf">Institutional spec &mdash; 07 62 00 sheet metal flashing &amp; trim</a></td><td class="q"><span class="chip killed">Refuted</span></td></tr>
+          <tr><td><a href="https://1stcoastmrs.com/wp-content/uploads/2021/04/Installation-Manual.pdf">Metal roofing installation manual</a></td><td class="q"><span class="chip high">Primary</span></td></tr>
+          <tr><td><a href="https://www.arcat.com/sdspecs/htm04/07_42_13aps.htm">ARCAT &mdash; 07 42 13 guide specification</a></td><td class="q"><span class="chip medium">Secondary</span></td></tr>
+          <tr><td><a href="https://readmetalroofing.com/panel-clips-and-cleats-101/">Panel clips and cleats 101</a></td><td class="q"><span class="chip medium">Secondary</span></td></tr>
+          <tr><td><a href="https://www.thefabricator.com/thefabricator/article/bending/bending-basics-the-hows-and-whys-of-springback-and-springforward">The Fabricator &mdash; springback and springforward</a></td><td class="q"><span class="chip medium">Secondary</span></td></tr>
+          <tr><td><a href="https://nfba.org/aws/NFBA/asset_manager/get_file/892538?ver=0">NFBA &mdash; technical document</a></td><td class="q"><span class="chip medium">Secondary</span></td></tr>
+          <tr><td><a href="https://sheffieldmetals.com/learning-center/what-is-oil-canning/">Sheffield Metals &mdash; what is oil-canning</a></td><td class="q"><span class="chip open">Trade blog</span></td></tr>
+          <tr><td><a href="https://sheffieldmetals.com/learning-center/pvdf-vs-smp/">Sheffield Metals &mdash; PVDF vs SMP</a></td><td class="q"><span class="chip open">Trade blog</span></td></tr>
+          <tr><td><a href="https://sheffieldmetals.com/learning-center/metal-roofing-clips/">Sheffield Metals &mdash; metal roofing clips</a></td><td class="q"><span class="chip open">Trade blog</span></td></tr>
+          <tr><td><a href="https://fractory.com/sheet-metal-hemming/">Fractory &mdash; sheet metal hemming</a></td><td class="q"><span class="chip open">Trade blog</span></td></tr>
+          <tr><td><a href="https://www.jeelix.com/metal-hemming-guide/">Metal hemming guide</a></td><td class="q"><span class="chip open">Trade blog</span></td></tr>
+          <tr><td><a href="https://homedepot.com/p/Gibraltar-Building-Products-0-015-Aluminum-Smooth-Texture-H-Moulding-Joint-Cover-for-7-16-in-Hardboard-Siding-06627/202093040">Gibraltar &mdash; aluminum H-moulding joint cover</a></td><td class="q"><span class="chip medium">Secondary</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    Method: five research angles, parallel web search per angle, 23 sources fetched and de-duplicated, 110 falsifiable claims extracted, 25 carried into verification, each checked by three independent verifiers prompted to refute rather than confirm &mdash; two of three refutations kill a claim. 11 survived; 14 were killed; 10 remain after merging semantic duplicates. Six claims were dropped on budget before verification and are not represented here. Every dimension, part number and spec figure in this report should be confirmed against a current cut sheet before it is fabricated from.
+  </footer>
+
+</div>
