@@ -11,3 +11,4 @@ build never reads this directory.
 | --- | --- | --- |
 | `lee-street-soffit-punch-closeout.html` | Lee Street canopy soffit — 1670 S. Floyd St. | 2026-08-24 |
 | `lee-street-cover-trim-research.html` | Lee Street — cover trim sourcing & fabrication research | 2026-08-24 |
+| `lee-street-superior-metal-order.html` | Lee Street — Superior Metal material request (24 pcs 10' reverse J, 1-1/8" ID) | 2026-08-25 |
