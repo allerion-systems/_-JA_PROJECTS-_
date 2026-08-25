@@ -1,0 +1,343 @@
+<title>Superior Metal Material Request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  :root {
+    --paper:#E9EDF2; --surface:#FFFFFF; --surface-2:#F4F6F9;
+    --ink:#151D26; --ink-2:#56636F; --ink-3:#7C8895;
+    --rule:#C4CEDA; --rule-soft:#DDE3EA;
+    --cardinal:#A81B2E; --cardinal-w:#F6E7E9;
+    --amber:#8A5A08; --amber-w:#F7EEDC;
+    --green:#1C6248; --green-w:#E1EFE8;
+    --fill:#FFF6D8; --fill-line:#C9A227;
+    --trim:#E4E8ED;
+    --shadow:0 1px 2px rgba(21,29,38,.06), 0 6px 20px -12px rgba(21,29,38,.28);
+    --f-head:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0F141A; --surface:#181F27; --surface-2:#1F2731;
+      --ink:#E2E8EF; --ink-2:#A2AEBB; --ink-3:#7E8B99;
+      --rule:#33404E; --rule-soft:#262F3A;
+      --cardinal:#F0798A; --cardinal-w:#3A1B21;
+      --amber:#E0AC5A; --amber-w:#362A16;
+      --green:#6DC7A2; --green-w:#163026;
+      --fill:#2E2716; --fill-line:#B8952E;
+      --trim:#3A4552;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 20px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0F141A; --surface:#181F27; --surface-2:#1F2731;
+    --ink:#E2E8EF; --ink-2:#A2AEBB; --ink-3:#7E8B99;
+    --rule:#33404E; --rule-soft:#262F3A;
+    --cardinal:#F0798A; --cardinal-w:#3A1B21;
+    --amber:#E0AC5A; --amber-w:#362A16;
+    --green:#6DC7A2; --green-w:#163026;
+    --fill:#2E2716; --fill-line:#B8952E;
+    --trim:#3A4552;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 20px -12px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--f-body); font-size:16.5px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet { max-width:900px; margin:0 auto; padding:0 18px 90px; }
+
+  .titleblock {
+    background:var(--surface); border:1px solid var(--rule);
+    border-top:3px solid var(--cardinal); margin-top:24px; box-shadow:var(--shadow);
+  }
+  .tb-main { padding:24px 26px 20px; }
+  .eyebrow {
+    font-family:var(--f-mono); font-size:11px; font-weight:500;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--cardinal); margin:0;
+  }
+  h1 {
+    font-family:var(--f-head); font-weight:700;
+    font-size:clamp(26px,4.4vw,38px); line-height:1.06;
+    letter-spacing:-.02em; margin:8px 0 0; text-wrap:balance;
+  }
+  .tb-sub { font-size:15.5px; color:var(--ink-2); margin:10px 0 0; max-width:60ch; }
+  .tb-grid { border-top:1px solid var(--rule); display:grid; grid-template-columns:repeat(4,1fr); }
+  .tb-cell { padding:11px 15px 13px; border-right:1px solid var(--rule-soft); min-width:0; }
+  .tb-cell:last-child { border-right:0; }
+  .tb-cell span {
+    display:block; font-family:var(--f-mono); font-size:9.5px;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:3px;
+  }
+  .tb-cell strong {
+    font-family:var(--f-head); font-weight:600; font-size:14px;
+    color:var(--ink); display:block; line-height:1.3;
+  }
+
+  .shead {
+    display:flex; align-items:baseline; gap:12px;
+    border-bottom:1px solid var(--rule); padding-bottom:8px; margin:44px 0 18px;
+  }
+  .shead .num {
+    font-family:var(--f-mono); font-size:12px; font-weight:600;
+    color:var(--cardinal); letter-spacing:.04em;
+  }
+  .shead h2 { font-family:var(--f-head); font-weight:600; font-size:20px; letter-spacing:-.01em; margin:0; }
+  h3 { font-family:var(--f-head); font-weight:600; font-size:15px; margin:26px 0 7px; }
+  p { margin:0 0 13px; max-width:68ch; }
+  .lede { font-size:18px; }
+  .m { font-family:var(--f-mono); font-size:.88em; font-weight:500; }
+  strong { font-weight:600; }
+  em { font-style:italic; }
+
+  .fb {
+    display:inline-block; min-width:4.5em; padding:0 .45em;
+    background:var(--fill); border-bottom:1.5px solid var(--fill-line);
+    font-family:var(--f-mono); font-size:.86em; font-weight:600;
+    color:var(--ink-3); text-align:center;
+  }
+  .fb.wide { min-width:9em; }
+
+  .tablewrap {
+    overflow-x:auto; margin:18px 0 22px; border:1px solid var(--rule);
+    background:var(--surface); box-shadow:var(--shadow);
+  }
+  table { border-collapse:collapse; width:100%; font-family:var(--f-head); font-size:14px; min-width:560px; }
+  th, td { text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
+  th {
+    font-family:var(--f-mono); font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:500;
+    background:var(--surface-2); border-bottom:1px solid var(--rule); white-space:nowrap;
+  }
+  tbody tr:last-child td { border-bottom:0; }
+  td.item { font-weight:600; white-space:nowrap; }
+  td.qty { font-family:var(--f-mono); font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  tr.headline td { background:var(--cardinal-w); }
+  tr.headline td.item, tr.headline td.qty { color:var(--cardinal); }
+
+  figure { margin:22px 0 26px; background:var(--surface); border:1px solid var(--rule); box-shadow:var(--shadow); }
+  .figwrap { overflow-x:auto; padding:16px 16px 4px; }
+  figure svg { display:block; max-width:100%; height:auto; min-width:540px; color:var(--ink); }
+  figcaption {
+    font-family:var(--f-head); font-size:12.5px; line-height:1.5; color:var(--ink-2);
+    padding:11px 16px 14px; border-top:1px solid var(--rule-soft); background:var(--surface-2);
+  }
+  figcaption b { color:var(--ink); font-weight:600; }
+  figure svg .s-red-f { fill:var(--cardinal); }
+  figure svg .s-red-s { stroke:var(--cardinal); }
+  figure svg .s-trim-f { fill:var(--trim); }
+  figure svg .s-fill-f { fill:var(--fill); }
+
+  .callout {
+    border:1px solid var(--rule); border-left:3px solid var(--cardinal);
+    background:var(--surface); padding:15px 19px; margin:20px 0; box-shadow:var(--shadow);
+  }
+  .callout .label {
+    font-family:var(--f-mono); font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--cardinal); display:block; margin-bottom:6px;
+  }
+  .callout p { margin:0; max-width:62ch; }
+  .callout p + p { margin-top:9px; }
+  .callout.warn { border-left-color:var(--amber); }
+  .callout.warn .label { color:var(--amber); }
+
+  ol.steps { list-style:none; counter-reset:s; padding:0; margin:16px 0 20px; }
+  ol.steps > li { counter-increment:s; position:relative; padding:0 0 13px 42px; max-width:66ch; }
+  ol.steps > li::before {
+    content:counter(s,decimal-leading-zero); position:absolute; left:0; top:1px;
+    font-family:var(--f-mono); font-size:11px; font-weight:600;
+    color:var(--cardinal); background:var(--cardinal-w); border:1px solid var(--cardinal);
+    width:28px; height:22px; display:grid; place-items:center;
+  }
+  ol.steps > li b { font-family:var(--f-head); font-weight:600; }
+
+  footer {
+    margin-top:40px; padding-top:16px; border-top:1px solid var(--rule);
+    font-family:var(--f-mono); font-size:11px; line-height:1.7;
+    color:var(--ink-3); max-width:78ch;
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="titleblock">
+    <div class="tb-main">
+      <p class="eyebrow">Lee Street Canopy Soffit &middot; Material Request</p>
+      <h1>Superior Metal Order</h1>
+      <p class="tb-sub">Reverse J&#8209;channel cover trim to close the canopy soffit punch list. Field&#8209;measured on site 25&nbsp;Aug. Needed on site Wednesday morning.</p>
+    </div>
+    <div class="tb-grid">
+      <div class="tb-cell"><span>Project</span><strong>Lee Street</strong></div>
+      <div class="tb-cell"><span>Location</span><strong>1670 S. Floyd St.</strong></div>
+      <div class="tb-cell"><span>Needed on site</span><strong>Wed AM</strong></div>
+      <div class="tb-cell"><span>Contact</span><strong><span class="fb wide">name / cell</span></strong></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="shead"><span class="num">01</span><h2>The order</h2></div>
+
+    <p class="lede">24 sticks of 10&prime; reverse J&#8209;channel, <span class="m">1&#8209;1/8&Prime;</span> inside dimension, white to match the scrap we are bringing you.</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">#</th><th scope="col">Item</th><th scope="col">Spec</th><th scope="col">Qty</th></tr></thead>
+        <tbody>
+          <tr class="headline">
+            <td class="qty">1</td>
+            <td class="item">Reverse J&#8209;channel</td>
+            <td><strong><span class="m">1&#8209;1/8&Prime; ID</span></strong> throat &mdash; field&#8209;measured, must clear the existing soffit assembly. <span class="m">10&prime;&#8209;0&Prime;</span> sticks. White to match supplied scrap. Hem the exposed edge <span class="m">1/2&Prime;</span>, 180&deg;.</td>
+            <td class="qty">24 pcs<br>240 LF</td>
+          </tr>
+          <tr>
+            <td class="qty">2</td>
+            <td class="item">Splice backers</td>
+            <td>Same coil, flat, <span class="m">8&Prime;</span> long &times; channel girth. Concealed behind each butt joint so the two stick ends stay in plane. <em>One per splice plus two spare.</em></td>
+            <td class="qty"><span class="fb">ea</span></td>
+          </tr>
+          <tr>
+            <td class="qty">3</td>
+            <td class="item">End caps</td>
+            <td>Same coil, formed to close the open channel at each termination. Tell us if you would rather we field&#8209;notch and return the leg.</td>
+            <td class="qty"><span class="fb">ea</span></td>
+          </tr>
+          <tr>
+            <td class="qty">4</td>
+            <td class="item">Flat stock</td>
+            <td>Same coil, flat sheet &mdash; field&#8209;cut shims and packing where the substrate falls away behind the channel.</td>
+            <td class="qty"><span class="fb">sf</span></td>
+          </tr>
+          <tr>
+            <td class="qty">5</td>
+            <td class="item">Blind rivets</td>
+            <td><span class="m">1/8&Prime;</span> painted blind rivet, <strong>stainless body and stainless mandrel</strong>, dome head, <span class="m">#30</span> hole, grip <span class="m">.126&ndash;.187</span>. White to match. WSMR STST43 or equal.</td>
+            <td class="qty">400 ea</td>
+          </tr>
+          <tr>
+            <td class="qty">6</td>
+            <td class="item">Butyl tape</td>
+            <td><span class="m">1/8&Prime; &times; 3/4&Prime;</span> butyl sealant tape for the splice backers.</td>
+            <td class="qty">2 rolls</td>
+          </tr>
+          <tr>
+            <td class="qty">7</td>
+            <td class="item">Pancake screws</td>
+            <td><span class="m">#10 &times; 1&Prime;</span> pancake head, color&#8209;matched white &mdash; refastening loose soffit pieces.</td>
+            <td class="qty">100 ea</td>
+          </tr>
+          <tr>
+            <td class="qty">8</td>
+            <td class="item">Touch&#8209;up paint</td>
+            <td>Matching white, same batch as the coil.</td>
+            <td class="qty">2 ea</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <span class="label">Still needed from us before you run it</span>
+      <p><strong>Gauge and coating.</strong> <span class="fb wide">24ga steel / .032 alum</span> &nbsp;and&nbsp; <span class="fb wide">SMP / PVDF</span> &mdash; match whatever the existing trim is. If you can read it off the scrap, tell us.</p>
+      <p><strong>Leg depths.</strong> The <span class="m">1&#8209;1/8&Prime;</span> is the throat. We still owe you how deep each leg runs and how wide the exposed face is: <span class="fb">back leg</span> / <span class="fb">face</span> / <span class="fb">front leg</span>.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">02</span><h2>Profile</h2></div>
+
+    <figure>
+      <div class="figwrap">
+        <svg viewBox="0 0 820 300" role="img" aria-label="Section through the reverse J-channel. The throat opening is one and one eighth inches inside dimension, field measured, and slips up over the existing soffit assembly. The back leg, exposed face, and front leg depths are still to be confirmed. The exposed edge is hemmed one half inch at one hundred eighty degrees.">
+          <defs>
+            <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+            </marker>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" class="s-red-f"></path>
+            </marker>
+            <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="8" stroke="currentColor" stroke-width="1" opacity=".3"></line>
+            </pattern>
+          </defs>
+
+          <text x="20" y="22" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" letter-spacing="1.6" fill="currentColor">SECTION &mdash; CHANNEL SLIPS UP OVER EXISTING</text>
+          <line x1="20" y1="30" x2="800" y2="30" stroke="currentColor" stroke-width="1" opacity=".3"></line>
+
+          <!-- existing assembly being swallowed -->
+          <rect x="330" y="58" width="150" height="74" fill="url(#hatch)" stroke="currentColor" stroke-width="1.3"></rect>
+          <text x="405" y="90" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".8">EXISTING</text>
+          <text x="405" y="105" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".8">SOFFIT ASSY</text>
+
+          <!-- the reverse J: throat up, face down, hem -->
+          <path d="M 318 62 L 318 178 L 492 178 L 492 62"
+                fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="miter"></path>
+          <!-- hem on the front (exposed) leg -->
+          <path d="M 492 62 L 492 52 L 484 52 L 484 76" fill="none" stroke="currentColor" stroke-width="4"></path>
+
+          <!-- ID dimension -->
+          <line x1="322" y1="146" x2="488" y2="146" stroke-width="1.6" class="s-red-s" marker-start="url(#a2)" marker-end="url(#a2)"></line>
+          <text x="405" y="166" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" class="s-red-f">1-1/8&Prime; ID</text>
+          <text x="405" y="140" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" class="s-red-f" opacity=".9">FIELD MEASURED</text>
+
+          <!-- slip direction arrows -->
+          <line x1="405" y1="238" x2="405" y2="196" stroke-width="2" class="s-red-s" marker-end="url(#a2)"></line>
+          <text x="405" y="256" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" class="s-red-f">SLIPS UP</text>
+
+          <!-- leg callouts -->
+          <line x1="318" y1="62" x2="318" y2="178" stroke="currentColor" stroke-width="1.2" opacity=".0"></line>
+          <line x1="296" y1="62" x2="296" y2="178" stroke="currentColor" stroke-width="1.2" marker-start="url(#a1)" marker-end="url(#a1)"></line>
+          <text x="288" y="112" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="currentColor">BACK LEG</text>
+          <text x="288" y="126" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".75">TBC</text>
+
+          <line x1="514" y1="62" x2="514" y2="178" stroke="currentColor" stroke-width="1.2" marker-start="url(#a1)" marker-end="url(#a1)"></line>
+          <text x="524" y="112" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="currentColor">FRONT LEG</text>
+          <text x="524" y="126" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".75">TBC</text>
+
+          <line x1="484" y1="56" x2="590" y2="34" stroke="currentColor" stroke-width="1" marker-start="url(#a1)"></line>
+          <text x="596" y="32" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="currentColor">1/2&Prime; HEM, 180&deg;</text>
+          <text x="596" y="46" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".8">EXPOSED EDGE</text>
+
+          <line x1="318" y1="196" x2="492" y2="196" stroke="currentColor" stroke-width="1.2" marker-start="url(#a1)" marker-end="url(#a1)"></line>
+          <text x="180" y="200" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="currentColor">EXPOSED FACE &mdash; TBC</text>
+          <line x1="188" y1="196" x2="312" y2="196" stroke="currentColor" stroke-width="1" opacity=".45"></line>
+
+          <text x="20" y="284" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".7">SOFFIT CONDITION &mdash; VIEWED FROM BELOW. NON-STRUCTURAL COVER TRIM.</text>
+        </svg>
+      </div>
+      <figcaption><b>The <span class="m">1&#8209;1/8&Prime;</span> is the throat, not the trim size.</b> It is the clearance that has to swallow what is already on the building. Leg depths and exposed face still to be confirmed &mdash; those are what Superior will ask for to quote and brake it.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">03</span><h2>Read this before you run it</h2></div>
+
+    <div class="callout warn">
+      <span class="label">Color match &mdash; the one that bites</span>
+      <p>We are bringing a <strong>physical scrap of the existing white trim</strong>. Match to the scrap, not to a color name. The existing has been on the building through a summer, so a nominal name match can still read wrong beside it &mdash; and these two whites will sit six inches apart on a red field where everyone looks up at them.</p>
+      <p>If you cannot confirm a match from the scrap, <strong>call before running</strong>. We would rather change the plan than hang the wrong white.</p>
+    </div>
+
+    <p>Context so the shop knows what this is doing: the canopy beam was field&#8209;cut and is out of plane, so the existing splice trim never had a flat surface to land on and the reveal at the joint wanders. This channel slips up over the whole condition and hides it. Nothing here is structural &mdash; it is all appearance, which is exactly why the color match and the flatness of the exposed face are the whole job.</p>
+  </section>
+
+  <section>
+    <div class="shead"><span class="num">04</span><h2>Questions for Superior</h2></div>
+
+    <ol class="steps">
+      <li><b>Can you have 24 sticks Wednesday morning?</b> If not, what is the soonest &mdash; and can we take the channel first and pick up the small items after?</li>
+      <li><b>Does the scrap match anything you already stock?</b> A same&#8209;coil match beats a close match every time.</li>
+      <li><b>Is the existing SMP or PVDF?</b> If you can tell from the scrap, tell us &mdash; we want the same coating system, not just the same color name.</li>
+      <li><b>At our exposed face width, do you want a crown or a light center vee in it?</b> You form more of this than we do. If a flat face that wide will oil&#8209;can on you, say so and put a break in it &mdash; a wavy white line overhead would be worse than what we are covering.</li>
+      <li><b>Do you stock the painted stainless rivet in this white,</b> or do we source it separately?</li>
+    </ol>
+  </section>
+
+  <footer>
+    Quantities and the <span class="m">1&#8209;1/8&Prime;</span> inside dimension are field&#8209;measured on site 25&nbsp;Aug 2026. Gauge, coating, leg depths and exposed face width are to be confirmed before fabrication. Color match is to the supplied physical scrap, not to a color name. Cover trim is remedial over finished work and carries no structural load.
+  </footer>
+
+</div>

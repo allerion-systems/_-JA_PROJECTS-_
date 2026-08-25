@@ -1,0 +1,835 @@
+<title>Lee Street Soffit Closeout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  :root {
+    --paper:      #E9EDF2;
+    --surface:    #FFFFFF;
+    --surface-2:  #F4F6F9;
+    --ink:        #151D26;
+    --ink-2:      #56636F;
+    --ink-3:      #7C8895;
+    --rule:       #C4CEDA;
+    --rule-soft:  #DDE3EA;
+    --cardinal:   #A81B2E;
+    --cardinal-w: #F6E7E9;
+    --amber:      #8A5A08;
+    --amber-w:    #F7EEDC;
+    --green:      #1C6248;
+    --green-w:    #E1EFE8;
+    --trim:       #E4E8ED;
+    --shadow:     0 1px 2px rgba(21,29,38,.06), 0 6px 20px -12px rgba(21,29,38,.28);
+
+    --f-head: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #0F141A;
+      --surface:    #181F27;
+      --surface-2:  #1F2731;
+      --ink:        #E2E8EF;
+      --ink-2:      #A2AEBB;
+      --ink-3:      #7E8B99;
+      --rule:       #33404E;
+      --rule-soft:  #262F3A;
+      --cardinal:   #F0798A;
+      --cardinal-w: #3A1B21;
+      --amber:      #E0AC5A;
+      --amber-w:    #362A16;
+      --green:      #6DC7A2;
+      --green-w:    #163026;
+      --trim:       #3A4552;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 6px 20px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:      #0F141A;
+    --surface:    #181F27;
+    --surface-2:  #1F2731;
+    --ink:        #E2E8EF;
+    --ink-2:      #A2AEBB;
+    --ink-3:      #7E8B99;
+    --rule:       #33404E;
+    --rule-soft:  #262F3A;
+    --cardinal:   #F0798A;
+    --cardinal-w: #3A1B21;
+    --amber:      #E0AC5A;
+    --amber-w:    #362A16;
+    --green:      #6DC7A2;
+    --green-w:    #163026;
+    --trim:       #3A4552;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 6px 20px -12px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+  }
+
+  /* ---------- title block ---------- */
+
+  .titleblock {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--cardinal);
+    margin-top: 28px;
+    box-shadow: var(--shadow);
+  }
+  .tb-main {
+    padding: 26px 28px 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 32px;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .tb-main h1 {
+    font-family: var(--f-head);
+    font-weight: 700;
+    font-size: clamp(28px, 4.4vw, 42px);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    margin: 6px 0 0;
+    text-wrap: balance;
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--cardinal);
+    margin: 0;
+  }
+  .tb-sub {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin: 10px 0 0;
+    max-width: 46ch;
+  }
+  .stamp {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    border-left: 1px solid var(--rule);
+    padding-left: 18px;
+    white-space: nowrap;
+  }
+  .stamp b { color: var(--ink); font-weight: 600; display: block; font-size: 13px; }
+
+  .tb-grid {
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .tb-cell {
+    padding: 12px 16px 14px;
+    border-right: 1px solid var(--rule-soft);
+    min-width: 0;
+  }
+  .tb-cell:last-child { border-right: 0; }
+  .tb-cell span {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 3px;
+  }
+  .tb-cell strong {
+    font-family: var(--f-head);
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    display: block;
+    line-height: 1.3;
+  }
+
+  /* ---------- layout ---------- */
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 306px;
+    gap: 44px;
+    margin-top: 44px;
+    align-items: start;
+  }
+
+  section { margin: 0 0 52px; scroll-margin-top: 20px; }
+
+  .shead {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 9px;
+    margin-bottom: 20px;
+  }
+  .shead .num {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cardinal);
+    letter-spacing: .04em;
+  }
+  .shead h2 {
+    font-family: var(--f-head);
+    font-weight: 600;
+    font-size: 21px;
+    letter-spacing: -.01em;
+    margin: 0;
+  }
+
+  h3 {
+    font-family: var(--f-head);
+    font-weight: 600;
+    font-size: 15.5px;
+    letter-spacing: .0em;
+    margin: 30px 0 8px;
+  }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .lede { font-size: 18px; color: var(--ink); }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+
+  code, .m {
+    font-family: var(--f-mono);
+    font-size: .88em;
+    font-weight: 500;
+  }
+  code {
+    background: var(--surface-2);
+    border: 1px solid var(--rule-soft);
+    padding: 1px 5px;
+    white-space: nowrap;
+  }
+
+  /* ---------- figures ---------- */
+
+  figure {
+    margin: 26px 0 30px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .figwrap { overflow-x: auto; padding: 18px 18px 4px; }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 560px; color: var(--ink); }
+  figcaption {
+    font-family: var(--f-head);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    padding: 12px 18px 15px;
+    border-top: 1px solid var(--rule-soft);
+    background: var(--surface-2);
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* SVG fills/strokes must be CSS, not presentation attributes: var() does not
+     resolve in an attribute value, so these would silently render black. */
+  figure svg .s-red-f  { fill: var(--cardinal); }
+  figure svg .s-red-s  { stroke: var(--cardinal); }
+  figure svg .s-trim-f { fill: var(--trim); }
+
+  /* ---------- spec table ---------- */
+
+  .tablewrap { overflow-x: auto; margin: 20px 0 26px; border: 1px solid var(--rule); background: var(--surface); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-family: var(--f-head); font-size: 14px; }
+  th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  th {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.k { font-weight: 600; white-space: nowrap; width: 1%; }
+  td.v .m { color: var(--ink); }
+  .num-col { font-variant-numeric: tabular-nums; }
+
+  /* ---------- steps ---------- */
+
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 18px 0 24px; }
+  ol.steps > li {
+    counter-increment: s;
+    position: relative;
+    padding: 0 0 16px 46px;
+    margin: 0;
+    max-width: 68ch;
+  }
+  ol.steps > li::before {
+    content: counter(s, decimal-leading-zero);
+    position: absolute;
+    left: 0; top: 1px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cardinal);
+    background: var(--cardinal-w);
+    border: 1px solid var(--cardinal);
+    width: 30px; height: 24px;
+    display: grid; place-items: center;
+  }
+  ol.steps > li b { font-family: var(--f-head); font-weight: 600; }
+
+  ul.plain { padding-left: 20px; margin: 12px 0 18px; max-width: 68ch; }
+  ul.plain li { margin-bottom: 8px; }
+
+  /* ---------- callout ---------- */
+
+  .callout {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--cardinal);
+    background: var(--surface);
+    padding: 16px 20px;
+    margin: 22px 0;
+    box-shadow: var(--shadow);
+  }
+  .callout p { margin: 0; max-width: 62ch; }
+  .callout p + p { margin-top: 10px; }
+  .callout .label {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--cardinal);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .callout.warn { border-left-color: var(--amber); }
+  .callout.warn .label { color: var(--amber); }
+
+  /* ---------- rail ---------- */
+
+  .rail { display: flex; flex-direction: column; gap: 22px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .card > h4 {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface-2);
+  }
+  .card-body { padding: 4px 16px 14px; }
+
+  .item {
+    padding: 13px 0 12px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .item:last-child { border-bottom: 0; }
+  .item .id {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: .06em;
+  }
+  .item .t {
+    font-family: var(--f-head);
+    font-weight: 600;
+    font-size: 14.5px;
+    line-height: 1.3;
+    margin: 3px 0 5px;
+    display: block;
+    color: var(--ink);
+  }
+  .item .d { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); margin: 0; }
+
+  .chip {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 2px 7px 3px;
+    border: 1px solid;
+    margin-left: 8px;
+    vertical-align: 1px;
+  }
+  .chip.rework { color: var(--cardinal); border-color: var(--cardinal); background: var(--cardinal-w); }
+  .chip.scope  { color: var(--amber);    border-color: var(--amber);    background: var(--amber-w); }
+  .chip.ready  { color: var(--green);    border-color: var(--green);    background: var(--green-w); }
+
+  .sched { list-style: none; margin: 0; padding: 4px 0 0; }
+  .sched li {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    font-family: var(--f-head);
+    font-size: 13.5px;
+    line-height: 1.42;
+  }
+  .sched li:last-child { border-bottom: 0; }
+  .sched time {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-3);
+    padding-top: 1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .sched .who { display: block; font-size: 11.5px; color: var(--ink-3); font-family: var(--f-mono); margin-top: 2px; }
+  .sched li.mark time { color: var(--cardinal); }
+  .sched li.mark span:not(.who) { font-weight: 600; }
+
+  /* ---------- email ---------- */
+
+  .email {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    margin: 22px 0 8px;
+  }
+  .email-head {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface-2);
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-2);
+  }
+  .email-head b { color: var(--ink); font-weight: 600; }
+  .email-body { padding: 20px 24px 8px; }
+  .email-body p { font-size: 15.5px; max-width: 64ch; }
+  .email-body ul { font-size: 15.5px; }
+
+  footer {
+    margin-top: 12px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--ink-3);
+    max-width: 78ch;
+  }
+
+  @media (max-width: 900px) {
+    .body-grid { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 34px; }
+    .rail { margin-bottom: 52px; }
+    .tb-grid { grid-template-columns: repeat(2, 1fr); }
+    .tb-cell:nth-child(2) { border-right: 0; }
+    .tb-cell:nth-child(1), .tb-cell:nth-child(2) { border-bottom: 1px solid var(--rule-soft); }
+    .stamp { border-left: 0; padding-left: 0; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="titleblock">
+    <div class="tb-main">
+      <div>
+        <p class="eyebrow">Field Directive FD-01 &middot; Punch Closeout</p>
+        <h1>Lee Street Canopy Soffit</h1>
+        <p class="tb-sub">Three open items, one root cause, and a cover-cap detail the crew can brake and hang in a single day.</p>
+      </div>
+      <div class="stamp">
+        <b>Issued 24 Aug 2026</b>
+        Work day &mdash; Wed 26 Aug<br>
+        GC walk &mdash; 10:30 AM<br>
+        Rev. 0
+      </div>
+    </div>
+    <div class="tb-grid">
+      <div class="tb-cell"><span>Project</span><strong>Lee Street</strong></div>
+      <div class="tb-cell"><span>Location</span><strong>1670 S. Floyd St.</strong></div>
+      <div class="tb-cell"><span>General Contractor</span><strong>Buffalo Construction</strong></div>
+      <div class="tb-cell"><span>Open items</span><strong>2 rework &middot; 1 scope</strong></div>
+    </div>
+  </header>
+
+  <div class="body-grid">
+
+    <main>
+
+      <section id="cause">
+        <div class="shead"><span class="num">01</span><h2>What is actually wrong</h2></div>
+
+        <p class="lede">The soffit panels are not the problem. The line they die into is.</p>
+
+        <p>The framers cut the canopy beam in the field with a chainsaw and a Sawzall, so the face the splice trim had to land on is not straight and not in one plane. When the installers ran the two panel fields, they had a choice: follow the crooked beam and let the red panel runs go out of square with the building, or hold the panels square and absorb the error at the trim. They held the panels square and opened the joint <span class="m">1/16&Prime;</span> to <span class="m">1/8&Prime;</span> to do it.</p>
+
+        <p>That was the right call structurally and the wrong call visually. A red field against a bright white line is the highest-contrast edge on the whole canopy, and the eye reads that white line as a straightedge. Any wander in the reveal &mdash; and the wander here changes along the run and steps at the trim's own butt splice &mdash; reads as sloppy work even though the panels themselves are dead square.</p>
+
+        <div class="callout">
+          <span class="label">Why we are not stripping it</span>
+          <p>Tearing the fields off does not fix a crooked beam. You would re-hang the same panels against the same substrate and land in the same place, plus a week of schedule and a canopy full of new fastener holes. The defect lives in the substrate, so the fix has to be a piece of metal that spans it.</p>
+        </div>
+      </section>
+
+      <section id="cap">
+        <div class="shead"><span class="num">02</span><h2>PL&#8209;01 &mdash; The reverse&#8209;J cover cap</h2></div>
+
+        <p>Brake a shallow channel out of the same white coil the existing trim came from, lap it over the whole joint, and rivet it off. The cap's own edges become the straight line the eye was looking for; the wander disappears underneath the flange.</p>
+
+        <figure>
+          <div class="figwrap">
+            <svg viewBox="0 0 880 322" role="img" aria-label="Cross-section through the soffit joint. On the left, the existing condition: a crooked beam above, the white splice trim below it, and red panel ends stopping short with a gap of one-sixteenth to one-eighth inch on each side. On the right, the same section with a new white cover cap lapping one inch minimum past each gap, riveted through its legs into the panel flats, with packing behind it where the substrate falls away.">
+              <defs>
+                <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+                </marker>
+                <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" class="s-red-f"></path>
+                </marker>
+                <pattern id="wood" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                  <line x1="0" y1="0" x2="0" y2="8" stroke="currentColor" stroke-width="1" opacity=".28"></line>
+                </pattern>
+              </defs>
+
+              <!-- ============ LEFT: EXISTING ============ -->
+              <text x="20" y="24" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" letter-spacing="1.6" fill="currentColor">EXISTING</text>
+              <line x1="20" y1="32" x2="400" y2="32" stroke="currentColor" stroke-width="1" opacity=".35"></line>
+
+              <!-- framing (crooked) -->
+              <polygon points="30,58 400,72 400,110 30,96" fill="url(#wood)" stroke="currentColor" stroke-width="1.25" opacity=".9"></polygon>
+              <text x="42" y="86" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".75">BEAM &mdash; NOT STRAIGHT</text>
+
+              <!-- existing trim, section -->
+              <polygon points="196,118 244,118 244,152 196,152" class="s-trim-f" stroke="currentColor" stroke-width="1.4"></polygon>
+              <line x1="202" y1="122" x2="202" y2="146" stroke="currentColor" stroke-width="1" opacity=".45"></line>
+              <line x1="238" y1="122" x2="238" y2="146" stroke="currentColor" stroke-width="1" opacity=".45"></line>
+
+              <!-- red panels, section, with a rib each side -->
+              <path d="M 40 152 L 40 146 L 96 146 L 104 132 L 128 132 L 136 146 L 190 146 L 190 152 Z" class="s-red-f" stroke="currentColor" stroke-width="1.1"></path>
+              <path d="M 250 152 L 250 146 L 304 146 L 312 132 L 336 132 L 344 146 L 400 146 L 400 152 Z" class="s-red-f" stroke="currentColor" stroke-width="1.1"></path>
+
+              <!-- gap callouts -->
+              <line x1="190" y1="152" x2="190" y2="196" class="s-red-s" stroke-width="1"></line>
+              <line x1="196" y1="152" x2="196" y2="196" class="s-red-s" stroke-width="1"></line>
+              <line x1="244" y1="152" x2="244" y2="196" class="s-red-s" stroke-width="1"></line>
+              <line x1="250" y1="152" x2="250" y2="196" class="s-red-s" stroke-width="1"></line>
+              <line x1="150" y1="196" x2="290" y2="196" class="s-red-s" stroke-width="1.2" marker-start="url(#arr)" marker-end="url(#arr)"></line>
+              <text x="220" y="216" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" class="s-red-f">1/16&Prime;&ndash;1/8&Prime; EACH SIDE</text>
+              <text x="220" y="232" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" class="s-red-f" opacity=".85">VARIES ALONG THE RUN</text>
+
+              <text x="30" y="266" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".7">PANELS HELD SQUARE &mdash;</text>
+              <text x="30" y="281" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity=".7">ERROR PUSHED INTO THE JOINT</text>
+
+              <!-- divider -->
+              <line x1="430" y1="16" x2="430" y2="300" stroke="currentColor" stroke-width="1" opacity=".28" stroke-dasharray="4 5"></line>
+
+              <!-- ============ RIGHT: PROPOSED ============ -->
+              <text x="460" y="24" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" letter-spacing="1.6" class="s-red-f">WITH CAP</text>
+              <line x1="460" y1="32" x2="860" y2="32" class="s-red-s" stroke-width="1" opacity=".5"></line>
+
+              <polygon points="470,58 860,72 860,110 470,96" fill="url(#wood)" stroke="currentColor" stroke-width="1.25" opacity=".9"></polygon>
+
+              <!-- existing trim retained -->
+              <polygon points="640,118 688,118 688,152 640,152" class="s-trim-f" stroke="currentColor" stroke-width="1.4"></polygon>
+
+              <!-- panels -->
+              <path d="M 480 152 L 480 146 L 538 146 L 546 132 L 570 132 L 578 146 L 634 146 L 634 152 Z" class="s-red-f" stroke="currentColor" stroke-width="1.1"></path>
+              <path d="M 694 152 L 694 146 L 750 146 L 758 132 L 782 132 L 790 146 L 850 146 L 850 152 Z" class="s-red-f" stroke="currentColor" stroke-width="1.1"></path>
+
+              <!-- packing behind cap -->
+              <rect x="628" y="152" width="72" height="8" fill="url(#wood)" stroke="currentColor" stroke-width="0.9" opacity=".85"></rect>
+
+              <!-- the cap -->
+              <path d="M 566 150 L 566 168 L 762 168 L 762 150 L 754 150 L 754 160 L 574 160 L 574 150 Z" class="s-trim-f s-red-s" stroke-width="1.8" stroke-linejoin="round"></path>
+              <!-- hems -->
+              <path d="M 566 150 L 561 147" class="s-red-s" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M 762 150 L 767 147" class="s-red-s" stroke-width="1.8" stroke-linecap="round"></path>
+
+              <!-- rivets -->
+              <circle cx="570" cy="163" r="3.4" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+              <circle cx="758" cy="163" r="3.4" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+
+              <!-- leaders -->
+              <line x1="758" y1="163" x2="826" y2="200" stroke="currentColor" stroke-width="1" marker-start="url(#ar)"></line>
+              <text x="830" y="198" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="currentColor" text-anchor="end">1/8&Prime; RIVET</text>
+              <text x="830" y="212" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".8" text-anchor="end">@ 16&Prime; O.C. &mdash; GAUGE THE EDGE</text>
+
+              <line x1="664" y1="156" x2="600" y2="112" stroke="currentColor" stroke-width="1" marker-start="url(#ar)"></line>
+              <text x="596" y="108" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" text-anchor="end">PACK BEHIND AS REQ&rsquo;D</text>
+
+              <!-- coverage dims -->
+              <line x1="566" y1="240" x2="634" y2="240" class="s-red-s" stroke-width="1.2" marker-start="url(#arr)" marker-end="url(#arr)"></line>
+              <line x1="566" y1="172" x2="566" y2="244" class="s-red-s" stroke-width="1" opacity=".6"></line>
+              <line x1="634" y1="156" x2="634" y2="244" class="s-red-s" stroke-width="1" opacity=".6"></line>
+              <text x="600" y="260" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" class="s-red-f">1&Prime; MIN.</text>
+
+              <line x1="566" y1="290" x2="762" y2="290" stroke="currentColor" stroke-width="1.2" marker-start="url(#ar)" marker-end="url(#ar)"></line>
+              <line x1="762" y1="172" x2="762" y2="294" stroke="currentColor" stroke-width="1" opacity=".5"></line>
+              <text x="664" y="308" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" fill="currentColor">CAP FACE &mdash; FIELD VERIFY</text>
+            </svg>
+          </div>
+          <figcaption><b>Section through the joint.</b> The cap does not repair the gap &mdash; it spans it. Every dimension on the right side is driven by one number: the widest reveal anywhere on the run, plus an inch of cover on each side of it.</figcaption>
+        </figure>
+
+        <h3>Set the cap to a string, not to the trim</h3>
+
+        <p>This is the step that decides whether the fix works. The existing trim line is the crooked thing you are hiding &mdash; if you set the cap by holding it to that trim, you will build a second crooked line one inch wider and the client will reject it again. Pull a dry line end to end, set the cap edge to the string, and let the flange width eat the difference.</p>
+
+        <figure>
+          <div class="figwrap">
+            <svg viewBox="0 0 880 250" role="img" aria-label="View looking up at the soffit. The existing trim line wanders about three-sixteenths of an inch across the run. A string line pulled end to end is dead straight. The new cap is set to the string, so its edges are straight while the wandering existing line stays hidden inside the cap's width.">
+              <defs>
+                <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+                </marker>
+              </defs>
+
+              <text x="20" y="22" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" letter-spacing="1.6" fill="currentColor">LOOKING UP AT THE SOFFIT</text>
+
+              <!-- red fields -->
+              <rect x="60" y="46" width="760" height="52" class="s-red-f" opacity=".92"></rect>
+              <rect x="60" y="162" width="760" height="52" class="s-red-f" opacity=".92"></rect>
+              <g stroke="currentColor" stroke-width="0.8" opacity=".25">
+                <line x1="140" y1="46" x2="140" y2="98"></line><line x1="220" y1="46" x2="220" y2="98"></line>
+                <line x1="300" y1="46" x2="300" y2="98"></line><line x1="380" y1="46" x2="380" y2="98"></line>
+                <line x1="460" y1="46" x2="460" y2="98"></line><line x1="540" y1="46" x2="540" y2="98"></line>
+                <line x1="620" y1="46" x2="620" y2="98"></line><line x1="700" y1="46" x2="700" y2="98"></line>
+                <line x1="140" y1="162" x2="140" y2="214"></line><line x1="220" y1="162" x2="220" y2="214"></line>
+                <line x1="300" y1="162" x2="300" y2="214"></line><line x1="380" y1="162" x2="380" y2="214"></line>
+                <line x1="460" y1="162" x2="460" y2="214"></line><line x1="540" y1="162" x2="540" y2="214"></line>
+                <line x1="620" y1="162" x2="620" y2="214"></line><line x1="700" y1="162" x2="700" y2="214"></line>
+              </g>
+
+              <!-- the wandering existing line (dashed = now concealed) -->
+              <path d="M 60 118 C 180 112, 250 126, 340 121 S 520 112, 610 124 S 740 116, 820 120"
+                    fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="6 5" opacity=".85"></path>
+              <path d="M 60 142 C 180 136, 250 150, 340 145 S 520 136, 610 148 S 740 140, 820 144"
+                    fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="6 5" opacity=".85"></path>
+
+              <!-- the cap: dead straight band -->
+              <rect x="60" y="104" width="760" height="52" fill="none" class="s-red-s" stroke-width="2.6"></rect>
+
+              <!-- string line -->
+              <line x1="40" y1="104" x2="846" y2="104" class="s-red-s" stroke-width="1.4" stroke-dasharray="10 6"></line>
+              <circle cx="40" cy="104" r="4" class="s-red-f"></circle>
+              <circle cx="846" cy="104" r="4" class="s-red-f"></circle>
+
+              <text x="40" y="94" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" class="s-red-f">STRING LINE &mdash; SET THE CAP EDGE TO THIS</text>
+
+              <!-- annotations -->
+              <line x1="340" y1="121" x2="300" y2="238" stroke="currentColor" stroke-width="1" marker-start="url(#ar2)"></line>
+              <text x="296" y="242" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor">EXISTING LINE WANDERS &mdash; NOW CONCEALED</text>
+
+              <text x="440" y="136" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600" class="s-red-f">NEW CAP &mdash; STRAIGHT EDGES, TOP AND BOTTOM</text>
+
+              <line x1="846" y1="104" x2="846" y2="156" stroke="currentColor" stroke-width="1.2" marker-start="url(#ar2)" marker-end="url(#ar2)"></line>
+              <text x="856" y="126" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor">FLANGE</text>
+              <text x="856" y="140" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor">ABSORBS IT</text>
+            </svg>
+          </div>
+          <figcaption><b>Why the string line is the whole job.</b> The cap is only as straight as the line you set it to. Held against the existing trim it reproduces the wander; held to a string it reads as a drawn line and the substrate stops mattering.</figcaption>
+        </figure>
+
+        <div class="callout">
+          <span class="label">Field&#8209;measured 25 Aug &mdash; supersedes the estimates below</span>
+          <p>The soffit assembly measures <span class="m">1&#8209;1/8&Prime;</span>, so the channel is ordered at <span class="m">1&#8209;1/8&Prime;</span> inside dimension to slip up over it. Order placed with Superior Metal: <strong>24 sticks at 10&prime;&#8209;0&Prime;</strong>, 240&nbsp;LF. Leg depths, exposed face width, gauge and coating still to be confirmed with the shop before they brake it.</p>
+        </div>
+
+        <h3>Fabrication ticket</h3>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Item</th><th scope="col">Spec</th><th scope="col">Why it matters</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="k">Material</td><td class="v"><span class="m">Same white coil as existing trim</span></td><td>A second white next to the first white is a brand&#8209;new punch item. Verify against a chip in daylight before you brake 100 feet.</td></tr>
+              <tr><td class="k">Face width</td><td class="v"><span class="m">Field verify &mdash; as narrow as will do the job</span></td><td>Widest reveal anywhere on the run, plus <span class="m">1&Prime;</span> cover each side. Resist going wider: a broad flat face overhead is the thing that oil&#8209;cans. Past about <span class="m">3&Prime;</span>, break a shallow crown or light center vee into the face so it reads flat instead of wavy.</td></tr>
+              <tr><td class="k">Legs</td><td class="v"><span class="m">3/8&Prime;&ndash;1/2&Prime; return</span></td><td>Stands the cap proud of the panel flats so the substrate can't telegraph through the face.</td></tr>
+              <tr><td class="k">Edges</td><td class="v"><span class="m">1/2&Prime; min. hem, 180&deg;</span></td><td>McElroy&rsquo;s published shop standard and the SMACNA&#8209;derived spec norm, for exactly our reason &mdash; it stiffens the piece against oil&#8209;canning. Also kills the razor edge and throws a crisp shadow line.</td></tr>
+              <tr><td class="k">Piece length</td><td class="v"><span class="m">Longest obtainable; brake caps out ~10&prime;&ndash;12&prime;</span></td><td>Every splice is a place the straight line can break, so run continuous where you can. A conventional brake limits a flat trim to roughly 10&prime;&ndash;12&prime; &mdash; plan the joints rather than discovering them.</td></tr>
+              <tr><td class="k">Splices</td><td class="v"><span class="m">Concealed backer plate</span></td><td>Never butt them &mdash; a butt joint is the exact defect we are covering. The manufacturer answer is a short piece of the same coil behind the joint holding both cap ends in plane, not a face lap. Turn any visible edge away from the entry approach.</td></tr>
+              <tr><td class="k">Fasteners</td><td class="v"><span class="m">1/8&Prime; painted blind rivet, #30 pre&#8209;drill</span></td><td>Stainless body and mandrel painted to a stock white &mdash; e.g. Western States STST43, grip .126&ndash;.187, #30 hole, 420&#8239;lb shear. Into panel flats or the existing trim leg. Never into a rib.</td></tr>
+              <tr><td class="k">Spacing</td><td class="v"><span class="m">16&Prime; o.c., gauged off the edge</span></td><td>Consistency outranks quantity. Use a scribe or a coil strip as a marking gauge &mdash; a wandering rivet line draws more complaints than the gap did.</td></tr>
+              <tr><td class="k">Terminations</td><td class="v"><span class="m">Notch and return, or shop end cap</span></td><td>An open channel visible looking up the run is unfinished work. Close both ends.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Nobody sells this part &mdash; and the no&#8209;fastener version costs more than it looks</h3>
+
+        <p>Worth knowing before anyone goes shopping: there is no stock trim for this condition. Every &ldquo;cover&rdquo; product on the market is either a batten cap that runs <em>parallel</em> to the ribs, a parapet coping, or a new&#8209;install splice detail that needs the panel ends cut into a receiver. Berridge&rsquo;s 2&Prime; cap is the widest stock cover face out there, and 2&Prime; barely laps a joint that already has slop in it. This gets braked.</p>
+
+        <p>The tempting alternative is a two&#8209;piece cover &mdash; a fastened backer with a cap that snaps over it and hides every fastener. That is real manufacturer practice, not an improvisation. But the snap in those systems is a positive hook&#8209;and&#8209;rotate interlock over formed kicks on both pieces, not a friction fit, so it means forming two profiles instead of one. And the manufacturers who ship them still require mechanical or adhesive securement on top of the snap, because the cap moves thermally. If you go that way the backer must be <strong>continuous</strong> and shimmed to the string &mdash; a segmented cleat cannot hold a line straight over a crooked beam. For a Wednesday, the riveted one&#8209;piece is the right call; keep the two&#8209;piece in your pocket for the next one.</p>
+
+        <div class="callout warn">
+          <span class="label">Do not substitute caulk</span>
+          <p>Running a bead of white sealant in the reveal is tempting and it will look acceptable for about two months. Then it shrinks, picks up dirt, and yellows against a red field on a south&#8209;facing canopy. The client already rejected living with it; caulk is living with it with extra steps and a second callback.</p>
+        </div>
+
+        <h3>Install sequence</h3>
+
+        <ol class="steps">
+          <li><b>Close PL&#8209;02 first.</b> Every loose panel gets refastened before anything gets measured. You cannot size a cap against a soffit that is still moving.</li>
+          <li><b>Measure the worst case.</b> Five points minimum along the run, edge of existing trim to the far side of the widest gap. Take the largest number and size the whole run off it &mdash; one cap width for the whole canopy.</li>
+          <li><b>Confirm the color.</b> Chip against the existing trim outdoors, not under the cans. Do this before the brake runs.</li>
+          <li><b>Brake and dry&#8209;fit one piece.</b> Hang a single length, look at it from the sidewalk at the angle the client looks at it. Adjust before you make the other hundred feet.</li>
+          <li><b>Pull the string.</b> End to end, both edges. Snap a chalk line on the panel faces if the run is long enough to sag a string.</li>
+          <li><b>Pack the hollows.</b> Where the substrate falls away behind the cap, shim it so the face does not dish when the rivets pull.</li>
+          <li><b>Set to the string and rivet off.</b> Gauge every rivet the same distance from the edge. Work one direction so the laps all face the same way.</li>
+          <li><b>Close the ends, then photograph.</b> Same angles as the rejection photos, so the before-and-after reads at a glance in the closeout package.</li>
+        </ol>
+      </section>
+
+      <section id="loose">
+        <div class="shead"><span class="num">03</span><h2>PL&#8209;02 &mdash; White soffit pieces hanging below the line</h2></div>
+
+        <p>Straightforward rework, but find out <em>why</em> each piece is loose before refastening &mdash; putting another screw through a panel that has nothing behind it just makes a second hole.</p>
+
+        <ul class="plain">
+          <li><strong>No backing.</strong> Add blocking to the framing, then fasten to the blocking. Most common cause on a field&#8209;cut canopy.</li>
+          <li><strong>Fastener missed the framing.</strong> Locate the member, refasten, and fill or replace the piece if the miss left a visible hole in the finish face.</li>
+          <li><strong>Receiver leg is too shallow to hold the panel.</strong> Add a concealed cleat or Z&#8209;closure fastened to framing and hook the panel to it. Do not try to fix a shallow receiver with more fasteners.</li>
+        </ul>
+
+        <p>Refasten with color&#8209;matched pancake&#8209;head or stitch screws in the panel flats, and keep the fastener line consistent for the same reason the rivet line has to be consistent. This item has to be complete before the cap gets measured.</p>
+      </section>
+
+      <section id="fascia">
+        <div class="shead"><span class="num">04</span><h2>PL&#8209;03 &mdash; The fascia scope question</h2></div>
+
+        <p>The client believes the fascia was bought. The installer has it flagged as different scope. Nobody is going to win this one across a table, so take it off the table and onto paper &mdash; in this order, because each step is stronger evidence than the one before it.</p>
+
+        <ol class="steps">
+          <li><b>The subcontract scope exhibit.</b> Read the inclusions <em>and</em> the exclusions. Most of these end here.</li>
+          <li><b>The bid takeoff and the material PO.</b> If fascia coil and trim were quantified and purchased, it was in the number, and that is very hard to walk back.</li>
+          <li><b>The drawings and the finish schedule.</b> Exterior elevations plus the spec section referenced in the sub &mdash; who is carrying the fascia finish.</li>
+          <li><b>The approved shop drawings.</b> If fascia was shown and came back approved without comment, that is a strong argument it is in.</li>
+        </ol>
+
+        <div class="callout">
+          <span class="label">The move that keeps the GC on your side</span>
+          <p>If it lands in scope: do it, say nothing else about it, and let the goodwill count for something.</p>
+          <p>If it lands out of scope: write a short clarification citing the exact exhibit paragraph, price it as a PCO &mdash; and <strong>offer to install it during Wednesday's mobilization anyway</strong>, with the change order reconciled after. Buffalo gets a finished building on schedule, the money conversation happens on paper, and you save a second trip that would have cost more than the argument is worth.</p>
+          <p>What you never do is let a scope dispute hold up a punch item that <em>is</em> yours. That is the thing that actually burns a GC relationship, and it is the reason patience is running short here.</p>
+        </div>
+      </section>
+
+      <section id="message">
+        <div class="shead"><span class="num">05</span><h2>What to send Buffalo today</h2></div>
+
+        <p>The patience problem is a communication problem as much as a workmanship one. Right now they have a rejected inspection and no evidence that a plan exists. Send this with the two details above attached, today, before anyone asks for it.</p>
+
+        <div class="email">
+          <div class="email-head">
+            <b>Subject:</b> Lee Street canopy soffit &mdash; punch closeout plan, work Wednesday 8/26<br>
+            <b>Attach:</b> Section detail &amp; string&#8209;line detail (this sheet)
+          </div>
+          <div class="email-body">
+            <p>Following up on the canopy soffit inspection with a plan and a date.</p>
+            <p><strong>Root cause.</strong> The canopy beam was field&#8209;cut and is not straight or in plane, so the splice trim had nothing flat to land on. Our crew held the panel fields square to the building and absorbed the error at the joint, which is why the reveal varies. The panels themselves are square and correct.</p>
+            <p><strong>Fix.</strong> We are fabricating a brake&#8209;formed cover cap from the same white coil as the existing trim, lapping a minimum of one inch past the joint on each side and set to a string line so the finished edges are straight regardless of the substrate. Detail attached. No panel removal, no new penetrations in the red fields.</p>
+            <p><strong>Schedule.</strong> Caps fabricated Tuesday. Crew on site Wednesday 8/26 at 7:00 AM. Loose soffit pieces refastened first, caps set after. We will be ready to walk it with you at 10:30.</p>
+            <p><strong>Fascia.</strong> We are confirming scope against the subcontract exhibit and the approved shop drawings and will have an answer to you before Wednesday. Either way, if you want it installed we will do it during Wednesday's mobilization so you are not waiting on a second trip &mdash; we can reconcile the commercial side separately.</p>
+            <p>I will send before&#8209;and&#8209;after photos the same day and would like to get the punch signed off in the field while we are there.</p>
+          </div>
+        </div>
+
+        <div class="callout warn">
+          <span class="label">One thing not to claim</span>
+          <p>Do not tell Buffalo this remedy &ldquo;meets industry standard.&rdquo; We went looking for a published acceptance tolerance for reveal and alignment in architectural metal soffit work &mdash; MCA, SMACNA, NRCA, AAMA, a real 07&nbsp;42&nbsp;13 section &mdash; and nothing citable came back. The <span class="m">1&Prime;</span> lap and the string&#8209;line criterion are sound engineering judgment, and they are defensible as such, but they are not a standard you can point at. The one figure that does trace to a published standard is the <span class="m">1/2&Prime;</span> hem.</p>
+          <p>Say it as judgment and it holds up. Dress it as a code citation and the first person who looks it up wins the argument.</p>
+        </div>
+
+        <p>Three things in that message do the work: a root cause that is not an excuse, a dated commitment with a time on it, and an offer on the disputed item that removes the schedule risk from the GC's plate.</p>
+      </section>
+
+    </main>
+
+    <aside class="rail">
+
+      <div class="card">
+        <h4>Item register</h4>
+        <div class="card-body">
+          <div class="item">
+            <span class="id">PL-01</span><span class="chip rework">Rework</span>
+            <span class="t">Splice trim line &amp; uneven reveal</span>
+            <p class="d">Reverse&#8209;J cover cap, string&#8209;set, riveted. Root cause is the field&#8209;cut beam.</p>
+          </div>
+          <div class="item">
+            <span class="id">PL-02</span><span class="chip rework">Rework</span>
+            <span class="t">Loose white soffit pieces</span>
+            <p class="d">Refasten to solid backing. Must close before PL&#8209;01 is measured.</p>
+          </div>
+          <div class="item">
+            <span class="id">PL-03</span><span class="chip scope">Scope</span>
+            <span class="t">Fascia responsibility</span>
+            <p class="d">Resolve on paper &mdash; exhibit, takeoff, drawings, approved shops. Install regardless; reconcile after.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4>Wednesday 26 Aug</h4>
+        <div class="card-body">
+          <ul class="sched">
+            <li><time>Mon&ndash;Tue</time><span>Field verify, confirm color chip, brake caps<span class="who">shop + lead</span></span></li>
+            <li><time>Tue</time><span>Fascia paper trail answered in writing<span class="who">lead</span></span></li>
+            <li><time>7:00</time><span>Mobilize; refasten PL&#8209;02 loose pieces<span class="who">installer</span></span></li>
+            <li><time>8:30</time><span>Pull string; dry&#8209;fit first cap; look from the sidewalk<span class="who">installer + lead</span></span></li>
+            <li><time>9:00</time><span>Set and rivet caps; pack hollows as needed<span class="who">installer</span></span></li>
+            <li class="mark"><time>10:30</time><span>Walk with Buffalo<span class="who">lead</span></span></li>
+            <li><time>PM</time><span>Terminations, touch&#8209;up, photos, field sign&#8209;off<span class="who">installer + lead</span></span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4>Owed today</h4>
+        <div class="card-body">
+          <div class="item">
+            <span class="t">Cap detail &amp; sketch <span class="chip ready">Ready</span></span>
+            <p class="d">Both details on this sheet. Send as&#8209;is.</p>
+          </div>
+          <div class="item">
+            <span class="t">Reverse&#8209;J spec to the field</span>
+            <p class="d">Fabrication ticket, section 02.</p>
+          </div>
+          <div class="item">
+            <span class="t">Metal Sales rep contact</span>
+            <p class="d">For coil match confirmation before the brake runs.</p>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    Dimensions shown are the design intent and the basis for fabrication &mdash; every one of them is subject to field verification before the brake runs. Cap face width in particular is driven by the widest measured reveal on the actual run, not by the estimate on this sheet. Root cause, gap range, and item list are as reported from the inspection walk.
+  </footer>
+
+</div>
