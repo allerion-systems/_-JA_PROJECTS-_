@@ -7,6 +7,7 @@ An always-evolving portfolio site for James "Joey" Allee — construction estima
 - **`index.html` / `css/` / `js/`** — the site itself. Plain HTML/CSS/JS, no build step, no framework. The globe is rendered with [globe.gl](https://github.com/vasturiano/globe.gl) (a Three.js-based helper), loaded via CDN.
 - **`data/projects.json`** — the source of truth: every project's year, employer, location, budget, scope, role, and status, extracted from Joey's master project log. Coordinates are city/site-level approximations for map plotting, not survey-grade.
 - **`content/lssbb/`** — first-draft Lean Six Sigma Black Belt (DMAIC) case studies per project. These are AI-drafted narratives grounded in the real project facts; any quantified metric that wasn't in the source data is marked `[QUANTIFY: ...]` and needs Joey's real numbers before being presented to an employer as fact. See `content/lssbb/README.md`.
+- **`allerion/`** — the Allerion Technologies LLC federal launch kit: SAM.gov registration facts, capability-statement draft, target-opportunity map, and the launch playbook. See `allerion/README.md`.
 - **`obsidian/`** — an Obsidian vault view of the same data: one note per project, employer, and year, cross-linked so Graph View shows the whole portfolio as a network (project ↔ employer, project ↔ year, project ↔ LSSBB write-up). Regenerate it any time the data changes: `python3 scripts/gen_obsidian.py`.
 
 ## Running locally
