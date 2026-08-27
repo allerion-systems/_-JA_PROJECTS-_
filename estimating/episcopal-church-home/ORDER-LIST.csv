@@ -1,0 +1,32 @@
+Line,Category,Item,Spec,Qty,UoM,Unit $,Ext $,Price Source,Note
+1,MEMBRANE,60-mil TPO white reinforced,"10' x 100' roll, mech-attached grade",5,RL,800.00,4000.00,FIRM - QXO bid 422516,3 field + 2 wall
+2,MEMBRANE,60-mil TPO white reinforced,5' x 100' roll,2,RL,420.00,840.00,PLACEHOLDER,Curbs/details/patches
+3,MEMBRANE,Seam flashing (QuickSeam) 5.5",5.5" x 100' white,3,RL,260.00,780.00,FIRM - QXO bid 422516,
+4,MEMBRANE,Pre-molded pipe boots,1" to 6" universal + SS clamps,6,EA,30.00,180.00,PLACEHOLDER,
+5,MEMBRANE,Inside / outside corners,Pre-molded,24,EA,9.00,216.00,PLACEHOLDER,4 wall corners + curbs + drains
+6,INSULATION,Polyiso 2.0" flat,"4'x8', ASTM C1289 Type II Cl.1 Gr.2 (20psi)",71,BD,29.00,2059.00,PLACEHOLDER,BUY ALL - base layer
+7,INSULATION,Polyiso 1.5" flat,"4'x8', same spec",7,BD,23.00,161.00,PLACEHOLDER,71 needed / 64 IN YARD - VERIFY
+8,INSULATION,Tapered polyiso 1/4":12,"1.0"" min at drains, supplier-designed",7472,BF,1.35,10087.00,PLACEHOLDER,BASE BID - see alt line 8A
+8A,INSULATION,ALT: Tapered polyiso 1/8":12,"1.0"" min at drains",4786,BF,1.35,6461.00,PLACEHOLDER,ALTERNATE - needs AHJ signoff
+9,INSULATION,Tapered drain sumps,4'x4' tapered over 18",3,EA,95.00,285.00,PLACEHOLDER,
+10,FASTENERS,Insulation fasteners + 3" plates,"3.5"" long, 20-ga steel deck - base layer",600,EA,0.55,330.00,FIRM plates $235/ctn,
+11,FASTENERS,Insulation fasteners + 3" plates,"Length to suit upper layers 5""-10""",600,EA,0.75,450.00,PLACEHOLDER,
+12,FASTENERS,Membrane fasteners + 2-3/8" seam plates,"MULTIPLE LENGTHS 5.5"" / 7"" / 8.5"" / 10.5""",600,EA,1.95,1170.00,PLACEHOLDER,SCHEDULE BY LENGTH off taper layout
+13,FASTENERS,Masonry anchors - termination bar,"184 LF @ 8"" o.c.",300,EA,0.35,105.00,PLACEHOLDER,
+14,ADHESIVE,TPO bonding adhesive,5-gal pail,7,PL,160.00,1120.00,FIRM - QXO bid 422516,1840 SF wall @ 60 SF/gal
+15,ADHESIVE,TPO primer,3-gal,2,EA,110.00,220.00,PLACEHOLDER,Term bar / masonry
+16,SEALANT,Water cut-off mastic,10.1 oz tube,12,TU,17.00,204.00,PLACEHOLDER,
+17,SEALANT,TPO lap / cut-edge sealant,10.1 oz tube,12,TU,15.00,180.00,PLACEHOLDER,
+18,SEALANT,TPO membrane cleaner,1-gal,2,GA,62.00,124.00,PLACEHOLDER,
+19,SEALANT,Pourable sealer 2-part,Kit,2,KT,55.00,110.00,PLACEHOLDER,Odd penetrations
+20,METAL,Aluminum termination bar,1.08" x 10',19,PC,15.00,285.00,PLACEHOLDER,184 LF
+21,METAL,Stainless steel curb bands,,32,LF,9.00,288.00,PLACEHOLDER,2 equipment curbs
+22,METAL,Counterflashing / surface-mount reglet,,184,LF,0.00,0.00,SCOPE TBC,CONFIRM detail at top of wall flashing
+23,METAL,6" aluminum gutter + downspout + hangers,,30,LF,16.00,480.00,PLACEHOLDER,
+24,WOOD,Treated wood cant strip,4" legs x 4' lengths,46,PC,7.00,322.00,PLACEHOLDER,184 LF
+25,DRAINS,Commercial roof drain assembly,Bowl + clamping ring + dome strainer + TPO-clad flange,3,EA,410.00,1230.00,PLACEHOLDER,
+26,DRAINS,Drain lead / extension,,3,EA,0.00,0.00,SCOPE TBC,Build-up requires re-set
+27,FREIGHT,Freight + rooftop loading,,1,LS,850.00,850.00,PLACEHOLDER,Roof is in a well - confirm access
+A1,ALTERNATE,1/2" glass-mat gypsum cover board,"DensDeck, ASTM C1177 fire-rated, 4'x8'",66,SH,0.00,0.00,QUOTE SEPARATELY,May be required for 20-yr NDL
+A2,ALTERNATE,Walkway pads,80-mil diamond plate,100,SF,0.00,0.00,QUOTE SEPARATELY,At RTUs
+A3,ALTERNATE,Equipment curb extensions,,2,EA,0.00,0.00,QUOTE SEPARATELY,NOT IN SOLD SCOPE
