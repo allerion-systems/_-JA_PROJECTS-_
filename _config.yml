@@ -1,0 +1,5 @@
+# GitHub Pages build config.
+# The site itself is plain HTML/CSS/JS at the repo root — no Jekyll templating is used.
+# This file exists solely to keep internal, non-public directories out of the published site.
+exclude:
+  - estimating
