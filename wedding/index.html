@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding HQ — 154 Guests</title>
+<style>
+  :root{
+    --bg:#0e0f13; --panel:#171922; --panel2:#1d2030; --line:#2a2e42;
+    --text:#e8e9f0; --muted:#9aa0b4; --accent:#e8b4b8; --accent2:#8fb8de;
+    --good:#7fd1a8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:0 16px 64px}
+  .wrap{max-width:900px;margin:0 auto}
+  header{padding:48px 0 8px;text-align:center}
+  header h1{font-size:clamp(28px,5vw,44px);margin:0;font-weight:800;letter-spacing:-.02em}
+  header h1 span{color:var(--accent)}
+  header p{color:var(--muted);margin:8px 0 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:28px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h2{margin:0 0 12px;font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+  /* countdown */
+  #countdown{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  #countdown .unit{text-align:center;min-width:64px}
+  #countdown .num{font-size:34px;font-weight:800;color:var(--accent)}
+  #countdown .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+  .daterow{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap}
+  input[type=date],input[type=number]{background:var(--panel2);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:8px 10px;font-size:14px}
+  input[type=number]{width:90px}
+  label{color:var(--muted);font-size:13px}
+  /* calculator */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  .stat{background:var(--panel2);border-radius:10px;padding:10px 12px}
+  .stat b{display:block;font-size:20px;color:var(--accent2)}
+  .stat span{font-size:12px;color:var(--muted)}
+  /* checklist */
+  .phase{margin:10px 0;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+  .phase summary{cursor:pointer;padding:14px 18px;font-weight:700;display:flex;justify-content:space-between;align-items:center;list-style:none}
+  .phase summary::-webkit-details-marker{display:none}
+  .phase .count{font-size:12px;color:var(--muted);font-weight:500}
+  .phase .count.done{color:var(--good)}
+  .phase ul{list-style:none;margin:0;padding:4px 18px 14px}
+  .phase li{padding:5px 0;display:flex;gap:10px;align-items:baseline}
+  .phase input[type=checkbox]{accent-color:var(--accent);transform:translateY(2px);flex:none;width:16px;height:16px}
+  .phase li.checked label{color:var(--muted);text-decoration:line-through}
+  .phase li label{cursor:pointer;font-size:14.5px;color:var(--text)}
+  .progressbar{height:6px;background:var(--panel2);border-radius:3px;margin:18px 0 6px;overflow:hidden}
+  .progressbar div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .3s}
+  .note{font-size:12.5px;color:var(--muted);text-align:center;margin-top:24px}
+  a{color:var(--accent2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Wedding <span>HQ</span></h1>
+    <p>154 guests · one very good day · run like a project, enjoyed like a party</p>
+  </header>
+
+  <div class="grid">
+    <div class="card" style="grid-column:1/-1">
+      <h2>Countdown</h2>
+      <div id="countdown"></div>
+      <div class="daterow">
+        <label for="wdate">Wedding date:</label>
+        <input type="date" id="wdate">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Headcount math</h2>
+      <div class="daterow" style="justify-content:flex-start">
+        <label for="guests">Guests attending:</label>
+        <input type="number" id="guests" min="1" max="999" value="154">
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <div class="card">
+      <h2>Bar estimate <span style="text-transform:none;letter-spacing:0">(5-hr reception)</span></h2>
+      <div class="stats" id="barstats"></div>
+      <p style="font-size:12px;color:var(--muted);margin:10px 0 0">Rule of thumb: 1 drink/guest/hour, split ~35% beer / 35% wine / 30% cocktails. 1 bartender per 50–75 guests.</p>
+    </div>
+  </div>
+
+  <h2 style="font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-top:36px">Checklist</h2>
+  <div class="progressbar"><div id="totalbar"></div></div>
+  <p class="note" id="totaltxt" style="margin:0 0 14px"></p>
+  <div id="phases"></div>
+
+  <p class="note">Progress saves in this browser (localStorage). Full write-ups: <a href="playbook.md">playbook</a> · <a href="day-of-runsheet.md">day-of run sheet</a> · <a href="checklist.md">printable checklist</a>.</p>
+</div>
+
+<script>
+"use strict";
+var LS = {
+  get: function(k, d){ try { var v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } },
+  set: function(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+
+/* ---------- countdown ---------- */
+var dateInput = document.getElementById('wdate');
+dateInput.value = LS.get('wedding.date', '');
+function renderCountdown(){
+  var el = document.getElementById('countdown');
+  if (!dateInput.value){ el.innerHTML = '<p style="color:var(--muted)">Set your date below to start the clock.</p>'; return; }
+  var target = new Date(dateInput.value + 'T17:30:00');
+  var ms = target - new Date();
+  if (ms <= 0){ el.innerHTML = '<p style="font-size:24px">🎉 Married! Go enjoy it.</p>'; return; }
+  var d = Math.floor(ms/86400000), h = Math.floor(ms%86400000/3600000), m = Math.floor(ms%3600000/60000);
+  el.innerHTML = [[d,'days'],[h,'hours'],[m,'minutes']].map(function(u){
+    return '<div class="unit"><div class="num">'+u[0]+'</div><div class="lbl">'+u[1]+'</div></div>';
+  }).join('');
+}
+dateInput.addEventListener('change', function(){ LS.set('wedding.date', dateInput.value); renderCountdown(); });
+renderCountdown();
+setInterval(renderCountdown, 30000);
+
+/* ---------- headcount calculator ---------- */
+var guestsInput = document.getElementById('guests');
+guestsInput.value = LS.get('wedding.guests', '154');
+function calc(){
+  var g = Math.max(1, parseInt(guestsInput.value, 10) || 154);
+  LS.set('wedding.guests', String(g));
+  var stats = [
+    [Math.ceil(g/8) + ' / ' + Math.ceil(g/10), 'tables (rounds of 8 / 10)'],
+    [g + 6, 'ceremony chairs (incl. vendors)'],
+    [Math.round(g*0.55) + '–' + Math.round(g*0.65), 'invitation suites (households)'],
+    [g + ' + 6–10', 'meals (guests + vendor meals)'],
+    [Math.ceil(g/55) + '×', 'shuttle coach runs (55-seat, one way)'],
+    ['~' + Math.round(g*13).toLocaleString() + ' sq ft', 'reception floor (seated + dance)']
+  ];
+  document.getElementById('stats').innerHTML = stats.map(function(s){
+    return '<div class="stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>';
+  }).join('');
+  var drinks = g*5;
+  var bar = [
+    [drinks.toLocaleString(), 'total servings'],
+    [Math.ceil(drinks*0.35/24) + ' cases', 'beer (~35%)'],
+    [Math.ceil(drinks*0.35/5) + ' bottles', 'wine (~35%)'],
+    [Math.max(2, Math.ceil(g/60)), 'bartenders']
+  ];
+  document.getElementById('barstats').innerHTML = bar.map(function(s){
+    return '<div class="stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>';
+  }).join('');
+}
+guestsInput.addEventListener('input', calc);
+calc();
+
+/* ---------- checklist ---------- */
+var PHASES = [
+  ['Foundations (12+ months out)', [
+    'Set the total budget number (and who contributes what)',
+    'Draft the guest list to a real number',
+    'Agree on season, date candidates, and overall vibe',
+    'Decide: planner, day-of coordinator, or trusted point person',
+    'Tour and book the venue; lock the date',
+    'Book the officiant',
+    'Start the wedding website'
+  ]],
+  ['Big vendors (8–10 months)', [
+    'Book photographer (and videographer)',
+    'Book caterer; schedule tasting',
+    'Book band or DJ',
+    'Send save-the-dates',
+    'Reserve hotel room blocks',
+    'Shop for dress / suit',
+    'Ask the wedding party',
+    'Start master vendor + payment-due sheet'
+  ]],
+  ['Design & logistics (5–7 months)', [
+    'Book florist',
+    'Book hair & makeup',
+    'Order invitations (+10–15 extra)',
+    'Book transportation / shuttles',
+    'Price tent & rental contingencies',
+    'Book rehearsal dinner venue',
+    'Plan and book honeymoon',
+    'Order wedding party attire',
+    'Cake tasting and order',
+    'Set up registry'
+  ]],
+  ['Lock it down (3–4 months)', [
+    'Mail invitations (8–10 weeks out)',
+    'Finalize menu and bar package',
+    'Buy the rings',
+    'Hair & makeup trial',
+    'Write vows; confirm ceremony structure',
+    'Research marriage license rules',
+    'First fitting',
+    'Draft the day-of run sheet'
+  ]],
+  ['Final approach (4–8 weeks)', [
+    'Chase RSVP stragglers within 48 hrs of deadline',
+    'Build the seating chart; families sanity-check it',
+    'Send run sheet to every vendor; confirm in writing',
+    'Final fitting',
+    'Get the marriage license',
+    'Order signage, place cards, table numbers',
+    'Confirm shuttle timing',
+    'Write toasts and thank-yous'
+  ]],
+  ['Week of', [
+    'Final headcount to caterer (+ vendor meals)',
+    'Prepare labeled payment & tip envelopes',
+    'Hand off package to point person: run sheet, vendor list, envelopes, emergency kit',
+    'Delegate welcome bags, ceremony items, gift duty',
+    'Rehearsal + rehearsal dinner (keep it short)',
+    'Pack for the wedding night / honeymoon',
+    'Sleep'
+  ]],
+  ['Day of', [
+    'Eat breakfast',
+    'Phone off, handed away',
+    'Five minutes alone together after the ceremony',
+    'Eat the meal the caterer held for you',
+    'One deliberate look around the full room',
+    'Dance'
+  ]],
+  ['After', [
+    'Return rentals; preserve attire if wanted',
+    'Confirm marriage license was filed',
+    'Leave reviews for the great vendors',
+    'Thank-you notes (batch 10 a night, split the list)',
+    'Name-change paperwork if applicable'
+  ]]
+];
+
+var phasesEl = document.getElementById('phases');
+function itemKey(p, i){ return 'wedding.chk.' + p + '.' + i; }
+function render(){
+  var total = 0, done = 0, html = '';
+  PHASES.forEach(function(ph, p){
+    var pdone = 0;
+    var items = ph[1].map(function(txt, i){
+      var checked = LS.get(itemKey(p, i), '0') === '1';
+      if (checked) pdone++;
+      var id = 'c' + p + '_' + i;
+      return '<li class="' + (checked ? 'checked' : '') + '"><input type="checkbox" id="' + id +
+        '" data-p="' + p + '" data-i="' + i + '"' + (checked ? ' checked' : '') +
+        '><label for="' + id + '">' + txt + '</label></li>';
+    }).join('');
+    total += ph[1].length; done += pdone;
+    var allDone = pdone === ph[1].length;
+    var open = !allDone && html.indexOf('open') === -1 ? ' open' : '';
+    html += '<details class="phase"' + open + '><summary>' + ph[0] +
+      '<span class="count' + (allDone ? ' done' : '') + '">' + pdone + '/' + ph[1].length +
+      (allDone ? ' ✓' : '') + '</span></summary><ul>' + items + '</ul></details>';
+  });
+  phasesEl.innerHTML = html;
+  var pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('totalbar').style.width = pct + '%';
+  document.getElementById('totaltxt').textContent = done + ' of ' + total + ' done (' + pct + '%)';
+}
+phasesEl.addEventListener('change', function(e){
+  var t = e.target;
+  if (t.tagName !== 'INPUT') return;
+  LS.set(itemKey(t.dataset.p, t.dataset.i), t.checked ? '1' : '0');
+  var openStates = Array.prototype.map.call(phasesEl.querySelectorAll('details'), function(d){ return d.open; });
+  render();
+  Array.prototype.forEach.call(phasesEl.querySelectorAll('details'), function(d, i){ d.open = openStates[i]; });
+});
+render();
+</script>
+</body>
+</html>
