@@ -16,13 +16,13 @@
 
 ## Scope
 
-Material-only quote for bare Galvalume corrugated panels for a decorative **interior** roof canopy at a Texas Roadhouse. Canopy face is **44'-0" wide × 15'-10" tall**, panelized in three horizontal courses of 22 panels each. Panels figured at **24" net coverage** (528" ÷ 22 panels); please confirm profile availability at that coverage or advise nearest standard.
+Material-only quote for **5V Crimp** bare Galvalume panels for a decorative **interior** roof canopy at a Texas Roadhouse. Canopy face is **44'-0" wide × 15'-10" tall**, panelized in three horizontal courses of 22 panels each at 5V's **24" net coverage** (528" ÷ 22 panels).
 
 ## Panel Schedule (cut list)
 
 | Item | Qty | Description | Cut Length |
 |------|-----|-------------|-----------|
-| 1 | 22 | Corrugated bare Galvalume panel, AZ-50/AZ-55 acrylic-coated, 26 ga. (confirm), 24" net coverage | 50" |
+| 1 | 22 | 5V Crimp bare Galvalume panel, AZ-50/AZ-55 acrylic-coated, 26 ga. (confirm), 24" net coverage | 50" |
 | 2 | 22 | Same | 100" |
 | 3 | 22 | Same | 40" |
 

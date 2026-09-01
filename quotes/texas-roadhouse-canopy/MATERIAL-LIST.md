@@ -1,6 +1,6 @@
 # Material List — Texas Roadhouse Interior Galvalume Roof Canopy
 
-**Basis:** Field sketch dated 9/1/2026. Canopy face 44'-0" wide × 15'-10" tall (three horizontal courses: 50" + 100" + 40" = 190"). Panels figured at 24" net coverage — 528" ÷ 22 panels per course.
+**Basis:** Field sketch dated 9/1/2026. Canopy face 44'-0" wide × 15'-10" tall (three horizontal courses: 50" + 100" + 40" = 190"). Panel: **5V Crimp**, 24" net coverage — 528" ÷ 22 panels per course works out exactly.
 
 **Scope of this list:** Panel package only (materials supplied by QXO). Framing, blocking, and sheathing behind the panels by others / separate list.
 
@@ -8,7 +8,7 @@
 
 ## 1. Panels
 
-Corrugated bare Galvalume (mill finish), AZ-50/AZ-55 acrylic-coated, 26 ga. (confirm gauge), 24" net coverage.
+5V Crimp bare Galvalume (mill finish), AZ-50/AZ-55 acrylic-coated, 26 ga. (confirm gauge), 24" net coverage.
 
 | Line | Qty | Cut Length | LF | SF (net) |
 |------|-----|-----------|-----|----------|
