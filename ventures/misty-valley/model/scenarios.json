@@ -31,12 +31,30 @@
     },
     "mfn": {
       "value": 0.0,
-      "_verify": "UNVERIFIED. Column 1 General rate for 7216.91.0010 -- many Ch.72 lines are Free, but confirm on hts.usitc.gov."
+      "basis": "VERIFIED. Column 1 General rate for 7216.91.00 is Free. The entire duty burden here is trade-remedy tariffs, not ordinary customs duty -- which means the whole cost structure moves with politics, not with trade agreements.",
+      "_verify": "Reconfirm the statistical suffix rate on hts.usitc.gov at entry date."
     },
     "ad_cvd": {
       "value": 0.0,
-      "basis": "No AD/CVD order identified that plainly names cold-formed steel framing from China as of this writing.",
-      "_verify": "THIS IS THE BUSINESS-ENDING RISK. AD/CVD is deposited at entry and FINALLY ASSESSED at administrative review, often 2-3 years later, and the importer owes the difference retroactively with interest. Rates on Chinese steel cases have exceeded 100%. Check for new petitions and scope/anti-circumvention rulings BEFORE EVERY ORDER, not once."
+      "basis": "No AD/CVD order was found that names cold-formed steel framing from China as of this writing.",
+      "_trend_warning": [
+        "Absence of an order today is NOT safety. Commerce and the ITC are",
+        "working through downstream fabricated Chinese steel articles one",
+        "product at a time, and cold-formed framing sits squarely in the path:",
+        "  - Temporary steel fencing: petition 2025-01-14, ORDER 2026-05-13",
+        "  - Certain steel grating from China: active 2026",
+        "  - Certain steel racks and parts from China: active 2026",
+        "  - Corrosion-resistant steel (CORE) from China -- the SUBSTRATE that",
+        "    studs are roll-formed from -- is under an existing order and was",
+        "    re-investigated across multiple trading partners",
+        "The fencing case sets the clock: roughly 16 months from petition to",
+        "order. The US framing industry (ClarkDietrich, MarinoWARE, Telling,",
+        "SCAFCO) has both the motive and the trade counsel to file. A petition",
+        "filed the month you scale up puts every container already on the water",
+        "at risk, and 'critical circumstances' findings can reach back 90 days",
+        "before the preliminary determination."
+      ],
+      "_verify": "THIS IS THE BUSINESS-ENDING RISK. AD/CVD is a CASH DEPOSIT at entry, then FINALLY ASSESSED at administrative review two to three years later; the importer owes the shortfall retroactively, with interest, and the customs bond surety will come after the principals personally. Rates in Chinese steel cases have exceeded 100%. Re-check for new petitions and scope/anti-circumvention rulings BEFORE EVERY ORDER, not once."
     },
     "mpf_hmf": {
       "_verify": "MPF ad valorem rate and the min/max cap adjust annually for inflation. Confirm current figures."
