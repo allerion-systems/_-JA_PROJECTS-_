@@ -208,6 +208,13 @@ class Sheet:
         else:
             self.c.circle(x, y, r, stroke=1, fill=0)
 
+    def arc_path(self, cx, cy, r, a0, a1, lw=LW_OBJECT, dash=None, color=black):
+        """Arc centred on (cx, cy), from a0 to a1 in degrees, CCW."""
+        self._style(lw, dash, color)
+        p = self.c.beginPath()
+        p.arc(cx - r, cy - r, cx + r, cy + r, a0, a1 - a0)
+        self.c.drawPath(p)
+
     def text(self, x, y, s, size=TXT_NOTE, font=FONT, anchor="l", rot=0.0, color=black):
         self.c.saveState()
         self.c.setFillColor(color)
