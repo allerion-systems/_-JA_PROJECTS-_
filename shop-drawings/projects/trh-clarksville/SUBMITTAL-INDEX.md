@@ -103,22 +103,88 @@ plan sheet. Verbatim callouts:
 
 | Was open | Now |
 |---|---|
-| Net free area — unpublished by DCSM | **105 sq in minimum**, by contract |
+| Net free area — unpublished by DCSM | **105 s.i. here, but see the conflict below** |
 | Quantity — no vent line item on the cut list | **2** |
 | Deck opening — no dimension anywhere | **6" × 18", between rafters** |
-| Vent location | **"AT HIGH"** — confirms the ridge condition |
+| Vent location | **"AT HIGH"** |
 
-**What it raises**
+---
 
-1. **The sidelap-sealant note implies roof planes below 3:12 exist.** Metal
-   Sales publishes 3:12 as the 5V-Crimp *minimum* slope and states the panel is
-   "not recommended for use over open structural framing." A sub-3:12 plane is
-   a manufacturer conflict, not just a sealant condition. Confirm the pitch at
-   both vent locations.
-2. **Rafter spacing and direction must be confirmed** — the 6"×18" opening has
-   to fall between rafters without cutting one.
-3. **Detail 6/A8** (leak barrier / membrane incompatibility) needs to be read
-   before finalising the underlayment at the vent.
-4. Still open: DCSM's own vent dimensions and a *tested* NFA. The shop drawing
-   sizes the throat to meet 105 sq in and shows the calculation; a tested figure
-   from the manufacturer governs if one is issued.
+## Superseded by the contract documents
+
+The roof plan above is one sheet of the GreenbergFarrow permit set (project
+20291085, 02/12/26, sealed by Robert James Warshefski RA (IN) AR11900209).
+Reading the rest of that set — A2, A8, A10.2, **S3**, and SPC1–3 — answered
+every open item above and contradicted two of them. **The values below govern;
+the table above is kept only to show what the submittal alone established.**
+
+### Answered
+
+- **Roof slope at the vents: ±2.4 : 12.** No architectural sheet carries a
+  pitch anywhere. The slopes are on structural sheet **S3**: Rafter "A"
+  ±3.5:12, **Rafter "B" ±2.4:12**, Rafter "C" ±6.4/6.5:12. Both vents fall in
+  the Rafter "B" run — the outdoor waiting roof — which is why A2 note 7
+  scopes the SM7108 sidelap sealant to "roof pitch slopes less than 3:12 only
+  (specific requirement over outdoor waiting roof location only)".
+  **2.4:12 is below the panel's published 3:12 minimum.**
+- **Rafters: 24" o.c., running down-slope, 22.5" clear** in the vent bay
+  (16" o.c. west of Header "A"). So the **18" opening dimension runs ACROSS
+  the rafters and the 6" runs WITH the slope**, leaving ~2-1/4" each side.
+- **Detail 6/A8** is the metal-roof-to-parapet transition at a roof drain. The
+  incompatibility is **GAF StormGuard (asphaltic) against Duro-Last PVC**, and
+  the architect's fix is a **Duro-Last A.R.P. membrane strip** as a separation
+  layer with the leak barrier lapped over it.
+- **Roof assembly at the penetration:** 5V panel → ~4" rigid ISO (min R23.6) →
+  3/4" T&G APA plywood. The GC's subcontract scope words it differently —
+  3/4" ply by the framer, two layers of ISO, 7/16" OSB, GAF ice guard, panel.
+  Reconcile before cutting; the throat depth depends on it.
+- **Detail 3/A10.2 "DETAIL AT VENT"** (1"=1'-0") is the real vent detail. A2
+  note 9's pointer to "1/A10.2 & 4/A10.2" is a mis-reference.
+- **DCSM contact of record:** Len Osborne, len@dcsm.net, 239.594.0550.
+
+### Contradicted — three live conflicts
+
+| | Says | Versus |
+|---|---|---|
+| **Net free area** | A2 note 9 + plan callout: **105 S.I.** | Detail 3/A10.2: **108 S.I.** (= 6 × 18) |
+| **Panel gauge** | Spec 07550: **22 ga** | Submittal 2.05 + PO 26-10349: **26 ga** |
+| **Vent material** | Spec 07620: **G90 galvanized**, soldered flat-lock seam | Drawings: **Galvalume** |
+
+The design is built to **108 S.I.** The material conflict is the one that bites:
+Galvalume is ASTM A792, **cannot be soldered**, and carries a **2T** minimum
+bend radius where G90 is 1T. It changes the tooling, the seam type and the
+bend radius. Metal Sales does not stock 5V in 22 ga, so that spec figure is
+probably a typo — but §01600 forbids substitution without prior written
+approval, so it needs covering in writing either way.
+
+### An element the submittal never mentioned
+
+A2 note 9 also requires a **"REVERSED METAL ROOF COVER"** at each vent,
+running over the metal roof from the vent up-slope toward the tower wall. That
+is the 5V equivalent of DCSM's rear counterflashing, formed from an inverted
+roof panel. Detail 3/A10.2 adds **"VENT SECURED OVER METAL ROOF RIBS"** — the
+vent spans ribs rather than sitting in a flat bay.
+
+### Where the documents live
+
+GreenbergFarrow set, 100 PDFs, one sheet per file:
+`99_Archive/Completed_Projects_Legacy/March/03-20-2026-Texas Roadhouse, Clarksville, IN/…/Texas Roadhouse, Clarksville, IN_Files/`
+on SharePoint, and Google Drive folder
+"Texas Roadhouse, Clarksville, IN_Files Plans and specs".
+
+> The `01_Commercial_Bids/Texas_Roadhouse_Clarksville/TRH-Louisville,-KY-(Relo)_-_Drawings/`
+> folder is a **different job** — its title block reads Texas Roadhouse
+> Louisville (LOU1) KY. Do not fabricate from it.
+
+### Spec sections that do not exist on this job
+
+The spec book uses the **1995 five-digit CSI MasterFormat**. There is no
+07 72 00, no 01 33 00, no 01 25 00. The vent is specified **only on the
+drawings**. The sections that do govern:
+
+| Section | Covers |
+|---|---|
+| **07620** | Sheet metal flashing and trim — 24 ga, SMACNA ASMM, hemmed exposed edges |
+| **07550** | Metal roofing — four short paragraphs, no substitution clause, no test standards, no warranty, no minimum slope |
+| **01600** | Substitutions — closed spec, prior written approval, "lesser cost… or earlier completion" |
+| **01300** | Submittals — 3 sets to Architect, 2 returned, contractor stamp required or returned unreviewed; no draw until shop drawings are in |
