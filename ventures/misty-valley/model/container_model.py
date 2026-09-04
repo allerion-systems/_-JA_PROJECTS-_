@@ -231,9 +231,17 @@ class StudSpec:
     stick_length_ft: float = 10.0
 
 
-# A 40ft high-cube container. Payload varies by carrier and by the road-legal
-# gross weight limit for the drayage leg -- confirm both before loading.
-DEFAULT_PAYLOAD_LB = 61_700.0  # ~28,000 kg
+# A 40ft high-cube container rates ~62,975 lb of payload. But that is almost
+# never the binding constraint for a Kentucky importer: the dray from the port
+# is. Working back from an 80,000 lb road-legal gross -- tractor ~17,000,
+# 40ft chassis ~7,000, 40HC tare ~8,600 -- leaves roughly 47,400 lb, and
+# ~44,000 lb is the practical ceiling without overweight permits.
+#
+# Load to the container's rating and you cannot legally truck it to
+# Bonnieville. Model the road limit, not the box.
+ROAD_LEGAL_PAYLOAD_LB = 44_000.0
+CONTAINER_MAX_PAYLOAD_LB = 62_975.0
+DEFAULT_PAYLOAD_LB = ROAD_LEGAL_PAYLOAD_LB
 
 
 @dataclass

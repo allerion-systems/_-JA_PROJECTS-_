@@ -113,39 +113,184 @@ price of a building.
 
 ---
 
-## 4. Where the liability actually lands
+## 3A. The numbers — the 95% rule
+
+**This is the single most important number in this document.**
+
+ASTM C645 Table 1 footnote B and AISI S220-20 §A5.1.1: *"In no case shall the
+minimum base steel thickness be less than **95% of the design thickness**."*
+ICC-ES evaluation reports make it an enforceable condition of use — minimum
+uncoated base-metal thickness **"as delivered to the jobsite"** must be at least
+95% of design.
+
+Read that carefully: **measured at the jobsite, on your delivered product, with
+the coating stripped off. Not on the mill cert.**
+
+| Designation | Gauge | Design thickness | **Minimum base steel** |
+|---|---|---|---|
+| 18 mil | 25 ga | 0.0188" | **0.0179"** |
+| 27 mil | 22 ga | 0.0283" | **0.0269"** |
+| 30 mil | 20 ga drywall | 0.0312" | **0.0296"** |
+| 33 mil | 20 ga structural | 0.0346" | **0.0329"** |
+| 43 mil | 18 ga | 0.0451" | **0.0428"** |
+| 54 mil | 16 ga | 0.0566" | **0.0538"** |
+
+Coating minimums: **G40** nonstructural (AISI S220 §A4.1.1), **G60** structural.
+Nonstructural product is governed by **ASTM C645 / AISI S220**; structural by
+**ASTM C955 / AISI S240**. There is no such thing as a 25 ga structural stud —
+C955 floors structural product at 33 mil.
+
+**Kentucky enforces this with no small-project escape hatch.** The 2018 Kentucky
+Building Code (4th Ed., Feb 2024) is a statewide mini/maxi code — no local
+variation — and Kentucky **deleted** the IBC §1705.11.2 special-inspection
+exception in its entirety. **A special inspector will be looking at this
+product.**
+
+### The evidence on imported product
+
+Independent laboratory testing across seven rounds, on steel wall and ceiling
+products from **more than five suppliers importing from China**, measured
+against the identical 95% rule:
+
+| Product | Measured base metal | % of required |
+|---|---|---|
+| 3S64 stud | 0.468 mm | **94%** |
+| 3T64 track | 0.484 mm | **88%** |
+| H-Stud | 0.44 mm (0.50 specified) | **88%** |
+| 64 mm wall track | 0.47 mm (0.55 specified) | **85%** |
+
+Every sample failed. The stated root cause: Chinese mills manufacture to the
+*low end* of flat-rolled coil tolerance, and coil tolerance is looser than the
+CFS framing standard requires. *(This dataset is Australian, measured against
+AS/NZS 4600 — but the 95%-of-design rule is numerically identical and the mills
+are the same mills. Treat it as transferable.)*
+
+**And mill certificates do not settle it.** Industry audit data: *"more than 50
+percent of the samples that fail during an audit are sourced from a 'prime
+steel' coil"* — that is **domestic** product with **domestic** mill certs. Your
+risk with unverified foreign certs is strictly worse.
+
+### 🔴 The specification mismatch nobody mentions
+
+The Chinese product typically on offer is **metric and not ASTM-conforming** —
+C-stud profiles of 50/65/70/75 mm in 2800/2900/3000/4000 mm lengths. US
+commercial specs (Section 09 22 16) call for **ASTM C645** members at 3-5/8" ×
+10 ft with SFIA or ICC-ES listing.
+
+**Non-listed metric keel cannot legally be installed in code-critical
+commercial partitions.** This doesn't shrink the addressable market — it
+removes most of it. Confirm the actual profile dimensions and lengths on the
+quote *before* assuming the product fits the job.
+
+---
+
+## 4. Where the liability actually lands — verified, and it's bad
 
 Ben's instinct will be that the manufacturer is responsible for the
-manufacturer's product. In an import, that instinct is wrong in a specific and
-dangerous way.
+manufacturer's product. For an import, that instinct is wrong in a specific and
+documented way.
 
-The general principle across US product liability law is that everyone in the
-chain of distribution of a defective product can be liable — manufacturer,
-distributor, and seller. Many states, Kentucky included, have some form of
-"innocent seller" or middleman protection that shields a distributor who merely
-resold a sealed product made by someone else.
+Kentucky's middleman statute,
+[**KRS 411.340**](https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=17813),
+protects a distributor — but only on four conditions. **Supply likely fails
+three of them.**
 
-**The catch, and it is the whole ballgame:** those protections generally
-depend on the injured party being able to reach the actual manufacturer. When
-the manufacturer is a Chinese factory outside US jurisdiction, the practical
-effect is that **the importer becomes the defendant** — the importer is the
-last solvent, servable party in the chain. This is why insurers treat importers
-as manufacturers for rating purposes.
+> *"In any product liability action, **if the manufacturer is identified and
+> subject to the jurisdiction of the court**, a wholesaler, distributor, or
+> retailer... upon his showing... that said product **was sold by him in its
+> original manufactured condition or package**... shall not be liable... unless
+> such wholesaler, distributor or retailer **breached an express warranty or
+> knew or should have known** at the time of distribution or sale that the
+> product was in a defective condition..."*
 
-**[CONFIRM with Kentucky counsel]** — the precise question, worded for a lawyer:
+**Condition 1 — the manufacturer must be subject to the court's jurisdiction.
+This is where it fails.** Kentucky federal courts treat this as a hard
+prerequisite, not a formality. In ***Elkins v. Extreme Products Group, LLC***,
+No. 5:21-cv-00050 (E.D. Ky. Dec. 21, 2021), the court **denied** a retailer's
+motion to dismiss under the statute:
 
-> *"Does Kentucky's middleman/innocent-seller statute protect a distributor who
-> is also the importer of record, where the foreign manufacturer is not subject
-> to Kentucky jurisdiction? And does the protection survive if the distributor
-> cut, modified, or repackaged the product?"*
+> *"there is an open question... regarding whether the manufacturer is subject
+> to the Court's jurisdiction... **which is a prerequisite for the Middleman
+> Statute to apply.**"*
 
-That second clause matters enormously and is easy to miss: **the cut shop may
-forfeit the protection.** A distributor who passes through a sealed product has
-the strongest claim to innocent-seller status. A distributor who cuts material
-to length, re-bundles it, and ships it as a Misty Valley job package has
-altered the product and put its own name on it. That is much closer to
-manufacturing. The cut shop is a good business idea and it is also a liability
-posture change — go in knowing that, and price the insurance accordingly.
+The manufacturer there had never been found or served despite a Warning Order
+Attorney being appointed. **That is exactly the posture of a Chinese
+roll-former with no US presence, no US assets, no registered agent, and no
+realistic Hague service outcome within the life of a lawsuit.**
+
+**Condition 2 — "original manufactured condition or package." The cut shop
+independently defeats this.** Cutting to length and re-bundling is not selling
+in original condition. And Kentucky's product-liability act,
+[KRS 411.300(1)](https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=17809),
+defines a covered action to include claims arising from *"**processing,
+assembly, testing, listing, certifying**, warning, instructing, marketing,
+advertising, packaging or **labeling**"* — processing and assembly are
+enumerated. Kentucky courts have construed "alteration" **narrowly against the
+middleman**: assembling a ride per the manufacturer's own instructions counted
+as alteration; so did removing a warning label.
+
+**Condition 3 — "knew or should have known." Reading this document moves you
+across that line.** Once you know that imported CFS has a documented base-metal
+and mill-cert problem, **relying on those certs without independent
+verification is itself the evidence that defeats your defense.** A file of
+unverified Chinese MTCs is not protection — in litigation it is Exhibit A.
+
+**Condition 4 — express warranty.** Every gauge, yield, and code-compliance
+representation Supply makes is a potential express warranty. Selling "to code"
+means warranting to code.
+
+> **Net effect: Supply is a full defendant, and is treated as the
+> manufacturer** — the last solvent, servable party in the chain. This is why
+> insurers rate importers as manufacturers.
+
+**The cut shop is a good business idea *and* a liability-status change.** Go in
+knowing it, disclose it to the insurance broker (non-disclosure is a rescission
+risk), and price accordingly. **[SIGN-OFF]** — a Kentucky products-liability
+attorney should opine on whether the cut shop converts Supply from
+"distributor" to "manufacturer" under KRS 411.300/.340. That answer drives both
+the insurance program and the mill contract.
+
+**And don't count on supplier indemnity.** It is worth only the enforceability
+of a judgment against reachable assets. Against a Chinese roll-former, that is
+approximately zero — documented outcomes include foreign insurers withdrawing
+defense mid-case and invoking sunset clauses on already-tendered claims.
+
+---
+
+## 4A. The two legitimate paths — this is the constructive part
+
+Imported CFS **can** be made code-compliant. There are exactly two doors, and a
+third that doesn't exist for a distributor.
+
+**Door 1 — an ICC-ES Evaluation Report that names the actual plant.** This
+demonstrably works: **ESR-4135** is held by **Sunsha International LLC**, a *US
+importer*, covering CFS members cold-formed from Chinese coil to **GB/T 700
+Q235**. So a foreign grade can be evaluated as an alternative material, and **a
+US importer can hold the ESR.** The price of admission: §5.4 requires the
+members be *"manufactured under an approved quality control program with
+inspections by ICC-ES"* — ICC-ES inspects the plant, in China. An ESR is
+**plant-specific**; switching mills without amending it breaks it.
+
+**Door 2 — UL listing under category CIKV** for anything going into a
+fire-rated assembly (§2).
+
+**The door that is closed:** the **SFIA Code Compliance Certification Program**
+attaches to a *manufacturing facility* — eligibility is limited to members
+*manufacturing* product, and each plant enrolls independently with semi-annual
+**unannounced** audits and third-party ISO 17025 lab testing. **A distributor
+cannot buy an SFIA certification.** There is a narrow §A6.4 route for
+third-party-sourced product audited at the Licensee's facility — **[SIGN-OFF]**
+ask SFIA directly whether a cut-and-bundle operation can enroll, and whether
+their **Contractor & Truss Fabricators Certification** is the right program
+instead. Do not assume it.
+
+> **The strategic recommendation, if the economics survive `04`:** buy only
+> from a supplier holding a **current ICC-ES ESR that names the producing
+> plant**, and independently verify base metal thickness and coating weight on
+> every shipment at an IAS-accredited lab. That combination is the only
+> configuration in which Chinese sourcing is defensible in front of a Kentucky
+> code official, an architect, a special inspector — and if it ever comes to
+> it, a jury.
 
 ---
 
@@ -163,8 +308,29 @@ a container to it:
   preference that is stricter than most people expect. **[CONFIRM]** whether the
   Hebron project touches airport property or any federal funding.
 - **Private specs** frequently require "domestic steel" or "melted and poured in
-  the USA" outright — distribution centers and big-box work often do.
-- **[CONFIRM]** any Kentucky state procurement steel preference for public work.
+  the USA" outright — distribution centers and big-box work often do. SFIA
+  publishes guide specs for Sections 05 40 00 and 09 22 16 that commonly require
+  third-party certification or a current ESR. **Read the spec; these are
+  enforced at submittal — after your container has landed.**
+- **Kentucky has NO state Buy American statute in force** (verified). HB 345
+  (2025) died in committee on 28 March 2025; HB 472 (2026) was introduced
+  22 January 2026 and remains in committee. **But it has now been filed twice
+  with bipartisan sponsorship** — if it passes, product already in the
+  Bonnieville yard could become unsellable into the public market overnight.
+  That's an inventory risk, not just a legal one.
+
+### The three questions to ask the supplier before wiring anything
+
+1. *"What is your **ICC-ES ESR number**, and does its manufacturing-locations
+   table name the exact plant that will produce my order?"* No ESR, or a plant
+   not named, means you're buying commodity steel, not code-compliant framing.
+2. *"Will you provide, **per shipment**, ASTM A90 coating-weight and A370
+   mechanical test reports from an IAS-accredited ISO 17025 lab — and will you
+   accept **my independent verification as the governing result**?"* A supplier
+   who won't accept independent verification is telling you something.
+3. *"Which **UL fire-resistance designs** is your product listed in, under what
+   company name and product type?"* If the answer is "it's equivalent to 25
+   gauge," the answer is no.
 
 Searching the spec PDF for *"domestic," "Buy America," "melted," "poured"* takes
 ninety seconds and can save a container.
