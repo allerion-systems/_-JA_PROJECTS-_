@@ -202,6 +202,70 @@ def compute_landed_cost(s: ContainerScenario) -> LandedCostResult:
 
 
 # --------------------------------------------------------------------------
+# Container capacity -- what is actually in the box, and what is it worth
+# --------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class StudSpec:
+    """One product line. Weights are PUBLISHED member weights, lb per foot.
+
+    Reference points from ClarkDietrich submittal data:
+      362S162-43  (3-5/8", 18ga / 43 mil structural)  = 1.16 lb/ft
+      362S162-33  (3-5/8", 20ga / 33 mil structural)  = 0.89 lb/ft
+
+    Note that "25 gauge" in the drywall-framing world is commonly a 15-mil
+    EQ product, which is a different animal from a 25ga generic stud -- see
+    03-product-compliance-risk.md before assuming one substitutes for the
+    other in a rated assembly.
+    """
+
+    designation: str
+    weight_lb_per_ft: float
+    market_price_per_ft: float = 0.0  # distributor-to-contractor
+    stick_length_ft: float = 10.0
+
+
+# A 40ft high-cube container. Payload varies by carrier and by the road-legal
+# gross weight limit for the drayage leg -- confirm both before loading.
+DEFAULT_PAYLOAD_LB = 61_700.0  # ~28,000 kg
+
+
+@dataclass
+class CapacityResult:
+    designation: str
+    payload_lb: float
+    linear_feet: float
+    pieces: float
+    market_value: float
+
+
+def compute_capacity(
+    spec: StudSpec,
+    payload_lb: float = DEFAULT_PAYLOAD_LB,
+    packing_efficiency: float = 1.0,
+) -> CapacityResult:
+    """Linear feet that fit, assuming the load WEIGHS OUT.
+
+    `packing_efficiency` below 1.0 models a load that cubes out before it
+    weighs out -- light-gauge studs nest, but not perfectly, and a container
+    of 25ga product may hit the ceiling on volume rather than tonnage. Set it
+    from a real packing list once the first container is measured.
+    """
+    if spec.weight_lb_per_ft <= 0:
+        raise ValueError("weight_lb_per_ft must be positive")
+
+    lf = (payload_lb / spec.weight_lb_per_ft) * packing_efficiency
+    return CapacityResult(
+        designation=spec.designation,
+        payload_lb=payload_lb,
+        linear_feet=lf,
+        pieces=lf / spec.stick_length_ft if spec.stick_length_ft else 0.0,
+        market_value=lf * spec.market_price_per_ft,
+    )
+
+
+# --------------------------------------------------------------------------
 # Working capital
 # --------------------------------------------------------------------------
 

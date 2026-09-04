@@ -10,7 +10,9 @@ from container_model import (
     ConversionCosts,
     DutyRates,
     LogisticsCosts,
+    StudSpec,
     UserFees,
+    compute_capacity,
     compute_landed_cost,
     compute_working_capital,
     load_scenarios,
@@ -151,6 +153,45 @@ def test_peak_cash_scales_linearly_with_volume() -> None:
     if one.weighted_days_outstanding < 60:
         FAILURES.append(
             f"cash cycle implausibly short: {one.weighted_days_outstanding:.0f}d"
+        )
+
+
+def test_capacity_is_inverse_to_stud_weight() -> None:
+    """Lighter gauge means more feet in the box, proportionally."""
+    heavy = compute_capacity(StudSpec("18ga", 1.16), payload_lb=61_700.0)
+    light = compute_capacity(StudSpec("20ga", 0.89), payload_lb=61_700.0)
+    check("18ga linear feet", heavy.linear_feet, 61_700.0 / 1.16, tol=1.0)
+    if light.linear_feet <= heavy.linear_feet:
+        FAILURES.append("lighter stud must yield more linear feet")
+
+
+def test_packing_efficiency_derates_a_load_that_cubes_out() -> None:
+    full = compute_capacity(StudSpec("t", 0.89))
+    derated = compute_capacity(StudSpec("t", 0.89), packing_efficiency=0.6)
+    check("60% packing", derated.linear_feet, full.linear_feet * 0.6, tol=1.0)
+
+
+def test_capacity_rejects_nonsense_weight() -> None:
+    try:
+        compute_capacity(StudSpec("bad", 0.0))
+    except ValueError:
+        return
+    FAILURES.append("zero weight per foot should raise, not divide by zero")
+
+
+def test_a_full_container_is_worth_far_more_than_22k() -> None:
+    """Guards the finding that reframed the pricing question: a 40HC that
+    weighs out holds tens of thousands of linear feet. Even at a
+    deliberately conservative price per foot, the box is worth multiples of
+    the $22,000 sale price described verbally -- which means the quoted
+    numbers are not describing a full container of studs."""
+    spec = StudSpec("362S162-33", 0.89, market_price_per_ft=1.00)
+    r = compute_capacity(spec)
+    if r.linear_feet < 50_000:
+        FAILURES.append(f"expected >50k lf in a 40HC, got {r.linear_feet:,.0f}")
+    if r.market_value <= 22_000:
+        FAILURES.append(
+            "a weighed-out container should be worth well over $22k at $1/lf"
         )
 
 
