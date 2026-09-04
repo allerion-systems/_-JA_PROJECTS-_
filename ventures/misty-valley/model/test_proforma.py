@@ -173,14 +173,14 @@ def test_ramp_expands_segments_to_full_horizon() -> None:
 
 def test_shipped_scenarios_are_all_funded() -> None:
     """Every scenario we publish must either survive on its stated capital
-    or be explicitly labelled as the failure case. `stress` is the only
-    one allowed to run dry -- that is what it is for."""
+    or be explicitly labelled as a failure case. `stress` and `no_mill_terms`
+    are the two allowed to run dry -- that is what they are for."""
     for key, s in P.load_scenarios().items():
         rows = P._run_months(s)
         low = min(r.cash_balance for r in rows)
-        if key == "stress":
+        if key in ("stress", "no_mill_terms"):
             if low >= 0:
-                FAILURES.append("stress scenario should expose a funding gap")
+                FAILURES.append(f"{key} scenario should expose a funding gap")
             continue
         if low < -0.01:
             FAILURES.append(f"{key}: underfunded, low cash {low:,.0f}")

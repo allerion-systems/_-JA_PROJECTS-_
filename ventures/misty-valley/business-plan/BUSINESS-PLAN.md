@@ -88,6 +88,28 @@ before it collects. The model shows the plan running dry even while posting
 positive EBITDA every month if the line is undersized. That is the single most
 important thing a lender should understand about this credit.
 
+### Two preconditions the facility depends on
+
+Both are researched in `../08-financing-and-benchmarks.md`, and both must be
+settled before drawdown rather than discovered afterwards:
+
+**1. Mill trade terms.** The 80-day cycle assumes 30 days of supplier terms. A
+brand-new entity does not get them by default — GMS carries 41.5 days of
+payables because it has decades of mill relationships. **With no terms the
+cycle stretches to 110 days and peak cash rises to $1,047,356 — the $700,000
+line runs dry.** The mitigation is free: submit credit applications to
+ClarkDietrich, MarinoWARE and Telling **now**, using Misty Valley Contracting's
+ten-year payment history as the trade reference, and attach the approved limits
+to this plan as an appendix.
+*(`python3 model/proforma.py --scenario no_mill_terms`)*
+
+**2. Borrowing-base eligibility on cut inventory.** The OCC's lending handbook
+notes that commodity raw materials carry the best inventory advance rates while
+**work-in-process is "frequently excluded."** Job-specific bundles cut to one
+wall type on one floor look exactly like work-in-process — no alternative
+buyer, no liquidation value. **Operating rule: cut to order, not to stock**, and
+negotiate the eligibility definition in the loan agreement up front.
+
 ## 1.5 What we are asking readers to check
 
 This plan is deliberately explicit about its own weak points:
@@ -860,6 +882,8 @@ Nothing in this plan should be implemented without the corresponding clearance.
 | `../04-unit-economics.md` | Market pricing, container capacity, competitor margins |
 | `../05-first-container-gate.md` | Pre-purchase checklist for imported material |
 | `../06-the-stronger-play.md` | Strategic rationale for the service-led model |
+| `../07-logistics-routing.md` | Inbound routing: barge, rail, truck; Kentucky weight limits |
+| `../08-financing-and-benchmarks.md` | SBA underwriting rules, collateral discounts, industry ratios |
 | `../website/` | Deployable marketing site |
 
 **To reproduce any figure in §7:**
