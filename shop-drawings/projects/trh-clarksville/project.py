@@ -73,3 +73,28 @@ SCREEN = '1/4" mesh aluminum insect screen'
 DRAWN_BY = "J. ALLEE"
 CHECKED_BY = ""
 STATUS = "FOR GC / ARCHITECT APPROVAL"
+
+
+# --- architect's roof plan requirements ------------------------------------
+# Verbatim from the roof plan sheet. These override anything absent from the
+# submittal binder, which established none of them.
+#
+#   "DCSM METAL ROOF VENT (COLOR: GALVALUME) - NFA MIN. 105 S.I.
+#    AT HIGH, TYP. OF 2"
+#   "PROVIDE 6"x18" (THRU METAL ROOF, INSULATION, & PLYWOOD)
+#    OPENING BETWEEN RAFTERS EACH VENT LOCATION"
+#   "5 RIB V-GROOVE METAL ROOF (WITH SIDELAP SM7108 SEALANT AT EACH PANEL
+#    ON ROOF PITCH SLOPES LESS THEN 3:12 ONLY)"
+#   "NO DIRECT CONTACT [...] LEAK BARRIER & [...] MEMBRANE - NOT [...], SEE 6/A8"
+#
+PLAN_NFA_MIN_SQIN = 105.0
+PLAN_VENT_QTY = 2
+PLAN_VENT_LOCATION = "AT HIGH"
+PLAN_DECK_OPENING = '6" x 18", between rafters, thru roof/insulation/plywood'
+PLAN_PANEL_CALLOUT = "5 RIB V-GROOVE METAL ROOF"
+PLAN_SIDELAP_SEALANT = "SM7108 at each panel where pitch < 3:12"
+PLAN_INCOMPATIBILITY = "No direct contact, leak barrier to membrane - see 6/A8"
+
+# The sidelap-sealant note implies roof planes BELOW 3:12 exist. Metal Sales
+# publishes 3:12 as the 5V-Crimp MINIMUM slope, so a sub-3:12 plane is a
+# manufacturer conflict, not merely a sealant condition. Open item on SM-2.

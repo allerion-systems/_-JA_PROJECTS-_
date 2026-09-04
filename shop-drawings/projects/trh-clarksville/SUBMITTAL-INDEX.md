@@ -81,3 +81,44 @@ These matter and are carried onto the shop drawing's OPEN ITEMS block.
 - Pay Apps #1–#3 filed; Procore Subcontractor Invoice #2 **overdue** (notices 9/1–9/4/2026)
 - Sept 2026 follow-on: interior metal roof canopy — (23) 50", (23) 100",
   (23) 40" 5V Galvalume + (2) 44' ridge caps at 4/12
+
+---
+
+## The architect's roof plan — what the binder was missing
+
+Three of the four things the submittal never established are fixed on the roof
+plan sheet. Verbatim callouts:
+
+> **"DCSM METAL ROOF VENT (COLOR: GALVALUME) — NFA MIN. 105 S.I. AT HIGH, TYP. OF 2"**
+>
+> **"PROVIDE 6"x18" (THRU METAL ROOF, INSULATION, & PLYWOOD) OPENING BETWEEN RAFTERS EACH VENT LOCATION"**
+>
+> "5 RIB V-GROOVE METAL ROOF (WITH SIDELAP SM7108 SEALANT AT EACH PANEL ON ROOF PITCH SLOPES LESS THEN 3:12 ONLY)"
+>
+> "NO DIRECT CONTACT […] LEAK BARRIER & […] MEMBRANE — NOT […], SEE 6/A8"
+>
+> "OUTLINE OF WALL BELOW" · vent centrelines dimensioned ±1'-11" · ±6'-1 3/4" · 14'-0"
+
+**What this resolves**
+
+| Was open | Now |
+|---|---|
+| Net free area — unpublished by DCSM | **105 sq in minimum**, by contract |
+| Quantity — no vent line item on the cut list | **2** |
+| Deck opening — no dimension anywhere | **6" × 18", between rafters** |
+| Vent location | **"AT HIGH"** — confirms the ridge condition |
+
+**What it raises**
+
+1. **The sidelap-sealant note implies roof planes below 3:12 exist.** Metal
+   Sales publishes 3:12 as the 5V-Crimp *minimum* slope and states the panel is
+   "not recommended for use over open structural framing." A sub-3:12 plane is
+   a manufacturer conflict, not just a sealant condition. Confirm the pitch at
+   both vent locations.
+2. **Rafter spacing and direction must be confirmed** — the 6"×18" opening has
+   to fall between rafters without cutting one.
+3. **Detail 6/A8** (leak barrier / membrane incompatibility) needs to be read
+   before finalising the underlayment at the vent.
+4. Still open: DCSM's own vent dimensions and a *tested* NFA. The shop drawing
+   sizes the throat to meet 105 sq in and shows the calculation; a tested figure
+   from the manufacturer governs if one is issued.
