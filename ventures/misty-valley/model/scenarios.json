@@ -1,0 +1,142 @@
+{
+  "_README": [
+    "Rate assumptions for container_model.py. Anything marked _verify must be",
+    "confirmed by a licensed customs broker against the entry-date HTSUS before",
+    "you wire money. Tariff rates in this space changed four times in 18 months.",
+    "Customs value = transaction value (broadly the FOB price paid to the",
+    "supplier). Ocean freight is NOT in the customs value for US entries, which",
+    "is why it sits in `logistics` and is not duty-bearing."
+  ],
+
+  "_rate_sources": {
+    "hts_classification": {
+      "value": "7216.91.0010",
+      "basis": "CBP CROSS rulings NY N303868 and NY N267728 classify roll-formed, punched steel channel/profile under 7216.91.00 (cold-formed from flat-rolled). '0010' is the drilled/notched/punched statistical suffix -- framing studs have punched service holes.",
+      "_verify": "Get a BINDING RULING from CBP before the first entry. A ruling is free and takes ~30-90 days. Guessing the code is how importers end up in a 19 USC 1592 penalty case."
+    },
+    "section_232": {
+      "value": 0.50,
+      "basis": "Proclamation 11021, 'Strengthening Actions Taken To Adjust Imports of Aluminum, Steel, and Copper', signed 2026-04-02, effective 12:01am EDT 2026-04-06. 50% top tier on articles made entirely or almost entirely of steel, assessed on FULL customs value. Federal Register 2026-06960.",
+      "_verify": "Proclamation 2026-11314 (June 2026) further adjusted the regime, and BIS opened another derivative-inclusions comment window 2026-08-06 (FR 2026-15961). Confirm the operative rate at entry date."
+    },
+    "section_301": {
+      "value": 0.25,
+      "basis": "China Section 301 List 3 rate. Steel articles of Ch.72 were broadly covered on List 3 at 25%.",
+      "_verify": "UNVERIFIED for 7216.91.0010 specifically. Confirm against the USTR list and the HTSUS Ch.99 subheading before relying on it."
+    },
+    "ieepa": {
+      "value": 0.0,
+      "basis": "The Supreme Court struck down IEEPA-based tariffs on 2026-02-20; the reciprocal and 'fentanyl' tariffs on China were terminated and CBP opened the CAPE refund portal 2026-04-20. These no longer stack.",
+      "_verify": "Watch for replacement authority. The administration retains Section 122, Section 338 and expanded 301 options. This line can come back."
+    },
+    "mfn": {
+      "value": 0.0,
+      "_verify": "UNVERIFIED. Column 1 General rate for 7216.91.0010 -- many Ch.72 lines are Free, but confirm on hts.usitc.gov."
+    },
+    "ad_cvd": {
+      "value": 0.0,
+      "basis": "No AD/CVD order identified that plainly names cold-formed steel framing from China as of this writing.",
+      "_verify": "THIS IS THE BUSINESS-ENDING RISK. AD/CVD is deposited at entry and FINALLY ASSESSED at administrative review, often 2-3 years later, and the importer owes the difference retroactively with interest. Rates on Chinese steel cases have exceeded 100%. Check for new petitions and scope/anti-circumvention rulings BEFORE EVERY ORDER, not once."
+    },
+    "mpf_hmf": {
+      "_verify": "MPF ad valorem rate and the min/max cap adjust annually for inflation. Confirm current figures."
+    }
+  },
+
+  "scenarios": {
+    "ben_claim": {
+      "name": "As described verbally (reverse-engineered)",
+      "notes": "Ben's stated numbers: ~$11,000 all-in landed, sell at ~$22,000. This scenario back-solves what the FOB invoice would have to be for $11,000 to be true under the CURRENT duty stack. If the implied FOB is below the raw steel value of a container, the quote is not what he thinks it is.",
+      "fob_invoice_value": 2900.0,
+      "duty": { "mfn": 0.0, "section_232": 0.50, "section_301": 0.25 },
+      "logistics": {
+        "ocean_freight": 3200.0,
+        "drayage": 1100.0,
+        "customs_broker": 350.0,
+        "isf_filing": 50.0,
+        "customs_bond": 150.0,
+        "chassis_and_port_fees": 300.0,
+        "demurrage_reserve": 0.0,
+        "unloading": 200.0
+      },
+      "conversion": {},
+      "sell_price": 22000.0,
+      "linear_feet": 0.0
+    },
+
+    "base_case": {
+      "name": "Realistic container, current duty stack",
+      "notes": "A 40HC of cold-formed steel framing at a plausible FOB value, run through the verified Section 232 + Section 301 stack, with real cut-shop and delivery cost added. Replace fob_invoice_value with the actual supplier quote.",
+      "fob_invoice_value": 14000.0,
+      "duty": { "mfn": 0.0, "section_232": 0.50, "section_301": 0.25 },
+      "logistics": {
+        "ocean_freight": 3200.0,
+        "drayage": 1100.0,
+        "customs_broker": 350.0,
+        "isf_filing": 50.0,
+        "customs_bond": 150.0,
+        "chassis_and_port_fees": 300.0,
+        "demurrage_reserve": 400.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 34000.0,
+      "linear_feet": 0.0
+    },
+
+    "adcvd_shock": {
+      "name": "AD/CVD order lands mid-stream",
+      "notes": "Same container, but a petition succeeds and a combined AD/CVD deposit rate attaches. Models the retroactive-assessment risk: this is what a demand letter looks like two years after you already sold and spent the money.",
+      "fob_invoice_value": 14000.0,
+      "duty": {
+        "mfn": 0.0,
+        "section_232": 0.50,
+        "section_301": 0.25,
+        "ad_deposit": 0.80,
+        "cvd_deposit": 0.20
+      },
+      "logistics": {
+        "ocean_freight": 3200.0,
+        "drayage": 1100.0,
+        "customs_broker": 350.0,
+        "isf_filing": 50.0,
+        "customs_bond": 900.0,
+        "chassis_and_port_fees": 300.0,
+        "demurrage_reserve": 400.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 34000.0,
+      "linear_feet": 0.0
+    },
+
+    "domestic_alternative": {
+      "name": "Buy domestic, distribute only",
+      "notes": "No import, no duty, no AD/CVD tail, no code-compliance argument, no importer product liability. Thinner margin, but the business is legal-risk-free and can bid Buy America work. This is the control case every import scenario must beat on a RISK-ADJUSTED basis, not just on margin.",
+      "fob_invoice_value": 26000.0,
+      "duty": {},
+      "logistics": {
+        "drayage": 900.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 34000.0,
+      "linear_feet": 0.0
+    }
+  }
+}
