@@ -179,12 +179,12 @@ def test_capacity_rejects_nonsense_weight() -> None:
     FAILURES.append("zero weight per foot should raise, not divide by zero")
 
 
-def test_a_full_container_is_worth_far_more_than_22k() -> None:
-    """Guards the finding that reframed the pricing question: a 40HC that
-    weighs out holds tens of thousands of linear feet. Even at a
-    deliberately conservative price per foot, the box is worth multiples of
-    the $22,000 sale price described verbally -- which means the quoted
-    numbers are not describing a full container of studs."""
+def test_a_full_container_is_worth_multiples_of_its_landed_cost() -> None:
+    """Guards the finding that carries the business case: a road-legal load
+    holds tens of thousands of linear feet, and even at a deliberately
+    conservative price per foot the box resells for several times what it
+    costs to land. This is why the venture works at all -- provided the
+    product is code-compliant and the duty is actually budgeted for."""
     spec = StudSpec("362S162-33", 0.89, market_price_per_ft=1.00)
     r = compute_capacity(spec)
     if r.linear_feet < 40_000:
@@ -197,7 +197,7 @@ def test_a_full_container_is_worth_far_more_than_22k() -> None:
 
 def test_shipped_scenarios_all_load_and_compute() -> None:
     scenarios = load_scenarios()
-    for key in ("ben_claim", "base_case", "adcvd_shock", "domestic_alternative"):
+    for key in ("ben_actual", "base_case", "adcvd_shock", "domestic_alternative"):
         if key not in scenarios:
             FAILURES.append(f"missing scenario {key}")
             continue

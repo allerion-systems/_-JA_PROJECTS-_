@@ -10,91 +10,76 @@ been cancelling each other out into a margin that looks plausible.
 
 ---
 
-## 1. The headline
+## 1. The headline — corrected
+
+**This section was rewritten on 4 September 2026.** The original transcript
+said "eleven thousand *after* shipping and tariffs and handling," so the first
+pass priced $11,000 as an all-in landed cost and concluded the margin was
+absent. Joey clarified the real basis: **$11,000 is the goods, FOB China, and
+Ben budgets roughly $10,000 on top to land it in Bonnieville.**
+
+On the corrected basis the conclusion changes. The margin is real and good.
+The error is a budgeting gap, and it is almost exactly the size of the tariff.
 
 | Claim | Verdict | Reality |
 |---|---|---|
-| Container costs **$11,000** landed | **Arithmetically impossible** | **$38,000–$42,600** |
-| Container sells for **$22,000** | **~4× too low** | **$81,500–$126,000** at distributor pricing |
-| **50% gross margin** | **Not real, not sustainable** | Real distributors earn **~31%**; steel framing earns *less* |
-| Working capital | **The actual constraint** | **~137 days**; $698K locked at just 4 containers/month |
-
-The single fact that settles it:
-
-> **Ocean freight alone is $9,587 per 40ft container.**
-> That is 87% of the entire $11,000 "all-in" budget, before one dollar of
-> steel, duty, brokerage, or trucking.
-
-Drewry World Container Index, Shanghai→New York, assessed 3 September 2026 —
-up 3% week on week. ([Drewry](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry) · [Daily Cargo News](https://www.thedcn.com.au/news/world-container-index-3-september-2026))
+| Goods at **$11,000** FOB | **Plausible** | Implies $550–800/tonne depending on load weight — consistent with Chinese galvanized keel |
+| **~$10,000** to land it | **Roughly half of what's needed** | **$21,489** — the adder covers freight, not duty |
+| Landed cost | — | **$32,489 per container** |
+| **$22,000** as "our cost" | **Understates by ~$10,500** | Missing the 75% duty stack |
+| Gross margin | **Genuinely strong** | **32–53%** depending on load weight |
 
 ---
 
-## 2. Why $11,000 cannot be a landed cost
+## 2. The corrected landed cost
 
-Work it backwards. Start with $11,000, subtract the freight, and see what's
-left for everything else:
+| Line | Amount |
+|---|---:|
+| FOB goods, China | $11,000 |
+| Section 232 — 50% of customs value | $5,500 |
+| Section 301 — 25% | $2,750 |
+| MPF (0.3464%) + HMF (0.125%) | $52 |
+| **Duty and fees subtotal** | **$8,302** |
+| Ocean freight, Shanghai → USEC (Drewry, 2026-09-03) | $9,587 |
+| Customs broker + ISF | $300 |
+| Chassis, terminal and port fees | $400 |
+| Drayage to Bonnieville | $2,200 |
+| Bond (amortised) + demurrage reserve + unloading | $700 |
+| **LANDED, BONNIEVILLE** | **$32,489** |
 
-```
-Claimed all-in landed                                  $11,000
-Ocean freight alone (Drewry, 2026-09-03)             −  $9,587
-──────────────────────────────────────────────────────────────
-Left for goods + 75% duty + fees + dray to Kentucky   $ 1,413
-```
+**Landed cost is 2.95× the FOB invoice.** That multiple is the single most
+useful number to carry around: whatever the supplier quotes, multiply by
+roughly three to get it onto the yard.
 
-Solve for the supplier invoice that fits in $1,413, at the verified 75% duty
-stack (see `02`), and you get an **FOB invoice of about $788 per container** —
-roughly **$39 per tonne** for ~20 tonnes of galvanized, roll-formed, punched,
-cut-to-length steel.
-
-Three reference prices for scale:
-
-| Benchmark | $/tonne | vs. the $39 implied |
-|---|---|---|
-| Chinese ferrous **scrap** | ~$300–350 | **8–9× higher** |
-| Chinese **HRC export**, FOB | ~$490 | **12× higher** |
-| Chinese **galvanized sheet**, FOB | $650–920 | **17–24× higher** |
-
-The implied number is a fifth of *scrap*. It isn't a discount; it's a
-different unit.
-
-**The absolute arithmetic floor**, using Chinese HRC export parity and
-assuming free roll-forming, free galvanizing and zero supplier margin:
+### Where the $10,000 assumption goes wrong
 
 ```
-20 t × $490/t HRC parity     = $ 9,800
-Section 232 at 50%           = $ 4,900
-Ocean freight                = $ 9,587
-Fees, broker, dray (floor)   = $ 2,750
-─────────────────────────────────────
-IMPOSSIBLE-TO-BEAT FLOOR       $27,037
+Ben's adder                                    $10,000
+Ocean freight alone (Drewry, 2026-09-03)     −  $9,587
+──────────────────────────────────────────────────────
+Left for duty, broker, port, and 600 miles       $413
 ```
 
-Even that floor is 2.5× the stated budget, and it's a fantasy price.
+The ocean freight consumes the entire adder by itself. The **$8,250 of duty**
+and the **~$3,600 inland and clearance cost** are simply not in the budget.
 
-### What the $11,000 probably is
+> **Action: reprice at $21,500 per container to land, not $10,000.**
+> On a container Ben has already sold at a fixed price, that gap comes
+> straight out of margin — which is why this needs fixing *before* the next
+> quote goes out, not after.
 
-Four possibilities. The first two are ordinary misunderstandings; the last two
-are reasons to walk away.
-
-1. **It's an FOB or EXW quote read as delivered.** Most likely. $11,000 ÷ 20 t
-   = $550/tonne is a *coherent* FOB price for commodity galvanized keel. It is
-   simply not a landed cost. **Fix: get the Incoterm in writing.**
-2. **It's a stale number.** Section 232 doubled to 50% in June 2025 and moved
-   to full customs value in April 2026; transpacific freight spiked in 2026. A
-   2024 quote could plausibly have been near $11,000. The plan may be priced
-   off a market that no longer exists.
-3. **🚩 Undervaluation.** The only way to actually hit $11,000 is to understate
-   the invoice. That is customs fraud under 19 USC 1592, and **the importer of
-   record carries it personally — not the Chinese supplier.**
-4. **🚩 Dumped or non-conforming product.** Finished fabricated steel at
-   $550/tonne, when the US galvanized coil it's made from runs ~$1,477/tonne, is
-   37% of input cost. That is a textbook dumping signature — and see `02` on why
-   that invites the one risk that ends companies.
+**One caution on the goods price itself.** $11,000 for a 20-tonne load implies
+$550/tonne. Chinese galvanized sheet runs $650–920/tonne FOB, so finished,
+roll-formed, punched product at $550 is *below the raw material cost*. Either
+the load is lighter than 20 tonnes (13–16 tonnes at $688–800/tonne is entirely
+coherent), or the product is being sold below input cost — which is the
+definition of dumping and is exactly the fact pattern that attracts the
+petition described in `02` §4. **The packing list and weight ticket settle
+which it is, and they cost nothing to ask for.**
 
 ---
 
-## 3. Why $22,000 is too low — the more interesting error
+## 3. What is actually in the box — the open question
 
 This is the finding worth Ben's attention, because it's the one that costs him
 money he could be earning today.
@@ -156,9 +141,13 @@ ticket.** Not the supplier's description — the actual documents.
 
 ---
 
-## 4. Why 50% gross margin isn't a real number
+## 4. The margin is real today — but it is an arbitrage, not a moat
 
-Actual gross margins from public filings:
+Section 2 shows a 32–53% gross margin on an imported container. That is a real
+number and Ben should take it. But understand precisely *what* it is, because
+it does not behave like a distribution margin — it behaves like a trade.
+
+Actual **sustainable** gross margins, from public filings:
 
 | Company | Period | Gross margin |
 |---|---|---|
@@ -169,8 +158,18 @@ Actual gross margins from public filings:
 
 ([GMS FY2025 10-K](https://www.sec.gov/Archives/edgar/data/1600438/000162828025032103/gms-20250430.htm) · [SiteOne](https://www.sec.gov/Archives/edgar/data/1650729/000165072926000005/site-20251228.htm) · [BLDR](https://investors.bldr.com/news/news-details/2026/Builders-FirstSource-Reports-Fourth-Quarter-and-Full-Year-2025-Results-Provides-2026-Financial-Outlook/))
 
-A 50% gross margin would be **~19 points above the best specialty distributor
-in any adjacent category.** That is not a margin; that's a mispricing.
+A 42% gross margin sits **~11 points above the best specialty distributor in
+any adjacent category**, and ~19 points above the direct comparable. Nobody
+sustains that on a commodity by being a better buyer. It exists because of a
+price gap between Chinese and domestic steel that currently survives a 75%
+tariff — and it lasts exactly as long as that gap does.
+
+**Two things close it:** a competitor placing the same phone call to the same
+factory, or an antidumping petition (`02` §4). Neither is under Ben's control,
+and the second one is retroactive.
+
+That is the whole argument for `06`: take the arbitrage, but do not build the
+company's identity, its overhead, or its org chart on top of it.
 
 **And steel framing is the *worst* line inside GMS, not the best.** From the
 same 10-K, FY2025 vs FY2024:

@@ -1,6 +1,6 @@
 # Misty Valley Supply — Structure & Risk Review
 
-Prepared for **Ben East Ray** (Misty Valley Contracting) and **Joey Allee**,
+Prepared for **Ben Easterday** (Misty Valley Contracting) and **Joey Allee**,
 4 September 2026.
 
 Ben asked for help setting the structure up right and being effective. The
@@ -17,29 +17,52 @@ business and not a $40,000 tuition payment.
 
 ## The three findings
 
-### 1. The margin isn't there at the numbers as stated
+### 1. The margin is real — but the tariff is not in the budget
 
-The plan is buy at **$11,000** landed, sell at **$22,000**. Both numbers are
-wrong, in opposite directions, which is why the error has gone unnoticed — they
-cancel out into a margin that looks plausible.
+**Corrected 4 Sept 2026.** My first read had this wrong. The original transcript
+said "eleven thousand *after* shipping and tariffs," so I priced it as an all-in
+landed cost and concluded the margin wasn't there. Joey clarified the actual
+basis: **$11,000 is the goods (FOB China), plus about $10,000 to get it to
+Bonnieville.** On that basis the conclusion flips — the margin is genuinely
+good. The problem is narrower and fixable.
 
-**Ocean freight alone is $9,587 per 40ft container** (Drewry, 3 Sept 2026).
-That's 87% of the entire "all-in" budget before one dollar of steel, duty, or
-trucking. On top of that, Chinese cold-formed steel framing carries a **75% ad
-valorem duty stack** — 50% Section 232 plus 25% Section 301, both verified in
-the HTSUS legal text, and since April 2026 the 50% applies to the **full
-customs value**, not just steel content.
+Here is the real landed cost, at the verified duty stack:
 
-For $11,000 to be a real landed cost, the supplier invoice would have to be
-**$788 per container** — about $39/tonne. Chinese *scrap* is $300–350/tonne.
+| | |
+|---|---:|
+| FOB goods, China | $11,000 |
+| Section 232 (50% of customs value) | $5,500 |
+| Section 301 (25%) | $2,750 |
+| MPF + HMF | $52 |
+| Ocean freight, Shanghai → US East Coast | $9,587 |
+| Drayage, broker, ISF, bond, chassis, port | $3,600 |
+| **Landed Bonnieville** | **$32,489** |
 
-> **Realistic landed cost: $38,000–$42,600 per container.**
+**Ben's $10,000 adder covers the ocean freight almost exactly — and nothing
+else.** The missing $11,500 is essentially the tariff, plus the inland leg.
 
-And the sell price is too *low*: a properly loaded container holds ~110,000
-linear feet of stud, worth **$81,500–$126,000** at distributor pricing. $22,000
-implies either a quarter-loaded container or a sale below the raw steel cost.
+> **Budget $21,500 per container to land it, not $10,000.**
 
-**→ `04-unit-economics.md`** for the arithmetic, sources, and what to do about it.
+**And the margin still works.** Depending on how much steel is actually in the
+box, resale at distributor pricing ($0.80/LF) is:
+
+| Load weight | Implied $/tonne | Linear feet | Resale value | Gross margin |
+|---|---|---|---|---|
+| 13.75 t | $800 | 65,500 | $52,400 | **32%** |
+| 16 t | $688 | 76,200 | $60,900 | **42%** |
+| 20 t | $550 | 95,200 | $76,200 | **53%** |
+
+That is better than any public building-products distributor earns — GMS runs
+31.2% blended. So the venture is not the problem. **The budgeting gap is, and
+so is everything in findings 2 and 3.**
+
+Two things still need answers before this is bankable: **what is actually in
+the box** (get the packing list and weight ticket), and **what is the sell
+price** (I still don't have it — $22,000 turns out to be Ben's landed-cost
+estimate, not his revenue).
+
+**→ `04-unit-economics.md`** for the arithmetic and sources.
+**→ `07-logistics-routing.md`** for barge, rail and truck routing to Bonnieville.
 
 ### 2. The product may not be legal to install — and that reaches Contracting
 
