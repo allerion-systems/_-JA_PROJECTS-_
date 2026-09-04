@@ -66,11 +66,16 @@ class DutyRates:
 
 @dataclass(frozen=True)
 class UserFees:
-    """CBP user fees. Both adjust; confirm current figures at entry time."""
+    """CBP user fees, FY2026 figures per CBP Dec. 25-10, effective 2025-10-01.
+
+    FY2027 fees take effect 2026-10-01. FY2026 saw a 34.3% jump in COBRA
+    fees, so re-verify the MPF min/max for any container landing in Q4.
+    The 0.3464% rate itself is statutory and does not move.
+    """
 
     mpf_rate: float = 0.003464   # merchandise processing fee, ad valorem
-    mpf_min: float = 32.71
-    mpf_max: float = 634.62
+    mpf_min: float = 33.58
+    mpf_max: float = 651.50
     hmf_rate: float = 0.00125    # harbor maintenance fee, ocean entries only
 
     def mpf(self, customs_value: float) -> float:
