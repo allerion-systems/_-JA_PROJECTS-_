@@ -49,9 +49,19 @@ COPPER = {16: 0.0216, 20: 0.0270, 24: 0.0323, 32: 0.0431}
 def thickness(spec: str) -> float:
     """Resolve a material spec string to a decimal thickness in inches.
 
-    Accepts e.g. "24ga galv", "22ga", ".040 alum", "20oz copper".
+    Accepts e.g. "24ga galvalume", "24ga galv", "22ga", ".040 alum",
+    "20oz copper".
+
+    Galvalume is tested first and explicitly: the word contains "alum", so a
+    naive aluminium check swallows it. Galvalume is ASTM A792 Al-Zn coated
+    STEEL - the base steel matches the MSG steel column and the coated total
+    is close to the A653 galvanized column, which is what is returned here.
+    Confirm against the mill cert.
     """
     s = spec.lower().strip()
+    if "galvalume" in s or "az50" in s or "az55" in s or "a792" in s:
+        n = int("".join(c for c in s.split("ga")[0] if c.isdigit()))
+        return STEEL_GALVANIZED[n]
     if "alum" in s or s.startswith("."):
         for k, v in ALUMINUM.items():
             if k in s:
@@ -79,22 +89,85 @@ def thickness(spec: str) -> float:
 #   flat length = sum(mold-line legs) - sum(BD)      [outside/mold-line method]
 #               = sum(tangent legs)   + sum(BA)      [tangent method]
 #
-# K-factor is the ratio of neutral-axis offset to material thickness. For air
-# bending mild steel at a small radius it runs ~0.40-0.45; press-brake bottoming
-# on thin architectural gauges runs lower. 0.42 is the common shop default and
-# is what is used here unless overridden.
+# K-factor is the ratio of neutral-axis offset to material thickness.
+# Air bending, medium/steel, with an inside radius in the Mt..3Mt band -
+# which is where a 1/16" radius on 24 ga sits (IR/MT = 2.3). SheetMetal.Me's
+# K-factor table gives 0.43 for that cell. Verify against a bent coupon before
+# running production coil: K = (180*BA)/(pi*B*MT) - (IR/MT).
+K_DEFAULT = 0.43
 
-K_DEFAULT = 0.42
-
-# Minimum inside bend radius as a multiple of thickness. Thin architectural
-# gauges brake sharp; a 1T radius is a safe drawing assumption for 24ga steel.
+# Minimum inside bend radius as a multiple of thickness.
+#
+# GALVALUME IS THE CRITICAL ENTRY. Per the Metal Construction Association's
+# Metal Roof Installation Manual ch.3: "Typical minimum bend limits of
+# Galvalume are stated as 2T"; exceeding it "develops micro-fractures that may
+# cause premature corrosion at the bend line", and the limit is a WARRANTY
+# term, not merely an ASTM test. ASTM A792's own coating bend test is more
+# forgiving than the warranty - follow the warranty.
+#
+# Order matters: "galvalume" must be tested before "galv".
 MIN_BEND_RADIUS_MULTIPLE = {
-    "steel": 1.0,
+    "galvalume": 2.0,
     "galvanized": 1.0,
     "stainless": 1.5,
     "aluminum": 1.5,   # 3003-H14 / 5052-H32 at these gauges
     "copper": 1.0,
+    "steel": 1.0,
 }
+
+
+def min_bend_radius(material: str, thk: float | None = None) -> float:
+    """Minimum inside bend radius for a material spec, in inches."""
+    t = thk if thk is not None else thickness(material)
+    s = material.lower()
+    for key, mult in MIN_BEND_RADIUS_MULTIPLE.items():
+        if key in s:
+            return mult * t
+    return 1.0 * t
+
+
+# --- press brake tooling -------------------------------------------------
+#
+# Air forming produces an inside radius that is a roughly fixed fraction of
+# the die opening: about 0.166 x V for mild steel. So the die opening is what
+# actually sets the radius, and the naive "V = 8 x t" rule gives a radius far
+# below Galvalume's 2T limit on thin gauge - the trap this constant exists to
+# avoid. Minimum formable flange is b = sqrt(2) x V/2 = 0.7071 V, because the
+# blank must still bridge both die shoulders as the bend closes.
+
+AIR_BEND_RADIUS_FRACTION = 0.166      # inside radius / die opening, mild steel
+MIN_FLANGE_DIE_FRACTION = 0.7071      # minimum flange / die opening
+
+
+def die_for_radius(radius: float) -> float:
+    """Die opening needed to air-form a given inside radius."""
+    return radius / AIR_BEND_RADIUS_FRACTION
+
+
+def radius_from_die(v_opening: float) -> float:
+    return AIR_BEND_RADIUS_FRACTION * v_opening
+
+
+def min_flange(v_opening: float) -> float:
+    """Shortest flange that can be air-formed in a given die."""
+    return MIN_FLANGE_DIE_FRACTION * v_opening
+
+
+# Standard V dies, inches
+V_DIES = (0.125, 0.1875, 0.250, 0.3125, 0.375, 0.500, 0.625, 0.750, 1.000)
+
+
+def select_die(material: str, thk: float | None = None) -> dict:
+    """Pick the smallest standard die that still clears the material's
+    minimum inside bend radius, and report what it implies."""
+    t = thk if thk is not None else thickness(material)
+    r_min = min_bend_radius(material, t)
+    for v in V_DIES:
+        r = radius_from_die(v)
+        if r >= r_min:
+            return {"die": v, "radius": r, "radius_multiple": r / t,
+                    "min_flange": min_flange(v), "min_radius_required": r_min}
+    raise ValueError(f"no standard die clears {r_min:.4f}\" inside radius")
 
 
 def bend_allowance(angle: float, radius: float, thk: float, k: float = K_DEFAULT) -> float:

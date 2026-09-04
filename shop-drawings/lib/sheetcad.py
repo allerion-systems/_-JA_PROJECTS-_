@@ -29,7 +29,8 @@ from dataclasses import dataclass, field
 
 import cadquery as cq
 
-from .sheetmetal import bend_allowance, bend_deduction, thickness as gauge_thk
+from .sheetmetal import (bend_allowance, bend_deduction, min_bend_radius,
+                         thickness as gauge_thk)
 
 
 # ---------------------------------------------------------------- features
@@ -118,7 +119,8 @@ class SheetProfile:
 
     @property
     def default_radius(self) -> float:
-        return round(self.t, 4)          # 1t
+        """Minimum inside radius for the material - 2T for Galvalume."""
+        return round(min_bend_radius(self.material, self.t), 4)
 
     def _radius(self, f: Fold) -> float:
         return f.radius if f.radius is not None else self.default_radius

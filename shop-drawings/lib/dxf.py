@@ -14,12 +14,19 @@ from ezdxf.enums import TextEntityAlignment
 from .sheetmetal import Profile
 
 
+# Layer names follow the convention contract shops expect. Up-bends and
+# down-bends MUST be on separate layers: a file with everything on one "BEND"
+# layer cannot be used without manual rework, because the press brake operator
+# has no way to know which way each line folds. Confirm the exact names with
+# the shop before exporting - some use BEND_UP/BEND_DOWN or numbered layers.
 LAYERS = {
-    "CUT":   {"color": 7,  "desc": "Cut profile / outline"},
-    "BEND":  {"color": 1,  "desc": "Bend lines - do not cut"},
-    "TEXT":  {"color": 2,  "desc": "Annotation"},
-    "DIM":   {"color": 4,  "desc": "Dimensions"},
-    "SCORE": {"color": 3,  "desc": "Score / hem lines"},
+    "CUT":       {"color": 7, "desc": "Cut profile / outline"},
+    "BEND-UP":   {"color": 1, "desc": "Bend lines, fold UP - do not cut"},
+    "BEND-DOWN": {"color": 5, "desc": "Bend lines, fold DOWN - do not cut"},
+    "TEXT":      {"color": 2, "desc": "Annotation"},
+    "DIM":       {"color": 4, "desc": "Dimensions"},
+    "SCORE":     {"color": 3, "desc": "Score / hem lines"},
+    "BBOX":      {"color": 8, "desc": "Bounding box"},
 }
 
 
@@ -57,13 +64,20 @@ def export_flat_patterns(profiles: list[Profile], path: str,
             close=True, dxfattribs={"layer": "CUT"},
         )
 
-        # bend lines at their developed stations
+        # bounding box, so the shop can nest the blank
+        msp.add_lwpolyline([(0, y), (L, y), (L, y + W), (0, y + W)],
+                           close=True, dxfattribs={"layer": "BBOX"})
+
+        # bend lines at their developed stations, split UP vs DOWN
         for i, station in enumerate(prof.flat_stations()):
-            msp.add_line((station, y), (station, y + W),
-                         dxfattribs={"layer": "BEND"})
             b = prof.bends[i]
+            layer = "BEND-UP" if b.direction.upper() in (
+                "UP", "U", "LEFT", "L", "CCW") else "BEND-DOWN"
+            msp.add_line((station, y), (station, y + W),
+                         dxfattribs={"layer": layer})
+            r = b.radius if b.radius is not None else prof.default_radius
             msp.add_text(
-                f"{b.direction} {b.angle:g}deg",
+                f"{b.direction} {b.angle:g}deg  R{r:.4f}",
                 dxfattribs={"layer": "TEXT", "height": 0.18, "rotation": 90},
             ).set_placement((station + 0.10, y + 0.25), align=TextEntityAlignment.LEFT)
 

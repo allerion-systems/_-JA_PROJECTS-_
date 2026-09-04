@@ -95,10 +95,10 @@ from lib.sheetmetal import thickness as gauge_thk
 
 @dataclass
 class VentModel:
-    material: str = "24ga galv"
+    material: str = "24ga galvalume"
 
     # -- ventilation requirement, from the architect's roof plan ------------
-    nfa_required: float = 105.0    # "NFA MIN. 105 S.I."
+    nfa_required: float = 108.0    # detail 3/A10.2 (note 9 says 105 - RFI)
     opening_w: float = 18.0        # deck opening across the roof
     opening_l: float = 6.0         # deck opening up the slope
     qty: int = 2                   # "TYP. OF 2"
@@ -106,7 +106,9 @@ class VentModel:
     # -- hood ---------------------------------------------------------------
     hood_w: float = 24.0           # outside width at the pan (panel module)
     hood_h: float = 8.50           # overall height (ACM: 8-1/2")
-    fascia_h: float = 2.00         # front band above the throat (MMI: 2")
+    fascia_h: float = 1.75         # front band above the throat (MMI: 2")
+    #  trimmed from 2" to 1-3/4" to lift the throat to 6-3/4" and clear the
+    #  higher 108 S.I. figure without exceeding ACM's proven 8-1/2" height
     top_len: float = 6.125         # flat top run (ACM: 6-1/8")
     ramp_deg: float = 35.0         # rear wedge off the roof plane (ACM 145 incl.)
     batter_deg: float = 7.0        # side walls raked inward as they rise
