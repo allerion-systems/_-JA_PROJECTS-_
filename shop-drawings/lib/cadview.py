@@ -36,8 +36,12 @@ VIEWS = {
     "bottom": ((0, 0, 1), (0, 1, 0)),
     "left":   ((1, 0, 0), (0, 0, 1)),
     "right":  ((-1, 0, 0), (0, 0, 1)),
-    "iso":    ((-1, -1, -1), (0, 0, 1)),
-    "iso_rear": ((1, 1, -1), (0, 0, 1)),
+    # Roof-vent isometrics. Model axes are x across, y up-slope, z normal to
+    # the roof, so a useful eye sits downslope, off to one side and above,
+    # looking up-slope and down onto the assembly.
+    "iso":      ((-0.55, 1.0, -0.75), (0, 0, 1)),   # from downslope, shows throat
+    "iso_rear": ((0.55, -1.0, -0.75), (0, 0, 1)),   # from upslope, shows back wedge
+    "iso_hi":   ((-0.40, 0.75, -1.15), (0, 0, 1)),  # steeper, reads the top
 }
 
 
