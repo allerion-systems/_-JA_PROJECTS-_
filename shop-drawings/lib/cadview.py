@@ -56,7 +56,17 @@ def project(shape, direction=(0, -1, 0), up=(0, 0, 1),
 
     algo = HLRBRep_Algo()
     algo.Add(solid.wrapped)
-    ax = gp_Ax2(gp_Pnt(0, 0, 0), gp_Dir(*direction), gp_Dir(*up))
+    # gp_Ax2's third argument is the X DIRECTION of the projection plane, not
+    # "up". Passing the up-vector there rotates every view 90 degrees. The
+    # screen X axis is up x direction; screen Y then falls out as the up
+    # vector itself.
+    d, u = direction, up
+    xdir = (u[1] * d[2] - u[2] * d[1],
+            u[2] * d[0] - u[0] * d[2],
+            u[0] * d[1] - u[1] * d[0])
+    if abs(xdir[0]) + abs(xdir[1]) + abs(xdir[2]) < 1e-9:
+        raise ValueError("view direction and up vector are parallel")
+    ax = gp_Ax2(gp_Pnt(0, 0, 0), gp_Dir(*d), gp_Dir(*xdir))
     algo.Projector(HLRAlgo_Projector(ax))
     algo.Update()
     algo.Hide()
