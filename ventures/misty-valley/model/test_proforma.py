@@ -186,17 +186,40 @@ def test_shipped_scenarios_are_all_funded() -> None:
             FAILURES.append(f"{key}: underfunded, low cash {low:,.0f}")
 
 
-def test_import_lane_needs_more_cash_than_domestic() -> None:
-    """The trade-off the plan turns on: imported steel is cheaper per foot
-    and more expensive in working capital, because it is paid for before it
-    ships and sits on the water for weeks."""
+def test_import_lane_has_a_longer_cash_cycle_than_domestic() -> None:
+    """The trade-off the plan turns on: imported steel is cheaper per foot but
+    far slower in cash, because it is paid for before it ships and then sits
+    on the water for weeks.
+
+    Compare the CYCLE, not peak cash. Peak cash conflates two things -- the
+    cycle and the margin -- and cheaper material funds more of its own
+    working capital, which can mask a much worse cycle."""
     sc = P.load_scenarios()
-    dom = P.peak_cash_need(P._run_months(sc["base_case"]))
-    imp = P.peak_cash_need(P._run_months(sc["import_lane"]))
-    if imp <= dom:
+    dom = sc["base_case"].working_capital
+    imp = sc["import_lane"].working_capital
+    if imp.cash_conversion_days <= dom.cash_conversion_days:
         FAILURES.append(
-            f"import lane should tie up more cash: {imp:,.0f} vs {dom:,.0f}"
+            f"import cycle should be longer: {imp.cash_conversion_days:.0f}d "
+            f"vs {dom.cash_conversion_days:.0f}d"
         )
+    if imp.days_payable >= dom.days_payable:
+        FAILURES.append("import supplier terms should be worse, not better")
+
+
+def test_service_premium_stays_inside_the_defensible_band() -> None:
+    """Research caps the sustainable cut/kit premium at roughly 3-7% of
+    material price -- the value created is about $1.00-1.30 per stud and a
+    supplier can hold a third to a half of it. A scenario that prices the
+    service above that band is quietly assuming a premium customers have no
+    reason to pay."""
+    for key, s in P.load_scenarios().items():
+        if key == "stress":
+            continue          # stress deliberately competes the premium away
+        premium = s.load.service_price_per_lf / s.load.material_price_per_lf
+        if premium > 0.07:
+            FAILURES.append(
+                f"{key}: service premium {premium:.1%} exceeds the 7% ceiling"
+            )
 
 
 def main() -> int:

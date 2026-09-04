@@ -15,41 +15,84 @@
     "",
     "Volume basis: 04-unit-economics.md sizes total corridor demand at 40-100",
     "loads/month and realistic new-entrant capture at 0.5-3/month in years 1-2.",
-    "The base case ramps inside that range and does not assume otherwise."
+    "The base case ramps inside that range and does not assume otherwise.",
+    "",
+    "SERVICE PRICING BASIS (revised 2026-09-04 after market research):",
+    "The cut/kit premium is capped by the value it creates. Peer-reviewed field",
+    "measurement puts saw-trigger time at 13.2 sec/stud and average saw use at",
+    "only ~6.2 minutes per worker per day (Schutt et al., Annals of Work",
+    "Exposures and Health 68(8), 2024). Full cut-cycle time plus avoided waste",
+    "is worth roughly $1.00-1.30/stud; a supplier can sustainably capture a",
+    "third to a half of that, which caps the premium at 3-7% of material price.",
+    "$0.05/LF against $0.80/LF material is 6.25% -- at the top of that band.",
+    "The 30-60% labour savings quoted in the industry belong to PANELIZED",
+    "assemblies, not pre-cut loose material. Do not price off those figures."
   ],
-
   "scenarios": {
     "base_case": {
       "name": "Domestic-first, value-added packages",
       "notes": "The plan in 06-the-stronger-play.md. Buy domestic steel, cut and kit it, deliver sequenced packages. No duty, no AD/CVD tail, no customs bond, Buy America eligible. Ramps from half a load a month to five over three years -- inside the researched capture range.",
       "volume": {
         "segments": [
-          { "months": 3, "loads": 0.5 },
-          { "months": 3, "loads": 1.0 },
-          { "months": 3, "loads": 1.5 },
-          { "months": 3, "loads": 2.0 },
-          { "months": 3, "loads": 2.5 },
-          { "months": 3, "loads": 3.0 },
-          { "months": 3, "loads": 3.0 },
-          { "months": 3, "loads": 3.5 },
-          { "months": 3, "loads": 4.0 },
-          { "months": 3, "loads": 4.5 },
-          { "months": 6, "loads": 5.0 }
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 1.5
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 2.5
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 4.0
+          },
+          {
+            "months": 3,
+            "loads": 4.5
+          },
+          {
+            "months": 6,
+            "loads": 5.0
+          }
         ]
       },
       "load": {
         "linear_feet_per_load": 95000.0,
-        "material_price_per_lf": 0.80,
-        "material_cost_per_lf": 0.60,
-        "service_price_per_lf": 0.11,
-        "service_cost_per_lf": 0.045,
-        "delivery_cost_per_load": 850.0
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
       },
       "opex_by_year": [
         {
-          "owner_salary": 3000.0,
+          "owner_salary": 1500.0,
           "yard_and_shop_wages": 3800.0,
-          "driver_wages": 4200.0,
+          "driver_wages": 0.0,
           "admin_wages": 0.0,
           "payroll_burden_pct": 0.24,
           "facility_lease": 2000.0,
@@ -101,43 +144,60 @@
         "days_payable": 30.0
       },
       "capital": {
-        "equity_injection": 150000.0,
+        "equity_injection": 175000.0,
         "term_debt": 200000.0,
         "term_rate_annual": 0.105,
         "term_years": 7,
-        "line_of_credit_limit": 550000.0,
+        "line_of_credit_limit": 700000.0,
         "line_rate_annual": 0.095
       },
       "startup_cost": 185000.0,
       "tax_rate": 0.0
     },
-
     "lean": {
       "name": "Self-funded, no debt, slow ramp",
       "notes": "What the business looks like with no bank at all -- used equipment, Ben taking almost nothing out, growth funded only by retained cash. Slower and smaller, but it cannot be killed by a covenant. Run this before deciding to borrow.",
       "volume": {
         "segments": [
-          { "months": 6, "loads": 0.5 },
-          { "months": 6, "loads": 1.0 },
-          { "months": 6, "loads": 1.5 },
-          { "months": 6, "loads": 2.0 },
-          { "months": 6, "loads": 2.5 },
-          { "months": 6, "loads": 3.0 }
+          {
+            "months": 6,
+            "loads": 0.5
+          },
+          {
+            "months": 6,
+            "loads": 1.0
+          },
+          {
+            "months": 6,
+            "loads": 1.5
+          },
+          {
+            "months": 6,
+            "loads": 2.0
+          },
+          {
+            "months": 6,
+            "loads": 2.5
+          },
+          {
+            "months": 6,
+            "loads": 3.0
+          }
         ]
       },
       "load": {
         "linear_feet_per_load": 95000.0,
-        "material_price_per_lf": 0.80,
-        "material_cost_per_lf": 0.60,
-        "service_price_per_lf": 0.11,
-        "service_cost_per_lf": 0.045,
-        "delivery_cost_per_load": 850.0
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
       },
       "opex_by_year": [
         {
           "owner_salary": 0.0,
           "yard_and_shop_wages": 3200.0,
-          "driver_wages": 3600.0,
+          "driver_wages": 0.0,
           "payroll_burden_pct": 0.24,
           "facility_lease": 1500.0,
           "insurance": 1600.0,
@@ -183,46 +243,78 @@
         "days_payable": 30.0
       },
       "capital": {
-        "equity_injection": 120000.0,
+        "equity_injection": 150000.0,
         "term_debt": 0.0,
-        "line_of_credit_limit": 250000.0,
+        "line_of_credit_limit": 350000.0,
         "line_rate_annual": 0.095
       },
       "startup_cost": 95000.0,
       "tax_rate": 0.0
     },
-
     "import_lane": {
       "name": "Phase 2 -- compliant import sourcing added",
       "notes": "Same business, but material sourced through a verified import lane once a code-compliant supplier and a compliance function exist. Material cost drops, but the cash cycle gets much worse: suppliers are paid before shipment, so payable days go to zero and inventory days include ocean transit. Compare peak cash against base_case before deciding the cheaper steel is actually cheaper.",
       "volume": {
         "segments": [
-          { "months": 3, "loads": 0.5 },
-          { "months": 3, "loads": 1.0 },
-          { "months": 3, "loads": 1.5 },
-          { "months": 3, "loads": 2.0 },
-          { "months": 3, "loads": 2.5 },
-          { "months": 3, "loads": 3.0 },
-          { "months": 3, "loads": 3.0 },
-          { "months": 3, "loads": 3.5 },
-          { "months": 3, "loads": 4.0 },
-          { "months": 3, "loads": 4.5 },
-          { "months": 6, "loads": 5.0 }
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 1.5
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 2.5
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 4.0
+          },
+          {
+            "months": 3,
+            "loads": 4.5
+          },
+          {
+            "months": 6,
+            "loads": 5.0
+          }
         ]
       },
       "load": {
         "linear_feet_per_load": 95000.0,
-        "material_price_per_lf": 0.80,
-        "material_cost_per_lf": 0.50,
-        "service_price_per_lf": 0.11,
-        "service_cost_per_lf": 0.045,
-        "delivery_cost_per_load": 850.0
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.5,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
       },
       "opex_by_year": [
         {
-          "owner_salary": 3000.0,
+          "owner_salary": 1500.0,
           "yard_and_shop_wages": 3800.0,
-          "driver_wages": 4200.0,
+          "driver_wages": 0.0,
           "payroll_burden_pct": 0.24,
           "facility_lease": 2000.0,
           "insurance": 3200.0,
@@ -273,43 +365,60 @@
         "days_payable": 0.0
       },
       "capital": {
-        "equity_injection": 150000.0,
+        "equity_injection": 175000.0,
         "term_debt": 200000.0,
         "term_rate_annual": 0.105,
         "term_years": 7,
-        "line_of_credit_limit": 775000.0,
+        "line_of_credit_limit": 850000.0,
         "line_rate_annual": 0.095
       },
       "startup_cost": 205000.0,
       "tax_rate": 0.0
     },
-
     "stress": {
       "name": "Stress -- price war and slow pay",
       "notes": "Material price compressed 10% (GMS reported steel framing price/mix at -10.4% in FY2025, so this is a lived number, not a hypothetical), receivables stretched to 90 days, and the service uplift halved because a competitor copied it. This is the case the plan has to survive, not the case it hopes for.",
       "volume": {
         "segments": [
-          { "months": 3, "loads": 0.5 },
-          { "months": 3, "loads": 1.0 },
-          { "months": 6, "loads": 1.5 },
-          { "months": 6, "loads": 2.0 },
-          { "months": 6, "loads": 2.5 },
-          { "months": 12, "loads": 3.0 }
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 6,
+            "loads": 1.5
+          },
+          {
+            "months": 6,
+            "loads": 2.0
+          },
+          {
+            "months": 6,
+            "loads": 2.5
+          },
+          {
+            "months": 12,
+            "loads": 3.0
+          }
         ]
       },
       "load": {
         "linear_feet_per_load": 95000.0,
         "material_price_per_lf": 0.72,
-        "material_cost_per_lf": 0.60,
-        "service_price_per_lf": 0.055,
-        "service_cost_per_lf": 0.045,
-        "delivery_cost_per_load": 950.0
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.025,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
       },
       "opex_by_year": [
         {
-          "owner_salary": 3000.0,
+          "owner_salary": 1500.0,
           "yard_and_shop_wages": 3800.0,
-          "driver_wages": 4200.0,
+          "driver_wages": 0.0,
           "payroll_burden_pct": 0.24,
           "facility_lease": 2000.0,
           "insurance": 1800.0,
