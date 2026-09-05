@@ -1,6 +1,9 @@
 import * as React from "react";
 import { ROOFSCREEN as RS, SCREEN_PARTS } from "@/data";
 import { Btn, DataTable, Field, Head, Lab, Panel, Rule, Tag, cx, inputCls, money } from "@/ui";
+import { useAuth } from "@/auth";
+
+const ScreenScene = React.lazy(() => import("./ScreenScene"));
 
 const usd2 = (n: number) => `$${n.toFixed(2)}`;
 
@@ -290,6 +293,305 @@ function ShopSheet({ lf, h, bay, posts, hatLf, faceSf, panel, project }: {
   );
 }
 
+/* ------------------------------------------------------- design center */
+
+type QuoteConfig = {
+  lf: number; height: number; bay: number; mount: string; panel: string;
+  gauge: number; drawings: boolean; markupPct: number;
+};
+
+type Contact = { name: string; company: string; email: string; phone: string };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const fmtPhone = (d: string) => `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+
+const FINE_PRINT =
+  "Prototype — email/SMS delivery connects at launch; your request is saved for the counter to call back.";
+
+/** Append a record to a localStorage array key. Failure is non-fatal. */
+function saveLead(key: string, rec: Record<string, unknown>) {
+  try {
+    const prev = JSON.parse(localStorage.getItem(key) || "[]");
+    const arr = Array.isArray(prev) ? prev : [];
+    arr.push(rec);
+    localStorage.setItem(key, JSON.stringify(arr));
+  } catch {
+    /* storage unavailable — the confirmation still shows; nothing else to do */
+  }
+}
+
+/** Contact + SMS-consent form used by both the quote gate and the spec flow. */
+function LeadForm({ cta, onDone }: { cta: string; onDone: (c: Contact) => void }) {
+  const [f, setF] = React.useState({ name: "", company: "", email: "", phone: "", consent: false });
+  const [err, setErr] = React.useState("");
+  const set = (k: string, v: string | boolean) => setF(x => ({ ...x, [k]: v }));
+
+  const submit = () => {
+    const digits = f.phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+    if (!f.name.trim()) return setErr("Your name is required.");
+    if (!EMAIL_RE.test(f.email.trim())) return setErr("Enter a valid email address.");
+    if (!/^\d{10}$/.test(digits)) return setErr("Enter a 10-digit US mobile number.");
+    if (!f.consent) return setErr("The text-message consent box is required.");
+    setErr("");
+    onDone({ name: f.name.trim(), company: f.company.trim(), email: f.email.trim(), phone: digits });
+  };
+
+  return (
+    <div className="grid gap-2.5">
+      <div className="grid gap-2.5 sm:grid-cols-2">
+        <Field label="Name">
+          <input value={f.name} onChange={e => set("name", e.target.value)} className={inputCls}
+            autoComplete="name" placeholder="Joey Allee" />
+        </Field>
+        <Field label="Company">
+          <input value={f.company} onChange={e => set("company", e.target.value)} className={inputCls}
+            autoComplete="organization" placeholder="R&B Roofing" />
+        </Field>
+      </div>
+      <Field label="Email">
+        <input value={f.email} onChange={e => set("email", e.target.value)} className={inputCls}
+          type="email" inputMode="email" autoComplete="email" placeholder="you@company.com" />
+      </Field>
+      <Field label="Mobile phone">
+        <input value={f.phone} onChange={e => set("phone", e.target.value)} className={inputCls}
+          type="tel" inputMode="tel" autoComplete="tel" placeholder="(270) 555-0142" />
+      </Field>
+      <label className="flex min-h-[44px] items-start gap-2.5 py-1 text-[13px] leading-[1.45]">
+        <input type="checkbox" checked={f.consent} onChange={e => set("consent", e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--safety))]" />
+        <span>Text me this quote and delivery updates at this number</span>
+      </label>
+      {err && <p role="alert" className="text-[13px] font-medium text-[hsl(var(--bad))]">{err}</p>}
+      <Btn className="w-full" onClick={submit}>{cta}</Btn>
+    </div>
+  );
+}
+
+/** Signed-in: straight to confirmation. Signed-out: inline lead form first. */
+function QuoteGate({ config, sell }: { config: QuoteConfig; sell: number }) {
+  const { user } = useAuth();
+  const [open, setOpen] = React.useState(false);
+  const [sent, setSent] = React.useState<{ q: string; to: string } | null>(null);
+
+  const finish = (to: string) =>
+    setSent({ q: `Q-${Math.floor(1000 + Math.random() * 9000)}`, to });
+
+  if (sent) return (
+    <div data-testid="quote-confirm">
+      <Tag tone="good">On its way</Tag>
+      <p className="mt-2 text-[13px] leading-[1.55]">
+        Quote <span className="mono font-semibold">{sent.q}</span> is on its way to{" "}
+        <span className="font-medium">{sent.to}</span>.
+      </p>
+      <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">{FINE_PRINT}</p>
+    </div>
+  );
+
+  if (!user && open) return (
+    <div>
+      <Lab kicker className="mb-2">Where do we send it?</Lab>
+      <LeadForm cta="Send my quote" onDone={c => {
+        saveLead("mvs-quote-leads", {
+          ts: Date.now(), config, sell,
+          name: c.name, company: c.company, email: c.email, phone: c.phone,
+        });
+        finish(`${c.email} and ${fmtPhone(c.phone)}`);
+      }} />
+    </div>
+  );
+
+  return (
+    <Btn className="w-full" onClick={() => {
+      if (user) {
+        const email = (user as { email?: string }).email;
+        finish(email || `the email on file for ${user.company} (${user.acct})`);
+      } else setOpen(true);
+    }}>
+      Text + email me this quote
+    </Btn>
+  );
+}
+
+/* ------------------------------------------------- spec / drawing upload */
+
+type SpecFile = { name: string; size: number; type: string; thumb?: string; preview?: string };
+
+const fmtKb = (b: number) => b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`;
+
+/** “Design from your spec” — dropzone, BoD confirmation, then the same gate. */
+function SpecCard({ lf, h, config, sell }: { lf: number; h: number; config: QuoteConfig; sell: number }) {
+  const { user } = useAuth();
+  const [files, setFiles] = React.useState<SpecFile[]>([]);
+  const [drag, setDrag] = React.useState(false);
+  const [bod, setBod] = React.useState("");
+  const [slf, setSlf] = React.useState("");
+  const [sh, setSh] = React.useState("");
+  const [notes, setNotes] = React.useState("");
+  const [gate, setGate] = React.useState(false);
+  const [err, setErr] = React.useState("");
+  const [sent, setSent] = React.useState<string | null>(null);
+
+  const addFiles = (incoming: FileList | File[]) => {
+    const ok = Array.from(incoming)
+      .filter(f => /^(application\/pdf|image\/jpeg|image\/png)$/.test(f.type) || /\.(pdf|jpe?g|png)$/i.test(f.name))
+      .slice(0, Math.max(0, 8 - files.length));
+    if (!ok.length) return;
+    if (files.length === 0) { setSlf(String(lf)); setSh(String(h)); } // prefill from the configurator
+    ok.forEach(f => {
+      const meta: SpecFile = { name: f.name, size: f.size, type: f.type };
+      const push = (extra?: Partial<SpecFile>) =>
+        setFiles(prev => prev.some(x => x.name === meta.name && x.size === meta.size)
+          ? prev : [...prev, { ...meta, ...extra }]);
+      if (f.type.startsWith("image/")) {
+        const r = new FileReader();
+        r.onload = () => {
+          const url = typeof r.result === "string" ? r.result : undefined;
+          // store the dataURL as the saved thumbnail only when it stays small
+          push({ preview: url, thumb: url && url.length < 200_000 ? url : undefined });
+        };
+        r.onerror = () => push();
+        r.readAsDataURL(f);
+      } else push();
+    });
+  };
+
+  const save = (contact: Contact) => {
+    saveLead("mvs-design-requests", {
+      ts: Date.now(),
+      files: files.map(({ name, size, type, thumb }) => (thumb ? { name, size, type, thumb } : { name, size, type })),
+      bod: { line: bod.trim(), lf: Number(slf) || lf, height: Number(sh) || h, notes: notes.trim() },
+      config, sell, contact,
+    });
+    setSent(`D-${Math.floor(1000 + Math.random() * 9000)}`);
+  };
+
+  const submit = () => {
+    if (!bod.trim()) return setErr("Name the spec section or basis-of-design line — even a guess helps.");
+    setErr("");
+    if (user) {
+      save({
+        name: user.name, company: user.company,
+        email: (user as { email?: string }).email || `on file — ${user.acct}`, phone: "",
+      });
+    } else setGate(true);
+  };
+
+  return (
+    <Panel className="mt-6 card-hi" pad={false}>
+      <div className="tape h-1.5" />
+      <div className="p-5">
+        <Lab kicker className="mb-1.5 !text-[hsl(var(--safety-2))]">Design from your spec</Lab>
+
+        {sent ? (
+          <div data-testid="spec-confirm">
+            <Tag tone="good">Received</Tag>
+            <p className="mt-2 max-w-[60ch] text-[13px] leading-[1.55]">
+              Design request <span className="mono font-semibold">{sent}</span> received — a
+              fabricator reviews your spec and your quote follows by email and text.
+            </p>
+            <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">{FINE_PRINT}</p>
+          </div>
+        ) : (
+          <>
+            <p className="mb-3 max-w-[64ch] text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
+              Drop the spec section or the screen detail here.{" "}
+              <strong>We design from your basis of design</strong> — our shop-fabricated frame is
+              furnished as an equal to the named BoD, and the formal substitution goes to the
+              architect with our shop drawings and sealed calcs.
+            </p>
+
+            {/* dropzone */}
+            <label
+              onDragOver={e => { e.preventDefault(); setDrag(true); }}
+              onDragLeave={() => setDrag(false)}
+              onDrop={e => { e.preventDefault(); setDrag(false); addFiles(e.dataTransfer.files); }}
+              className={cx(
+                "flex min-h-[96px] cursor-pointer flex-col items-center justify-center gap-1 rounded-[6px] border-2 border-dashed p-4 text-center transition-colors",
+                drag ? "border-[hsl(var(--safety))] bg-[hsl(var(--safety-soft))]"
+                     : "border-[hsl(var(--field))] hover:border-[hsl(var(--marine))]")}>
+              <span className="text-[13px] font-semibold text-[hsl(var(--marine))]">
+                ＋ Drop PDF / JPG / PNG here, or tap to browse
+              </span>
+              <span className="text-[11px] text-[hsl(var(--ink-3))]">
+                Spec pages, screen details, roof plans — up to 8 files ({files.length}/8)
+              </span>
+              <input type="file" multiple data-testid="spec-input"
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                onChange={e => { addFiles(e.target.files ?? []); e.target.value = ""; }}
+                aria-label="Upload spec pages or drawings (PDF, JPG or PNG)" className="sr-only" />
+            </label>
+
+            {/* file list */}
+            {files.length > 0 && (
+              <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
+                {files.map((f, i) => (
+                  <div key={`${f.name}-${i}`}
+                    className="flex min-h-[44px] items-center gap-2.5 rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2">
+                    {f.preview ? (
+                      <img src={f.preview} alt={f.name}
+                        className="h-10 w-10 shrink-0 rounded-[3px] border border-[hsl(var(--rule))] object-cover" />
+                    ) : (
+                      <span className="mono grid h-10 w-10 shrink-0 place-items-center rounded-[3px] bg-[hsl(var(--marine-soft))] text-[10px] font-bold text-[hsl(var(--marine))]">
+                        PDF
+                      </span>
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-medium">{f.name}</span>
+                      <span className="text-[11px] text-[hsl(var(--ink-3))]">{fmtKb(f.size)}</span>
+                    </span>
+                    <button onClick={() => setFiles(x => x.filter((_, k) => k !== i))}
+                      aria-label={`Remove ${f.name}`}
+                      className="grid h-11 w-11 shrink-0 place-items-center text-[13px] text-[hsl(var(--ink-3))] hover:text-[hsl(var(--ink))]">✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* basis-of-design confirmation, once there is something to review */}
+            {files.length > 0 && (
+              <div className="mt-4">
+                <Rule className="mb-4" />
+                <Lab className="mb-2.5">Confirm the basis of design</Lab>
+                <div className="grid gap-2.5">
+                  <Field label="Spec section / BoD product line">
+                    <input value={bod} onChange={e => setBod(e.target.value)} className={inputCls}
+                      data-testid="spec-bod" placeholder='e.g. "RoofScreen SC3 + 7.2 Rib" or "07 42 13"' />
+                  </Field>
+                  <div className="grid gap-2.5 sm:grid-cols-2">
+                    <Field label="Screen length (LF)">
+                      <input type="number" min={0} value={slf} onChange={e => setSlf(e.target.value)}
+                        className={inputCls} />
+                    </Field>
+                    <Field label="Height above deck (FT)">
+                      <input type="number" min={0} step={0.5} value={sh} onChange={e => setSh(e.target.value)}
+                        className={inputCls} />
+                    </Field>
+                  </div>
+                  <Field label="Notes">
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
+                      placeholder="Wind zone, color, schedule, what the architect cares about…"
+                      className="w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2.5 text-[13px] outline-none focus:border-[hsl(var(--safety-2))]" />
+                  </Field>
+                </div>
+                {err && <p role="alert" className="mt-2 text-[13px] font-medium text-[hsl(var(--bad))]">{err}</p>}
+                {gate && !user ? (
+                  <div className="mt-3">
+                    <Rule className="mb-3" />
+                    <Lab kicker className="mb-2">Where do we send the design review?</Lab>
+                    <LeadForm cta="Send spec for design review" onDone={save} />
+                  </div>
+                ) : (
+                  <Btn className="mt-3 w-full" onClick={submit}>Send spec for design review</Btn>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </Panel>
+  );
+}
+
 export default function Screen() {
   const [lf, setLf] = React.useState(RS.lee.lf);
   const [h, setH] = React.useState(RS.lee.height);
@@ -298,7 +600,7 @@ export default function Screen() {
   const [panel, setPanel] = React.useState(RS.panels[0].id);
   const [drawings, setDrawings] = React.useState(true);
   const [markup, setMarkup] = React.useState(Math.round(RS.defaultMarkup * 100));
-  const [mode, setMode] = React.useState<"kit" | "drawing" | "parts">("kit");
+  const [mode, setMode] = React.useState<"design" | "kit" | "drawing" | "parts">("design");
   const [project, setProject] = React.useState("");
   const [shots, setShots] = React.useState<{ name: string; url: string }[]>([]);
   const [notes, setNotes] = React.useState("");
@@ -312,6 +614,10 @@ export default function Screen() {
 
   const p = RS.panels.find(x => x.id === panel)!;
   const m = RS.mounts.find(x => x.id === mount)!;
+
+  /* remembers the last real panel so the frame-only toggle can restore it */
+  const lastPanel = React.useRef(panel !== "none" ? panel : RS.panels[0].id);
+  React.useEffect(() => { if (panel !== "none") lastPanel.current = panel; }, [panel]);
 
   const faceSf = lf * h;
   const posts = Math.max(2, Math.ceil(lf / bay) + 1);
@@ -328,6 +634,10 @@ export default function Screen() {
   const totalCost = Object.values(cost).reduce((a, b) => a + b, 0);
   const sell = Math.round(totalCost * (1 + markup / 100));
   const gm = sell ? (sell - totalCost) / sell : 0;
+
+  const quoteConfig: QuoteConfig = {
+    lf, height: h, bay, mount, panel: p.id, gauge: p.ga, drawings, markupPct: markup,
+  };
 
   const rows: [string, string, number][] = [
     ["Frame package", `${lf} LF × ${h}′ @ ${usd2(RS.frameCostLf(h))}/LF — tube, ${posts} bases, ${hatLf.toLocaleString()} LF hat channel, fasteners`, cost.frame],
@@ -375,16 +685,133 @@ export default function Screen() {
       </div>
 
       {/* ------------------------------------------------------- kit / parts */}
-      <div className="mb-5 flex gap-0 border-b border-[hsl(var(--ink))]">
-        {(["kit", "drawing", "parts"] as const).map(t => (
+      <div className="mb-5 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
+        {(["design", "kit", "drawing", "parts"] as const).map(t => (
           <button key={t} onClick={() => setMode(t)}
-            className={cx("disp -mb-0.5 min-h-[44px] border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
+            className={cx("disp -mb-0.5 min-h-[44px] shrink-0 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
               mode === t ? "border-[hsl(var(--safety))] text-[hsl(var(--ink))]"
                          : "border-transparent text-[hsl(var(--ink-3))]")}>
-            {t === "kit" ? "Configure a kit" : t === "drawing" ? "Shop drawing" : "Buy by the piece"}
+            {t === "design" ? "Design Center" : t === "kit" ? "Configure a kit"
+              : t === "drawing" ? "Shop drawing" : "Buy by the piece"}
           </button>
         ))}
       </div>
+
+      {mode === "design" && (
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          {/* --------------------------------------------- canvas + controls */}
+          <div className="min-w-0">
+            <div className="card-hi overflow-hidden rounded-[8px]">
+              <div className="tape h-1.5" />
+              <div className="h-[320px] md:h-[460px]">
+                <React.Suspense fallback={
+                  <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
+                    <span className="lab">Loading the 3D shop…</span>
+                  </div>
+                }>
+                  <ScreenScene lf={lf} heightFt={h} bayFt={bay} frameOnly={p.id === "none"} gauge={p.ga} />
+                </React.Suspense>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 py-2">
+                <span className="mono text-[11px] text-[hsl(var(--ink-3))]">
+                  {lf} LF × {fmtFtIn(h)} · {fmtFtIn(bay)} bays · {posts} posts ·{" "}
+                  {p.id === "none" ? "frame only" : `${p.ga} ga panel`}
+                </span>
+                <span className="text-[11px] text-[hsl(var(--ink-3))]">drag to orbit · scroll to zoom</span>
+              </div>
+            </div>
+
+            {/* controls — the same shared state every tab prices from */}
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <Field label="Screen length (LF)">
+                <input type="number" min={10} max={4000} value={lf}
+                  onChange={e => setLf(Math.max(0, Number(e.target.value) || 0))} className={inputCls} />
+              </Field>
+              <Field label="Bay spacing (FT)">
+                <input type="number" min={2} max={12} step={0.5} value={bay}
+                  onChange={e => setBay(Math.min(12, Math.max(2, Number(e.target.value) || RS.lee.bay)))}
+                  className={inputCls} />
+              </Field>
+              <Field label="Screen height above deck">
+                <div className="flex flex-wrap gap-1.5">
+                  {RS.heights.map(x => (
+                    <button key={x} onClick={() => setH(x)}
+                      className={cx("h-11 min-w-[52px] flex-1 border px-1 text-[13px]",
+                        h === x ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
+                                : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
+                      {x === 3.5 ? "3′-6″" : `${x}′`}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+              <Field label="Panel gauge">
+                <div className="flex flex-wrap gap-1.5">
+                  {RS.panels.filter(x => x.id !== "none").map(x => (
+                    <button key={x.id} onClick={() => { setPanel(x.id); lastPanel.current = x.id; }}
+                      className={cx("h-11 flex-1 border px-2 text-[13px] whitespace-nowrap",
+                        panel === x.id ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
+                                       : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
+                      {`${x.ga} ga${x.id === "perf" ? " perf" : ""}`}
+                    </button>
+                  ))}
+                </div>
+                <label className="mt-1.5 flex min-h-[44px] items-center gap-2.5 text-[13px]">
+                  <input type="checkbox" checked={panel === "none"}
+                    onChange={e => setPanel(e.target.checked ? "none" : lastPanel.current)}
+                    className="h-4 w-4 accent-[hsl(var(--safety))]" />
+                  <span>Frame only — panel by others</span>
+                </label>
+              </Field>
+            </div>
+
+            <SpecCard lf={lf} h={h} config={quoteConfig} sell={sell} />
+          </div>
+
+          {/* --------------------------------- live price, one calculation */}
+          <div>
+            <Panel className="card-hi xl:sticky xl:top-4" pad={false}>
+              <div className="tape h-1.5" />
+              <div className="p-5">
+                <Lab className="mb-3">Live price — one calculation</Lab>
+                {rows.map(([a, b, c]) => (
+                  <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="disp text-[15px] font-semibold">{a}</div>
+                      <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>
+                    </div>
+                    <div className="shrink-0 text-[15px]">{money(c)}</div>
+                  </div>
+                ))}
+                <Rule className="my-3" />
+                <div className="mb-1.5 flex items-baseline justify-between">
+                  <span className="lab">Our cost</span>
+                  <span className="text-[15px]">{money(totalCost)}</span>
+                </div>
+                <Field label={`Markup — ${markup}%`}>
+                  <input type="range" min={0} max={150} value={markup} aria-label="Markup percent"
+                    onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
+                </Field>
+                <div className="mt-2 flex items-baseline justify-between">
+                  <div className="disp text-[18px] font-bold">Sell</div>
+                  <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
+                    {money(sell)}
+                  </div>
+                </div>
+                <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
+                  <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
+                  <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>
+                </div>
+                <Rule className="my-4" />
+                <QuoteGate config={quoteConfig} sell={sell} />
+                <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                  Same math as the kit tab and the S-1 sheet — the model, the schedule and this
+                  price cannot disagree.
+                </p>
+              </div>
+            </Panel>
+          </div>
+        </div>
+      )}
 
       {mode === "parts" && (
         <>
