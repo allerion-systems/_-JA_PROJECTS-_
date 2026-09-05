@@ -69,15 +69,15 @@ impressive and it works — right up until the person doing it stops.
 after you are gone. It is slower, less flattering, and almost nobody does it,
 because nobody claps for the clock.
 
-We know exactly what happens to the other kind. **The Allee Wholesale Lumber
-Company was organised in 1940 in Mattoon, Illinois. Two brothers and a secretary
-moved thirty-five to forty million board feet a year across sixteen states, most
-of which they never saw. It lasted eighty-three years and four generations. It
-was dissolved in 2023.**
+We know exactly what happens to the other kind. **The Allee lumber business
+started as a yard in Tupelo, Mississippi and ended as a wholesale house in
+Mattoon, Illinois. A hundred years. Five generations. At its height two brothers
+and a secretary moved thirty-five to forty million board feet a year across
+sixteen states, most of which they never saw. It was dissolved in 2023.**
 
 It was an extraordinary machine for telling the time. It was not a clock. When
 the last man who knew how to run it stopped running it, it stopped — and
-everything those four generations knew went into a drawer.
+everything those five generations knew went into a drawer.
 
 > **We are not building a company that depends on Ben knowing how to frame, on
 > Christopher knowing how to run it, or on Joey knowing how to read a set of
@@ -399,7 +399,7 @@ larger, better-capitalized companies who would not notice if we disappeared.
 **Good. That is the only kind of thing worth starting.**
 
 We know how the other version ends, because it is in one of our families. A
-company can be brilliant for eighty-three years and still die in a drawer,
+company can be brilliant for a hundred years and still die in a drawer,
 because the men who ran it never built the thing that would outlive them.
 
 > **So build the clock.**

@@ -7,17 +7,48 @@ Written for **Joey Allee** — to say to **Ben Easterday**, and to hold himself 
 
 ## 1. First, the record, because it matters
 
-**Allee Wholesale Lumber Company was organised in 1940.** James A. ("Big Jim")
-and James Byron ("Little Jim") Allee. Main office moved to Mattoon, Illinois in
-July 1951, with a branch in Tupelo, Mississippi. Sixteen states. Hardwoods
-exported to Ireland. Lumber for the Willow Run housing project and Scott Field
-Air Base during the war. Thirty-five to forty million board feet a year — **most
-of which they never saw.**
+There are **two records** here and they do not say the same thing. Both are below,
+labelled, because the difference matters the moment this goes on a website or in
+front of a bank.
 
-**It was dissolved in 2023 by Jeff Allee, the fourth-generation owner.**
+### The newspaper record
 
-Eighty-three years. Four generations. That is not a failure. That is longer than
-almost any privately held company in America gets, and it ended by a decision of
+**Allee Wholesale Lumber Company, organised 1940.** James A. ("Big Jim") and
+James Byron ("Little Jim") Allee. Main office moved to Mattoon, Illinois in July
+1951, with a branch in Tupelo, Mississippi. Sixteen states. Hardwoods exported to
+Ireland. Lumber for the Willow Run housing project and Scott Field Air Base
+during the war. Thirty-five to forty million board feet a year — **most of which
+they never saw.**
+
+### The family record
+
+**The business did not start in 1940 and it did not start in Illinois.** It
+started as **a lumber yard in Tupelo, Mississippi**, and by that reckoning it ran
+**more than a hundred years across five generations.** The 1940 date is the
+organisation of the *wholesale trading arm* — the newspaper is describing the
+company's second act and calling Tupelo a branch when Tupelo was the origin.
+
+And the founding mechanism was not capital. **James Byron Allee built the
+business on the network he made playing football at Northwestern and then
+professionally for the Chicago Cardinals.** He turned a set of relationships into
+a company.
+
+> 🔎 **Both of these need verifying before either goes anywhere public.**
+> Research is running on: the earliest documented Allee yard in Tupelo (Lee
+> County records, Sanborn fire maps, city directories, Tupelo papers); the
+> Northwestern and Chicago Cardinals rosters; the Illinois SOS entity record; and
+> obituaries for both men, which usually settle founding dates faster than
+> anything else. **The football claim is the most checkable thing in the file and
+> also the best story in it — get it nailed down.**
+
+**It was dissolved in 2023 by Jeff Allee, the fourth-generation owner** — a
+generation count that sits oddly against "five generations," and one more reason
+to close the record properly.
+
+A century. Five generations, if the family record holds. That is not a failure.
+That is longer than almost any privately held company in America gets, and it
+ended by a decision of its owner, not by a bank.
+
 its owner, not by a bank.
 
 ---
@@ -39,7 +70,7 @@ were. **Those two things are not the same sentence, and only one of them was
 ever said in his hearing.**
 
 Whatever was true, it is settled now. The relevant question is not who kept
-whom out of what. It is: **what does someone do with eighty-three years of
+whom out of what. It is: **what does someone do with a century of
 accumulated knowledge about how to move building materials, when the company
 that held it is gone and the person who carries it is thirty-something and
 already in the trade?**
@@ -52,10 +83,11 @@ That is a live question. It has a good answer. Everything below is the answer.
 
 Not a speech. Four facts, in this order.
 
-> **1. My family did this for eighty-three years and sixteen states.** Allee
-> Wholesale Lumber, Mattoon, Illinois, 1940 to 2023. Four generations. Thirty-
-> five to forty million board feet a year with a handful of people, because they
-> sold it before it landed and never touched it.
+> **1. My family did this for a hundred years and sixteen states.** It started
+> as a yard in Tupelo, Mississippi and ended as a wholesale house in Mattoon,
+> Illinois in 2023. Five generations. Thirty-five to forty million board feet a
+> year with a handful of people, because they sold it before it landed and never
+> touched it.
 >
 > **2. I was kept out of it, and I have spent since 2018 doing the version of
 > it nobody in my family ever did — Kentucky, in the field, on the estimating
@@ -190,7 +222,7 @@ The story is not the asset. Plenty of people have a family business in the past
 tense.
 
 **The asset is that Joey is an estimator who can read a set of plans, price a
-package, and talk to a GC — and who happens to have eighty-three years of
+package, and talk to a GC — and who happens to have a century of
 institutional memory about how this trade actually works.** The second thing is
 worthless without the first. The first is already true.
 
