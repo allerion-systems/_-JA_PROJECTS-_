@@ -190,8 +190,8 @@ function Card({ l, onOpen }: { l: Listing; onOpen: () => void }) {
   return (
     <button onClick={onOpen}
       className="group flex flex-col border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-left">
-      <div className="relative flex aspect-[4/3] items-center justify-center plate border-b border-[hsl(var(--rule))] text-[hsl(var(--ink-3))]">
-        <Glyph cat="guard" sku={KIND_GLYPH[l.kind]} className="h-[46%] w-[46%]" />
+      <div className="relative flex aspect-[4/3] items-center justify-center plate border-b border-[hsl(var(--rule))]">
+        <Glyph cat="guard" sku={KIND_GLYPH[l.kind]} className="h-[70%] w-[70%]" />
         <span className="absolute left-2 top-2"><Tag tone={tone(l.kind) as never}>{l.kind}</Tag></span>
       </div>
       <div className="flex flex-1 flex-col p-3">
@@ -309,8 +309,8 @@ export default function Yard() {
               <button onClick={() => setOpen(null)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
             </div>
 
-            <div className="flex aspect-[16/9] items-center justify-center plate border-b border-[hsl(var(--rule))] text-[hsl(var(--ink-3))]">
-              <Glyph cat="guard" sku={KIND_GLYPH[open.kind]} className="h-[42%] w-[42%]" />
+            <div className="flex aspect-[16/9] items-center justify-center plate border-b border-[hsl(var(--rule))]">
+              <Glyph cat="guard" sku={KIND_GLYPH[open.kind]} className="h-[62%] w-[62%]" />
             </div>
 
             <div className="p-4">

@@ -70,38 +70,38 @@ function Row({
   const min = p.moq ?? 1;
   const [qty, setQty] = React.useState(min);
   return (
-    <article className="grid grid-cols-[68px_1fr] gap-3 border-b border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-3 sm:grid-cols-[92px_1fr_190px] sm:gap-4 sm:p-4">
+    <article className="grid grid-cols-[84px_1fr] gap-3.5 border-b border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-3 transition-colors hover:bg-[hsl(var(--panel-2))]/60 sm:grid-cols-[128px_1fr_200px] sm:gap-5 sm:p-4">
       {/* image */}
       <button onClick={onSpec}
-        className="flex aspect-square items-center justify-center plate rounded-[4px] border border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]">
-        <Glyph sku={p.sku} cat={p.cat} className="h-[62%] w-[62%]" />
+        className="flex aspect-square items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
+        <Glyph sku={p.sku} cat={p.cat} className="h-[78%] w-[78%]" />
       </button>
 
       {/* detail */}
       <div className="min-w-0">
         <button onClick={onSpec} className="text-left">
-          <h3 className="text-[14.5px] font-semibold leading-[1.3] text-[hsl(var(--ink))] hover:text-[hsl(var(--safety))] sm:text-[15.5px]">
+          <h3 className="text-[15px] font-semibold leading-[1.25] text-[hsl(var(--ink))] hover:text-[hsl(var(--marine))] sm:text-[18px]">
             {p.name}
           </h3>
         </button>
-        <div className="mono mt-1 text-[11px] text-[hsl(var(--ink-3))]">
+        <div className="ident mt-1.5 text-[11px] text-[hsl(var(--ink-3))]">
           {p.sku} · {p.supplier}
         </div>
 
-        <dl className="mt-2 grid gap-x-4 gap-y-1 text-[12px] sm:grid-cols-2">
-          <div className="flex gap-1.5">
-            <dt className="lab shrink-0 pt-[3px]">Std</dt>
-            <dd className="mono min-w-0 text-[hsl(var(--ink))]">{p.std}</dd>
-          </div>
-          <div className="flex gap-1.5">
-            <dt className="lab shrink-0 pt-[3px]">OSHA</dt>
-            <dd className="mono min-w-0 text-[hsl(var(--safety))]">{p.osha}</dd>
-          </div>
-        </dl>
+        {/* One sentence, not a definition list: what it is built to, and what
+            requires it. This is the reason to buy here rather than anywhere. */}
+        <p className="mt-2 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+          Built to <span className="ident text-[hsl(var(--ink))]">{p.std}</span>
+          {" · required by "}
+          <button onClick={onSpec}
+            className="ident text-[hsl(var(--safety-2))] underline underline-offset-2 hover:text-[hsl(var(--safety-press))]">
+            {p.osha}
+          </button>
+        </p>
 
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <Tag tone={fulfilTone(p.fulfil) as never}>{fulfilName(p.fulfil)}</Tag>
-          <span className="mono text-[11px] text-[hsl(var(--ink-2))]">Ships {p.lead}</span>
+          <span className="text-[12px] text-[hsl(var(--ink-2))]">Ships {p.lead}</span>
           {p.hot && <Tag tone="safety">Frequently bought</Tag>}
         </div>
 
@@ -111,7 +111,7 @@ function Row({
           <div className="flex items-center gap-1.5">
             <input type="number" min={min} step={min} value={qty}
               onChange={e => setQty(Math.max(min, Number(e.target.value) || min))}
-              className="mono h-10 w-16 border border-[hsl(var(--rule))] bg-white px-2 text-center text-[14px]" />
+              className="num h-11 w-16 rounded-[6px] border border-[hsl(var(--field))] bg-white px-2 text-center text-[15px] font-medium outline-none focus:border-[hsl(var(--safety-2))]" />
             <Btn size="sm" className="h-10" onClick={() => onAdd(p.sku, qty)}>Add</Btn>
           </div>
         </div>
@@ -120,15 +120,15 @@ function Row({
       {/* desktop price + buy */}
       <div className="hidden border-l border-[hsl(var(--rule))] pl-4 sm:block">
         <Price list={p.price} uom={p.uom} onSignIn={onSignIn} />
-        {min > 1 && <div className="mono mt-1 text-[11px] text-[hsl(var(--warn))]">min order {min}</div>}
+        {min > 1 && <div className="mt-1.5 text-[11px] font-medium text-[hsl(var(--warn))]">Minimum order {min}</div>}
         <div className="mt-3 flex items-center gap-1.5">
           <input type="number" min={min} step={min} value={qty}
             onChange={e => setQty(Math.max(min, Number(e.target.value) || min))}
-            className="mono h-9 w-16 border border-[hsl(var(--rule))] bg-white px-2 text-center text-[14px]" />
+            className="num h-10 w-16 rounded-[6px] border border-[hsl(var(--field))] bg-white px-2 text-center text-[15px] font-medium outline-none focus:border-[hsl(var(--safety-2))]" />
           <Btn size="sm" className="flex-1" onClick={() => onAdd(p.sku, qty)}>Add</Btn>
         </div>
-        <button onClick={onSpec} className="lab mt-2 text-[hsl(var(--ink-3))] hover:text-[hsl(var(--safety))]">
-          Full spec →
+        <button onClick={onSpec} className="mt-2.5 text-[12px] font-medium text-[hsl(var(--marine))] hover:underline">
+          Full spec and compliance →
         </button>
       </div>
     </article>
@@ -310,7 +310,7 @@ export default function Shop({
               <button onClick={() => setOpen(null)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
             </div>
             <div className="mb-4 flex gap-4">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center plate rounded-[4px] border border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
                 <Glyph sku={open.sku} cat={open.cat} className="h-[62%] w-[62%]" />
               </div>
               <h3 className="disp text-[24px] font-bold leading-[1.05] sm:text-[28px]">{open.name}</h3>

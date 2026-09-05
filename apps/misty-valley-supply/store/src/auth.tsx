@@ -312,12 +312,12 @@ export function Price({
 }: { list: number; uom: string; onSignIn: () => void; size?: "sm" | "md" }) {
   const { user, net, can } = useAuth();
   const yours = net(list);
-  const big = size === "md" ? "text-[26px]" : "text-[24px]";
+  const big = size === "md" ? "text-[28px]" : "text-[22px]";
 
   if (!user || !can("price.contract")) return (
     <div>
-      <div className={cx("disp font-bold leading-none text-[hsl(var(--ink-2))]", big)}>{money(list)}</div>
-      <div className="lab mt-1">list · per {uom}</div>
+      <div className={cx("num font-bold leading-none text-[hsl(var(--ink))]", big)}>{money(list)}</div>
+      <div className="mt-1 text-[12px] text-[hsl(var(--ink-2))]">List price · per {uom}</div>
       <button onClick={onSignIn}
         className="lab mt-1.5 block text-left font-semibold text-[hsl(var(--safety-2))] underline">
         {user ? "Ask your admin for pricing" : "Sign in for your price"}
@@ -327,11 +327,11 @@ export function Price({
 
   return (
     <div>
-      <div className={cx("disp font-bold leading-none", big)}>{money(yours)}</div>
-      <div className="lab mt-1">your price · per {uom}</div>
-      <div className="mono mt-1 text-[11px] text-[hsl(var(--ink-3))]">
-        <span className="line-through">{money(list)}</span>{" "}
-        <span className="text-[hsl(var(--good))]">−{user.discountPct}%</span>
+      <div className={cx("num font-bold leading-none text-[hsl(var(--ink))]", big)}>{money(yours)}</div>
+      <div className="mt-1 text-[12px] text-[hsl(var(--ink-2))]">Your price · per {uom}</div>
+      <div className="mt-1.5 text-[12px] font-medium text-[hsl(var(--good))]">
+        Save {money(Math.round((list - yours) * 100) / 100)}
+        <span className="ml-1 font-normal text-[hsl(var(--ink-3))] line-through">{money(list)}</span>
       </div>
     </div>
   );

@@ -134,7 +134,7 @@ export default function Home({
         {CATEGORIES.map(c => (
           <button key={c.id} onClick={() => onShop(c.id)}
             className="card lift flex flex-col items-center gap-2 p-4">
-            <span className="text-[hsl(var(--ink-2))]"><Glyph cat={c.id} className="h-11 w-11" /></span>
+            <span className="text-[hsl(var(--ink-2))]"><Glyph cat={c.id} className="h-14 w-14" /></span>
             <span className="disp text-center text-[14px] font-semibold leading-[1.1]">{c.name}</span>
             <span className="mono text-[10.5px] text-[hsl(var(--ink-3))]">
               {PRODUCTS.filter(p => p.cat === c.id).length} items
@@ -174,8 +174,8 @@ export default function Home({
       <div className="mb-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {hot.map(p => (
           <button key={p.sku} onClick={() => onShop(p.cat)} className="card lift p-3 text-left">
-            <div className="mb-2 flex aspect-[3/2] items-center justify-center plate rounded-[4px] border border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]">
-              <Glyph sku={p.sku} cat={p.cat} className="h-[52%] w-[52%]" />
+            <div className="mb-2 flex aspect-[3/2] items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
+              <Glyph sku={p.sku} cat={p.cat} className="h-[76%] w-[76%]" />
             </div>
             <div className="text-[13.5px] font-semibold leading-[1.3]">{p.name}</div>
             <div className="mono mt-1 text-[11px] text-[hsl(var(--safety))]">{p.osha}</div>
