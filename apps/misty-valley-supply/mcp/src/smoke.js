@@ -40,8 +40,9 @@ const main = async () => {
   console.log("tools:", names.join(", "), "\n");
 
   const expected = ["check_compliance", "create_quote", "get_offer_manifest", "get_product",
-                    "list_classifieds", "place_order", "quote_roofscreen", "search_products"];
-  check("all 8 tools registered", expected.every((n) => names.includes(n)), names.join(","));
+                    "get_screen_parts", "get_seller_status", "list_classifieds", "place_order",
+                    "quote_roofscreen", "search_products"];
+  check("all 10 tools registered", expected.every((n) => names.includes(n)), names.join(","));
   check("every tool has a description", tools.every((t) => (t.description || "").length > 20));
 
   // --- search ------------------------------------------------------------
@@ -86,33 +87,79 @@ const main = async () => {
   const c4 = parse(await client.callTool({ name: "check_compliance", arguments: { hazard: "asdfqwer" } }));
   check("unknown hazard degrades safely", c4.matched === false && Array.isArray(c4.recognised_hazards));
 
-  // --- roof screen -------------------------------------------------------
+  // --- roof screen (the Lee Street model) --------------------------------
+  // Lee Street itself: 156 LF at 3'-6", 26 ga panel, base mount, drawings on.
   const r1 = parse(await client.callTool({
     name: "quote_roofscreen",
-    arguments: { linear_feet: 120, height_ft: 8, mount: "curb", infill: "louver" },
+    arguments: { lf: 156, heightFt: 3.5, panel: "p26", mount: "base", includeDrawings: true },
   }));
-  check("roof screen budget computes", r1.budget_usd > 0, `$${r1.budget_usd}`);
-  check("budget is frame + infill + mount", r1.budget_usd ===
-    r1.breakdown.frame + r1.breakdown.infill + r1.breakdown.mounting);
+  check("frame package hits the Lee Street anchor (~$6,006)",
+    Math.abs(r1.costs.frame_package.amount - 6006) < 0.01, `$${r1.costs.frame_package.amount}`);
+  check("frame rate is 14 + 7h = $38.50/LF at 3.5 ft",
+    Math.abs(r1.costs.frame_package.rate_per_lf - 38.5) < 0.001, String(r1.costs.frame_package.rate_per_lf));
+  check("panel lands near the real ~$1,000 (26 ga × 546 SF)",
+    Math.abs(r1.costs.panel.amount - 1010.10) < 0.01, `$${r1.costs.panel.amount}`);
+  check("base mount carries no adder", r1.costs.mount_adder.amount === 0);
+  check("drawings line is 850 + 3.25/LF",
+    Math.abs(r1.costs.shop_drawings.amount - (850 + 3.25 * 156)) < 0.01, `$${r1.costs.shop_drawings.amount}`);
+  check("totalCost is the sum of the build-up",
+    Math.abs(r1.totalCost - (r1.costs.frame_package.amount + r1.costs.mount_adder.amount +
+      r1.costs.panel.amount + r1.costs.shop_drawings.amount)) < 0.01, `$${r1.totalCost}`);
+  check("sell applies the default 71.4% markup",
+    Math.abs(r1.sell - Math.round(r1.totalCost * 1.714 * 100) / 100) < 0.01, `$${r1.sell}`);
+  check("gmPct is consistent with cost and sell",
+    Math.abs(r1.gmPct - ((r1.sell - r1.totalCost) / r1.sell) * 100) < 0.1, String(r1.gmPct));
+  check("spec-grade 26 ga panel carries no gauge warning", r1.warning === undefined);
   check("includes the substitution notice", (r1.substitution_notice || "").includes("substitution"));
 
+  // 29 ga is agricultural gauge — the quote must say so, unprompted.
   const r2 = parse(await client.callTool({
-    name: "quote_roofscreen", arguments: { linear_feet: 120, height_ft: 12, mount: "curb", infill: "louver" },
+    name: "quote_roofscreen", arguments: { lf: 156, heightFt: 3.5, panel: "p29" },
   }));
-  check("taller screen costs more", r2.budget_usd > r1.budget_usd, `${r2.budget_usd} vs ${r1.budget_usd}`);
+  check("p29 quote carries the gauge warning", typeof r2.warning === "string" && r2.warning.length > 20);
+  check("warning names agricultural gauge and the 7.2 Rib basis of design",
+    /agricultural/i.test(r2.warning || "") && /7\.2 Rib/.test(r2.warning || ""), r2.warning);
+  check("29 ga is cheaper than 26 ga", r2.totalCost < r1.totalCost, `${r2.totalCost} vs ${r1.totalCost}`);
+
+  // Frame only, no drawings, custom markup.
+  const r3 = parse(await client.callTool({
+    name: "quote_roofscreen",
+    arguments: { lf: 100, heightFt: 6, panel: "none", mount: "ballast", includeDrawings: false, markupPct: 50 },
+  }));
+  check("frame-only quote has zero panel cost", r3.costs.panel.amount === 0);
+  check("drawings can be excluded", r3.costs.shop_drawings.amount === 0);
+  check("ballast mount adds $14/LF", Math.abs(r3.costs.mount_adder.amount - 1400) < 0.01);
+  check("custom markup honoured", Math.abs(r3.sell - r3.totalCost * 1.5) < 0.01, `$${r3.sell}`);
+
+  const r4 = parse(await client.callTool({
+    name: "quote_roofscreen", arguments: { lf: 156, heightFt: 6, panel: "p26" },
+  }));
+  check("taller screen costs more", r4.totalCost > r1.totalCost, `${r4.totalCost} vs ${r1.totalCost}`);
 
   // An invalid enum value must come back as a structured error result the agent
   // can read and correct — not a thrown exception, and never a silent default.
   let bad;
   try {
-    bad = await client.callTool({ name: "quote_roofscreen", arguments: { linear_feet: 100, height_ft: 7 } });
+    bad = await client.callTool({ name: "quote_roofscreen", arguments: { lf: 100, heightFt: 7 } });
   } catch (e) {
     bad = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] };
   }
   check("invalid height is rejected", bad.isError === true);
   check("rejection names the allowed values",
-    /height_ft/.test(bad.content?.[0]?.text ?? "") && /4, 6, 8, 10, 12/.test(bad.content?.[0]?.text ?? ""),
+    /heightFt/.test(bad.content?.[0]?.text ?? "") && /3\.5, 4, 6, 8, 10, 12/.test(bad.content?.[0]?.text ?? ""),
     bad.content?.[0]?.text);
+
+  // --- screen parts ------------------------------------------------------
+  const sp1 = parse(await client.callTool({ name: "get_screen_parts", arguments: {} }));
+  check("all 8 screen parts listed", sp1.count === 8 && sp1.parts.length === 8, String(sp1.count));
+  const frame = sp1.parts.find((p) => p.sku === "MVS-RSF-SC3");
+  check("frame part sells at the default markup ($38.50 → $66.00-ish)",
+    frame && Math.abs(frame.unit_sell - Math.round(38.5 * 1.714 * 100) / 100) < 0.01,
+    frame && String(frame.unit_sell));
+  check("parts flag kit membership", sp1.parts.some((p) => p.in_kit) && sp1.parts.some((p) => !p.in_kit));
+
+  const sp2 = parse(await client.callTool({ name: "get_screen_parts", arguments: { markupPct: 0 } }));
+  check("zero markup sells at cost", sp2.parts.every((p) => p.unit_sell === p.unit_cost));
 
   // --- quoting -----------------------------------------------------------
   const q1 = parse(await client.callTool({
@@ -141,10 +188,43 @@ const main = async () => {
   }));
   check("human-approved order is accepted", o2.status === "accepted_pending_confirmation");
 
-  // --- classifieds & manifest --------------------------------------------
+  // --- classifieds & the seller gate -------------------------------------
   const y1 = parse(await client.callTool({ name: "list_classifieds", arguments: { kind: "Surplus" } }));
   check("classifieds filter by kind", y1.count > 0 && y1.listings.every((l) => l.kind === "Surplus"));
 
+  const y2 = parse(await client.callTool({ name: "list_classifieds", arguments: {} }));
+  check("every listing carries a protectedPayment verdict",
+    y2.listings.every((l) => typeof l.protectedPayment === "boolean"));
+  const gated = y2.listings.find((l) => l.id === "L-2291");   // Hardin Interiors — fully onboarded
+  const ungated = y2.listings.find((l) => l.id === "L-2268"); // J. Meredith — no agreement
+  check("onboarded seller's listing takes protected payment", gated?.protectedPayment === true);
+  check("un-onboarded seller's listing does not", ungated?.protectedPayment === false);
+  check("payment note says authorize-then-capture with the 7-day hold",
+    /authorize/i.test(y2.payment_note) && /7 days/.test(y2.payment_note) && /pickup/.test(y2.payment_note));
+  check("the word 'escrow' never appears — Misty Valley never holds the money",
+    !/escrow/i.test(JSON.stringify(y2)) && /never holds the money/.test(y2.payment_note));
+
+  const ss1 = parse(await client.callTool({ name: "get_seller_status", arguments: { seller: "Hardin Interiors LLC" } }));
+  check("gated seller: protected payment available",
+    ss1.protected_payment === true && ss1.reason === "Protected payment available", ss1.reason);
+
+  const ss2 = parse(await client.callTool({ name: "get_seller_status", arguments: { seller: "J. Meredith" } }));
+  check("no agreement → no protected payment",
+    ss2.protected_payment === false && /agreement/.test(ss2.reason), ss2.reason);
+
+  const ss3 = parse(await client.callTool({ name: "get_seller_status", arguments: { seller: "E. Vargas" } }));
+  check("agreement but not onboarded → blocked on onboarding",
+    ss3.protected_payment === false && /onboarding/.test(ss3.reason), ss3.reason);
+
+  const ss4 = parse(await client.callTool({ name: "get_seller_status", arguments: { seller: "TRH GC — subcontract" } }));
+  check("onboarded but payouts disabled → blocked on payouts",
+    ss4.protected_payment === false && /payouts/.test(ss4.reason), ss4.reason);
+
+  const ss5 = parse(await client.callTool({ name: "get_seller_status", arguments: { seller: "Nobody Inc" } }));
+  check("unknown seller fails gracefully with the known list",
+    ss5.error === "not_found" && Array.isArray(ss5.known_sellers) && ss5.known_sellers.length === 8);
+
+  // --- manifest ----------------------------------------------------------
   const m1 = parse(await client.callTool({ name: "get_offer_manifest", arguments: {} }));
   check("manifest reports the catalog size", m1.catalog_lines > 0, String(m1.catalog_lines));
   check("manifest declares no auto-execute", m1.ordering.auto_execute === false);

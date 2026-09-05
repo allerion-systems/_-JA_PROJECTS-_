@@ -8,7 +8,7 @@ citation that requires it** as structured data. That is what makes
 copy by scraping a product page.
 
 ```
-32 passed, 0 failed          node src/smoke.js
+60 passed, 0 failed          node src/smoke.js
 ```
 
 ---
@@ -51,10 +51,12 @@ claude mcp add misty-valley-supply -- node /absolute/path/to/mvs-mcp/src/server.
 | `search_products` | Free text across name, SKU, standard and OSHA cite; filters by category and price |
 | `get_product` | Full spec for one SKU, including cautions |
 | **`check_compliance`** | **Hazard in plain language → the OSHA rule → what satisfies it, and what does not** |
-| `quote_roofscreen` | Budget for a shop-fabricated roof screen frame |
+| `quote_roofscreen` | Cost build-up and sell for a shop-fabricated roof screen, anchored on the real Lee Street job (frame `$14 + $7/ft` per LF, panel by SF, mount adder, drawings line, 71.4% default markup). Warns when 29 ga panel is quoted against a 7.2 Rib basis of design |
+| `get_screen_parts` | The 8-part roof screen bill of materials, priced by the piece at a given markup |
 | `create_quote` | Prices lines, enforces minimums, dates the quote |
 | `place_order` | **Refuses without a PO number and explicit human approval** |
-| `list_classifieds` | The Yard — surplus, equipment, crews, wanted |
+| `list_classifieds` | The Yard — surplus, equipment, crews, wanted. Each listing carries `protectedPayment` per the seller gate; payment is authorize-then-capture (card held up to 7 days, captured on pickup confirmation) — Misty Valley never holds the money |
+| `get_seller_status` | Whether a Yard seller can take protected payment (signed agreement + Stripe onboarding + payouts enabled), with the reason |
 | `get_offer_manifest` | Machine-readable seller description |
 
 ### The one that matters
@@ -89,7 +91,17 @@ asserts this, so it cannot regress quietly.
 ## Data
 
 `catalog.json` is generated from the storefront's `src/data.ts`, so the shop and
-the agent API cannot drift apart. Regenerate it when the catalog changes.
+the agent API cannot drift apart. Regenerate it when the catalog changes:
+
+```bash
+npm run sync            # node scripts/sync-catalog.js [path/to/data.ts]
+```
+
+The sync script strips the TypeScript syntax from `data.ts`, imports the data as
+a plain module, converts the two formula fields (`frameCostLf`, `hatRows`) into
+serializable coefficients/tables, verifies the Lee Street anchors (24 products,
+8 screen parts, `frameCostLf(3.5) = $38.50/LF`, every listing has a seller
+account), and writes `catalog.json`.
 
 **Standards and OSHA citations are accurate. Prices, stock levels and suppliers
 are placeholders for a prototype.**

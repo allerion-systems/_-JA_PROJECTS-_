@@ -1,5 +1,5 @@
 {
-  "$schema": "https://mistyvalleysupply.com/schema/catalog-v1.json",
+  "$schema": "https://mistyvalleysupply.com/schema/catalog-v2.json",
   "generated": "2026-09-05",
   "seller": {
     "name": "Misty Valley Supply",
@@ -375,63 +375,185 @@
     }
   ],
   "roofscreen": {
-    "title": "Shop-Fabricated Roof Screen Frame",
+    "title": "Shop-Fabricated Roof Screen",
     "proof": "Lee Street",
-    "cost": 6000,
+    "lee": {
+      "frameCost": 6000,
+      "panelCost": 1000,
+      "sell": 12000,
+      "height": 3.5,
+      "bay": 5,
+      "lf": 156
+    },
+    "bod": {
+      "frame": "RoofScreen SC3",
+      "frameNote": "3-member cantilevered galvanized round tube, stainless connectors, square base supports",
+      "panel": "RoofScreen 7.2 Rib",
+      "panelNote": "7.2 in module, 1-1/2 in deep rib",
+      "detail": "Detail 6/A160 — RTU screen, 3'-6\" above deck, hat channel behind panel"
+    },
     "bullets": [
-      "Entire roof screen frame shop-fabricated to the project's basis of design",
-      "Fabricated flat, delivered in labeled sections, set in one crane pick",
-      "Galvanized structural framing with your specified infill",
-      "Delegated design and sealed calculations by a licensed engineer, per the spec section"
+      "Whole frame shop-fabricated flat to the project basis of design",
+      "Delivered in labeled sections and set in one pick",
+      "Buy the kit, or buy frame, panel, hat channel and fasteners separately",
+      "Shop drawings and sealed calculations quoted as their own line"
     ],
     "heights": [
+      3.5,
       4,
       6,
       8,
       10,
       12
     ],
+    "frameCostLf": {
+      "base": 14,
+      "perFtHeight": 7
+    },
     "mounts": [
       {
-        "id": "curb",
-        "name": "Curb mount",
-        "note": "Fastened to a structural curb — least deflection"
+        "id": "base",
+        "name": "Square base support",
+        "note": "Bolted post base on the deck or curb — what Lee Street used",
+        "adder": 0
       },
       {
         "id": "sleeper",
         "name": "Sleeper / rail",
-        "note": "Distributes load across the deck"
+        "note": "Spreads load across the deck",
+        "adder": 8
       },
       {
         "id": "ballast",
         "name": "Non-penetrating ballast",
-        "note": "No roof penetration; needs uplift calc"
+        "note": "No penetration; needs an uplift calc and a lot of weight",
+        "adder": 14
       }
     ],
-    "infills": [
+    "panels": [
       {
-        "id": "louver",
-        "name": "Aluminum louver",
-        "adder": 42
+        "id": "p26",
+        "name": "26 ga rib panel",
+        "ga": 26,
+        "thick": 0.0187,
+        "costSf": 1.85,
+        "note": "Commercial standard. What a 7.2 Rib basis of design expects.",
+        "spec": true
+      },
+      {
+        "id": "p29",
+        "name": "29 ga rib panel",
+        "ga": 29,
+        "thick": 0.0142,
+        "costSf": 1.35,
+        "note": "Agricultural grade. Cheaper, thinner, dents. Not for a specified screen.",
+        "spec": false
       },
       {
         "id": "perf",
-        "name": "Perforated metal panel",
-        "adder": 31
+        "name": "Perforated panel",
+        "ga": 22,
+        "thick": 0.0299,
+        "costSf": 4.6,
+        "note": "Where the architect wants air through the screen.",
+        "spec": true
       },
       {
-        "id": "corr",
-        "name": "Corrugated panel",
-        "adder": 24
-      },
-      {
-        "id": "frame",
+        "id": "none",
         "name": "Frame only",
-        "adder": 0
+        "ga": 0,
+        "thick": 0,
+        "costSf": 0,
+        "note": "You are supplying or reusing the panel.",
+        "spec": true
       }
     ],
-    "baseLf": 88
+    "hardware": {
+      "hatChannelLf": 1.95,
+      "hatRowsByHeight": {
+        "4": 2,
+        "6": 3,
+        "8": 4,
+        "10": 5,
+        "12": 6,
+        "3.5": 2
+      },
+      "baseEach": 46,
+      "screwsPerLf": 0.62
+    },
+    "shopDrawings": {
+      "base": 850,
+      "perLf": 3.25,
+      "note": "Shop drawings plus calculations sealed by an engineer licensed in the project state."
+    },
+    "defaultMarkup": 0.714
   },
+  "screen_parts": [
+    {
+      "sku": "MVS-RSF-SC3",
+      "name": "Screen frame, 3-member galvanized tube (SC3 equal)",
+      "uom": "LF",
+      "cost": 38.5,
+      "kit": true,
+      "note": "Round galvanized tube posts, rails and kickers with stainless connectors. Cut and labeled."
+    },
+    {
+      "sku": "MVS-RSB-SQ",
+      "name": "Square base support, adjustable for roof slope",
+      "uom": "EA",
+      "cost": 46,
+      "kit": true,
+      "note": "One per post. Bolted through the deck with a flashed, watertight connection."
+    },
+    {
+      "sku": "MVS-RSH-HAT",
+      "name": "Hat channel, 20 ga galvanized",
+      "uom": "LF",
+      "cost": 1.95,
+      "kit": true,
+      "note": "Horizontal runs behind the panel. Sets the panel plane and the screw pattern."
+    },
+    {
+      "sku": "MVS-RSP-26",
+      "name": "Rib panel, 26 ga, 7.2 in module, 1-1/2 in rib",
+      "uom": "SF",
+      "cost": 1.85,
+      "kit": true,
+      "note": "Commercial gauge. Kynar or SMP finish, standard colors."
+    },
+    {
+      "sku": "MVS-RSP-29",
+      "name": "Rib panel, 29 ga, 7.2 in module",
+      "uom": "SF",
+      "cost": 1.35,
+      "kit": false,
+      "note": "Budget gauge. Read the gauge warning before you spec this on a commercial roof."
+    },
+    {
+      "sku": "MVS-RSS-STC",
+      "name": "Panel screw, #12 self-drill, bonded washer, painted head",
+      "uom": "EA",
+      "cost": 0.62,
+      "kit": true,
+      "note": "Color matched to the panel. Ordered by panel SF, not guessed."
+    },
+    {
+      "sku": "MVS-RSA-ANC",
+      "name": "Certified roof anchor, 5,000 lb, ANSI/ASSP Z359.18 Type D",
+      "uom": "EA",
+      "cost": 268,
+      "kit": false,
+      "note": "Separate rated anchor on the same deck attachment pattern. A screen base is NOT a fall-arrest anchor."
+    },
+    {
+      "sku": "MVS-RSE-SHP",
+      "name": "Shop drawings and sealed calculations",
+      "uom": "LOT",
+      "cost": 850,
+      "kit": false,
+      "note": "Per project. Required for a substitution against a named basis of design."
+    }
+  ],
   "classifieds": [
     {
       "id": "L-2291",
@@ -513,5 +635,80 @@
       "who": "TRH GC — subcontract",
       "body": "Tear-off and load. Must have own Z87 and Class 2. Start Monday."
     }
-  ]
+  ],
+  "listing_kinds": [
+    "All",
+    "Equipment",
+    "Surplus",
+    "Crews",
+    "Trucks",
+    "Tools",
+    "Wanted"
+  ],
+  "sellers": {
+    "Hardin Interiors LLC": {
+      "acct": "acct_1QyHrd",
+      "agreement": true,
+      "onboarded": true,
+      "payouts": true,
+      "since": "Mar 2025",
+      "deals": 7
+    },
+    "Barren River Drywall": {
+      "acct": "acct_1QyBrd",
+      "agreement": true,
+      "onboarded": true,
+      "payouts": true,
+      "since": "Jan 2025",
+      "deals": 12
+    },
+    "E. Vargas": {
+      "acct": "acct_1QyVrg",
+      "agreement": true,
+      "onboarded": false,
+      "payouts": false,
+      "since": "Aug 2025",
+      "deals": 0
+    },
+    "Nelson Co. Mechanical": {
+      "acct": "acct_1QyNco",
+      "agreement": true,
+      "onboarded": true,
+      "payouts": true,
+      "since": "Feb 2025",
+      "deals": 4
+    },
+    "Cumberland Sheet Metal": {
+      "acct": "acct_1QyCsm",
+      "agreement": true,
+      "onboarded": true,
+      "payouts": true,
+      "since": "Apr 2025",
+      "deals": 3
+    },
+    "Salt River Roofing": {
+      "acct": "acct_1QySrr",
+      "agreement": true,
+      "onboarded": true,
+      "payouts": true,
+      "since": "May 2025",
+      "deals": 6
+    },
+    "J. Meredith": {
+      "acct": "acct_1QyJmr",
+      "agreement": false,
+      "onboarded": false,
+      "payouts": false,
+      "since": "Sep 2025",
+      "deals": 0
+    },
+    "TRH GC — subcontract": {
+      "acct": "acct_1QyTrh",
+      "agreement": true,
+      "onboarded": true,
+      "payouts": false,
+      "since": "Jul 2025",
+      "deals": 1
+    }
+  }
 }

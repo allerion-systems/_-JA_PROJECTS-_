@@ -20,7 +20,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const CATALOG = JSON.parse(readFileSync(join(HERE, "..", "catalog.json"), "utf8"));
 
-const { products: PRODUCTS, categories: CATEGORIES, roofscreen: RS, classifieds: LISTINGS } = CATALOG;
+const {
+  products: PRODUCTS, categories: CATEGORIES, roofscreen: RS,
+  screen_parts: SCREEN_PARTS, classifieds: LISTINGS, sellers: SELLERS,
+} = CATALOG;
 
 /* ---------------------------------------------------------------- helpers */
 
@@ -93,11 +96,30 @@ const parseHeight = (s = "") => {
 const findProduct = (sku) =>
   PRODUCTS.find((p) => p.sku.toLowerCase() === String(sku).toLowerCase()) || null;
 
+const DEFAULT_MARKUP_PCT = money(RS.defaultMarkup * 100); // 71.4 — realized on Lee Street
+
+/**
+ * Mirror of the storefront's canTakePayment (src/payments.ts). A listing may
+ * take a protected payment only with a signed seller agreement AND a completed
+ * Stripe Connect onboarding AND payouts enabled on the connected account.
+ */
+function canTakePayment(s) {
+  if (!s.agreement) return { ok: false, why: "Seller has not signed the seller agreement" };
+  if (!s.onboarded) return { ok: false, why: "Seller has not completed Stripe onboarding" };
+  if (!s.payouts) return { ok: false, why: "Stripe has not enabled payouts on the seller account" };
+  return { ok: true, why: "Protected payment available" };
+}
+
+const PAYMENT_NOTE =
+  "Protected payment is authorize-then-capture: the buyer's card is authorized when the deal is agreed " +
+  "(the hold lasts up to 7 days) and captured only when the buyer confirms pickup, at which point the funds " +
+  "move directly to the seller's connected account. Misty Valley never holds the money.";
+
 /* ----------------------------------------------------------------- server */
 
 export function buildServer() {
   const server = new McpServer(
-    { name: "misty-valley-supply", version: "0.1.0" },
+    { name: "misty-valley-supply", version: "0.2.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -197,30 +219,104 @@ export function buildServer() {
 
   server.registerTool("quote_roofscreen", {
     title: "Budget a shop-fabricated roof screen",
-    description: "Budget number for a shop-fabricated roof screen frame. Not a firm quote — a firm number needs the roof plan, equipment schedule and wind load.",
+    description:
+      "Cost build-up and sell price for a shop-fabricated roof screen, anchored on the real Lee Street job " +
+      `(${RS.lee.lf} LF at ${RS.lee.height} ft: $${RS.lee.frameCost.toLocaleString()} frame + ~$${RS.lee.panelCost.toLocaleString()} panel, sold $${RS.lee.sell.toLocaleString()}). ` +
+      "Not a firm quote — a firm number needs the roof plan, equipment schedule and wind load.",
     inputSchema: {
-      linear_feet: z.number().positive(),
-      height_ft: z.number().refine((v) => RS.heights.includes(v), { message: `height_ft must be one of ${RS.heights.join(", ")}` }),
-      mount: z.enum(["curb", "sleeper", "ballast"]).optional(),
-      infill: z.enum(["louver", "perf", "corr", "frame"]).optional(),
+      lf: z.number().positive().describe("Linear feet of screen"),
+      heightFt: z.number().refine((v) => RS.heights.includes(v), { message: `heightFt must be one of ${RS.heights.join(", ")}` }),
+      panel: z.enum(["p26", "p29", "perf", "none"]).optional().describe("Panel: p26 (26 ga rib, spec grade), p29 (29 ga, agricultural), perf (perforated), none (frame only)"),
+      mount: z.enum(["base", "sleeper", "ballast"]).optional().describe("Mounting: square base support (Lee Street), sleeper/rail, or non-penetrating ballast"),
+      includeDrawings: z.boolean().optional().describe("Include shop drawings and sealed calculations as their own line (default true)"),
+      markupPct: z.number().min(0).max(300).optional().describe(`Markup percent on cost (default ${DEFAULT_MARKUP_PCT}, the realized Lee Street markup)`),
     },
-  }, async ({ linear_feet, height_ft, mount = "curb", infill = "louver" }) => {
-    const inf = RS.infills.find((i) => i.id === infill);
-    const f = height_ft / 8;
-    const frame = Math.round(RS.baseLf * f * linear_feet);
-    const infillCost = Math.round(inf.adder * f * linear_feet);
-    const mountAdd = mount === "ballast" ? Math.round(linear_feet * 14)
-                   : mount === "sleeper" ? Math.round(linear_feet * 8) : 0;
-    const total = frame + infillCost + mountAdd;
-    return ok({
-      budget_usd: total, per_linear_foot: money(total / linear_feet),
-      breakdown: { frame, infill: infillCost, mounting: mountAdd },
-      spec: { linear_feet, height_ft, mount, infill: inf.name },
-      proof: `Reference project ${RS.proof}: entire frame shop-fabricated for $${RS.cost.toLocaleString()}.`,
+  }, async ({ lf, heightFt, panel = "p26", mount = "base", includeDrawings = true, markupPct = DEFAULT_MARKUP_PCT }) => {
+    const pan = RS.panels.find((p) => p.id === panel);
+    const mnt = RS.mounts.find((m) => m.id === mount);
+
+    const frameRate = money(RS.frameCostLf.base + RS.frameCostLf.perFtHeight * heightFt);
+    const framePackage = money(frameRate * lf);
+    const mountAdder = money(mnt.adder * lf);
+    const screenSf = money(lf * heightFt);
+    const panelCost = money(pan.costSf * screenSf);
+    const drawings = includeDrawings ? money(RS.shopDrawings.base + RS.shopDrawings.perLf * lf) : 0;
+
+    const totalCost = money(framePackage + mountAdder + panelCost + drawings);
+    const sell = money(totalCost * (1 + markupPct / 100));
+    const gmPct = sell > 0 ? money(((sell - totalCost) / sell) * 100) : 0;
+
+    const out = {
+      spec: { lf, heightFt, panel: pan.name, mount: mnt.name, includeDrawings, markupPct },
+      costs: {
+        frame_package: {
+          rate_per_lf: frameRate, amount: framePackage,
+          includes: "posts, rails, kickers, square base supports, hat channel and fasteners — shop-fabricated and labeled",
+        },
+        mount_adder: { mount: mnt.name, rate_per_lf: mnt.adder, amount: mountAdder, note: mnt.note },
+        panel: { id: pan.id, name: pan.name, cost_per_sf: pan.costSf, screen_sf: screenSf, amount: panelCost },
+        shop_drawings: includeDrawings
+          ? { base: RS.shopDrawings.base, per_lf: RS.shopDrawings.perLf, amount: drawings, note: RS.shopDrawings.note }
+          : { amount: 0, note: "Excluded — required for a substitution against a named basis of design." },
+      },
+      totalCost, sell, gmPct,
+      basis_of_design: RS.bod,
+      proof:
+        `Reference project ${RS.proof}: ${RS.lee.lf} LF at ${RS.lee.height} ft — frame $${RS.lee.frameCost.toLocaleString()}, ` +
+        `panel ~$${RS.lee.panelCost.toLocaleString()}, sold for $${RS.lee.sell.toLocaleString()}.`,
       firm_quote_requires: ["roof plan", "equipment schedule", "wind load / design pressures"],
       substitution_notice:
         "Where a specification names a manufacturer as basis of design, a shop-fabricated alternate is a formal substitution request " +
         "to the architect, submitted with drawings and sealed calculations before buyout.",
+    };
+
+    if (panel === "p29") {
+      out.warning =
+        "29 ga is agricultural gauge panel — thinner, softer, and it dents. It must not be substituted against a " +
+        "named 7.2 Rib basis of design; a specified screen expects 26 ga commercial panel. Use p29 only on unspecified, budget work.";
+    }
+
+    return ok(out);
+  });
+
+  server.registerTool("get_screen_parts", {
+    title: "Roof screen parts, by the piece",
+    description:
+      "The roof screen bill of materials, sold as a kit or by the piece. Returns unit cost and sell price at the " +
+      `given markup (default ${DEFAULT_MARKUP_PCT}%, the realized Lee Street markup).`,
+    inputSchema: {
+      markupPct: z.number().min(0).max(300).optional().describe(`Markup percent applied to unit cost (default ${DEFAULT_MARKUP_PCT})`),
+    },
+  }, async ({ markupPct = DEFAULT_MARKUP_PCT }) => ok({
+    markupPct,
+    count: SCREEN_PARTS.length,
+    parts: SCREEN_PARTS.map((p) => ({
+      sku: p.sku, name: p.name, uom: p.uom,
+      unit_cost: p.cost, unit_sell: money(p.cost * (1 + markupPct / 100)),
+      in_kit: p.kit, note: p.note,
+    })),
+  }));
+
+  server.registerTool("get_seller_status", {
+    title: "Can this seller take protected payment",
+    description:
+      "Marketplace seller gating for The Yard. A listing may take a protected payment only when the seller has a " +
+      "signed seller agreement, has completed Stripe Connect onboarding, and has payouts enabled. Returns the verdict and the reason.",
+    inputSchema: { seller: z.string().describe("Seller name exactly as it appears on a listing, e.g. 'Hardin Interiors LLC'") },
+  }, async ({ seller }) => {
+    const key = Object.keys(SELLERS).find((k) => k.toLowerCase() === String(seller).toLowerCase().trim());
+    if (!key) {
+      return ok({ error: "not_found", seller, known_sellers: Object.keys(SELLERS) });
+    }
+    const s = SELLERS[key];
+    const verdict = canTakePayment(s);
+    return ok({
+      seller: key,
+      agreement: s.agreement, onboarded: s.onboarded, payouts: s.payouts,
+      since: s.since, deals: s.deals,
+      protected_payment: verdict.ok,
+      reason: verdict.why,
+      payment_note: PAYMENT_NOTE,
     });
   });
 
@@ -286,7 +382,9 @@ export function buildServer() {
 
   server.registerTool("list_classifieds", {
     title: "Browse The Yard",
-    description: "Construction classifieds — surplus material, equipment, crews, trucks and wanted ads. Read-only.",
+    description:
+      "Construction classifieds — surplus material, equipment, crews, trucks and wanted ads. Each listing reports " +
+      "whether protected payment is available for its seller (see get_seller_status). Read-only.",
     inputSchema: {
       kind: z.enum(["Equipment", "Surplus", "Crews", "Trucks", "Tools", "Wanted"]).optional(),
       query: z.string().optional(),
@@ -298,7 +396,14 @@ export function buildServer() {
       (!kind || l.kind === kind) &&
       (!q || `${l.title} ${l.body} ${l.where} ${l.who}`.toLowerCase().includes(q))
     ).slice(0, limit);
-    return ok({ count: hits.length, listings: hits });
+    return ok({
+      count: hits.length,
+      listings: hits.map((l) => {
+        const s = SELLERS[l.who];
+        return { ...l, protectedPayment: s ? canTakePayment(s).ok : false };
+      }),
+      payment_note: PAYMENT_NOTE,
+    });
   });
 
   server.registerTool("get_offer_manifest", {
@@ -306,9 +411,10 @@ export function buildServer() {
     description: "Machine-readable description of who this seller is, what they sell, where they ship and how ordering works.",
     inputSchema: {},
   }, async () => ok({
-    name: "misty-valley-supply", version: "0.1.0",
+    name: "misty-valley-supply", version: "0.2.0",
     seller: CATALOG.seller,
     catalog_lines: PRODUCTS.length,
+    screen_parts: SCREEN_PARTS.length,
     categories: CATEGORIES.map((c) => ({ id: c.id, name: c.name })),
     fulfilment: ["dropship", "fabricate"],
     ships: "US, Canada, Mexico — quote for rest of world",
