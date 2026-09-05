@@ -146,6 +146,37 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
 
   if (modal === "signin") return (
     <Shell wide title="Sign in" sub="Different jobs see different screens. Pick who you are." onClose={close}>
+      {/* social sign-in first \u2014 one tap on a phone at the counter */}
+      <div className="grid gap-2 sm:grid-cols-2">
+        <button onClick={() => { signIn(); close(); }}
+          className="flex h-11 items-center justify-center gap-2.5 rounded-[6px] border border-[hsl(var(--rule))] bg-white text-[15px] font-medium text-[hsl(var(--ink))] hover:border-[hsl(var(--ink-3))]">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden>
+            <path fill="#4285F4" d="M23.5 12.27c0-.85-.08-1.66-.22-2.45H12v4.64h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.86c2.26-2.08 3.58-5.15 3.58-8.81z" />
+            <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.86-3c-1.07.72-2.44 1.14-4.08 1.14-3.13 0-5.78-2.11-6.73-4.96H1.29v3.1A12 12 0 0 0 12 24z" />
+            <path fill="#FBBC05" d="M5.27 14.27a7.2 7.2 0 0 1 0-4.54v-3.1H1.29a12 12 0 0 0 0 10.74l3.98-3.1z" />
+            <path fill="#EA4335" d="M12 4.77c1.76 0 3.34.6 4.59 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.63l3.98 3.1C6.22 6.88 8.87 4.77 12 4.77z" />
+          </svg>
+          Continue with Google
+        </button>
+        <button onClick={() => { signIn(); close(); }}
+          className="flex h-11 items-center justify-center gap-2.5 rounded-[6px] bg-black text-[15px] font-medium text-white hover:bg-[#1a1a1a]">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor" aria-hidden>
+            <path d="M17.05 12.54c-.03-2.9 2.37-4.29 2.48-4.36-1.35-1.97-3.45-2.24-4.2-2.27-1.78-.18-3.48 1.05-4.39 1.05-.9 0-2.3-1.03-3.79-1-1.95.03-3.75 1.13-4.75 2.88-2.03 3.52-.52 8.72 1.46 11.57.97 1.4 2.12 2.96 3.63 2.9 1.46-.06 2.01-.94 3.77-.94s2.26.94 3.8.91c1.57-.03 2.57-1.42 3.53-2.83 1.11-1.62 1.57-3.19 1.6-3.27-.04-.02-3.07-1.18-3.14-4.64zM14.16 4.03c.8-.97 1.34-2.32 1.19-3.66-1.15.05-2.55.77-3.38 1.74-.74.86-1.39 2.23-1.22 3.55 1.29.1 2.6-.65 3.41-1.63z" />
+          </svg>
+          Continue with Apple
+        </button>
+      </div>
+      <p className="mt-1.5 text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">
+        Prototype: social buttons sign you into the demo buyer account. Live Google/Apple
+        OAuth connects at launch.
+      </p>
+
+      <div className="my-3 flex items-center gap-3">
+        <span className="h-px flex-1 bg-[hsl(var(--rule))]" />
+        <span className="lab">or with email</span>
+        <span className="h-px flex-1 bg-[hsl(var(--rule))]" />
+      </div>
+
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="grid gap-1.5"><Lab>Email</Lab>
           <input className={field} defaultValue="joey@rbroofing.com" /></label>
