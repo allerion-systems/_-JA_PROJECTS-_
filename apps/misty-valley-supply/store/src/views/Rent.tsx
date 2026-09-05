@@ -79,10 +79,11 @@ export default function Rent({ onSignIn }: { onSignIn: () => void }) {
           <Panel className="mt-4 border-l-2 border-l-[hsl(var(--warn))]">
             <Lab kicker className="mb-2">Why we inspect what you rent</Lab>
             <p className="max-w-[80ch] text-[13px] leading-[1.6]">
-              A rented SRL that arrests a fall is done working until a competent person clears
-              it. Every fall-arrest rental leaves documented and comes back documented — that
-              paper is part of what you are renting. Harnesses we do not rent at all: personal
-              fit, personal history, personal gear.
+              Steel rents; textiles wait. A returned harness or SRL cannot prove it never
+              arrested a fall, and ANSI Z359 wants documented competent-person inspection —
+              so fall-arrest gear joins the rental fleet only once our per-asset inspection
+              ledger is live. Until then: guardrail, warning line, screens and covers,
+              counted out and counted back.
             </p>
           </Panel>
         </div>
@@ -150,8 +151,8 @@ export default function Rent({ onSignIn }: { onSignIn: () => void }) {
                     <Btn className="mt-3 w-full" onClick={onSignIn}>Sign in to request</Btn>
                   )}
                   <p className="mt-2.5 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
-                    Certificate of insurance required on delivery rentals. Rates are
-                    placeholders until benchmarking lands.
+                    Certificate of insurance required on delivery rentals. Rates benchmarked against the corridor
+                    rental market, Sept 2026.
                   </p>
                 </>
               )}

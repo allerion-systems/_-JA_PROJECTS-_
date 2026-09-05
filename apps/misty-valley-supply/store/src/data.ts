@@ -351,8 +351,11 @@ export const LISTINGS: Listing[] = [
 
 
 // ---- rentals -------------------------------------------------------------
-// Day / week / 4-week, the trade convention. Rates are placeholders until the
-// rental benchmarking lands; the flow is reserve-request, never online payment.
+// Day / week / 4-week, the trade convention (verified: week is 2-2.5x day,
+// 4-week is 1.5-2.5x week across Art's Rental's published catalog). Steel only
+// in phase one: harnesses and SRLs rent only after the per-asset inspection
+// ledger exists, because a renter must be able to prove a returned unit never
+// arrested a fall. Reserve-request flow, never online payment.
 
 export type Rental = {
   sku: string; name: string; uom: string;
@@ -363,20 +366,20 @@ export type Rental = {
 
 export const RENTALS: Rental[] = [
   { sku: "MVS-RG-1000", name: "Non-Penetrating Guardrail — 10 ft Section", uom: "section",
-    day: 9, week: 24, month: 62, minQty: 10, deposit: 60,
-    note: "Bases included one-per-section. Cheaper than buying for a single job; buy it if the yard keeps needing it." },
+    day: 16, week: 40, month: 100, minQty: 10, deposit: 60,
+    note: "Base included per section — $4.00/LF-week, mid-range of the published corridor benchmarks." },
   { sku: "MVS-RG-BASE", name: "Extra Counterweight Base — 90 lb", uom: "each",
-    day: 3, week: 8, month: 20, deposit: 25,
+    day: 4, week: 10, month: 25, deposit: 25,
     note: "For corners and gates beyond the one-per-section allowance." },
   { sku: "MVS-WL-600", name: "Warning Line System — 600 ft Kit", uom: "kit",
-    day: 22, week: 60, month: 155, deposit: 150,
+    day: 45, week: 110, month: 275, deposit: 150,
     note: "Stanchions, flagged line and end anchors, ready to set." },
+  { sku: "MVS-SKY-48", name: "Skylight Screen — 4 ft × 8 ft", uom: "each",
+    day: 15, week: 40, month: 100, deposit: 60,
+    note: "For the re-roof that only needs them for a month." },
   { sku: "MVS-HOLE-4", name: "Hole Cover Set — 4 covers", uom: "set",
-    day: 6, week: 16, month: 40, deposit: 40,
+    day: 24, week: 60, month: 150, deposit: 40,
     note: "Marked and load-rated. Count them back on the truck." },
-  { sku: "MVS-SRL-11", name: "Self-Retracting Lifeline — 11 ft", uom: "each",
-    day: 12, week: 32, month: 80, deposit: 120, inspect: true,
-    note: "Function-tested and documented before every rental and on return." },
 ];
 
 // ---- seller payout accounts ----------------------------------------------
