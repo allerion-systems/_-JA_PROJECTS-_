@@ -148,7 +148,7 @@ its own affiliate is not a company yet — it is a department.**
 | **2** | **First-container gate closed or the container cancelled.** Incoterm in writing; packing list and weight ticket in hand; a licensed customs broker's classification and AD/CVD read in writing; the Hebron spec read for Buy America. | **Ben** |
 | **3** | **Professional sign-offs cleared.** KY CPA on the LLET and sales tax; KY construction attorney on the related-party protocol; **products liability bound naming Supply as importer with the cut shop disclosed, before material ships.** | **Christopher** |
 | **4** | **The coil question closed.** Call Steel Technologies, Eminence KY — **502-845-4202** — on stock vs. slit-to-order, and either kill roll-forming for good or cost it properly. | **Ben** |
-| **5** | **Joey's employment agreement reviewed** by a KY employment attorney before Supply sells anything into Kelley's market. | **Joey** |
+| **5** | **Joey's employment agreement with R&B Roofing reviewed** by a KY employment attorney — **before he gives notice**, not before the first sale. Non-compete, non-solicit, moonlighting, conflict of interest. | **Joey** |
 | **6** | **Scorecard live** — ten measurables, populated every Monday, no blanks. | **Christopher** |
 | **7** | **Constitution adopted and signed.** Article I completed in Ben's words; the outside advisor named. | **Ben** |
 
@@ -237,7 +237,7 @@ Two out of three is a no.**
 >
 > **A. Bound the seat.** Joey owns takeoff and quoting for a stated number of
 > hours a week, on nights and weekends, on a defined customer list outside
-> Kelley's market. Written down. Everyone agrees it is a part-time seat and the
+> R&B's market. Written down. Everyone agrees it is a part-time seat and the
 > scorecard targets are sized to it.
 >
 > **B. Hire into it.** Joey stays as owner and advisor; someone else holds the

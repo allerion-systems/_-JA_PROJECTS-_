@@ -257,7 +257,7 @@ whole model runs on.
 **[SIGN-OFF]** He should read his employment agreement for non-compete,
 non-solicit, moonlighting and conflict-of-interest terms, and — if there is
 any real ambiguity — have a Kentucky employment attorney look at it **before**
-Misty Valley Supply sells anything to anyone in Kelley's market. The Allee name
+Misty Valley Supply sells anything to anyone in R&B's market. The Allee name
 is worth more than any single order.
 
 ---

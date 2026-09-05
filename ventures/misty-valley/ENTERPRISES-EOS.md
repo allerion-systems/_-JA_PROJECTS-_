@@ -154,7 +154,7 @@ All three undocumented at once is how good families end up in depositions.**
    documented in writing before it happens.** Not reconstructed at year end.
    `01-entity-structure.md` has the protocol; a Kentucky construction attorney
    signs off on it before the first invoice.
-2. **Kelley Construction's information never crosses into either company.** Not
+2. **R&B Roofing's information never crosses into either company.** Not
    bid numbers, not the pipeline, not sub pricing. Joey's *skill* is his;
    **his employer's information never is.** This is Article IX and it is
    unamendable.

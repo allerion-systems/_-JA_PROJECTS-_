@@ -50,7 +50,7 @@ these the four that gate real money and that has not changed.
 | 2.1 | **KY CPA** | Is the cut shop "manufacturing" or a "service" under the LLET? Sales-tax treatment before the first invoice. **Both are five-figure annual questions.** | Christopher |
 | 2.2 | **KY construction attorney** | The related-party protocol, before Supply's first sale to Construction. Plus the Enterprises structure — **Kentucky has no series LLC**, so it is separate entities or nothing. | Christopher |
 | 2.3 | **Insurance broker** | Products liability for Supply **as importer**, cut shop disclosed, **bound in writing before material ships.** KRS 411.340's middleman defense does not protect you and the cut shop independently defeats it. | Christopher |
-| 2.4 | **KY employment attorney** | Joey's agreement — non-compete, non-solicit, moonlighting, conflict of interest — **before Supply sells anything into Kelley's market.** | Joey |
+| 2.4 | **KY employment attorney** | Joey's R&B Roofing agreement — non-compete, non-solicit, moonlighting, conflict of interest — **before he gives notice.** A resignation planned for October moves this to the front of the queue. | Joey |
 
 **Also in this window:**
 
