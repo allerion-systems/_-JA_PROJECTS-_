@@ -11,6 +11,8 @@ import Account from "@/views/Account";
 import Ops from "@/views/Ops";
 import Rent from "@/views/Rent";
 import Services from "@/views/Services";
+import Shed from "@/views/Shed";
+import Deck from "@/views/Deck";
 import Runs from "@/views/Runs";
 import Agents from "@/views/Agents";
 import Dashboard from "@/views/Dashboard";
@@ -19,7 +21,7 @@ import Users from "@/views/Users";
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
 
-type View = "home" | "dash" | "shop" | "product" | "screen" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
+type View = "home" | "dash" | "shop" | "product" | "screen" | "shed" | "deck" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -30,9 +32,9 @@ const NAV: { id: View; label: string; short: string; sub: string; icon: React.Re
     icon: <path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-5H3zM13 8h8V3h-8z" /> },
   { id: "shop", label: "Catalog", short: "Shop", sub: "Safety & edge protection", bar: true,
     icon: <path d="M3 6h18M6 6v13h12V6M9 10h6" /> },
-  { id: "screen", label: "Roof Screens", short: "Screens", sub: "Shop fabrication", bar: true,
+  { id: "screen", label: "Design Center", short: "Design", sub: "Build it in 3D, priced live", bar: true,
     icon: <path d="M3 19h18M5 19V8l7-4 7 4v11M9 19v-6h6v6" /> },
-  { id: "runs", label: "Material Runs", short: "Runs", sub: "We pick it up today", bar: true,
+  { id: "runs", label: "Delivery", short: "Delivery", sub: "Any counter in town, today", bar: true,
     icon: <path d="M2 16V7h11v9M13 10h5l4 4v2h-2M2 16h2m5 0h6" /> },
   { id: "yard", label: "The Yard", short: "Yard", sub: "Marketplace",
     icon: <path d="M4 5h16M4 12h16M4 19h10" /> },
@@ -51,7 +53,8 @@ const NAV: { id: View; label: string; short: string; sub: string; icon: React.Re
    one roof, fabrication first, the marketplace as its own divider. The left
    rail sells; the workspace group is where the software lives. */
 const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string };
-                     cats?: string[]; kids?: { label: string; cat: string }[] }[] = [
+                     cats?: string[]; kids?: { label: string; cat: string }[];
+                     tools?: { label: string; view: View }[] }[] = [
   { label: "Building Materials", sub: "Siding, OSB, studs, drywall", go: { view: "shop", cat: "sheathing" },
     cats: ["siding", "sheathing", "drywall", "roofing", "site"],
     kids: [
@@ -74,7 +77,12 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
       { label: "Hi-Vis Apparel", cat: "hivis" },
     ] },
   { label: "Building Structures", sub: "Conex, offices, custom modular", go: { view: "shop", cat: "structures" }, cats: ["structures"] },
-  { label: "Custom Fabrication", sub: "Roof screens · shop drawings", go: { view: "screen" } },
+  { label: "Design Center", sub: "Screens, sheds, decks — in 3D", go: { view: "screen" },
+    tools: [
+      { label: "Roof Screens", view: "screen" },
+      { label: "Sheds", view: "shed" },
+      { label: "Decks", view: "deck" },
+    ] },
   { label: "Services", sub: "Drafting, takeoffs, design-build", go: { view: "services" } },
   { label: "Rentals", sub: "Day, week, 4-week", go: { view: "rent" } },
 ];
@@ -246,7 +254,8 @@ function Inner() {
         <nav className="sticky top-[140px] hidden h-[calc(100vh-140px)] w-[228px] shrink-0 overflow-y-auto border-r border-[hsl(var(--rule))] py-6 pr-5 lg:block">
           <Lab kicker className="mb-2.5">Departments</Lab>
           {DEPARTMENTS.map(d => {
-            const active = (d.go.view !== "shop" && view === d.go.view) ||
+            const active = (d.tools?.some(t => t.view === view) ?? false) ||
+              (d.go.view !== "shop" && view === d.go.view) ||
               (d.go.view === "shop" && view === "shop" && !!d.cats?.length && !!preCat && d.cats.includes(preCat));
             return (
               <div key={d.label} className="mb-0.5">
@@ -263,6 +272,19 @@ function Inner() {
                     <span className="num shrink-0 text-[11px] text-[hsl(var(--ink-3))]">{deptCount(d.cats)}</span>
                   )}
                 </button>
+                {d.tools && active && (
+                  <div className="mb-1 ml-2.5 border-l border-[hsl(var(--rule))] pl-2.5">
+                    {d.tools.map(t => (
+                      <button key={t.view} onClick={() => go(t.view)}
+                        className={cx("flex min-h-[36px] w-full items-center rounded-[4px] px-2 py-1 text-left text-[13px]",
+                          view === t.view
+                            ? "font-semibold text-[hsl(var(--safety-2))]"
+                            : "text-[hsl(var(--ink-2))] hover:text-[hsl(var(--ink))]")}>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {d.kids && active && (
                   <div className="mb-1 ml-2.5 border-l border-[hsl(var(--rule))] pl-2.5">
                     {d.kids.map(k => (
@@ -292,7 +314,7 @@ function Inner() {
               view === "runs" ? "bg-[hsl(var(--safety-soft))]" : "hover:bg-[hsl(var(--panel))]")}>
             <span className="min-w-0">
               <span className={cx("block text-[15px] font-semibold leading-[1.2]",
-                view === "runs" ? "text-[hsl(var(--safety-2))]" : "text-[hsl(var(--ink))]")}>Material Runs</span>
+                view === "runs" ? "text-[hsl(var(--safety-2))]" : "text-[hsl(var(--ink))]")}>Delivery</span>
               <span className="mt-0.5 block text-[11px] text-[hsl(var(--ink-3))]">Any counter in town, today</span>
             </span>
           </button>
@@ -339,6 +361,8 @@ function Inner() {
           {view === "runs" && <Runs onSignIn={() => setModal("signin")} />}          {view === "users" && <Users onSignIn={() => setModal("signin")} />}
           {view === "rent" && <Rent onSignIn={() => setModal("signin")} />}
           {view === "services" && <Services />}
+          {view === "shed" && <Shed />}
+          {view === "deck" && <Deck />}
           {view === "yard" && <Yard />}
           {view === "account" && <Account onSignIn={() => setModal("signin")} />}
           {view === "ops" && <Ops />}

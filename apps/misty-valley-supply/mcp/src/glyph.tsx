@@ -757,6 +757,27 @@ const M: Record<string, React.ReactNode> = {
     <path d="M27 44h11M18 51h9M39 51h9" stroke={C.tanD} strokeWidth="1.3" opacity=".8" />
   </>),
 
+  /* ---- decking & outdoor lumber --------------------------------------- */
+
+  // Three gapped deck courses riding a joist below.
+  deckBoards: (<>
+    <Shadow />
+    <rect x="26" y="32" width="12" height="18" rx="1" fill={C.tanD} />
+    {[6, 24, 42].map(x => <rect key={x} x={x} y="20" width="16" height="10" rx="1.5" fill={C.tan} />)}
+    {[6, 24, 42].map(x => <rect key={x} x={x} y="20" width="16" height="3" rx="1.5" fill="#fff" opacity=".3" />)}
+  </>),
+
+  // Galvanized face-mount joist hanger, seat and flanges.
+  hanger: (<>
+    <Shadow />
+    <rect x="14" y="12" width="8" height="36" rx="1" fill={C.galv} />
+    <rect x="42" y="12" width="8" height="36" rx="1" fill={C.galv} />
+    <rect x="22" y="40" width="20" height="8" fill={C.galvD} />
+    <rect x="22" y="16" width="20" height="26" fill={C.tan} />
+    <rect x="22" y="16" width="20" height="4" fill="#fff" opacity=".3" />
+    {[17, 45].map(x => [20, 30].map(y => <circle key={`${x}-${y}`} cx={x + 1} cy={y} r="1.4" fill={C.steelD} />))}
+  </>),
+
   drawing: (<>
     <Shadow />
     <path d="M12 8h30l10 10v34H12z" fill={C.white} />
@@ -800,6 +821,8 @@ const BY_SKU: [RegExp, string][] = [
   [/BT-CAU/, "tapeCaution"], [/BT-DAN/, "tapeDanger"], [/MP-/, "markPaint"],
   [/PY-/, "polyRoll"], [/TP-/, "tarp"], [/FP-/, "ramBoard"], [/SW-/, "stretchWrap"],
   [/EC-SILT/, "siltFence"], [/EC-SF/, "safetyFence"], [/EC-SB/, "sandbags"],
+  // decking & outdoor lumber
+  [/PT-448|PT-668|PT-248|PT-BAL/, "stud"], [/HD-/, "hanger"], [/CN-80/, "sandbags"],
 ];
 
 const BY_CAT: Record<string, string> = {
@@ -807,6 +830,7 @@ const BY_CAT: Record<string, string> = {
   eye: "glassesClear", hand: "gloveA4", hivis: "vestC2", fall: "harness",
   siding: "sidingVinyl", sheathing: "osb", drywall: "drywallSheet", structures: "conex",
   jobsite: "firstAidA", roofing: "underlayment", site: "safetyFence",
+  decking: "deckBoards",
 };
 
 export function Glyph({ sku, cat, className }: { sku?: string; cat?: string; className?: string }) {

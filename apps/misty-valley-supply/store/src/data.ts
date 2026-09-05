@@ -38,6 +38,7 @@ export const CATEGORIES = [
   { id: "jobsite", name: "Jobsite Compliance", blurb: "First aid, fire, respiratory, hearing, GFCI — the reorder wall" },
   { id: "roofing", name: "Roofing Accessories", blurb: "Underlayment, ice & water, drip edge, boots, coil nails" },
   { id: "site", name: "Site Protection & Erosion", blurb: "Poly, tarps, floor protection, silt fence, barricade tape" },
+  { id: "decking", name: "Decking & Outdoor Lumber", blurb: "PT posts, joists, beams, deck boards, hangers and bases" },
 ];
 
 export const PRODUCTS: Product[] = [
@@ -513,6 +514,87 @@ export const PRODUCTS: Product[] = [
     note: "Fill on site. Ballast, hold-downs, inlet protection, water diversion.",
     why: "Empty bags, filled on site: ballast for silt fence and safety fence, hold-downs for poly and tarps, inlet protection around storm drains, and gravity for anything the wind wants. UV-treated polypropylene survives a season in the sun where the cheap bag splits in a month.",
     fulfil: "dropship", supplier: "Louisville Site Supply", lead: "2–3 days",
+  },
+
+  // ---- decking & outdoor lumber ------------------------------------------
+  // Street prices checked Sep 2026 against Lowe's, Home Depot and regional
+  // yards (AW Graham, Owens Supply corridor lists) and rounded street-typical.
+  {
+    sku: "MVS-PT-448", name: "Post — 4×4×8 PT #2, Ground Contact", cat: "decking",
+    price: 11.85, uom: "EA", std: "PS 20, UC4A ground contact", osha: "IRC R507",
+    note: "Guard posts, stair posts, light framing. Actual 3-1/2 × 3-1/2.",
+    why: "IRC R507 is the prescriptive deck chapter, and R317.1 puts treated or naturally durable wood everywhere lumber sits exposed or near grade. UC4A ground-contact treatment is the retention that survives soil splash — and modern copper treatments eat bare steel, so hang it on coated or hot-dip fasteners only.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 4,
+  },
+  {
+    sku: "MVS-PT-668", name: "Post — 6×6×8 PT #2, Ground Contact", cat: "decking",
+    price: 29.50, uom: "EA", std: "PS 20, UC4B ground contact", osha: "IRC R507.4",
+    note: "The deck support post. Actual 5-1/2 × 5-1/2. Cut end gets field preservative.",
+    why: "IRC R507.4 sizes deck support posts, and a 6×6 covers every bearing height the table allows where a 4×4 runs out early. UC4B is the heavy ground-contact retention for structural posts. Every field cut exposes untreated core — swab it with copper naphthenate or the rot starts at your saw kerf.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", hot: true,
+  },
+  {
+    sku: "MVS-PT-2812", name: "Joist — 2×8×12 PT #2 SYP", cat: "decking",
+    price: 14.75, uom: "EA", std: "PS 20, SYP #2, UC3B", osha: "IRC R507.6",
+    note: "Deck joists, ledgers, rim. Crown up. 16 in o.c. spans to the R507.6 table.",
+    why: "IRC R507.6 sets deck joist spans — a #2 southern pine 2×8 at 16 in on center is good for roughly 11 ft 8 in of joist span, which is why it is the corridor's default deck joist. The ledger comes out of the same pile: R507.9 wants it the same depth as the joists it carries.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 10, hot: true,
+  },
+  {
+    sku: "MVS-PT-21012", name: "Beam Stock — 2×10×12 PT #2 SYP", cat: "decking",
+    price: 21.50, uom: "EA", std: "PS 20, SYP #2, UC3B", osha: "IRC R507.5",
+    note: "Doubled for deck beams; also the stair-stringer blank.",
+    why: "IRC R507.5 sizes deck beams by ply and span: a doubled 2×10 over posts at 8 ft covers the spans these decks draw. Fasten the plies per the table, crown both up, and keep post bearing full — a beam notched to a sliver on top of a 6×6 is the failure photo in every deck-collapse report.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 4,
+  },
+  {
+    sku: "MVS-PT-5412", name: "Deck Board — 5/4×6×12 PT, Radius Edge", cat: "decking",
+    price: 12.95, uom: "EA", std: "PS 20, UC3B, radius edge", osha: "IRC R507.7",
+    note: "Actual 1 × 5-1/2. Lay bark side down, gap 1/4 in wet-to-wet.",
+    why: "IRC R507.7 wants decking fastened to each joist per its span rating, and 5/4 radius-edge board is rated for joists at 16 in on center. Treated boards ship wet and shrink — set them near-tight and the sun opens the gap; the 5.5 in face plus the gap is what the takeoff counts per course.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 10, hot: true,
+  },
+  {
+    sku: "MVS-PT-248", name: "Rail Stock — 2×4×8 PT #2", cat: "decking",
+    price: 6.45, uom: "EA", std: "PS 20, UC3B", osha: "IRC R507.10.2",
+    note: "Guard rails, blocking, stair framing. Exterior fasteners only.",
+    why: "The treated 2×4 is the guard's top and bottom rail and the blocking between joists. IRC R507.10.2 hangs the number on the assembly it joins: a guard that resists a 200 lb concentrated load at the top — which is a post-connection problem the rail carries the load to, not a reason to skip the rail.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 10,
+  },
+  {
+    sku: "MVS-PT-BAL", name: "Baluster — 2×2×42 PT, Beveled", cat: "decking",
+    price: 1.95, uom: "EA", std: "PS 20, UC3B", osha: "IRC R312.1.3",
+    note: "One per 5-1/2 in of rail run keeps the sphere out. Sold by the bundle in spirit.",
+    why: "IRC R312.1.3 is the 4-inch-sphere rule: no opening in a required guard may pass a 4 in sphere. A 1-1/2 in baluster every 5-1/2 in of run leaves a hair under 4 in clear — which is why the takeoff counts balusters off rail length, not off guesswork.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 25,
+  },
+  {
+    sku: "MVS-HD-LUS28", name: "Joist Hanger — 2×8, Double-Shear, G90", cat: "decking",
+    price: 2.10, uom: "EA", std: "ASTM A653 G90, 18 ga", osha: "IRC R507.6.1",
+    note: "Face-mount. Fill every hole with the listed hanger nail or screw.",
+    why: "IRC R507.6.1 requires deck joist bearing or an approved hanger at the ledger — toenails alone are exactly what the rule exists to end. A G90-galvanized double-shear hanger is the approved path, and it only carries its rating with every nail hole filled with the listed fastener, not whatever was in the pouch.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 10, hot: true,
+  },
+  {
+    sku: "MVS-HD-ABU66", name: "Post Base — 6×6, Standoff, ZMAX", cat: "decking",
+    price: 28.50, uom: "EA", std: "ASTM A653 G185 (ZMAX)", osha: "IRC R507.4.1",
+    note: "1 in standoff keeps end grain out of the puddle. Anchors to the footing.",
+    why: "IRC R507.4.1 wants deck posts restrained against lateral displacement at the footing, and a cast-in or anchored standoff base is the listed way to do it. The 1 in standoff matters as much as the steel: post end grain sitting in water rots from the bottom up, treated or not. ZMAX (G185) coating is the grade rated for contact with modern treated lumber.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day",
+  },
+  {
+    sku: "MVS-FS-STR50", name: "Structural Screws — 1/4 × 3 in, 50 ct", cat: "decking",
+    price: 44, uom: "box", std: "ICC-ES evaluated, coated", osha: "IRC R507.9.1.3",
+    note: "Ledger and hardware duty. A lag alternative with a published report.",
+    why: "IRC R507.9.1.3 fastens the ledger with 1/2 in lags or bolts — or fasteners installed per an ICC-ES evaluation report, which is what a structural screw's paperwork is. Two staggered rows at the table spacing, into the band, through flashing, and the report in the job file is what the inspector actually reads.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", hot: true,
+  },
+  {
+    sku: "MVS-CN-80", name: "Concrete Mix — 80 lb Bag", cat: "decking",
+    price: 6.50, uom: "bag", std: "ASTM C387, 4,000 psi", osha: "IRC R507.3",
+    note: "About 0.6 cu ft per bag. Three bags fills a 10 in tube 30 in deep.",
+    why: "IRC R507.3 puts deck footings on undisturbed or compacted soil, sized to the load and — R507.3.3 — carried below the local frost line. Bagged ASTM C387 mix at 4,000 psi is how a three-post deck gets poured without ordering a truck; the takeoff runs three bags per post and the frost depth comes from the county, not the bag.",
+    fulfil: "stock", supplier: "BlueLinx", lead: "Same day", moq: 10,
   },
 ];
 

@@ -128,7 +128,7 @@ export default function Home({
       {/* ----------------------------------------------- marketplace band */}
       <div className="mb-10 grid gap-4 lg:grid-cols-2">
         <div className="card lift p-5">
-          <Lab className="mb-2">Material Runs</Lab>
+          <Lab className="mb-2">Delivery</Lab>
           <h3 className="disp text-[22px] font-bold leading-none">Any counter in town, today</h3>
           <p className="mt-2 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
             A runner picks up your list from any local store and puts it on your deck.
