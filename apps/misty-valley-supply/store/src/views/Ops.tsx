@@ -31,8 +31,8 @@ export default function Ops() {
         ].map(([k, v, s]) => (
           <div key={k} className="bg-[hsl(var(--panel))] p-4">
             <Lab className="mb-1.5">{k}</Lab>
-            <div className="disp text-[27px] font-bold leading-none">{v}</div>
-            {s && <div className="mono mt-1 text-[11px] text-[hsl(var(--ink-3))]">{s}</div>}
+            <div className="disp text-[28px] font-bold leading-none">{v}</div>
+            {s && <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">{s}</div>}
           </div>
         ))}
       </div>
@@ -47,8 +47,8 @@ export default function Ops() {
             <span className="mono text-[hsl(var(--safety))]">{o.id}</span>,
             o.customer,
             <span className="text-[hsl(var(--ink-2))]">{o.job}</span>,
-            <span className="mono text-[12px]">{o.placed}</span>,
-            <span className="text-[12.5px]">{o.route}</span>,
+            <span className="text-[13px]">{o.placed}</span>,
+            <span className="text-[13px]">{o.route}</span>,
             o.lines,
             money(o.total),
             money(o.cost),
@@ -70,15 +70,15 @@ export default function Ops() {
                 <div>
                   <div>{s.name}</div>
                   {s.cutNote && (
-                    <div className="mono mt-0.5 text-[11px] text-[hsl(var(--warn))]">
+                    <div className="mt-0.5 text-[11px] text-[hsl(var(--warn))]">
                       no terms yet — prepay
                     </div>
                   )}
                 </div>,
                 <Tag tone={s.mode === "Fabricate" ? "safety" : "steel"}>{s.mode}</Tag>,
-                <span className="mono text-[12px]">{s.terms}</span>,
-                <span className="text-[12.5px]">{s.ships}</span>,
-                <span className="mono text-[12px]">{s.cut}</span>,
+                <span className="text-[13px]">{s.terms}</span>,
+                <span className="text-[13px]">{s.ships}</span>,
+                <span className="text-[13px]">{s.cut}</span>,
                 s.lines,
               ])}
             />
@@ -99,8 +99,8 @@ export default function Ops() {
             ].map(([label, n, color]) => (
               <div key={label as string} className="mb-4 last:mb-0">
                 <div className="mb-1.5 flex items-baseline justify-between">
-                  <span className="disp text-[16px] font-semibold">{label}</span>
-                  <span className="mono text-[13px]">{n as number} lines</span>
+                  <span className="disp text-[15px] font-semibold">{label}</span>
+                  <span className="text-[13px]">{n as number} lines</span>
                 </div>
                 <div className="h-2.5 w-full bg-[hsl(var(--panel-2))]">
                   <div style={{
@@ -127,9 +127,9 @@ export default function Ops() {
           <h3 className="disp text-[22px] font-semibold">§ Odoo — what to actually configure</h3>
           <Tag tone="safety">Not built in a browser tab</Tag>
         </div>
-        <p className="mb-4 max-w-[80ch] text-[13.5px] leading-[1.6] text-[hsl(var(--ink-2))]">
+        <p className="mb-4 max-w-[80ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
           Odoo Community is a Python and PostgreSQL server application under LGPLv3
-          (<span className="mono">github.com/odoo/odoo</span>). It cannot run inside a single HTML
+          (<span className="">github.com/odoo/odoo</span>). It cannot run inside a single HTML
           file — it needs a server, a database and real sessions. Everything above is the
           <strong> specification</strong> for the configuration, not a replacement for it.
           Almost none of this is custom code; nearly all of it is configuration of modules that
@@ -140,7 +140,7 @@ export default function Ops() {
             cols={["Screen", "Odoo module", "Note"]}
             rows={ODOO_MAP.map(m => [
               <span className="disp text-[15px] font-semibold">{m.screen}</span>,
-              <span className="mono text-[12.5px] text-[hsl(var(--safety))]">{m.module}</span>,
+              <span className="text-[13px] text-[hsl(var(--safety))]">{m.module}</span>,
               <span className="text-[13px] text-[hsl(var(--ink-2))]">{m.note}</span>,
             ])}
           />

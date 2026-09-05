@@ -38,7 +38,7 @@ function Facet({
       <button onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between text-left">
         <span className="disp text-[15px] font-semibold">{title}</span>
-        <span className="mono text-[13px] text-[hsl(var(--ink-3))]">{open ? "–" : "+"}</span>
+        <span className="text-[13px] text-[hsl(var(--ink-3))]">{open ? "–" : "+"}</span>
       </button>
       {open && <div className="mt-2.5 grid gap-1.5">{children}</div>}
     </div>
@@ -57,7 +57,7 @@ function Check({
       </span>
       <input type="checkbox" checked={on} onChange={onChange} className="sr-only" />
       <span className="min-w-0 flex-1">{label}</span>
-      {count != null && <span className="mono text-[11px] text-[hsl(var(--ink-3))]">{count}</span>}
+      {count != null && <span className="text-[11px] text-[hsl(var(--ink-3))]">{count}</span>}
     </label>
   );
 }
@@ -101,7 +101,7 @@ function Row({
 
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <Tag tone={fulfilTone(p.fulfil) as never}>{fulfilName(p.fulfil)}</Tag>
-          <span className="text-[12px] text-[hsl(var(--ink-2))]">Ships {p.lead}</span>
+          <span className="text-[13px] text-[hsl(var(--ink-2))]">Ships {p.lead}</span>
           {p.hot && <Tag tone="safety">Frequently bought</Tag>}
         </div>
 
@@ -127,7 +127,7 @@ function Row({
             className="num h-10 w-16 rounded-[6px] border border-[hsl(var(--field))] bg-white px-2 text-center text-[15px] font-medium outline-none focus:border-[hsl(var(--safety-2))]" />
           <Btn size="sm" className="flex-1" onClick={() => onAdd(p.sku, qty)}>Add</Btn>
         </div>
-        <button onClick={onSpec} className="mt-2.5 text-[12px] font-medium text-[hsl(var(--marine))] hover:underline">
+        <button onClick={onSpec} className="mt-2.5 text-[13px] font-medium text-[hsl(var(--marine))] hover:underline">
           Full spec and compliance →
         </button>
       </div>
@@ -182,7 +182,7 @@ export default function Shop({
   const Filters = (
     <>
       <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] pb-2">
-        <span className="disp text-[17px] font-bold">Filter</span>
+        <span className="disp text-[18px] font-bold">Filter</span>
         {activeCount > 0 && (
           <button onClick={clear} className="lab text-[hsl(var(--safety))]">Clear {activeCount}</button>
         )}
@@ -216,16 +216,16 @@ export default function Shop({
     <div>
       {/* breadcrumb + count */}
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <div className="mono text-[11.5px] text-[hsl(var(--ink-3))]">
+        <div className="text-[11px] text-[hsl(var(--ink-3))]">
           Home / <span className="text-[hsl(var(--ink))]">Safety &amp; Edge Protection</span>
           {q && <> / “{query}”</>}
         </div>
       </div>
 
-      <h1 className="disp mb-1 text-[28px] font-bold leading-none sm:text-[34px]">
+      <h1 className="disp mb-1 text-[28px] font-bold leading-none sm:text-[40px]">
         Safety &amp; Edge Protection
       </h1>
-      <p className="mb-4 max-w-[75ch] text-[13.5px] leading-[1.5] text-[hsl(var(--ink-2))]">
+      <p className="mb-4 max-w-[75ch] text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
         Every line lists the standard it is built to and the OSHA rule that requires it.
         Filter by the citation, not by the marketing.
       </p>
@@ -237,13 +237,13 @@ export default function Shop({
         <div className="min-w-0">
           {/* toolbar */}
           <div className="mb-3 flex flex-wrap items-center gap-2 border-b border-[hsl(var(--rule))] pb-3">
-            <span className="mono text-[12.5px]">
+            <span className="text-[13px]">
               <strong className="text-[hsl(var(--ink))]">{list.length}</strong>
               <span className="text-[hsl(var(--ink-3))]"> of {PRODUCTS.length} items</span>
             </span>
             <button onClick={() => setFiltersOpen(true)}
               className="lab flex h-9 items-center gap-2 border border-[hsl(var(--ink))] px-3 lg:hidden">
-              Filter {activeCount > 0 && <span className="mono bg-[hsl(var(--safety))] px-1.5 text-white">{activeCount}</span>}
+              Filter {activeCount > 0 && <span className="bg-[hsl(var(--safety))] px-1.5 text-white">{activeCount}</span>}
             </button>
             <label className="ml-auto flex items-center gap-2">
               <span className="lab hidden sm:inline">Sort</span>
@@ -276,9 +276,9 @@ export default function Shop({
             ))}
             {list.length === 0 && (
               <div className="p-8 text-center">
-                <div className="disp mb-1 text-[20px] font-semibold">No items match</div>
-                <p className="mb-4 text-[13.5px] text-[hsl(var(--ink-2))]">
-                  Try the OSHA citation instead — for example <span className="mono">1926.501</span>.
+                <div className="disp mb-1 text-[18px] font-semibold">No items match</div>
+                <p className="mb-4 text-[13px] text-[hsl(var(--ink-2))]">
+                  Try the OSHA citation instead — for example <span className="">1926.501</span>.
                 </p>
                 <Btn variant="line" size="sm" onClick={() => { clear(); setQuery(""); }}>Reset everything</Btn>
               </div>
@@ -313,7 +313,7 @@ export default function Shop({
               <div className="flex h-24 w-24 shrink-0 items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
                 <Glyph sku={open.sku} cat={open.cat} className="h-[62%] w-[62%]" />
               </div>
-              <h3 className="disp text-[24px] font-bold leading-[1.05] sm:text-[28px]">{open.name}</h3>
+              <h3 className="disp text-[22px] font-bold leading-[1.05] sm:text-[28px]">{open.name}</h3>
             </div>
             <Panel pad={false} className="mb-4">
               {[["Standard", open.std], ["OSHA cite", open.osha], ["Availability", fulfilName(open.fulfil)],
@@ -323,14 +323,14 @@ export default function Shop({
                 <div key={k} className={cx("flex items-start justify-between gap-3 px-3 py-2.5",
                   i !== 7 && "border-b border-[hsl(var(--rule))]")}>
                   <span className="lab pt-[3px]">{k}</span>
-                  <span className={cx("mono text-right text-[13px]",
+                  <span className={cx("text-right text-[13px]",
                     k === "OSHA cite" && "text-[hsl(var(--safety))]")}>{v}</span>
                 </div>
               ))}
             </Panel>
             <Panel className="mb-4 border-l-2 border-l-[hsl(var(--safety))]">
               <div className="lab mb-2 !text-[hsl(var(--safety))]">Why this matters</div>
-              <p className="text-[13.5px] leading-[1.55]">{open.note}</p>
+              <p className="text-[13px] leading-[1.55]">{open.note}</p>
             </Panel>
             <div className="flex gap-2">
               <Btn className="flex-1" onClick={() => { add(open.sku, open.moq ?? 1); setOpen(null); }}>

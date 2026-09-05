@@ -117,7 +117,7 @@ function Shell({
           wide ? "sm:max-w-[720px]" : "sm:max-w-[440px]")}>
         <div className="flex items-start justify-between gap-4 border-b border-[hsl(var(--ink))] p-4">
           <div>
-            <h3 className="disp text-[24px] font-bold leading-none">{title}</h3>
+            <h3 className="disp text-[22px] font-bold leading-none">{title}</h3>
             {sub && <p className="mt-1.5 text-[13px] text-[hsl(var(--ink-2))]">{sub}</p>}
           </div>
           <button onClick={onClose} className="lab h-10 shrink-0 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
@@ -128,7 +128,7 @@ function Shell({
   );
 }
 
-const field = "h-11 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[14px] outline-none focus:border-[hsl(var(--safety))]";
+const field = "h-11 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))]";
 
 export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Modal) => void }) {
   const { signIn, signInAs, branch, setBranch } = useAuth();
@@ -152,7 +152,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
       <Lab className="mb-2">Or step into a role — this is a working prototype</Lab>
       {(["internal", "customer", "marketplace"] as const).map(side => (
         <div key={side} className="mb-3">
-          <div className="mono mb-1.5 text-[10.5px] uppercase tracking-[0.14em] text-[hsl(var(--ink-3))]">
+          <div className="mb-1.5 text-[11px] uppercase tracking-[0.14em] text-[hsl(var(--ink-3))]">
             {side === "internal" ? "Misty Valley staff"
               : side === "customer" ? "Contractor side" : "Marketplace"}
           </div>
@@ -166,7 +166,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
                     <span className="disp text-[15px] font-semibold leading-none">{d.name}</span>
                     <Tag tone={side === "internal" ? "safety" : side === "customer" ? "steel" : "good"}>{r.name}</Tag>
                   </div>
-                  <div className="mt-1 text-[12px] leading-[1.4] text-[hsl(var(--ink-2))]">{r.blurb}</div>
+                  <div className="mt-1 text-[13px] leading-[1.4] text-[hsl(var(--ink-2))]">{r.blurb}</div>
                 </button>
               );
             })}
@@ -203,7 +203,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
           </select>
         </label>
         <Btn className="mt-1 w-full" onClick={() => { signIn(); close(); }}>Create account</Btn>
-        <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))]">
+        <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-3))]">
           A web account shows pricing and history. It does not extend credit — that is the
           separate application.
         </p>
@@ -264,7 +264,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
             <span>I agree to the personal guarantee and terms of sale.</span>
           </label>
           <label className="grid gap-1.5"><Lab>Signature</Lab>
-            <input className={cx(field, "disp text-[20px]")} placeholder="Type your full name" /></label>
+            <input className={cx(field, "disp text-[18px]")} placeholder="Type your full name" /></label>
         </div>
       )}
 
@@ -274,7 +274,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
           {step < 3 ? "Continue" : "Submit application"}
         </Btn>
       </div>
-      <p className="mt-3 text-[12px] text-[hsl(var(--ink-3))]">
+      <p className="mt-3 text-[13px] text-[hsl(var(--ink-3))]">
         Most applications are decided in two business days. You can buy by card in the meantime.
       </p>
     </Shell>
@@ -289,11 +289,11 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
               branch.id === b.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
                                  : "border-[hsl(var(--rule))]")}>
             <div>
-              <div className="disp text-[17px] font-semibold leading-none">{b.name}</div>
-              <div className="mono mt-1 text-[11.5px] text-[hsl(var(--ink-3))]">{b.city} · {b.hours}</div>
-              <div className="mono text-[11.5px] text-[hsl(var(--ink-3))]">{b.phone}</div>
+              <div className="disp text-[18px] font-semibold leading-none">{b.name}</div>
+              <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">{b.city} · {b.hours}</div>
+              <div className="text-[11px] text-[hsl(var(--ink-3))]">{b.phone}</div>
             </div>
-            <div className="mono shrink-0 text-[12px] text-[hsl(var(--ink-2))]">
+            <div className="shrink-0 text-[13px] text-[hsl(var(--ink-2))]">
               {b.miles === 0 ? "here" : `${b.miles} mi`}
             </div>
           </button>
@@ -317,7 +317,7 @@ export function Price({
   if (!user || !can("price.contract")) return (
     <div>
       <div className={cx("num font-bold leading-none text-[hsl(var(--ink))]", big)}>{money(list)}</div>
-      <div className="mt-1 text-[12px] text-[hsl(var(--ink-2))]">List price · per {uom}</div>
+      <div className="mt-1 text-[13px] text-[hsl(var(--ink-2))]">List price · per {uom}</div>
       <button onClick={onSignIn}
         className="lab mt-1.5 block text-left font-semibold text-[hsl(var(--safety-2))] underline">
         {user ? "Ask your admin for pricing" : "Sign in for your price"}
@@ -328,8 +328,8 @@ export function Price({
   return (
     <div>
       <div className={cx("num font-bold leading-none text-[hsl(var(--ink))]", big)}>{money(yours)}</div>
-      <div className="mt-1 text-[12px] text-[hsl(var(--ink-2))]">Your price · per {uom}</div>
-      <div className="mt-1.5 text-[12px] font-medium text-[hsl(var(--good))]">
+      <div className="mt-1 text-[13px] text-[hsl(var(--ink-2))]">Your price · per {uom}</div>
+      <div className="mt-1.5 text-[13px] font-medium text-[hsl(var(--good))]">
         Save {money(Math.round((list - yours) * 100) / 100)}
         <span className="ml-1 font-normal text-[hsl(var(--ink-3))] line-through">{money(list)}</span>
       </div>

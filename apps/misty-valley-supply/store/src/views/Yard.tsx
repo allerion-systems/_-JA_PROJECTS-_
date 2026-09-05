@@ -40,12 +40,12 @@ function MoneyModel() {
           <span className="lab">Sale amount</span>
           <input type="number" min={1} value={usd}
             onChange={e => setUsd(Math.max(0, Number(e.target.value) || 0))}
-            className="mono mt-1 h-10 w-full border border-[hsl(var(--rule))] bg-white px-2.5 text-[15px]" />
+            className="mt-1 h-10 w-full border border-[hsl(var(--rule))] bg-white px-2.5 text-[15px]" />
         </label>
         {rows.map(([l, v, t]) => (
           <div key={l} className="mb-1.5 flex items-baseline justify-between gap-3">
             <span className="text-[13px] text-[hsl(var(--ink-2))]">{l}</span>
-            <span className={cx("mono text-[13.5px]",
+            <span className={cx("text-[13px]",
               t === "safety" && "text-[hsl(var(--safety))]",
               t === "warn" && "text-[hsl(var(--warn))]")}>
               {v < 0 ? `−${dollars(Math.abs(v))}` : dollars(v)}
@@ -54,18 +54,18 @@ function MoneyModel() {
         ))}
         <Rule className="my-2.5" />
         <div className="flex items-baseline justify-between">
-          <span className="disp text-[16px] font-bold">We keep</span>
-          <span className={cx("disp text-[26px] font-bold leading-none",
+          <span className="disp text-[15px] font-bold">We keep</span>
+          <span className={cx("disp text-[28px] font-bold leading-none",
             s.margin >= 0 ? "text-[hsl(var(--safety))]" : "text-[hsl(var(--bad))]")}>
             {s.margin < 0 ? `−${dollars(Math.abs(s.margin))}` : dollars(s.margin)}
           </span>
         </div>
-        <p className="mono mt-2 text-[11px] text-[hsl(var(--ink-3))]">
+        <p className="mt-2 text-[11px] text-[hsl(var(--ink-3))]">
           Break-even {dollars(be)}. Below that the 30¢ fixed fee eats the whole 5%.
         </p>
-        <p className="mt-3 text-[12px] leading-[1.5] text-[hsl(var(--ink-2))]">
+        <p className="mt-3 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
           Listing and browsing are free. The fee applies only to a protected sale,
-          and it is charged as a Stripe <span className="mono">application_fee_amount</span> on
+          and it is charged as a Stripe <span className="">application_fee_amount</span> on
           the seller's own charge — we are never the counterparty to the material.
         </p>
       </div>
@@ -106,7 +106,7 @@ function ProtectedSale({ l }: { l: Listing }) {
           <Btn className="w-full" onClick={() => setPhase("held")}>
             Authorize {dollars(s.gross)} — pay on pickup
           </Btn>
-          <p className="mt-2 text-[12px] leading-[1.5] text-[hsl(var(--ink-2))]">
+          <p className="mt-2 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
             Your card is held, not charged. It stays held for {AUTH_WINDOW_DAYS} days.
             Nothing moves until you confirm you have the material.
           </p>
@@ -136,8 +136,8 @@ function ProtectedSale({ l }: { l: Listing }) {
             <Lab className="mb-1.5">Captured</Lab>
             <p className="text-[13px] leading-[1.5]">
               Charged {dollars(s.gross)}. In the same call Stripe moved{" "}
-              <span className="mono">{dollars(s.sellerNet)}</span> to {l.who} and{" "}
-              <span className="mono">{dollars(s.platformFee)}</span> to Misty Valley.
+              <span className="">{dollars(s.sellerNet)}</span> to {l.who} and{" "}
+              <span className="">{dollars(s.platformFee)}</span> to Misty Valley.
               We held your money for zero seconds.
             </p>
             <button onClick={() => setPhase("idle")} className="lab mt-3 text-[hsl(var(--safety-2))] underline">
@@ -170,9 +170,9 @@ function ProtectedSale({ l }: { l: Listing }) {
           {steps.map(st => (
             <Panel key={st.title} className="min-w-0">
               <Lab className="mb-1">{st.when}</Lab>
-              <div className="disp text-[16px] font-semibold leading-none">{st.title}</div>
-              <p className="mt-1.5 text-[12.5px] leading-[1.5] text-[hsl(var(--ink-2))]">{st.body}</p>
-              <pre className="mono mt-2 max-w-full overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--panel-2))] p-2 text-[11px] leading-[1.6]">
+              <div className="disp text-[15px] font-semibold leading-none">{st.title}</div>
+              <p className="mt-1.5 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">{st.body}</p>
+              <pre className="mt-2 max-w-full overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--panel-2))] p-2 text-[11px] leading-[1.6]">
 {st.call}
               </pre>
             </Panel>
@@ -195,14 +195,14 @@ function Card({ l, onOpen }: { l: Listing; onOpen: () => void }) {
         <span className="absolute left-2 top-2"><Tag tone={tone(l.kind) as never}>{l.kind}</Tag></span>
       </div>
       <div className="flex flex-1 flex-col p-3">
-        <div className="disp text-[20px] font-bold leading-none text-[hsl(var(--safety))]">{l.price}</div>
-        <h3 className="mt-1.5 line-clamp-2 text-[13.5px] font-semibold leading-[1.35] group-hover:underline">
+        <div className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety))]">{l.price}</div>
+        <h3 className="mt-1.5 line-clamp-2 text-[13px] font-semibold leading-[1.35] group-hover:underline">
           {l.title}
         </h3>
         {ok && numeric(l.price) > 0 && (
-          <span className="mono mt-1.5 text-[10.5px] text-[hsl(var(--good))]">✓ pay on pickup</span>
+          <span className="mt-1.5 text-[11px] text-[hsl(var(--good))]">✓ pay on pickup</span>
         )}
-        <div className="mono mt-auto pt-2 text-[11px] text-[hsl(var(--ink-3))]">
+        <div className="mt-auto pt-2 text-[11px] text-[hsl(var(--ink-3))]">
           {l.where} · {l.when}
         </div>
       </div>
@@ -231,7 +231,7 @@ export default function Yard() {
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
         <div>
           <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">The Yard</Lab>
-          <h1 className="disp text-[28px] font-bold leading-none sm:text-[34px]">Marketplace</h1>
+          <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">Marketplace</h1>
         </div>
         <Btn size="sm">＋ Post a listing</Btn>
       </div>
@@ -242,11 +242,11 @@ export default function Yard() {
           <div className="mb-4 grid gap-2 sm:grid-cols-[1fr_auto]">
             <input value={q} onChange={e => setQ(e.target.value)}
               placeholder="Search the yard — scissor lift, stud, crew…"
-              className="mono h-10 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[14px] outline-none focus:border-[hsl(var(--safety))]" />
+              className="h-10 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))]" />
             <label className="flex items-center gap-2 border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3">
               <span className="text-[11px] font-medium whitespace-nowrap">Within</span>
               <select value={radius} onChange={e => setRadius(Number(e.target.value))}
-                className="mono h-9 bg-transparent text-[13px] outline-none">
+                className="h-9 bg-transparent text-[13px] outline-none">
                 {[25, 60, 150, 500].map(r => <option key={r} value={r}>{r} mi</option>)}
               </select>
             </label>
@@ -263,7 +263,7 @@ export default function Yard() {
             ))}
           </div>
 
-          <div className="mono mb-3 text-[12.5px] text-[hsl(var(--ink-3))]">
+          <div className="mb-3 text-[13px] text-[hsl(var(--ink-3))]">
             <strong className="text-[hsl(var(--ink))]">{list.length}</strong> listings within {radius} mi of Bonnieville
           </div>
 
@@ -315,9 +315,9 @@ export default function Yard() {
 
             <div className="p-4">
               <Tag tone={tone(open.kind) as never}>{open.kind}</Tag>
-              <div className="disp mt-2 text-[32px] font-bold leading-none text-[hsl(var(--safety))]">{open.price}</div>
+              <div className="disp mt-2 text-[28px] font-bold leading-none text-[hsl(var(--safety))]">{open.price}</div>
               <h3 className="disp mt-1.5 text-[22px] font-bold leading-[1.1]">{open.title}</h3>
-              <p className="mt-2.5 text-[13.5px] leading-[1.55] text-[hsl(var(--ink-2))]">{open.body}</p>
+              <p className="mt-2.5 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">{open.body}</p>
 
               <Panel className="mt-4" pad={false}>
                 <div className="flex items-center gap-3 p-3">
@@ -325,8 +325,8 @@ export default function Yard() {
                     <span className="disp text-[18px] font-bold">{open.who.slice(0, 1)}</span>
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[14px] font-semibold">{open.who}</div>
-                    <div className="mono text-[11px] text-[hsl(var(--ink-3))]">
+                    <div className="text-[15px] font-semibold">{open.who}</div>
+                    <div className="text-[11px] text-[hsl(var(--ink-3))]">
                       {open.where} · member since {openSeller?.since ?? "—"} ·{" "}
                       {openSeller?.deals ?? 0} completed
                     </div>
@@ -346,7 +346,7 @@ export default function Yard() {
                 <>
                   <textarea value={msg} onChange={e => setMsg(e.target.value)} rows={3}
                     placeholder="Is this still available? I can pick up Saturday."
-                    className="w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2.5 text-[14px] outline-none focus:border-[hsl(var(--safety))]" />
+                    className="w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2.5 text-[15px] outline-none focus:border-[hsl(var(--safety))]" />
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {["Still available?", "Can you deliver?", "Will you take less?"].map(t => (
                       <button key={t} onClick={() => setMsg(t)}

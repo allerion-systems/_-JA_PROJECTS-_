@@ -93,7 +93,7 @@ function Inner() {
         <div className="border-b border-white/10">
           <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-3 py-1.5 sm:px-6">
             <button onClick={() => setModal("branch")}
-              className="flex items-center gap-1.5 text-[12px] text-[hsl(var(--on-dark-2))] hover:text-white">
+              className="flex items-center gap-1.5 text-[13px] text-[hsl(var(--on-dark-2))] hover:text-white">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
                 <path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" />
               </svg>
@@ -103,17 +103,17 @@ function Inner() {
             <div className="ml-auto flex items-center gap-3">
               {user ? (
                 <button onClick={() => go(role?.home === "account" ? "account" : "dash")}
-                  className="text-[12px] text-[hsl(var(--on-dark-2))] hover:text-white">
+                  className="text-[13px] text-[hsl(var(--on-dark-2))] hover:text-white">
                   {person?.name} · <span className="text-[hsl(var(--safety-hi))]">{role?.name}</span>
                 </button>
               ) : (
                 <>
-                  <button onClick={() => setModal("signin")} className="text-[12px] text-[hsl(var(--on-dark-2))] hover:text-white">
+                  <button onClick={() => setModal("signin")} className="text-[13px] text-[hsl(var(--on-dark-2))] hover:text-white">
                     Sign in
                   </button>
                   <span className="text-white/20">|</span>
                   <button onClick={() => setModal("credit")}
-                    className="text-[12px] font-medium text-[hsl(var(--safety-hi))] hover:underline">
+                    className="text-[13px] font-medium text-[hsl(var(--safety-hi))] hover:underline">
                     Open a credit account
                   </button>
                 </>
@@ -125,8 +125,8 @@ function Inner() {
         {/* brand + cart */}
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-3 py-2 sm:gap-5 sm:px-6 sm:py-2.5">
           <button onClick={() => go("home")} className="flex min-w-0 items-baseline gap-1.5 text-left sm:gap-2.5">
-            <span className="disp truncate text-[20px] font-bold leading-none sm:text-[24px]">Misty Valley</span>
-            <span className="disp text-[20px] font-bold leading-none text-[hsl(var(--safety-hi))] sm:text-[24px]">Supply</span>
+            <span className="disp truncate text-[18px] font-bold leading-none sm:text-[22px]">Misty Valley</span>
+            <span className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety-hi))] sm:text-[22px]">Supply</span>
           </button>
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <button onClick={() => go("account")} aria-label="My account"
@@ -189,7 +189,7 @@ function Inner() {
           ))}
           <Rule className="my-5" />
           <Lab className="mb-2">Prototype</Lab>
-          <p className="text-[11.5px] leading-[1.5] text-[hsl(var(--ink-3))]">
+          <p className="text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
             Placeholder pricing. Standards and OSHA cites are real.
           </p>
         </nav>
@@ -224,7 +224,7 @@ function Inner() {
               <button key={n.id} onClick={() => go(n.id)} className="lab text-[hsl(var(--ink-2))]">{n.label}</button>
             ))}
           </div>
-          <div className="mono text-[11px] leading-[1.7] text-[hsl(var(--ink-3))]">
+          <div className="text-[11px] leading-[1.7] text-[hsl(var(--ink-3))]">
             Misty Valley Supply · Bonnieville, Kentucky · prototype build<br />
             Platform and agent interface by Allerion Technologies LLC · payments by Stripe Connect<br />
             Standards and OSHA citations are accurate. Prices, stock and suppliers are placeholders.
@@ -253,7 +253,7 @@ function Inner() {
           <div className="flex h-full w-full flex-col bg-[hsl(var(--ground))] sm:max-w-[460px] sm:border-l-2 sm:border-[hsl(var(--safety))]"
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] p-4 sm:p-5">
-              <h3 className="disp text-[24px] font-bold">Order</h3>
+              <h3 className="disp text-[22px] font-bold">Order</h3>
               <button onClick={() => setOpenCart(false)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
             </div>
 
@@ -262,21 +262,21 @@ function Inner() {
               {lines.map(l => (
                 <div key={l.sku} className="mb-4 border-b border-[hsl(var(--rule))] pb-4 last:border-0">
                   <div className="mono mb-1 text-[11px] text-[hsl(var(--ink-3))]">{l.sku}</div>
-                  <div className="disp mb-1 text-[17px] font-semibold leading-[1.1]">{l.p.name}</div>
-                  <div className="mono mb-2.5 text-[11.5px] text-[hsl(var(--safety))]">{l.p.osha}</div>
+                  <div className="disp mb-1 text-[18px] font-semibold leading-[1.1]">{l.p.name}</div>
+                  <div className="mono mb-2.5 text-[11px] text-[hsl(var(--safety))]">{l.p.osha}</div>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-1.5">
-                      <button aria-label="Decrease" className="mono h-10 w-10 border border-[hsl(var(--rule))] text-[16px]"
+                      <button aria-label="Decrease" className="h-10 w-10 border border-[hsl(var(--rule))] text-[15px]"
                         onClick={() => setCart(cart.map(c => c.sku === l.sku
                           ? { ...c, qty: Math.max(l.p.moq ?? 1, c.qty - (l.p.moq ?? 1)) } : c))}>–</button>
-                      <span className="mono w-12 text-center text-[14px]">{l.qty}</span>
-                      <button aria-label="Increase" className="mono h-10 w-10 border border-[hsl(var(--rule))] text-[16px]"
+                      <span className="w-12 text-center text-[15px]">{l.qty}</span>
+                      <button aria-label="Increase" className="h-10 w-10 border border-[hsl(var(--rule))] text-[15px]"
                         onClick={() => setCart(cart.map(c => c.sku === l.sku
                           ? { ...c, qty: c.qty + (l.p.moq ?? 1) } : c))}>+</button>
                       <button className="lab ml-1 h-10 px-2 text-[hsl(var(--ink-3))]"
                         onClick={() => setCart(cart.filter(c => c.sku !== l.sku))}>Remove</button>
                     </div>
-                    <div className="mono text-[15px]">
+                    <div className="text-[15px]">
                       {money((user ? l.p.price * (1 - user.discountPct / 100) : l.p.price) * l.qty)}
                     </div>
                   </div>
@@ -286,17 +286,17 @@ function Inner() {
 
             <div className="border-t border-[hsl(var(--ink))] p-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:p-5">
               {user && listTotal > 0 && (
-                <div className="mono mb-1.5 flex items-baseline justify-between text-[12px] text-[hsl(var(--ink-3))]">
+                <div className="mb-1.5 flex items-baseline justify-between text-[13px] text-[hsl(var(--ink-3))]">
                   <span>List {money(listTotal)}</span>
                   <span className="text-[hsl(var(--good))]">You save {money(listTotal - netTotal)}</span>
                 </div>
               )}
               <div className="mb-2.5 flex items-baseline justify-between">
                 <span className="disp text-[18px] font-bold">Material</span>
-                <span className="disp text-[30px] font-bold leading-none">{money(netTotal)}</span>
+                <span className="disp text-[28px] font-bold leading-none">{money(netTotal)}</span>
               </div>
               {!user && (
-                <p className="mb-3 text-[12px] leading-[1.5] text-[hsl(var(--safety))]">
+                <p className="mb-3 text-[13px] leading-[1.5] text-[hsl(var(--safety))]">
                   Showing list price.{" "}
                   <button onClick={() => { setOpenCart(false); setModal("signin"); }} className="font-semibold underline">
                     Sign in

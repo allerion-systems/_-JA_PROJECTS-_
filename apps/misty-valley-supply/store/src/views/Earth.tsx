@@ -74,13 +74,13 @@ function Story({ site, onClose }: { site: Site; onClose: () => void }) {
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             {isLive(site) && (
-              <span className="mono bg-[hsl(var(--safety))] px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.1em]">
+              <span className="bg-[hsl(var(--safety))] px-1.5 py-px text-[11px] font-bold uppercase tracking-[0.1em]">
                 Live
               </span>
             )}
             <span className="disp truncate text-[18px] font-bold leading-none">{site.name}</span>
           </div>
-          <div className="mono mt-1 text-[11px] text-white/60">
+          <div className="mt-1 text-[11px] text-white/60">
             {p.who} · {p.role} · {ago(p.minsAgo)} ago
           </div>
         </div>
@@ -109,10 +109,10 @@ function Story({ site, onClose }: { site: Site; onClose: () => void }) {
 
       {/* caption */}
       <div className="bg-gradient-to-t from-black to-black/0 px-4 pb-[calc(16px+env(safe-area-inset-bottom))] pt-6 text-white">
-        <p className="max-w-[60ch] text-[14px] leading-[1.5]">{p.caption}</p>
+        <p className="max-w-[60ch] text-[15px] leading-[1.5]">{p.caption}</p>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {p.tags.map(t => (
-            <span key={t} className="mono border border-white/25 px-1.5 py-0.5 text-[10.5px] text-white/75">{t}</span>
+            <span key={t} className="border border-white/25 px-1.5 py-0.5 text-[11px] text-white/75">{t}</span>
           ))}
         </div>
       </div>
@@ -193,10 +193,10 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
         <div>
           <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Job Site Earth</Lab>
-          <h1 className="disp text-[28px] font-bold leading-none sm:text-[34px]">The corridor, live</h1>
+          <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">The corridor, live</h1>
         </div>
         <div className="flex items-center gap-2">
-          <span className="mono text-[11.5px] text-[hsl(var(--ink-3))]">
+          <span className="text-[11px] text-[hsl(var(--ink-3))]">
             <span className="text-[hsl(var(--safety))]">●</span> {liveCount} live now
           </span>
           <div className="flex border border-[hsl(var(--rule))]">
@@ -234,7 +234,7 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
                         {isLive(focused) && <Tag tone="safety">Live</Tag>}
                         <span className="disp truncate text-[18px] font-bold leading-none">{focused.name}</span>
                       </div>
-                      <div className="mono mt-1 text-[11px] text-[hsl(var(--ink-3))]">
+                      <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">
                         {focused.gc} · {focused.phase} · {focused.crew} on site · last post {ago(lastPost(focused))} ago
                       </div>
                     </div>
@@ -258,7 +258,7 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
               </div>
             )}
           </div>
-          <p className="mono mt-2 text-[10.5px] leading-[1.5] text-[hsl(var(--ink-3))]">
+          <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
             Imagery © Esri, Maxar, Earthstar Geographics · vector tiles OpenFreeMap, © OpenStreetMap
             contributors · rendered with MapLibre GL. Check the imagery terms before commercial use.
           </p>
@@ -284,10 +284,10 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="disp block truncate text-[15px] font-semibold leading-none">{s.name}</span>
-                    <span className="mono mt-1 block text-[10.5px] text-[hsl(var(--ink-3))]">
+                    <span className="mt-1 block text-[11px] text-[hsl(var(--ink-3))]">
                       {s.trade} · {s.posts.length} posts · {ago(lastPost(s))} ago
                     </span>
-                    <span className="mt-1 block text-[12px] leading-[1.35] text-[hsl(var(--ink-2))]">{s.phase}</span>
+                    <span className="mt-1 block text-[13px] leading-[1.35] text-[hsl(var(--ink-2))]">{s.phase}</span>
                   </span>
                 </button>
               );
@@ -306,7 +306,7 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
 
           {!person && (
             <Panel className="mt-3">
-              <p className="text-[12.5px] leading-[1.5] text-[hsl(var(--ink-2))]">
+              <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
                 Watching is open to anyone. Posting needs an account —{" "}
                 <button onClick={onSignIn} className="font-semibold text-[hsl(var(--safety-2))] underline">
                   sign in

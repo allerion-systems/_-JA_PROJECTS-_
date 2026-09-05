@@ -18,8 +18,8 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
     <Panel className="mx-auto max-w-[520px] card-hi text-center" pad={false}>
       <div className="tape h-1.5" />
       <div className="p-6">
-        <h2 className="disp text-[26px] font-bold leading-none">Users and roles</h2>
-        <p className="mx-auto mt-3 max-w-[44ch] text-[13.5px] leading-[1.55] text-[hsl(var(--ink-2))]">
+        <h2 className="disp text-[28px] font-bold leading-none">Users and roles</h2>
+        <p className="mx-auto mt-3 max-w-[44ch] text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
           {person
             ? "Your role cannot manage users. That is the point of roles — ask an owner or your company's admin."
             : "Sign in as an owner or a customer admin to manage users."}
@@ -38,7 +38,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
         <div>
           <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Administration</Lab>
-          <h1 className="disp text-[28px] font-bold leading-none sm:text-[34px]">Users, roles, permissions</h1>
+          <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">Users, roles, permissions</h1>
         </div>
         {can("user.invite") && <Btn size="sm">＋ Invite someone</Btn>}
       </div>
@@ -46,7 +46,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
       <div className="mb-4 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
         {([["people", "People"], ["roles", "Roles"], ["matrix", "Permission matrix"]] as const).map(([id, label]) => (
           <button key={id} onClick={() => setTab(id)}
-            className={cx("disp -mb-0.5 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[16px] font-semibold",
+            className={cx("disp -mb-0.5 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
               tab === id ? "border-[hsl(var(--safety))] text-[hsl(var(--ink))]"
                          : "border-transparent text-[hsl(var(--ink-3))]")}>
             {label}
@@ -58,7 +58,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
         <>
           <input value={q} onChange={e => setQ(e.target.value)}
             placeholder="Search name, company or role"
-            className="mono mb-3 h-10 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[14px] outline-none focus:border-[hsl(var(--safety))] sm:max-w-[380px]" />
+            className="mb-3 h-10 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))] sm:max-w-[380px]" />
           <Panel pad={false}>
             <DataTable
               cols={["Name", "Company", "Role", "Branch", "Last seen", "Status", ""]}
@@ -67,12 +67,12 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
                 return [
                   <span>
                     <span className="font-semibold">{d.name}</span>
-                    <span className="mono mt-0.5 block text-[11px] text-[hsl(var(--ink-3))]">{d.email}</span>
+                    <span className="mt-0.5 block text-[11px] text-[hsl(var(--ink-3))]">{d.email}</span>
                   </span>,
                   <span className="text-[13px]">{d.company}</span>,
                   <Tag tone={r.side === "internal" ? "safety" : r.side === "customer" ? "steel" : "good"}>{r.name}</Tag>,
-                  <span className="mono text-[12px]">{d.branch}</span>,
-                  <span className="mono text-[12px] text-[hsl(var(--ink-2))]">{d.last}</span>,
+                  <span className="text-[13px]">{d.branch}</span>,
+                  <span className="text-[13px] text-[hsl(var(--ink-2))]">{d.last}</span>,
                   <Tag tone={d.status === "Active" ? "good" : d.status === "Invited" ? "steel" : "warn"}>{d.status}</Tag>,
                   can("user.roles")
                     ? <button className="lab text-[hsl(var(--safety-2))] underline">Change role</button>
@@ -94,12 +94,12 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
                   <Panel key={r.id} className="min-w-0">
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="disp text-[18px] font-semibold leading-none">{r.name}</span>
-                      <span className="mono text-[11px] text-[hsl(var(--ink-3))]">
+                      <span className="text-[11px] text-[hsl(var(--ink-3))]">
                         {r.perms === "*" ? "all" : r.perms.length}
                       </span>
                     </div>
-                    <p className="mt-1.5 text-[12.5px] leading-[1.45] text-[hsl(var(--ink-2))]">{r.blurb}</p>
-                    <div className="mono mt-2 text-[10.5px] text-[hsl(var(--ink-3))]">
+                    <p className="mt-1.5 text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">{r.blurb}</p>
+                    <div className="mt-2 text-[11px] text-[hsl(var(--ink-3))]">
                       lands on /{r.home} · {DIRECTORY.filter(d => d.roleId === r.id).length} people
                     </div>
                   </Panel>
@@ -118,7 +118,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
                 <th className="lab sticky left-0 z-10 bg-[hsl(var(--panel))] px-3 py-2">Permission</th>
                 {ROLES.map(r => (
                   <th key={r.id} className="px-2 py-2 align-bottom">
-                    <span className="mono block text-[10px] leading-[1.15] text-[hsl(var(--ink-2))]">{r.name}</span>
+                    <span className="block text-[11px] leading-[1.15] text-[hsl(var(--ink-2))]">{r.name}</span>
                   </th>
                 ))}
               </tr>
@@ -129,12 +129,12 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
                   i % 2 ? "bg-[hsl(var(--panel-2))]" : "bg-[hsl(var(--panel))]")}>
                   <td className={cx("sticky left-0 z-10 px-3 py-1.5",
                     i % 2 ? "bg-[hsl(var(--panel-2))]" : "bg-[hsl(var(--panel))]")}>
-                    <span className="text-[12.5px]">{PERMS[p]}</span>
-                    <span className="mono ml-1.5 text-[10px] text-[hsl(var(--ink-3))]">{p}</span>
+                    <span className="text-[13px]">{PERMS[p]}</span>
+                    <span className="ml-1.5 text-[11px] text-[hsl(var(--ink-3))]">{p}</span>
                   </td>
                   {ROLES.map(r => (
                     <td key={r.id} className="px-2 py-1.5 text-center">
-                      <span className={cx("mono text-[13px]",
+                      <span className={cx("text-[13px]",
                         hasPerm(r, p) ? "text-[hsl(var(--good))]" : "text-[hsl(var(--rule))]")}>
                         {hasPerm(r, p) ? "●" : "·"}
                       </span>

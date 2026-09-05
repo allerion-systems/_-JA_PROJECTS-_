@@ -52,7 +52,7 @@ export default function Screen() {
         <div className="tape h-1.5" />
         <div className="p-5">
           <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Proof of work — {RS.proof}</Lab>
-          <p className="max-w-[70ch] text-[13.5px] leading-[1.6] text-[hsl(var(--ink-2))]">
+          <p className="max-w-[70ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
             A {RS.lee.height}′ RTU screen on {RS.bod.detail}. Basis of design{" "}
             <strong>{RS.bod.frame}</strong> frame with a <strong>{RS.bod.panel}</strong> panel.
             Misty Valley had the frame shop-fabricated, bought the panel, and sold the package
@@ -71,7 +71,7 @@ export default function Screen() {
               <Lab className="mb-1.5">{k}</Lab>
               <div className={cx("disp text-[28px] font-bold leading-none",
                 i === 3 && "text-[hsl(var(--safety))]")}>{v}</div>
-              <div className="mono mt-1 text-[11px] text-[hsl(var(--ink-3))]">{s}</div>
+              <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">{s}</div>
             </div>
           ))}
         </div>
@@ -81,7 +81,7 @@ export default function Screen() {
       <div className="mb-5 flex gap-0 border-b border-[hsl(var(--ink))]">
         {(["kit", "parts"] as const).map(t => (
           <button key={t} onClick={() => setMode(t)}
-            className={cx("disp -mb-0.5 border-b-[3px] px-4 py-2.5 text-[16px] font-semibold",
+            className={cx("disp -mb-0.5 border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
               mode === t ? "border-[hsl(var(--safety))] text-[hsl(var(--ink))]"
                          : "border-transparent text-[hsl(var(--ink-3))]")}>
             {t === "kit" ? "Configure a kit" : "Buy by the piece"}
@@ -99,16 +99,16 @@ export default function Screen() {
                 <span className="mono text-[hsl(var(--safety))]">{sp.sku}</span>,
                 <span>
                   <span className="font-semibold">{sp.name}</span>
-                  <span className="mt-0.5 block text-[12px] leading-[1.45] text-[hsl(var(--ink-2))]">{sp.note}</span>
+                  <span className="mt-0.5 block text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">{sp.note}</span>
                 </span>,
-                <span className="mono text-[12px]">{sp.uom}</span>,
-                <span className="mono text-[12px] text-[hsl(var(--ink-3))]">{usd2(sp.cost)}</span>,
-                <span className="mono">{usd2(sp.cost * (1 + markup / 100))}</span>,
+                <span className="text-[13px]">{sp.uom}</span>,
+                <span className="text-[13px] text-[hsl(var(--ink-3))]">{usd2(sp.cost)}</span>,
+                <span className="">{usd2(sp.cost * (1 + markup / 100))}</span>,
                 sp.kit ? <Tag tone="good">kit</Tag> : <Tag>add-on</Tag>,
               ])}
             />
           </Panel>
-          <p className="mb-8 text-[12.5px] leading-[1.55] text-[hsl(var(--ink-2))]">
+          <p className="mb-8 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
             Unit cost is what the part lands at; your price applies the {markup}% markup set in the
             configurator. Move it there and this table moves with it.
           </p>
@@ -128,7 +128,7 @@ export default function Screen() {
               <div className="flex flex-wrap gap-1.5">
                 {RS.heights.map(x => (
                   <button key={x} onClick={() => setH(x)}
-                    className={cx("mono h-9 min-w-[52px] flex-1 border px-1 text-[13px]",
+                    className={cx("h-9 min-w-[52px] flex-1 border px-1 text-[13px]",
                       h === x ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
                               : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
                     {x === 3.5 ? "3′-6″" : `${x}′`}
@@ -147,7 +147,7 @@ export default function Screen() {
                       mount === x.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
                                      : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
                     <div className="disp text-[15px] font-semibold">{x.name}</div>
-                    <div className="text-[12px] leading-[1.4] text-[hsl(var(--ink-2))]">{x.note}</div>
+                    <div className="text-[13px] leading-[1.4] text-[hsl(var(--ink-2))]">{x.note}</div>
                   </button>
                 ))}
               </div>
@@ -161,13 +161,13 @@ export default function Screen() {
                                      : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="disp text-[15px] font-semibold">{x.name}</span>
-                      <span className="mono text-[12px] text-[hsl(var(--ink-2))]">
+                      <span className="text-[13px] text-[hsl(var(--ink-2))]">
                         {x.costSf ? `${usd2(x.costSf)}/SF` : "—"}
                       </span>
                     </div>
-                    <div className="text-[12px] leading-[1.4] text-[hsl(var(--ink-2))]">{x.note}</div>
+                    <div className="text-[13px] leading-[1.4] text-[hsl(var(--ink-2))]">{x.note}</div>
                     {x.thick > 0 && (
-                      <div className="mono mt-1 text-[10.5px] text-[hsl(var(--ink-3))]">
+                      <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">
                         {x.thick.toFixed(4)} in nominal steel
                       </div>
                     )}
@@ -186,13 +186,13 @@ export default function Screen() {
                 <span className={cx("mt-px flex h-5 w-5 shrink-0 items-center justify-center border",
                   drawings ? "border-[hsl(var(--safety))] bg-[hsl(var(--safety))] text-white"
                            : "border-[hsl(var(--rule))]")}>{drawings ? "✓" : ""}</span>
-                <span className="text-[12.5px] leading-[1.45]">{RS.shopDrawings.note}</span>
+                <span className="text-[13px] leading-[1.45]">{RS.shopDrawings.note}</span>
               </button>
             </Field>
             <Field label={`Markup — ${markup}%`}>
               <input type="range" min={0} max={150} value={markup}
                 onChange={e => setMarkup(Number(e.target.value))} className="mt-2 w-full" />
-              <div className="mono mt-1 flex justify-between text-[10.5px] text-[hsl(var(--ink-3))]">
+              <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
                 <span>cost</span>
                 <span>Lee Street ran {Math.round(RS.defaultMarkup * 100)}%</span>
               </div>
@@ -228,28 +228,28 @@ export default function Screen() {
                 <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
                   <div className="min-w-0">
                     <div className="disp text-[15px] font-semibold">{a}</div>
-                    <div className="mono text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>
+                    <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>
                   </div>
-                  <div className="mono shrink-0 text-[14px]">{money(c)}</div>
+                  <div className="shrink-0 text-[15px]">{money(c)}</div>
                 </div>
               ))}
               <Rule className="my-3" />
               <div className="mb-1.5 flex items-baseline justify-between">
                 <span className="lab">Our cost</span>
-                <span className="mono text-[14px]">{money(totalCost)}</span>
+                <span className="text-[15px]">{money(totalCost)}</span>
               </div>
               <div className="flex items-baseline justify-between">
-                <div className="disp text-[17px] font-bold">Sell</div>
-                <div className="disp text-[34px] font-bold leading-none text-[hsl(var(--safety))]">
+                <div className="disp text-[18px] font-bold">Sell</div>
+                <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
                   {money(sell)}
                 </div>
               </div>
-              <div className="mono mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
+              <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
                 <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
                 <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>
               </div>
               <Btn className="mt-4 w-full">Send the roof plan</Btn>
-              <p className="mt-3 text-[12px] leading-[1.5] text-[hsl(var(--ink-2))]">
+              <p className="mt-3 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
                 Budget only. A real number needs the roof plan, the equipment schedule and the
                 wind load for the site. We quote in two business days.
               </p>
@@ -263,12 +263,12 @@ export default function Screen() {
       <div className="mt-8 grid gap-4 lg:grid-cols-2">
         <Panel className="border-l-2 border-l-[hsl(var(--bad))]">
           <Tag tone="warn">A screen base is not a fall-arrest anchor</Tag>
-          <p className="mt-2 text-[13.5px] leading-[1.6]">
+          <p className="mt-2 text-[13px] leading-[1.6]">
             A screen post lands on the deck the same way a roof anchor does, and that is exactly
             why people tie off to them. Do not. OSHA requires a personal fall arrest anchorage to
             hold <strong>5,000 lb per attached worker</strong>, or to be designed and used under a
             qualified person with a safety factor of two —{" "}
-            <span className="mono text-[hsl(var(--safety))]">29 CFR 1926.502(d)(15)</span>. A screen
+            <span className="text-[hsl(var(--safety))]">29 CFR 1926.502(d)(15)</span>. A screen
             post base is sized for wind on a panel, not for arresting a falling body. We sell a
             rated anchor (<span className="mono">MVS-RSA-ANC</span>, ANSI/ASSP Z359.18 Type D) that
             uses the same deck attachment and is certified for the load. Sell that as its own line
@@ -277,7 +277,7 @@ export default function Screen() {
         </Panel>
         <Panel className="border-l-2 border-l-[hsl(var(--safety))]">
           <Tag tone="safety">Read this before you substitute</Tag>
-          <p className="mt-2 text-[13.5px] leading-[1.6]">
+          <p className="mt-2 text-[13px] leading-[1.6]">
             When a spec names <strong>{RS.bod.frame}</strong> and <strong>{RS.bod.panel}</strong> as
             the basis of design, our shop-fabricated frame is an <em>equal</em> and going with it is
             a <strong>formal substitution</strong> — it goes to the architect with our shop drawings

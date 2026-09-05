@@ -43,7 +43,7 @@ export function InstallBar() {
         <img src="/apple-touch-icon.png" alt="" className="h-11 w-11 shrink-0 rounded-[8px] border border-[hsl(var(--rule))]" />
         <div className="min-w-0 flex-1">
           <div className="text-[13px] font-semibold leading-[1.25]">Add Misty Valley to your home screen</div>
-          <p className="mt-0.5 text-[12px] leading-[1.35] text-[hsl(var(--ink-2))]">
+          <p className="mt-0.5 text-[13px] leading-[1.35] text-[hsl(var(--ink-2))]">
             Tap the Share button, then <strong>Add to Home Screen</strong>.
           </p>
         </div>
@@ -69,7 +69,7 @@ export function InstallBar() {
         <img src="/icon-192.png" alt="" className="h-11 w-11 shrink-0 border border-[hsl(var(--rule))]" />
         <div className="min-w-0 flex-1">
           <Lab className="mb-0.5">Put it on your phone</Lab>
-          <p className="text-[12.5px] leading-[1.35] text-[hsl(var(--ink-2))]">
+          <p className="text-[13px] leading-[1.35] text-[hsl(var(--ink-2))]">
             Opens full screen, works with one bar of signal.
           </p>
         </div>

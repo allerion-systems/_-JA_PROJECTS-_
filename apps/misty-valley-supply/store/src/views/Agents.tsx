@@ -78,22 +78,22 @@ export default function Agents() {
             <DataTable
               cols={["Tool", "Arguments", "Returns", "Note"]}
               rows={TOOLS.map(t => [
-                <span className="mono text-[13px] text-[hsl(var(--safety))]">{t.name}</span>,
-                <span className="mono text-[11.5px] text-[hsl(var(--ink-2))]">{t.args}</span>,
-                <span className="mono text-[11.5px]">{t.ret}</span>,
-                <span className="text-[12.5px] text-[hsl(var(--ink-2))]">{t.note}</span>,
+                <span className="text-[13px] text-[hsl(var(--safety))]">{t.name}</span>,
+                <span className="text-[11px] text-[hsl(var(--ink-2))]">{t.args}</span>,
+                <span className="text-[11px]">{t.ret}</span>,
+                <span className="text-[13px] text-[hsl(var(--ink-2))]">{t.note}</span>,
               ])}
             />
           </Panel>
 
           <h3 className="disp mb-3 text-[22px] font-semibold">The call that matters</h3>
-          <p className="mb-3 max-w-[75ch] text-[13.5px] leading-[1.6] text-[hsl(var(--ink-2))]">
+          <p className="mb-3 max-w-[75ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
             Anyone can expose a product search. <strong>check_compliance</strong> is the one
             nobody else has, because it requires the catalog to carry the standard and the rule
             as structured data rather than marketing copy — and it is the only tool here that
             answers the question a superintendent actually has.
           </p>
-          <pre className="mono max-w-full overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--ink))] p-3 text-[11px] leading-[1.6] text-[#dfe3e6] sm:p-4 sm:text-[12px]">
+          <pre className="max-w-full overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--ink))] p-3 text-[11px] leading-[1.6] text-[#dfe3e6] sm:p-4 sm:text-[13px]">
 {EXAMPLE}
           </pre>
         </div>
@@ -108,7 +108,7 @@ export default function Agents() {
                   {copied ? "Copied ✓" : "Copy JSON"}
                 </button>
               </div>
-              <pre className="mono max-h-[420px] max-w-full overflow-auto border border-[hsl(var(--rule))] bg-[hsl(var(--panel-2))] p-3 text-[10.5px] leading-[1.55] sm:text-[11px]">
+              <pre className="max-h-[420px] max-w-full overflow-auto border border-[hsl(var(--rule))] bg-[hsl(var(--panel-2))] p-3 text-[11px] leading-[1.55] sm:text-[11px]">
 {JSON.stringify(manifest, null, 2)}
               </pre>
               <Rule className="my-4" />
@@ -128,7 +128,7 @@ export default function Agents() {
         <Lab className="mb-2 !text-[hsl(var(--warn))]">What is real today, and what is not</Lab>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <div className="disp mb-1.5 text-[16px] font-semibold">Real</div>
+            <div className="disp mb-1.5 text-[15px] font-semibold">Real</div>
             <ul className="grid gap-1.5 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
               {["The catalog, with standards and OSHA cites as structured data",
                 "A working MCP server over stdio, runnable today",
@@ -141,7 +141,7 @@ export default function Agents() {
             </ul>
           </div>
           <div>
-            <div className="disp mb-1.5 text-[16px] font-semibold">Not yet</div>
+            <div className="disp mb-1.5 text-[15px] font-semibold">Not yet</div>
             <ul className="grid gap-1.5 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
               {["A hosted HTTPS endpoint with auth — needs a server and a domain",
                 "Payments — needs a processor and a merchant account",

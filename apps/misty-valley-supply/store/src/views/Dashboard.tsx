@@ -18,7 +18,7 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
       <div className="tape h-1.5" />
       <div className="p-6">
         <h2 className="disp text-[28px] font-bold leading-none">Your dashboard</h2>
-        <p className="mx-auto mt-3 max-w-[44ch] text-[13.5px] leading-[1.55] text-[hsl(var(--ink-2))]">
+        <p className="mx-auto mt-3 max-w-[44ch] text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
           What you see here depends on what you do. A driver gets a route. A buyer gets
           cut-off times. An owner gets the whole company. Sign in and it builds itself.
         </p>
@@ -41,11 +41,11 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
               <Tag tone={role.side === "internal" ? "safety" : role.side === "customer" ? "steel" : "good"}>
                 {role.name}
               </Tag>
-              <span className="mono text-[11px] text-[hsl(var(--ink-3))]">
+              <span className="text-[11px] text-[hsl(var(--ink-3))]">
                 {person.company} · {branch.name}
               </span>
             </div>
-            <h1 className="disp text-[28px] font-bold leading-none sm:text-[34px]">{d?.headline ?? "Dashboard"}</h1>
+            <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">{d?.headline ?? "Dashboard"}</h1>
             <p className="mt-2 max-w-[62ch] text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">{role.blurb}</p>
           </div>
           <button onClick={() => setShowPerms(!showPerms)}
@@ -63,9 +63,9 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
                 return (
                   <div key={p} className={cx("flex items-baseline gap-2 border-b border-[hsl(var(--rule))] py-1.5",
                     !on && "opacity-45")}>
-                    <span className={cx("mono w-3 shrink-0 text-[12px]",
+                    <span className={cx("w-3 shrink-0 text-[13px]",
                       on ? "text-[hsl(var(--good))]" : "text-[hsl(var(--ink-3))]")}>{on ? "✓" : "·"}</span>
-                    <span className="text-[12.5px] leading-[1.35]">{PERMS[p]}</span>
+                    <span className="text-[13px] leading-[1.35]">{PERMS[p]}</span>
                   </div>
                 );
               })}
@@ -81,8 +81,8 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
             {d.tiles.map(t => (
               <div key={t.k} className="bg-[hsl(var(--panel))] p-4">
                 <Lab className="mb-1.5">{t.k}</Lab>
-                <div className={cx("disp text-[30px] font-bold leading-none", toneCls(t.tone))}>{t.v}</div>
-                {t.s && <div className="mono mt-1.5 text-[11px] text-[hsl(var(--ink-3))]">{t.s}</div>}
+                <div className={cx("disp text-[28px] font-bold leading-none", toneCls(t.tone))}>{t.v}</div>
+                {t.s && <div className="mt-1.5 text-[11px] text-[hsl(var(--ink-3))]">{t.s}</div>}
               </div>
             ))}
           </div>
@@ -91,7 +91,7 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
             {d.queues.map(q => (
               <Panel key={q.title} pad={false} className="min-w-0">
                 <div className="border-b border-[hsl(var(--ink))] px-4 py-2.5">
-                  <h2 className="disp text-[19px] font-bold leading-none">{q.title}</h2>
+                  <h2 className="disp text-[18px] font-bold leading-none">{q.title}</h2>
                 </div>
                 <DataTable
                   cols={q.cta ? [...q.cols, ""] : q.cols}
@@ -113,12 +113,12 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
 
       {!d && (
         <Panel>
-          <p className="text-[13.5px]">No dashboard is configured for this role yet.</p>
+          <p className="text-[13px]">No dashboard is configured for this role yet.</p>
         </Panel>
       )}
 
       <Rule className="my-6" />
-      <p className="text-[12px] leading-[1.55] text-[hsl(var(--ink-3))]">
+      <p className="text-[13px] leading-[1.55] text-[hsl(var(--ink-3))]">
         Every screen in this app asks a permission, never a role name. That is why adding
         a role is a line of data and not a week of edits.
       </p>

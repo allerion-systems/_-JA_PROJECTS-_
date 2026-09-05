@@ -81,7 +81,7 @@ export function Field({ label, children }: { label: string; children: React.Reac
 }
 
 export const inputCls =
-  "h-10 w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[14px] mono outline-none " +
+  "h-10 w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none " +
   "transition-shadow focus:border-[hsl(var(--safety))] focus:shadow-[0_0_0_3px_hsl(var(--safety)/.14)]";
 
 /** A dense industrial data table. Stacks into labelled cards on phones. */
@@ -144,11 +144,11 @@ export function Head({
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-[hsl(var(--rule))] pb-3">
         <div className="min-w-0">
           {eyebrow && <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">{eyebrow}</Lab>}
-          <h2 className="disp text-[28px] font-bold leading-[1.02] sm:text-[38px]">{title}</h2>
+          <h2 className="disp text-[28px] font-bold leading-[1.02] sm:text-[40px]">{title}</h2>
         </div>
         {right}
       </div>
-      {sub && <p className="mt-3 max-w-[70ch] text-[14px] leading-[1.6] text-[hsl(var(--ink-2))] sm:text-[15px]">{sub}</p>}
+      {sub && <p className="mt-3 max-w-[70ch] text-[15px] leading-[1.6] text-[hsl(var(--ink-2))] sm:text-[15px]">{sub}</p>}
     </div>
   );
 }
