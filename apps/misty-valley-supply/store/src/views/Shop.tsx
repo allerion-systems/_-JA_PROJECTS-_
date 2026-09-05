@@ -20,6 +20,16 @@ const STD_FAMILIES = [
   { id: "OSHA", label: "OSHA 1926.502" },
 ];
 
+/* Department groupings for the landing header — mirrors the rail in App.tsx. */
+const DEPT_DEFS = [
+  { name: "Building Materials", sub: "Siding, sheathing, drywall, roofing accessories and site protection, delivered to the job.",
+    cats: ["siding", "sheathing", "drywall", "roofing", "site"] },
+  { name: "Safety", sub: "PPE, fall protection and edge systems. Every line lists the standard it is built to.",
+    cats: ["fall", "roof", "guard", "head", "eye", "hand", "hivis", "jobsite"] },
+  { name: "Building Structures", sub: "Shipping containers, ground-level offices and custom modular buildings.",
+    cats: ["structures"] },
+];
+
 const SORTS = [
   { id: "rel", label: "Relevance" },
   { id: "asc", label: "Price, low to high" },
@@ -235,23 +245,52 @@ export default function Shop({
     </>
   );
 
+  const activeCat = cats.length === 1 ? CATEGORIES.find(c => c.id === cats[0]) ?? null : null;
+  const activeDept = cats.length
+    ? DEPT_DEFS.find(d => cats.every(c => d.cats.includes(c))) ?? null
+    : null;
+
   return (
     <div>
-      {/* breadcrumb + count */}
+      {/* department landing header — title, blurb and sibling subcategories
+          all follow the active category, so each department reads as its own page */}
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <div className="text-[11px] text-[hsl(var(--ink-3))]">
-          Home / <span className="text-[hsl(var(--ink))]">Safety &amp; Edge Protection</span>
+          Home{activeDept && <> / {activeDept.name}</>}
+          {activeCat && <> / <span className="text-[hsl(var(--ink))]">{activeCat.name}</span></>}
           {q && <> / “{query}”</>}
         </div>
       </div>
 
       <h1 className="disp mb-1 text-[28px] font-bold leading-none sm:text-[40px]">
-        Safety &amp; Edge Protection
+        {q ? "Search results" : activeCat ? activeCat.name : activeDept ? activeDept.name : "Shop everything"}
       </h1>
-      <p className="mb-4 max-w-[75ch] text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
-        Every line lists the standard it is built to and the OSHA rule that requires it.
-        Filter by the citation, not by the marketing.
-      </p>
+      {!q && (activeCat?.blurb || activeDept) && (
+        <p className="mb-4 max-w-[75ch] text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+          {activeCat?.blurb ?? activeDept?.sub}
+        </p>
+      )}
+      {activeDept && activeDept.cats.length > 1 && !q && (
+        <div className="mb-5 flex flex-wrap gap-2">
+          {activeDept.cats.map(cid => {
+            const c = CATEGORIES.find(x => x.id === cid);
+            if (!c) return null;
+            const on = cats.length === 1 && cats[0] === cid;
+            return (
+              <button key={cid} onClick={() => setCats([cid])}
+                className={cx("flex min-h-[40px] items-center gap-2 rounded-[6px] border px-3 text-[13px] font-medium",
+                  on ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine-soft))] text-[hsl(var(--marine))]"
+                     : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] hover:border-[hsl(var(--ink-3))]")}>
+                <Glyph cat={cid} className="h-5 w-5" />
+                {c.name}
+                <span className="num text-[11px] text-[hsl(var(--ink-3))]">
+                  {PRODUCTS.filter(p => p.cat === cid).length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <div className="lg:grid lg:grid-cols-[228px_1fr] lg:gap-7">
         {/* desktop facets */}
