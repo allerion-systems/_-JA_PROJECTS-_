@@ -605,6 +605,9 @@ export default function Screen() {
   const [shots, setShots] = React.useState<{ name: string; url: string }[]>([]);
   const [notes, setNotes] = React.useState("");
   const [reqSent, setReqSent] = React.useState(false);
+  // Cost, markup and margin are internal economics — customers never see them.
+  const { can } = useAuth();
+  const internal = can("cost.view");
 
   const addShots = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fs = Array.from(e.target.files ?? []).slice(0, 6 - shots.length);
@@ -658,22 +661,30 @@ export default function Screen() {
       <div className="mb-8 card-hi">
         <div className="tape h-1.5" />
         <div className="p-5">
-          <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Proof of work — {RS.proof}</Lab>
+          <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Built and installed — {RS.proof}</Lab>
           <p className="max-w-[70ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
-            A {RS.lee.height}′ RTU screen on {RS.bod.detail}. Basis of design{" "}
-            <strong>{RS.bod.frame}</strong> frame with a <strong>{RS.bod.panel}</strong> panel.
-            Misty Valley had the frame shop-fabricated, bought the panel, and sold the package
-            to the roofing contractor. These are the actual numbers.
+            {internal ? (
+              <>A {RS.lee.height}′ RTU screen on {RS.bod.detail}. Basis of design{" "}
+                <strong>{RS.bod.frame}</strong> frame with a <strong>{RS.bod.panel}</strong> panel.
+                Misty Valley had the frame shop-fabricated, bought the panel, and sold the package
+                to the roofing contractor. These are the actual numbers.</>
+            ) : (
+              <>A real {RS.lee.lf} LF screen, shop-fabricated and set in one pick.</>
+            )}
           </p>
         </div>
-        <div className="grid gap-px border-t border-[hsl(var(--rule))] bg-[hsl(var(--rule))] sm:grid-cols-4">
-          {[
+        <div className={cx("grid gap-px border-t border-[hsl(var(--rule))] bg-[hsl(var(--rule))]",
+          internal ? "sm:grid-cols-4" : "sm:grid-cols-2")}>
+          {(internal ? [
             ["Frame fabrication", money(RS.lee.frameCost), "cost"],
             ["Panel", money(RS.lee.panelCost), "cost"],
             ["Sold for", money(RS.lee.sell), "price"],
             ["Gross margin", money(RS.lee.sell - RS.lee.frameCost - RS.lee.panelCost),
               `${Math.round(((RS.lee.sell - RS.lee.frameCost - RS.lee.panelCost) / RS.lee.sell) * 100)}% of the sale`],
-          ].map(([k, v, s], i) => (
+          ] : [
+            ["Screen length", `${RS.lee.lf} LF`, "delivered in labeled sections"],
+            ["Installed", "1 day", "set in one pick"],
+          ]).map(([k, v, s], i) => (
             <div key={k} className="bg-[hsl(var(--panel))] p-4">
               <Lab className="mb-1.5">{k}</Lab>
               <div className={cx("disp text-[28px] font-bold leading-none",
@@ -777,29 +788,31 @@ export default function Screen() {
                   <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
                     <div className="min-w-0">
                       <div className="disp text-[15px] font-semibold">{a}</div>
-                      <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>
+                      {internal && <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>}
                     </div>
-                    <div className="shrink-0 text-[15px]">{money(c)}</div>
+                    {internal && <div className="shrink-0 text-[15px]">{money(c)}</div>}
                   </div>
                 ))}
                 <Rule className="my-3" />
                 <div className="mb-1.5 flex items-baseline justify-between">
-                  <span className="lab">Our cost</span>
-                  <span className="text-[15px]">{money(totalCost)}</span>
+                  {internal && <span className="lab">Our cost</span>}
+                  {internal && <span className="text-[15px]">{money(totalCost)}</span>}
                 </div>
-                <Field label={`Markup — ${markup}%`}>
-                  <input type="range" min={0} max={150} value={markup} aria-label="Markup percent"
-                    onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
-                </Field>
+                {internal && (
+                  <Field label={`Markup — ${markup}%`}>
+                    <input type="range" min={60} max={150} value={markup} aria-label="Markup percent"
+                      onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
+                  </Field>
+                )}
                 <div className="mt-2 flex items-baseline justify-between">
-                  <div className="disp text-[18px] font-bold">Sell</div>
+                  <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                   <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
                     {money(sell)}
                   </div>
                 </div>
                 <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
                   <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
-                  <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>
+                  {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
                 </div>
                 <Rule className="my-4" />
                 <QuoteGate config={quoteConfig} sell={sell} />
@@ -817,25 +830,32 @@ export default function Screen() {
         <>
           <Panel pad={false} className="mb-4">
             <DataTable
-              cols={["SKU", "Item", "UOM", "Unit cost", "Your price", "In kit"]}
-              right={[3, 4]}
-              rows={SCREEN_PARTS.map(sp => [
-                <span className="mono text-[hsl(var(--safety-2))]">{sp.sku}</span>,
-                <span>
-                  <span className="font-semibold">{sp.name}</span>
-                  <span className="mt-0.5 block text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">{sp.note}</span>
-                </span>,
-                <span className="text-[13px]">{sp.uom}</span>,
-                <span className="text-[13px] text-[hsl(var(--ink-3))]">{usd2(sp.cost)}</span>,
-                <span className="">{usd2(sp.cost * (1 + markup / 100))}</span>,
-                sp.kit ? <Tag tone="good">kit</Tag> : <Tag>add-on</Tag>,
-              ])}
+              cols={internal
+                ? ["SKU", "Item", "UOM", "Unit cost", "Your price", "In kit"]
+                : ["SKU", "Item", "UOM", "Your price", "In kit"]}
+              right={internal ? [3, 4] : [3]}
+              rows={SCREEN_PARTS.map(sp => {
+                const row = [
+                  <span className="mono text-[hsl(var(--safety-2))]">{sp.sku}</span>,
+                  <span>
+                    <span className="font-semibold">{sp.name}</span>
+                    <span className="mt-0.5 block text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">{sp.note}</span>
+                  </span>,
+                  <span className="text-[13px]">{sp.uom}</span>,
+                  <span className="text-[13px] text-[hsl(var(--ink-3))]">{usd2(sp.cost)}</span>,
+                  <span className="">{usd2(sp.cost * (1 + markup / 100))}</span>,
+                  sp.kit ? <Tag tone="good">kit</Tag> : <Tag>add-on</Tag>,
+                ];
+                return internal ? row : row.filter((_, i) => i !== 3);
+              })}
             />
           </Panel>
-          <p className="mb-8 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
-            Unit cost is what the part lands at; your price applies the {markup}% markup set in the
-            configurator. Move it there and this table moves with it.
-          </p>
+          {internal && (
+            <p className="mb-8 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
+              Unit cost is what the part lands at; your price applies the {markup}% markup set in the
+              configurator. Move it there and this table moves with it.
+            </p>
+          )}
         </>
       )}
 
@@ -917,29 +937,31 @@ export default function Screen() {
                     <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
                       <div className="min-w-0">
                         <div className="disp text-[15px] font-semibold">{a}</div>
-                        <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>
+                        {internal && <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>}
                       </div>
-                      <div className="shrink-0 text-[15px]">{money(c)}</div>
+                      {internal && <div className="shrink-0 text-[15px]">{money(c)}</div>}
                     </div>
                   ))}
                   <Rule className="my-3" />
                   <div className="mb-1.5 flex items-baseline justify-between">
-                    <span className="lab">Our cost</span>
-                    <span className="text-[15px]">{money(totalCost)}</span>
+                    {internal && <span className="lab">Our cost</span>}
+                    {internal && <span className="text-[15px]">{money(totalCost)}</span>}
                   </div>
-                  <Field label={`Markup — ${markup}%`}>
-                    <input type="range" min={0} max={150} value={markup} aria-label="Markup percent"
-                      onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
-                  </Field>
+                  {internal && (
+                    <Field label={`Markup — ${markup}%`}>
+                      <input type="range" min={60} max={150} value={markup} aria-label="Markup percent"
+                        onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
+                    </Field>
+                  )}
                   <div className="mt-2 flex items-baseline justify-between">
-                    <div className="disp text-[18px] font-bold">Sell</div>
+                    <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                     <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
                       {money(sell)}
                     </div>
                   </div>
                   <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
                     <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
-                    <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>
+                    {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
                   </div>
                   <Rule className="my-4" />
                   <Btn className="w-full" onClick={() => window.print()}>Print / save PDF</Btn>
@@ -1028,14 +1050,16 @@ export default function Screen() {
                 <span className="text-[13px] leading-[1.45]">{RS.shopDrawings.note}</span>
               </button>
             </Field>
-            <Field label={`Markup — ${markup}%`}>
-              <input type="range" min={0} max={150} value={markup} aria-label="Markup percent"
-                onChange={e => setMarkup(Number(e.target.value))} className="mt-2 h-11 w-full" />
-              <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
-                <span>cost</span>
-                <span>Lee Street ran {Math.round(RS.defaultMarkup * 100)}%</span>
-              </div>
-            </Field>
+            {internal && (
+              <Field label={`Markup — ${markup}%`}>
+                <input type="range" min={60} max={150} value={markup} aria-label="Markup percent"
+                  onChange={e => setMarkup(Number(e.target.value))} className="mt-2 h-11 w-full" />
+                <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
+                  <span>60% floor</span>
+                  <span>Lee Street ran {Math.round(RS.defaultMarkup * 100)}%</span>
+                </div>
+              </Field>
+            )}
           </div>
 
           {/* the gauge warning, only when it applies */}
@@ -1067,25 +1091,25 @@ export default function Screen() {
                 <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
                   <div className="min-w-0">
                     <div className="disp text-[15px] font-semibold">{a}</div>
-                    <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>
+                    {internal && <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>}
                   </div>
-                  <div className="shrink-0 text-[15px]">{money(c)}</div>
+                  {internal && <div className="shrink-0 text-[15px]">{money(c)}</div>}
                 </div>
               ))}
               <Rule className="my-3" />
               <div className="mb-1.5 flex items-baseline justify-between">
-                <span className="lab">Our cost</span>
-                <span className="text-[15px]">{money(totalCost)}</span>
+                {internal && <span className="lab">Our cost</span>}
+                {internal && <span className="text-[15px]">{money(totalCost)}</span>}
               </div>
               <div className="flex items-baseline justify-between">
-                <div className="disp text-[18px] font-bold">Sell</div>
+                <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                 <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
                   {money(sell)}
                 </div>
               </div>
               <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
                 <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
-                <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>
+                {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
               </div>
               <Rule className="my-4" />
               {reqSent ? (
