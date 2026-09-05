@@ -1,7 +1,6 @@
 import { CATEGORIES, PRODUCTS } from "@/data";
 import { Glyph } from "@/glyph";
 import hero from "@/assets/site/lee-screen-1.jpg";
-import { SITES, ago, isLive, lastPost } from "@/sites";
 import { useAuth } from "@/auth";
 import { Btn, Lab, Panel, Rule, Tag, cx, money } from "@/ui";
 
@@ -100,19 +99,13 @@ export default function Home({
             )}
 
             <Rule className="my-5" />
-            <Lab className="mb-2.5">Live on the corridor</Lab>
-            <div className="grid gap-1.5">
-              {[...SITES].sort((a, b) => lastPost(a) - lastPost(b)).slice(0, 3).map(s => (
-                <div key={s.id} className="flex items-center gap-2.5">
-                  <span className={cx("h-1.5 w-1.5 shrink-0 rounded-full",
-                    isLive(s) ? "bg-[hsl(var(--safety))]" : "bg-[hsl(var(--rule))]")} />
-                  <span className="min-w-0 flex-1 truncate text-[13px]">{s.name}</span>
-                  <span className="shrink-0 text-[11px] text-[hsl(var(--ink-3))]">{ago(lastPost(s))}</span>
-                </div>
-              ))}
-            </div>
-            <button onClick={onEarth} className="lab mt-3 inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline underline-offset-2">
-              Open Job Site Earth
+            <Lab className="mb-2.5">Need it picked up instead?</Lab>
+            <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+              A runner can be at the counter of any local store today. List in, quote
+              back, materials on your deck.
+            </p>
+            <button onClick={onEarth} className="mt-2 flex min-h-[44px] items-center text-[13px] font-semibold text-[hsl(var(--safety-2))] underline underline-offset-2">
+              Start a material run →
             </button>
           </div>
         </div>

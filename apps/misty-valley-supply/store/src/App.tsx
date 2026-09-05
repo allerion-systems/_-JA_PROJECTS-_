@@ -10,14 +10,15 @@ import Yard from "@/views/Yard";
 import Account from "@/views/Account";
 import Ops from "@/views/Ops";
 import Rent from "@/views/Rent";
+import Runs from "@/views/Runs";
 import Agents from "@/views/Agents";
 import Dashboard from "@/views/Dashboard";
 import Users from "@/views/Users";
-const Earth = React.lazy(() => import("@/views/Earth"));
+
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
 
-type View = "home" | "dash" | "shop" | "product" | "screen" | "rent" | "earth" | "yard" | "account" | "users" | "ops" | "agents";
+type View = "home" | "dash" | "shop" | "product" | "screen" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -28,10 +29,10 @@ const NAV: { id: View; label: string; short: string; sub: string; icon: React.Re
     icon: <path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-5H3zM13 8h8V3h-8z" /> },
   { id: "shop", label: "Catalog", short: "Shop", sub: "Safety & edge protection", bar: true,
     icon: <path d="M3 6h18M6 6v13h12V6M9 10h6" /> },
-  { id: "earth", label: "Job Site Earth", short: "Earth", sub: "Live from the deck", bar: true,
-    icon: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" /></> },
   { id: "screen", label: "Roof Screens", short: "Screens", sub: "Shop fabrication", bar: true,
     icon: <path d="M3 19h18M5 19V8l7-4 7 4v11M9 19v-6h6v6" /> },
+  { id: "runs", label: "Material Runs", short: "Runs", sub: "We pick it up today", bar: true,
+    icon: <path d="M2 16V7h11v9M13 10h5l4 4v2h-2M2 16h2m5 0h6" /> },
   { id: "yard", label: "The Yard", short: "Yard", sub: "Marketplace",
     icon: <path d="M4 5h16M4 12h16M4 19h10" /> },
   { id: "account", label: "My Account", short: "Account", sub: "Orders, invoices, lists", bar: true,
@@ -54,6 +55,14 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
   { label: "Fall Protection", sub: "Harnesses, SRLs, anchors", go: { view: "shop", cat: "fall" }, cats: ["fall"] },
   { label: "Roof Safety", sub: "Warning line, covers, screens", go: { view: "shop", cat: "roof" }, cats: ["roof"] },
   { label: "Guardrail & Edge", sub: "Non-penetrating systems", go: { view: "shop", cat: "guard" }, cats: ["guard"] },
+  { label: "Building Materials", sub: "Siding, OSB, studs, drywall", go: { view: "shop", cat: "sheathing" },
+    cats: ["siding", "sheathing", "drywall"],
+    kids: [
+      { label: "Siding", cat: "siding" },
+      { label: "Sheathing & Framing", cat: "sheathing" },
+      { label: "Drywall", cat: "drywall" },
+    ] },
+  { label: "Site Structures", sub: "Conex, offices, custom modular", go: { view: "shop", cat: "structures" }, cats: ["structures"] },
   { label: "Rentals", sub: "Day, week, 4-week", go: { view: "rent" } },
   { label: "PPE", sub: "Head, eye, hand, hi-vis", go: { view: "shop", cat: "head" },
     cats: ["head", "eye", "hand", "hivis"],
@@ -265,6 +274,15 @@ function Inner() {
 
           <Rule className="my-4" />
           <Lab kicker className="mb-2.5">Marketplace</Lab>
+          <button onClick={() => go("runs")}
+            className={cx("flex min-h-[44px] w-full items-center justify-between rounded-[6px] px-2.5 py-2 text-left",
+              view === "runs" ? "bg-[hsl(var(--safety-soft))]" : "hover:bg-[hsl(var(--panel))]")}>
+            <span className="min-w-0">
+              <span className={cx("block text-[15px] font-semibold leading-[1.2]",
+                view === "runs" ? "text-[hsl(var(--safety-2))]" : "text-[hsl(var(--ink))]")}>Material Runs</span>
+              <span className="mt-0.5 block text-[11px] text-[hsl(var(--ink-3))]">Any counter in town, today</span>
+            </span>
+          </button>
           <button onClick={() => go("yard")}
             className={cx("flex min-h-[44px] w-full items-center justify-between rounded-[6px] px-2.5 py-2 text-left",
               view === "yard" ? "bg-[hsl(var(--safety-soft))]" : "hover:bg-[hsl(var(--panel))]")}>
@@ -277,7 +295,7 @@ function Inner() {
 
           <Rule className="my-4" />
           <Lab kicker className="mb-2.5">Workspace</Lab>
-          {visible.filter(n => ["dash", "earth", "users", "ops"].includes(n.id)).map(n => (
+          {visible.filter(n => ["dash", "users", "ops"].includes(n.id)).map(n => (
             <button key={n.id} onClick={() => go(n.id)}
               className={cx("flex min-h-[40px] w-full items-center gap-2.5 rounded-[6px] px-2.5 py-1.5 text-left",
                 isActive(n.id) ? "bg-[hsl(var(--panel))] text-[hsl(var(--ink))]" : "text-[hsl(var(--ink-2))] hover:text-[hsl(var(--ink))]")}>
@@ -295,7 +313,7 @@ function Inner() {
         </nav>
 
         <main className="min-w-0 flex-1 py-5 sm:py-6 lg:pl-8">
-          {view === "home" && <Home onShop={goShop} onScreens={() => go("screen")} onYard={() => go("yard")} onEarth={() => go("earth")}
+          {view === "home" && <Home onShop={goShop} onScreens={() => go("screen")} onYard={() => go("yard")} onEarth={() => go("runs")}
             onSignIn={() => setModal("signin")} onSearch={search} />}
           {view === "shop" && <Shop cart={cart} setCart={setCart} query={query} setQuery={setQuery}
             preCat={preCat} onSignIn={() => setModal("signin")} onProduct={openProduct} />}
@@ -305,15 +323,7 @@ function Inner() {
           )}
           {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
           {view === "screen" && <Screen />}
-          {view === "earth" && (
-            <React.Suspense fallback={
-              <div className="flex h-[46vh] items-center justify-center card-hi bg-[hsl(var(--panel-2))]">
-                <span className="lab text-[hsl(var(--ink-3))]">Loading the map…</span>
-              </div>}>
-              <Earth onSignIn={() => setModal("signin")} />
-            </React.Suspense>
-          )}
-          {view === "users" && <Users onSignIn={() => setModal("signin")} />}
+          {view === "runs" && <Runs onSignIn={() => setModal("signin")} />}          {view === "users" && <Users onSignIn={() => setModal("signin")} />}
           {view === "rent" && <Rent onSignIn={() => setModal("signin")} />}
           {view === "yard" && <Yard />}
           {view === "account" && <Account onSignIn={() => setModal("signin")} />}

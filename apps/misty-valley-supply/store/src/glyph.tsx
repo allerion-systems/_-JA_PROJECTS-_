@@ -268,6 +268,103 @@ const M: Record<string, React.ReactNode> = {
     <path d="M32 43a6 6 0 0 1 0 12 6 6 0 0 1 0-12z" fill="none" stroke={C.dark} strokeWidth="3.4" />
   </>),
 
+
+  /* ---- building materials ------------------------------------------------ */
+
+  sidingVinyl: (<>
+    <Shadow />
+    {[14, 22, 30, 38, 46].map(y => (
+      <g key={y}>
+        <path d={`M8 ${y} h48 v6 l-3 2 H11 l-3 -2 z`} fill={C.white} />
+        <path d={`M8 ${y + 6} l3 2 h42 l3 -2`} fill="none" stroke={C.whiteD} strokeWidth="1.4" />
+      </g>
+    ))}
+    <path d="M8 14h48v3H8z" fill="#fff" opacity=".7" />
+  </>),
+  sidingAlum: (<>
+    <Shadow />
+    {[14, 24, 34, 44].map(y => (
+      <g key={y}>
+        <rect x="8" y={y} width="48" height="9" fill={C.steelL} />
+        <rect x="8" y={y} width="48" height="2.4" fill="#fff" opacity=".55" />
+        <rect x="8" y={y + 7.5} width="48" height="1.5" fill={C.steel} />
+      </g>
+    ))}
+  </>),
+  jchannel: (<>
+    <Shadow />
+    <path d="M20 8h10v40a6 6 0 0 1-6 6h-6a6 6 0 0 1-6-6v-8h8v6h4z" fill={C.white} />
+    <path d="M20 8h4v40h-4z" fill={C.whiteD} />
+    <path d="M40 8h6v46h-6z" fill={C.whiteD} opacity=".5" />
+  </>),
+  osb: (<>
+    <Shadow />
+    <path d="M10 12h44v40H10z" fill={C.tan} />
+    {[[14,16,7],[24,15,9],[36,18,8],[45,14,6],[16,26,8],[30,25,10],[44,28,7],[12,36,9],[26,37,7],[38,35,9],[48,40,5],[18,45,8],[33,46,9]].map(([x,y,w],i) => (
+      <rect key={i} x={x} y={y} width={w} height="3.2" rx="1" fill={C.tanD} opacity={i % 3 ? .55 : .8}
+        transform={`rotate(${(i * 17) % 40 - 20} ${x} ${y})`} />
+    ))}
+    <path d="M10 12h44v3H10z" fill="#fff" opacity=".25" />
+  </>),
+  plywood: (<>
+    <Shadow />
+    <path d="M10 14h44v36H10z" fill={C.tan} />
+    <path d="M10 14h44v4H10zM10 46h44v4H10z" fill={C.tanD} opacity=".5" />
+    {[22, 30, 38].map(y => <path key={y} d={`M12 ${y} q10 -3 21 0 t21 0`} fill="none" stroke={C.tanD} strokeWidth="1.4" opacity=".7" />)}
+  </>),
+  stud: (<>
+    <Shadow />
+    <path d="M24 6h10l6 4v40l-6 4H24l-6-4V10z" fill={C.tan} />
+    <path d="M24 6h10v48H24z" fill="#fff" opacity=".2" />
+    <path d="M18 10v40" stroke={C.tanD} strokeWidth="2" />
+    <rect x="21" y="24" width="16" height="8" rx="1" fill="#fff" opacity=".65" />
+    <path d="M23 27h12M23 29.5h8" stroke={C.ink} strokeWidth="1.2" opacity=".55" />
+  </>),
+  drywallSheet: (<>
+    <Shadow />
+    <path d="M10 12h44v40H10z" fill={C.white} />
+    <path d="M10 12h44v40H10z" fill="none" stroke={C.whiteD} strokeWidth="2" />
+    <path d="M10 12v40M54 12v40" stroke={C.steelL} strokeWidth="3" />
+    <circle cx="20" cy="22" r="1.4" fill={C.steel} /><circle cx="20" cy="34" r="1.4" fill={C.steel} />
+    <circle cx="20" cy="46" r="1.4" fill={C.steel} /><circle cx="44" cy="22" r="1.4" fill={C.steel} />
+    <circle cx="44" cy="34" r="1.4" fill={C.steel} /><circle cx="44" cy="46" r="1.4" fill={C.steel} />
+  </>),
+  wrap: (<>
+    <Shadow />
+    <circle cx="32" cy="26" r="16" fill={C.white} />
+    <circle cx="32" cy="26" r="6" fill={C.steelL} />
+    <path d="M16 26v22h32V26" fill={C.white} />
+    <path d="M16 44h32v4H16z" fill={C.whiteD} />
+    <path d="M20 32h24M20 37h24" stroke={C.marine} strokeWidth="1.6" opacity=".5" />
+  </>),
+
+  conex: (<>
+    <Shadow />
+    <path d="M6 18h52v30H6z" fill={C.marine} />
+    {[12, 19, 26, 33, 40, 47].map(x => <rect key={x} x={x} y="18" width="2.5" height="30" fill="#0a3580" />)}
+    <path d="M6 18h52v4H6z" fill="#fff" opacity=".2" />
+    <rect x="50" y="24" width="5" height="18" rx="1" fill="#0a3580" />
+    <rect x="8" y="20" width="10" height="4" rx="1" fill="#fff" opacity=".7" />
+  </>),
+  office: (<>
+    <Shadow />
+    <path d="M6 16h52v34H6z" fill={C.steelL} />
+    <path d="M6 16h52v5H6z" fill={C.steel} />
+    <rect x="12" y="27" width="12" height="10" rx="1" fill={C.lens} />
+    <rect x="12" y="27" width="12" height="10" rx="1" fill="none" stroke={C.steelD} strokeWidth="1.5" />
+    <rect x="38" y="25" width="11" height="25" rx="1" fill={C.steelD} />
+    <circle cx="47" cy="38" r="1.2" fill="#fff" />
+    <rect x="28" y="22" width="6" height="4" rx="1" fill={C.steelD} />
+  </>),
+  booth: (<>
+    <Shadow />
+    <path d="M14 20h36l3 6H11z" fill={C.orange} />
+    <path d="M16 26h32v26H16z" fill={C.white} />
+    <rect x="20" y="30" width="10" height="12" rx="1" fill={C.lens} />
+    <rect x="34" y="30" width="10" height="22" rx="1" fill={C.steelD} />
+    <circle cx="42" cy="42" r="1.1" fill="#fff" />
+  </>),
+
   /* ---- roof screen parts --------------------------------------------------- */
 
   frame: (<>
@@ -330,6 +427,10 @@ const BY_SKU: [RegExp, string][] = [
   [/GL-LEA/, "gloveLeather"], [/GL-A6/, "gloveA6"], [/GL-/, "gloveA4"],
   [/VS-C3/, "vestC3"], [/VS-O/, "vestOrange"], [/VS-/, "vestC2"],
   [/FH-/, "harness"], [/SRL-/, "srl"], [/LY-/, "lanyard"],
+  [/SID-VD/, "sidingVinyl"], [/SID-AL/, "sidingAlum"], [/SID-JCH/, "jchannel"],
+  [/OSB-/, "osb"], [/PLY-/, "plywood"], [/STD-/, "stud"],
+  [/DW-/, "drywallSheet"], [/HW-/, "wrap"],
+  [/CX-/, "conex"], [/ST-GLO/, "office"], [/ST-BOOTH/, "booth"],
   // roof screen parts
   [/RSF-/, "frame"], [/RSB-/, "base"], [/RSH-/, "hat"],
   [/RSP-/, "panel"], [/RSS-/, "screw"], [/RSA-/, "anchor"], [/RSE-/, "drawing"],
@@ -338,6 +439,7 @@ const BY_SKU: [RegExp, string][] = [
 const BY_CAT: Record<string, string> = {
   roof: "guardrail", guard: "guardrail", head: "hatCap",
   eye: "glassesClear", hand: "gloveA4", hivis: "vestC2", fall: "harness",
+  siding: "sidingVinyl", sheathing: "osb", drywall: "drywallSheet", structures: "conex",
 };
 
 export function Glyph({ sku, cat, className }: { sku?: string; cat?: string; className?: string }) {

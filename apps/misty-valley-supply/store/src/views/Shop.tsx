@@ -162,6 +162,18 @@ export default function Shop({
   const [sort, setSort] = React.useState("rel");
   const [filtersOpen, setFiltersOpen] = React.useState(false);
   useEscape(() => setFiltersOpen(false), filtersOpen);
+  const [modOpen, setModOpen] = React.useState(false);
+  const [modType, setModType] = React.useState("Site office");
+  const [modSize, setModSize] = React.useState("");
+  const [modNotes, setModNotes] = React.useState("");
+  const [modShots, setModShots] = React.useState<{ name: string; url: string }[]>([]);
+  const [modSent, setModSent] = React.useState(false);
+  useEscape(() => setModOpen(false), modOpen);
+  const addModShots = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fs = Array.from(e.target.files ?? []).slice(0, 6 - modShots.length);
+    setModShots(x => [...x, ...fs.map(f => ({ name: f.name, url: URL.createObjectURL(f) }))]);
+    e.target.value = "";
+  };
 
   const toggle = (arr: string[], set: (v: string[]) => void, v: string) =>
     set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
@@ -263,6 +275,25 @@ export default function Shop({
             </label>
           </div>
 
+          {cats.length === 1 && cats[0] === "structures" && (
+            <div className="card-hi mb-4 overflow-hidden">
+              <div className="tape h-1" />
+              <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+                <div className="min-w-0">
+                  <div className="text-[15px] font-semibold">Need something custom — an office, a tiny home, a lash-up of both?</div>
+                  <p className="mt-1 text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">
+                    Send sizes, photos and what it has to do. We spec it with an upfitter,
+                    you get one quoted number, delivered set.
+                  </p>
+                </div>
+                <button onClick={() => { setModOpen(true); setModSent(false); }}
+                  className="inline-flex h-11 shrink-0 items-center rounded-[6px] bg-[hsl(var(--safety-2))] px-5 text-[15px] font-semibold text-white hover:bg-[hsl(var(--safety-press))]">
+                  Start a design intake
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* active chips */}
           {activeCount > 0 && (
             <div className="mb-3 flex flex-wrap gap-1.5">
@@ -295,6 +326,84 @@ export default function Shop({
           </div>
         </div>
       </div>
+
+      {/* custom modular intake */}
+      {modOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={() => setModOpen(false)}>
+          <div role="dialog" aria-modal="true" aria-label="Custom modular design intake"
+            className="h-full w-full overflow-y-auto bg-[hsl(var(--ground))] sm:max-w-[480px] sm:border-l-2 sm:border-[hsl(var(--safety))]"
+            onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-[hsl(var(--rule))] p-4">
+              <h3 className="disp text-[22px] font-bold">Custom modular intake</h3>
+              <button onClick={() => setModOpen(false)} aria-label="Close intake"
+                className="grid h-11 min-w-[44px] place-items-center text-[hsl(var(--ink-2))]">✕</button>
+            </div>
+            <div className="p-4">
+              {modSent ? (
+                <div>
+                  <Tag tone="good">Received</Tag>
+                  <p className="mt-3 text-[14px] leading-[1.55]">
+                    Your intake is with the shop. We spec it with an upfitter and come back
+                    with one quoted number and a drawing — usually inside a week.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  <div>
+                    <span className="lab mb-1.5 block">What is it</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {["Site office", "Tiny home", "Conex conversion", "Guard booth", "Something else"].map(t => (
+                        <button key={t} onClick={() => setModType(t)}
+                          className={cx("min-h-[44px] rounded-[6px] border px-3 text-[13px] font-medium",
+                            modType === t ? "border-[hsl(var(--safety-2))] bg-[hsl(var(--safety-soft))] text-[hsl(var(--safety-2))]"
+                                          : "border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]")}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <label className="grid gap-1.5">
+                    <span className="lab">Rough size</span>
+                    <input value={modSize} onChange={e => setModSize(e.target.value)}
+                      placeholder={'20 ft × 8 ft, or "sleeps 2 and an office"'}
+                      className="h-11 w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[14px] outline-none focus:border-[hsl(var(--safety-2))]" />
+                  </label>
+                  <label className="grid gap-1.5">
+                    <span className="lab">What it has to do</span>
+                    <textarea value={modNotes} onChange={e => setModNotes(e.target.value)} rows={3}
+                      placeholder="Power, plumbing, climate, how it gets there, when it's needed…"
+                      className="w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-3 text-[14px] outline-none focus:border-[hsl(var(--safety-2))]" />
+                  </label>
+                  {modShots.length > 0 && (
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {modShots.map((f, i) => (
+                        <span key={i} className="relative block overflow-hidden rounded-[4px] border border-[hsl(var(--rule))]">
+                          <img src={f.url} alt={f.name} className="aspect-square w-full object-cover" />
+                          <button onClick={() => setModShots(x => x.filter((_, k) => k !== i))}
+                            aria-label={`Remove ${f.name}`}
+                            className="absolute right-0.5 top-0.5 grid h-7 w-7 place-items-center rounded-[4px] bg-black/55 text-[11px] text-white">✕</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <label className="flex min-h-[44px] cursor-pointer items-center justify-center rounded-[6px] border border-dashed border-[hsl(var(--field))] text-[13px] font-medium text-[hsl(var(--marine))] hover:border-[hsl(var(--marine))]">
+                    ＋ Add inspiration &amp; site photos ({modShots.length}/6)
+                    <input type="file" accept="image/*" multiple onChange={addModShots}
+                      aria-label="Add inspiration and site photos" className="sr-only" />
+                  </label>
+                  <Btn disabled={!modSize.trim() && !modNotes.trim()} onClick={() => setModSent(true)}>
+                    Send the intake
+                  </Btn>
+                  <p className="text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                    Photos stay on your device in this prototype. Modular structures ship
+                    through state-approved builders; we quote the whole package, delivered set.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* mobile filter sheet */}
       {filtersOpen && (

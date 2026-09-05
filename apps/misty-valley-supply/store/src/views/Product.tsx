@@ -113,7 +113,7 @@ export default function ProductView({
                 <span className="hidden h-3 w-px bg-[hsl(var(--rule))] sm:inline-block" aria-hidden />
                 <span>
                   <span className="text-[hsl(var(--ink-2))]">Required by </span>
-                  <span className="ident text-[13px] font-medium text-[hsl(var(--safety-2))]">OSHA {p.osha}</span>
+                  <span className="ident text-[13px] font-medium text-[hsl(var(--safety-2))]">{/^\d/.test(p.osha) ? `OSHA ${p.osha}` : p.osha}</span>
                 </span>
               </div>
               <h2 className="mt-4 text-[15px] font-semibold text-[hsl(var(--ink))]">
