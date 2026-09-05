@@ -25,6 +25,36 @@ export default function Home({
 
   return (
     <div>
+      {/* -------------------------------------------------- what we sell */}
+      <h1 className="disp mb-1 text-[28px] font-bold leading-none sm:text-[40px]">What do you need on the job?</h1>
+      <p className="mb-4 text-[14px] text-[hsl(var(--ink-2))]">
+        Every category, right up front. Every part carries the standard behind it.
+      </p>
+      <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        {CATEGORIES.map(c => (
+          <button key={c.id} onClick={() => onShop(c.id)}
+            className="card lift flex min-h-[128px] flex-col items-center justify-center gap-2 p-4">
+            <span><Glyph cat={c.id} className="h-14 w-14" /></span>
+            <span className="disp text-center text-[16px] font-semibold leading-[1.05]">{c.name}</span>
+            <span className="num text-[11px] text-[hsl(var(--ink-3))]">
+              {PRODUCTS.filter(p => p.cat === c.id).length} items
+            </span>
+          </button>
+        ))}
+        <button onClick={onScreens}
+          className="card lift flex min-h-[128px] flex-col items-center justify-center gap-2 p-4">
+          <span><Glyph sku="MVS-RSF-SC3" className="h-14 w-14" /></span>
+          <span className="disp text-center text-[16px] font-semibold leading-[1.05]">Roof Screens</span>
+          <span className="text-[11px] font-medium text-[hsl(var(--safety-2))]">Shop-fabricated</span>
+        </button>
+        <button onClick={onYard}
+          className="card lift flex min-h-[128px] flex-col items-center justify-center gap-2 p-4">
+          <span><Glyph sku="MVS-CX-20OT" className="h-14 w-14" /></span>
+          <span className="disp text-center text-[16px] font-semibold leading-[1.05]">The Yard</span>
+          <span className="text-[11px] font-medium text-[hsl(var(--marine))]">Used &amp; surplus</span>
+        </button>
+      </div>
+
       {/* ---------------------------------------------------------- hero */}
       <section className="card-hi mb-10">
         <div className="grid lg:grid-cols-[1.15fr_1fr]">
@@ -122,19 +152,6 @@ export default function Home({
         ))}
       </div>
 
-      <h2 className="disp mb-4 border-b border-[hsl(var(--ink))] pb-2.5 text-[22px] font-bold">Shop by category</h2>
-      <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-        {CATEGORIES.map(c => (
-          <button key={c.id} onClick={() => onShop(c.id)}
-            className="card lift flex flex-col items-center gap-2 p-4">
-            <span className="text-[hsl(var(--ink-2))]"><Glyph cat={c.id} className="h-14 w-14" /></span>
-            <span className="disp text-center text-[15px] font-semibold leading-[1.1]">{c.name}</span>
-            <span className="text-[11px] text-[hsl(var(--ink-3))]">
-              {PRODUCTS.filter(p => p.cat === c.id).length} items
-            </span>
-          </button>
-        ))}
-      </div>
 
       {/* ------------------------------------------------- fabrication */}
       <div className="mb-10 grid gap-4 lg:grid-cols-2">
