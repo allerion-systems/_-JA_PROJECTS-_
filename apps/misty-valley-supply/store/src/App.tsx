@@ -10,6 +10,7 @@ import Yard from "@/views/Yard";
 import Account from "@/views/Account";
 import Ops from "@/views/Ops";
 import Rent from "@/views/Rent";
+import Services from "@/views/Services";
 import Runs from "@/views/Runs";
 import Agents from "@/views/Agents";
 import Dashboard from "@/views/Dashboard";
@@ -18,7 +19,7 @@ import Users from "@/views/Users";
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
 
-type View = "home" | "dash" | "shop" | "product" | "screen" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents";
+type View = "home" | "dash" | "shop" | "product" | "screen" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -74,6 +75,7 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
     ] },
   { label: "Building Structures", sub: "Conex, offices, custom modular", go: { view: "shop", cat: "structures" }, cats: ["structures"] },
   { label: "Custom Fabrication", sub: "Roof screens · shop drawings", go: { view: "screen" } },
+  { label: "Services", sub: "Design, engineering, design-build", go: { view: "services" } },
   { label: "Rentals", sub: "Day, week, 4-week", go: { view: "rent" } },
 ];
 
@@ -336,6 +338,7 @@ function Inner() {
           {view === "screen" && <Screen />}
           {view === "runs" && <Runs onSignIn={() => setModal("signin")} />}          {view === "users" && <Users onSignIn={() => setModal("signin")} />}
           {view === "rent" && <Rent onSignIn={() => setModal("signin")} />}
+          {view === "services" && <Services />}
           {view === "yard" && <Yard />}
           {view === "account" && <Account onSignIn={() => setModal("signin")} />}
           {view === "ops" && <Ops />}
