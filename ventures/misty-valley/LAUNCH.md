@@ -26,6 +26,97 @@ the step before it has cleared.*
 
 ---
 
+## GATE 0.5 — Ben's taxpayer number · the real gate on the entity
+
+**Full research and citations:** https://claude.ai/code/artifact/cd766100-9ae2-453b-b1f9-a6761f115c92
+
+**The good news first: this is narrower than it looks.** Kentucky corporate law
+is permissive — **KRS 275.025 requires no TIN and does not even name members**,
+so Ben can appear truthfully on every Secretary of State record from day one.
+The binding constraints are tax registration, banking and payment, and **each has
+a documented lawful path while an SS-5 is pending.** There is no legal bar or
+penalty for having gone decades without a number.
+
+### Step 00 — find out whether he already has one
+
+**Do this before anything else.** IRS **Form 4029** — the Amish/Mennonite
+religious exemption from Social Security and Medicare tax — **requires an SSN.**
+The instruction is explicit: *enter your social security number on line 2; if you
+do not have one, file Form SS-5.* Line 2 is required and the application can be
+denied without it.
+
+> **So one of two things is true, and they have very different consequences:**
+> either **he already has a number** and does not know it, or **he never had a
+> valid 4029** — in which case his prior self-employment may not have been exempt
+> at all.
+
+**How to find out:** an **SSA Numident request** plus **IRS account transcripts.**
+That is the first move, and it is Ben's to make.
+
+### ⚠️ Sequence the professionals: attorney first, then CPA
+
+Getting an SSN makes him visible in federal systems. **That is the right
+outcome** — but it means the ten-year filing history of the dissolved entity
+should be reviewed **by a Kentucky attorney first, under privilege**, and the CPA
+brought in after. That is ordinary prudence for anyone with a complicated
+history, and the ordering costs nothing.
+
+### The actual bottleneck is Kentucky Form 10A100, not the SOS
+
+| Requirement | Needs a TIN? |
+|---|---|
+| Kentucky SOS LLC filing (KRS 275.025) | **No** — and members need not be named |
+| **KY Form 10A100 tax registration** | **Yes** — responsible-party SSNs, citing KRS 131.180(3); for a partnership-taxed LLC it directs that **at least two members be listed** |
+| Federal K-1s | Yes — partner TIN |
+| Bank account (31 CFR 1020.220) | Yes, **but** §(a)(2)(i)(B) permits opening with a **pending** TIN — permissive per bank, so **ask in writing** |
+| Being paid as a 1099 vendor | **Avoid this route** — 24% backup withholding under IRC 3406 |
+| **CTA beneficial ownership reporting** | **No longer applies.** FinCEN's final rule of 11 Aug 2026 permanently exempts all US-formed entities and US persons. **The bank's separate CDD rule at 31 CFR 1010.230 survives untouched** — do not conflate the two. |
+
+### The clean interim structure
+
+**Ben as an employee while the SS-5 is pending**, not as a 1099 vendor:
+
+- **The I-9's SSN field is voluntary unless the employer uses E-Verify.** Check
+  that first — **it is dispositive.**
+- Work while awaiting a number is permitted.
+- **IRS Pub 15: enter "Applied For" on the W-2**, then file a W-2c once the
+  number issues.
+
+### 🔴 What not to do
+
+**Do not put the company in Joey's and Christopher's names while Ben runs it.**
+
+The IRS states plainly that **nominees cannot apply for an EIN and should not be
+listed on Form SS-4.** Exposure runs through **18 U.S.C. §1014** (false statement
+to a financial institution — up to 30 years) and **15 U.S.C. §645**, plus
+substance-over-form doctrine under ***Commissioner v. Bollinger*, 485 U.S. 340
+(1988)** — a Kentucky case.
+
+**The nominee structure does not solve the TIN problem. It relocates it and adds
+recharacterisation risk.** And the failure mode is almost never an audit — **it
+is a divorce, a death, or a falling-out.**
+
+### The long pole is proof of birth, not the SSN
+
+- **If a birth record exists:** weeks. The card is **free**, 5–10 business days
+  after approval.
+- **If a Kentucky delayed registration is needed** — 901 KAR 5:020, form VS-B-5,
+  requiring **two affidavits from people at least ten years his senior plus a
+  document at least ten years old** — **months.** Start now, not in December.
+- **His Kentucky driver's licence is usable identity evidence**, and it is
+  consistent with his account: **KRS 186.412** lets the Transportation Cabinet
+  assign a substitute number on a notarised affidavit.
+
+### One thing that is simpler than expected
+
+**Kentucky has no state general contractor licence** — only electrical, plumbing
+and HVAC. **Drywall, framing and materials distribution are not licensed
+trades.** The practical gates are local occupational licence registration and
+**workers' compensation, which matters more than people expect because of
+up-the-ladder liability under KRS 342.610.**
+
+---
+
 ## WEEK 1 — 8–11 September · the free calls
 
 | | Action | Owner |
@@ -50,7 +141,8 @@ these the four that gate real money and that has not changed.
 | 2.1 | **KY CPA** | Is the cut shop "manufacturing" or a "service" under the LLET? Sales-tax treatment before the first invoice. **Both are five-figure annual questions.** | Christopher |
 | 2.2 | **KY construction attorney** | The related-party protocol, before Supply's first sale to Construction. Plus the Enterprises structure — **Kentucky has no series LLC**, so it is separate entities or nothing. | Christopher |
 | 2.3 | **Insurance broker** | Products liability for Supply **as importer**, cut shop disclosed, **bound in writing before material ships.** KRS 411.340's middleman defense does not protect you and the cut shop independently defeats it. | Christopher |
-| 2.4 | **KY employment attorney** | Joey's R&B Roofing agreement — non-compete, non-solicit, moonlighting, conflict of interest — **before he gives notice.** A resignation planned for October moves this to the front of the queue. | Joey |
+| 2.4 | **KY attorney — Ben's side** | The taxpayer-number sequence in Gate 0.5, under privilege, **before the CPA.** | Christopher |
+| 2.5 | **KY employment attorney** | Joey's R&B Roofing agreement — non-compete, non-solicit, moonlighting, conflict of interest — **before he gives notice.** A resignation planned for October moves this to the front of the queue. | Joey |
 
 **Also in this window:**
 
