@@ -163,19 +163,19 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
               : side === "customer" ? "Contractor side" : "Marketplace"}
           </div>
           <div className="grid gap-1.5 sm:grid-cols-2">
-            {DIRECTORY.filter(d => roleById(d.roleId).side === side && d.status === "Active").map(d => {
-              const r = roleById(d.roleId);
-              return (
-                <button key={d.id} onClick={() => { signInAs(d.id); close(); }}
-                  className="min-h-[44px] border border-[hsl(var(--rule))] p-2.5 text-left hover:border-[hsl(var(--safety))]">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="disp text-[15px] font-semibold leading-none">{d.name}</span>
-                    <Tag tone={side === "internal" ? "safety" : side === "customer" ? "steel" : "good"}>{r.name}</Tag>
-                  </div>
-                  <div className="mt-1 text-[13px] leading-[1.4] text-[hsl(var(--ink-2))]">{r.blurb}</div>
-                </button>
-              );
-            })}
+            {/* one card per role — people stay in the directory, not on the door */}
+            {DIRECTORY.filter(d => roleById(d.roleId).side === side && d.status === "Active")
+              .filter((d, i, all) => all.findIndex(x => x.roleId === d.roleId) === i)
+              .map(d => {
+                const r = roleById(d.roleId);
+                return (
+                  <button key={d.roleId} onClick={() => { signInAs(d.id); close(); }}
+                    className="min-h-[44px] border border-[hsl(var(--rule))] p-2.5 text-left hover:border-[hsl(var(--marine))]">
+                    <span className="disp text-[15px] font-semibold leading-none">{r.name}</span>
+                    <div className="mt-1 text-[13px] leading-[1.4] text-[hsl(var(--ink-2))]">{r.blurb}</div>
+                  </button>
+                );
+              })}
           </div>
         </div>
       ))}
