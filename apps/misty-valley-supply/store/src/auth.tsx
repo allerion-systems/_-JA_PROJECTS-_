@@ -136,6 +136,33 @@ function Shell({
 
 const field = "h-11 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))]";
 
+/* The demo role list, folded behind one small link so the customer sign-in
+   stays clean. */
+function StaffDoor({ onPick }: { onPick: (id: string) => void }) {
+  const [open, setOpen] = React.useState(false);
+  if (!open) return (
+    <button onClick={() => setOpen(true)}
+      className="mt-2 text-[11px] text-[hsl(var(--ink-3))] underline underline-offset-2">
+      Staff sign-in
+    </button>
+  );
+  return (
+    <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
+      {DIRECTORY.filter(d => d.status === "Active")
+        .filter((d, i, all) => all.findIndex(x => x.roleId === d.roleId) === i)
+        .map(d => {
+          const r = roleById(d.roleId);
+          return (
+            <button key={d.roleId} onClick={() => onPick(d.id)}
+              className="min-h-[44px] border border-[hsl(var(--rule))] px-2.5 text-left text-[14px] font-semibold hover:border-[hsl(var(--marine))]">
+              {r.name}
+            </button>
+          );
+        })}
+    </div>
+  );
+}
+
 export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Modal) => void }) {
   const { signIn, signInAs, branch, setBranch } = useAuth();
   const [step, setStep] = React.useState(1);
@@ -185,31 +212,9 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
       </div>
       <Btn className="mt-3 w-full" onClick={() => { signIn(); close(); }}>Sign in</Btn>
 
-      <Rule className="my-4" />
-      <Lab className="mb-2">Or step into a role — this is a working prototype</Lab>
-      {(["internal", "customer", "marketplace"] as const).map(side => (
-        <div key={side} className="mb-3">
-          <div className="eyebrow mb-1.5 text-[hsl(var(--ink-3))]">
-            {side === "internal" ? "Misty Valley staff"
-              : side === "customer" ? "Contractor side" : "Marketplace"}
-          </div>
-          <div className="grid gap-1.5 sm:grid-cols-2">
-            {/* one card per role — people stay in the directory, not on the door */}
-            {DIRECTORY.filter(d => roleById(d.roleId).side === side && d.status === "Active")
-              .filter((d, i, all) => all.findIndex(x => x.roleId === d.roleId) === i)
-              .map(d => {
-                const r = roleById(d.roleId);
-                return (
-                  <button key={d.roleId} onClick={() => { signInAs(d.id); close(); }}
-                    className="min-h-[44px] border border-[hsl(var(--rule))] p-2.5 text-left hover:border-[hsl(var(--marine))]">
-                    <span className="disp text-[15px] font-semibold leading-none">{r.name}</span>
-                    <div className="mt-1 text-[13px] leading-[1.4] text-[hsl(var(--ink-2))]">{r.blurb}</div>
-                  </button>
-                );
-              })}
-          </div>
-        </div>
-      ))}
+      {/* Staff role-switching lives on the Dashboard for signed-in staff — the
+          customer sign-in stays clean. Demo roles: triple-tap the wordmark. */}
+      <StaffDoor onPick={id => { signInAs(id); close(); }} />
 
       <Rule className="my-3" />
       <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
