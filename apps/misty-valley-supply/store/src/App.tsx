@@ -75,7 +75,7 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
     ] },
   { label: "Building Structures", sub: "Conex, offices, custom modular", go: { view: "shop", cat: "structures" }, cats: ["structures"] },
   { label: "Custom Fabrication", sub: "Roof screens · shop drawings", go: { view: "screen" } },
-  { label: "Services", sub: "Design, engineering, design-build", go: { view: "services" } },
+  { label: "Services", sub: "Drafting, takeoffs, design-build", go: { view: "services" } },
   { label: "Rentals", sub: "Day, week, 4-week", go: { view: "rent" } },
 ];
 
