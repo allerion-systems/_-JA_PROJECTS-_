@@ -72,7 +72,7 @@ export default function Agents() {
       />
 
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-        <div>
+        <div className="min-w-0">
           <h3 className="disp mb-3 text-[22px] font-semibold">Tools exposed</h3>
           <Panel pad={false} className="mb-6">
             <DataTable
@@ -93,12 +93,12 @@ export default function Agents() {
             as structured data rather than marketing copy — and it is the only tool here that
             answers the question a superintendent actually has.
           </p>
-          <pre className="mono overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--ink))] p-4 text-[12px] leading-[1.6] text-[#dfe3e6]">
+          <pre className="mono max-w-full overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--ink))] p-3 text-[11px] leading-[1.6] text-[#dfe3e6] sm:p-4 sm:text-[12px]">
 {EXAMPLE}
           </pre>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <Panel className="sticky top-4" pad={false}>
             <div className="tape h-1.5" />
             <div className="p-5">
@@ -108,7 +108,7 @@ export default function Agents() {
                   {copied ? "Copied ✓" : "Copy JSON"}
                 </button>
               </div>
-              <pre className="mono max-h-[420px] overflow-auto border border-[hsl(var(--rule))] bg-[hsl(var(--panel-2))] p-3 text-[11px] leading-[1.55]">
+              <pre className="mono max-h-[420px] max-w-full overflow-auto border border-[hsl(var(--rule))] bg-[hsl(var(--panel-2))] p-3 text-[10.5px] leading-[1.55] sm:text-[11px]">
 {JSON.stringify(manifest, null, 2)}
               </pre>
               <Rule className="my-4" />
