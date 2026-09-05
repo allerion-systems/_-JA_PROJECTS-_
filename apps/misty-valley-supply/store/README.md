@@ -1,29 +1,32 @@
-# Joey's Portfolio
+# React + TypeScript + Vite
 
-An always-evolving portfolio site for James "Joey" Allee — construction estimator / project manager. The centerpiece is an interactive 3D globe with a pin for every project he's worked on; clicking a pin opens a case-study panel with real project facts and, where available, a Lean Six Sigma Black Belt (DMAIC) write-up.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## What's here
+Currently, two official plugins are available:
 
-- **`index.html` / `css/` / `js/`** — the site itself. Plain HTML/CSS/JS, no build step, no framework. The globe is rendered with [globe.gl](https://github.com/vasturiano/globe.gl) (a Three.js-based helper), loaded via CDN.
-- **`data/projects.json`** — the source of truth: every project's year, employer, location, budget, scope, role, and status, extracted from Joey's master project log. Coordinates are city/site-level approximations for map plotting, not survey-grade.
-- **`content/lssbb/`** — first-draft Lean Six Sigma Black Belt (DMAIC) case studies per project. These are AI-drafted narratives grounded in the real project facts; any quantified metric that wasn't in the source data is marked `[QUANTIFY: ...]` and needs Joey's real numbers before being presented to an employer as fact. See `content/lssbb/README.md`.
-- **`obsidian/`** — an Obsidian vault view of the same data: one note per project, employer, and year, cross-linked so Graph View shows the whole portfolio as a network (project ↔ employer, project ↔ year, project ↔ LSSBB write-up). Regenerate it any time the data changes: `python3 scripts/gen_obsidian.py`.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Running locally
+## React Compiler
 
-No build step — just serve the directory and open it:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-```bash
-python3 -m http.server 8000
-# then open http://localhost:8000
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
 
-(A plain `file://` open won't work — the site `fetch()`s `data/projects.json` and `content/lssbb/*.md`, which needs a real HTTP origin.)
-
-## Adding a new project
-
-Add an entry to `data/projects.json`'s `projects` array (see existing entries for the shape), then optionally add a matching `content/lssbb/<id>.md` write-up. Re-run `python3 scripts/gen_obsidian.py` to refresh the vault.
-
-## Deploying
-
-GitHub Pages, serving from `main` / root. (Enable under repo Settings → Pages if not already on.)
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

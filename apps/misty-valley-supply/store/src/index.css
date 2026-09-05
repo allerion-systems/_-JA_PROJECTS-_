@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ground */
+    --ground:        40 14% 97%;
+    --panel:          0  0% 100%;
+    --panel-2:       40 11% 95.5%;
+    --panel-3:       40 10% 93%;
+
+    /* ink */
+    --ink:          218 20% 13%;
+    --ink-2:        218 10% 36%;
+    --ink-3:        218  9% 50%;
+
+    /* rules */
+    --rule:          40  9% 88%;
+    --rule-2:        40  9% 93%;
+    --field:        218 10% 54%;
+
+    /* safety accent — --safety is DISPLAY fill only, never small white text */
+    --safety:        21 94% 46%;
+    --safety-2:      21 94% 40%;
+    --safety-press:  21 96% 33%;
+    --safety-soft:   24 100% 97%;
+    --safety-hi:     24 96% 56%;
+
+    /* secondary accent */
+    --marine:       218 86% 33%;
+    --marine-2:     218 88% 27%;
+    --marine-soft:  216 95% 96%;
+
+    /* semantic */
+    --good:         152 86% 24%;
+    --good-soft:    150 60% 95%;
+    --warn:          30 94% 32%;
+    --warn-soft:     42 96% 94%;
+    --bad:          356 74% 40%;
+    --bad-soft:     356 80% 96.5%;
+
+    /* on dark */
+    --on-dark:        0  0% 100%;
+    --on-dark-2:    218 12% 70%;
+
+    --steel: var(--marine);
+    --safety-2-legacy: var(--safety-2);
+
+    --background: var(--ground);
+    --foreground: var(--ink);
+    --card: var(--panel);
+    --card-foreground: var(--ink);
+    --popover: var(--panel);
+    --popover-foreground: var(--ink);
+    --primary: var(--ink);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--panel-2);
+    --secondary-foreground: var(--ink);
+    --muted: var(--panel-2);
+    --muted-foreground: var(--ink-2);
+    --accent: var(--panel-2);
+    --accent-foreground: var(--ink);
+    --destructive: var(--bad);
+    --destructive-foreground: 0 0% 100%;
+    --border: var(--rule);
+    --input: var(--field);
+    --ring: var(--safety);
+    --radius: 6px;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: hsl(var(--ground));
+  color: hsl(var(--ink));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-feature-settings: 'cv05' 1, 'cv08' 1, 'ss01' 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.disp { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: -.005em; line-height: 1; }
+.mono, .ident { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-variant-numeric: tabular-nums; }
+.num  { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+.lab  { font-size: 11px; font-weight: 500; line-height: 1.35; letter-spacing: .005em; color: hsl(var(--ink-3)); }
+.eyebrow { font-size: 11px; font-weight: 600; line-height: 1; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ---------------------------------------------------------- surfaces */
+
+.card {
+  background: hsl(var(--panel));
+  border: 1px solid hsl(var(--rule));
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px hsl(215 28% 12% / 0.05);
+}
+.card-hi {
+  background: hsl(var(--panel));
+  border: 1px solid hsl(var(--rule));
+  border-radius: var(--radius);
+  box-shadow: 0 2px 4px hsl(215 28% 12% / 0.06), 0 8px 24px -12px hsl(215 28% 12% / 0.18);
+  overflow: hidden;
+}
+.lift { transition: box-shadow .16s ease, transform .16s ease, border-color .16s ease; }
+.lift:hover {
+  border-color: hsl(var(--ink) / 0.28);
+  box-shadow: 0 4px 10px hsl(215 28% 12% / 0.08), 0 16px 30px -18px hsl(215 28% 12% / 0.3);
+  transform: translateY(-1px);
+}
+
+/* A product plate: the tile a part sits on. Reads as a photo, not a sketch. */
+.plate {
+  background:
+    radial-gradient(120% 90% at 50% 6%, #fff 0%, hsl(36 18% 96%) 58%, hsl(34 14% 91%) 100%);
+  box-shadow: inset 0 -14px 22px -18px hsl(215 28% 12% / 0.4);
+}
+
+.hair { border-color: hsl(var(--rule)); }
+.tape {
+  background-image: repeating-linear-gradient(
+    45deg, hsl(var(--safety)) 0 10px, hsl(var(--ink)) 10px 20px);
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: hsl(var(--rule)); }
+::-webkit-scrollbar-track { background: transparent; }
+
+:focus-visible { outline: 2px solid hsl(var(--safety)); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ------------------------------------------------- Job Site Earth pins */
+
+.mvs-pin {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; cursor: pointer; background: none; border: 0;
+}
+.mvs-pin-dot {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: hsl(var(--ink)); color: #fff;
+  border: 2px solid #fff;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px; line-height: 1;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.45);
+}
+.mvs-pin-ring {
+  position: absolute; inset: -6px; z-index: 1;
+  border: 2px solid transparent;
+}
+.mvs-pin-ring.live {
+  border-color: hsl(var(--safety));
+  animation: mvs-pulse 2s ease-out infinite;
+}
+.mvs-pin:hover .mvs-pin-dot { background: hsl(var(--safety)); }
+.mvs-pin-name {
+  position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px; letter-spacing: 0.02em;
+  color: #fff; background: hsl(var(--ink) / 0.82);
+  padding: 2px 5px; pointer-events: none;
+}
+@keyframes mvs-pulse {
+  0%   { transform: scale(0.85); opacity: 1; }
+  100% { transform: scale(1.9);  opacity: 0; }
+}
+.maplibregl-ctrl-attrib { font-size: 10px; }
