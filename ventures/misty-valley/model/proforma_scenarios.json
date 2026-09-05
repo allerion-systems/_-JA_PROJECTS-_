@@ -614,6 +614,116 @@
       },
       "startup_cost": 185000.0,
       "tax_rate": 0.0
+    },
+    "direct_ship": {
+      "name": "Direct-ship trading -- the Allee model",
+      "notes": "Buy from the mill, sell before or as it ships, have the mill deliver straight to the job site. Never take possession. Thinner margin per load, but no yard, no truck, no forklift, no cut-shop payroll, and -- the point -- NO INVENTORY. The cash conversion cycle collapses from 80 days to 35, so volume stops being rationed by capital. This is what Allee Wholesale Lumber did with 35-40 million board feet a year, two brothers and a teletype.",
+      "volume": {
+        "segments": [
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 5.0
+          },
+          {
+            "months": 3,
+            "loads": 7.0
+          },
+          {
+            "months": 3,
+            "loads": 9.0
+          },
+          {
+            "months": 3,
+            "loads": 11.0
+          },
+          {
+            "months": 3,
+            "loads": 13.0
+          },
+          {
+            "months": 3,
+            "loads": 15.0
+          },
+          {
+            "months": 3,
+            "loads": 17.0
+          },
+          {
+            "months": 6,
+            "loads": 20.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.695,
+        "service_price_per_lf": 0.015,
+        "service_cost_per_lf": 0.004,
+        "delivery_cost_per_load": 0.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 4000.0,
+          "admin_wages": 3200.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 700.0,
+          "insurance": 900.0,
+          "software_and_admin": 900.0,
+          "professional_fees": 900.0,
+          "marketing": 600.0,
+          "other": 400.0
+        },
+        {
+          "owner_salary": 7000.0,
+          "yard_and_shop_wages": 5200.0,
+          "admin_wages": 4200.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 1100.0,
+          "insurance": 1400.0,
+          "software_and_admin": 1400.0,
+          "professional_fees": 900.0,
+          "marketing": 1200.0,
+          "other": 700.0
+        },
+        {
+          "owner_salary": 9000.0,
+          "yard_and_shop_wages": 11000.0,
+          "admin_wages": 7000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 1600.0,
+          "insurance": 2200.0,
+          "software_and_admin": 2200.0,
+          "professional_fees": 1200.0,
+          "marketing": 2000.0,
+          "other": 1100.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 0.0,
+        "days_receivable": 65.0,
+        "days_payable": 30.0
+      },
+      "capital": {
+        "equity_injection": 60000.0,
+        "term_debt": 0.0,
+        "line_of_credit_limit": 900000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 35000.0,
+      "tax_rate": 0.0
     }
   }
 }
