@@ -85,7 +85,7 @@ export default function ProductView({
           </div>
           <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
             {p.img
-              ? "Representative image, AI-generated for the prototype. Supplier photography replaces these per SKU before launch."
+              ? "Representative image (AI render or licensed stock) for the prototype. Supplier photography replaces these per SKU before launch."
               : "Representative drawing. Supplier photography drops in per SKU as it arrives."}
           </p>
         </div>
