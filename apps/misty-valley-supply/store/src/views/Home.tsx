@@ -131,7 +131,7 @@ export default function Home({
           <Lab className="mb-2">Delivery</Lab>
           <h3 className="disp text-[22px] font-bold leading-none">Any counter in town, today</h3>
           <p className="mt-2 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
-            A runner picks up your list from any local store and puts it on your deck.
+            A runner picks up your list from any local store and puts it on your jobsite.
             List in, quote back, done.
           </p>
           <Btn size="sm" className="mt-4" onClick={onEarth}>Start a run</Btn>

@@ -22,7 +22,7 @@ const VERIFIED = [
 
 const BASE_FEE = 25, PER_MI = 2, SVC_PCT = 12;
 
-const STEPS = ["Requested", "Claimed", "Shopping", "Price verified", "En route", "On the deck"];
+const STEPS = ["Requested", "Claimed", "Shopping", "Price verified", "En route", "On the jobsite"];
 
 export default function Runs({ onSignIn }: { onSignIn: () => void }) {
   const { user } = useAuth();
@@ -50,7 +50,7 @@ export default function Runs({ onSignIn }: { onSignIn: () => void }) {
     <div>
       <Head
         eyebrow="Material Runs"
-        title="Any counter in town, on your deck today"
+        title="Any counter in town, on your jobsite today"
         sub="Send the list. A runner claims it, verifies the shelf price before buying, and runs it to the jobsite. We buy it, we resell it to you on your account — one invoice, your terms."
       />
 
@@ -78,7 +78,7 @@ export default function Runs({ onSignIn }: { onSignIn: () => void }) {
                 </div>
                 {step >= STEPS.length - 1 ? (
                   <p className="text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
-                    Delivered with a photo of the load on the deck. Goods and run fee land on
+                    Delivered with a photo of the load on the jobsite. Goods and run fee land on
                     one Misty Valley invoice at your terms.
                   </p>
                 ) : (

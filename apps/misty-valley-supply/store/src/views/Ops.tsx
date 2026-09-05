@@ -26,7 +26,7 @@ export default function Ops() {
           ["Gross margin", `${KPI.grossPct}%`, "blended"],
           ["Dropshipped", `${KPI.dropshipPct}%`, "of lines"],
           ["Avg fulfilment", KPI.avgFulfil, ""],
-          ["On time", `${KPI.onTime}%`, "to the deck"],
+          ["On time", `${KPI.onTime}%`, "to the jobsite"],
         ].map(([k, v, s]) => (
           <div key={k} className="bg-[hsl(var(--panel))] p-4">
             <Lab className="mb-1.5">{k}</Lab>

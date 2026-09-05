@@ -99,7 +99,7 @@ export const ROLES: Role[] = [
     perms: ["catalog.view","pick.queue","receive.post","inventory.adjust","site.view"] },
 
   { id: "driver", name: "Driver", side: "internal", home: "dash",
-    blurb: "Runs the route, gets the signature, shoots the deck photo.",
+    blurb: "Runs the route, gets the signature, shoots the delivery photo.",
     perms: ["delivery.run","site.view","site.post"] },
 
   { id: "fab", name: "Fabrication lead", side: "internal", home: "dash",
@@ -125,7 +125,7 @@ export const ROLES: Role[] = [
             "site.post","yard.list","yard.pay"] },
 
   { id: "cust_field", name: "Field requester", side: "customer", home: "shop",
-    blurb: "The foreman on the deck. Can ask for material, cannot commit money.",
+    blurb: "The foreman on the jobsite. Can ask for material, cannot commit money.",
     perms: [...CUSTOMER_BASE,"quote.create","site.post"] },
 
   /* ---- marketplace ---- */
@@ -349,7 +349,7 @@ export const DASHBOARDS: Record<string, Dash> = {
     ],
   },
   cust_field: {
-    headline: "Ask for what the deck needs",
+    headline: "Ask for what the job needs",
     tiles: [
       { k: "Your requests", v: "2", s: "1 waiting on the office", tone: "warn" },
       { k: "Delivering today", v: "1", s: "Lee Street 6a" },
