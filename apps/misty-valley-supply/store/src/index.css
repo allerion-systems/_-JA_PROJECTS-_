@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ground: 34 12% 94%;
+    --panel: 30 10% 98%;
+    --panel-2: 34 10% 90%;
+    --ink: 210 22% 9%;
+    --ink-2: 214 10% 38%;
+    --ink-3: 214 8% 55%;
+    --rule: 30 8% 82%;
+    --safety: 22 89% 42%;
+    --safety-2: 22 89% 48%;
+    --steel: 205 30% 27%;
+    --good: 152 45% 32%;
+    --warn: 38 82% 40%;
+    --bad: 2 62% 44%;
+
+    --background: var(--ground);
+    --foreground: var(--ink);
+    --card: var(--panel);
+    --card-foreground: var(--ink);
+    --popover: var(--panel);
+    --popover-foreground: var(--ink);
+    --primary: var(--ink);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--panel-2);
+    --secondary-foreground: var(--ink);
+    --muted: var(--panel-2);
+    --muted-foreground: var(--ink-2);
+    --accent: var(--panel-2);
+    --accent-foreground: var(--ink);
+    --destructive: var(--bad);
+    --destructive-foreground: 0 0% 100%;
+    --border: var(--rule);
+    --input: var(--rule);
+    --ring: var(--safety);
+    --radius: 2px;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: hsl(var(--ground));
+  color: hsl(var(--ink));
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.disp { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; text-transform: uppercase; letter-spacing: .01em; line-height: .96; }
+.mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.lab  { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .13em; text-transform: uppercase; }
+
+.hair { border-color: hsl(var(--rule)); }
+.tape {
+  background-image: repeating-linear-gradient(
+    45deg, hsl(var(--safety)) 0 10px, hsl(var(--ink)) 10px 20px);
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: hsl(var(--rule)); }
+::-webkit-scrollbar-track { background: transparent; }
+
+:focus-visible { outline: 2px solid hsl(var(--safety)); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

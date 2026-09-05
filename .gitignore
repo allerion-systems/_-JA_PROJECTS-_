@@ -4,3 +4,8 @@ Thumbs.db
 .venv/
 __pycache__/
 .verify/
+
+# app builds
+apps/**/node_modules/
+apps/**/dist/
+apps/**/.parcel-cache/
