@@ -137,8 +137,8 @@ function Inner() {
   return (
     <div className="min-h-full pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-0">
       {/* ---------------------------------------------------------- header */}
-      <header className="sticky top-0 z-40 border-b border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white">
-        <div className="h-1 bg-[hsl(var(--safety))]" />
+      <header className="sticky top-0 z-40 border-b border-[hsl(var(--marine-2))] bg-[hsl(var(--marine-2))] text-white">
+        <div className="h-1 bg-[hsl(var(--safety-hi))]" />
 
         {/* utility strip */}
         <div className="border-b border-white/10">
@@ -183,9 +183,17 @@ function Inner() {
 
         {/* brand + cart */}
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-3 py-2 sm:gap-5 sm:px-6 sm:py-2.5">
-          <button onClick={() => go("home")} className="flex min-h-[44px] min-w-0 items-baseline gap-1.5 text-left sm:gap-2.5">
-            <span className="disp truncate text-[18px] font-bold leading-none sm:text-[22px]">Misty Valley</span>
-            <span className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety-hi))] sm:text-[22px]">Supply</span>
+          <button onClick={() => go("home")} className="flex min-h-[44px] min-w-0 items-center gap-2 text-left sm:gap-3">
+            {/* the MV diamond, carried over from Misty Valley Contracting's mark */}
+            <svg viewBox="0 0 88 40" aria-hidden className="h-[26px] w-[57px] shrink-0 sm:h-[30px] sm:w-[66px]">
+              <polygon points="44,1 87,20 44,39 1,20" fill="hsl(var(--marine))" stroke="hsl(var(--safety-hi))" strokeWidth="1.5" />
+              <text x="44" y="27" textAnchor="middle" fill="hsl(var(--safety-hi))"
+                style={{ font: "800 21px Archivo, Arial, sans-serif", letterSpacing: "-0.5px" }}>MV</text>
+            </svg>
+            <span className="flex min-w-0 items-baseline gap-1.5 sm:gap-2.5">
+              <span className="disp truncate text-[18px] font-bold leading-none sm:text-[22px]">Misty Valley</span>
+              <span className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety-hi))] sm:text-[22px]">Supply</span>
+            </span>
           </button>
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <button onClick={() => go("account")} aria-label="My account"
@@ -196,7 +204,7 @@ function Inner() {
               className="flex h-11 items-center gap-2 rounded-[6px] border border-white/25 px-3.5 text-[13px] font-medium hover:border-white/60">
               Order
               <span className={cx("num rounded-full px-2 py-px text-[11px] font-bold",
-                count ? "bg-[hsl(var(--safety))] text-white" : "bg-white/15")}>{count}</span>
+                count ? "bg-[hsl(var(--safety-hi))] text-[hsl(var(--marine-2))]" : "bg-white/15")}>{count}</span>
             </button>
           </div>
         </div>
@@ -353,7 +361,7 @@ function Inner() {
           {bar.map(n => (
             <button key={n.id} onClick={() => go(n.id)} aria-current={isActive(n.id)}
               className={cx("-mt-0.5 flex h-[60px] flex-col items-center justify-center gap-1 border-t-2",
-                isActive(n.id) ? "border-[hsl(var(--safety))] text-[hsl(var(--safety))]"
+                isActive(n.id) ? "border-[hsl(var(--marine))] text-[hsl(var(--marine))]"
                               : "border-transparent text-[hsl(var(--ink-3))]")}>
               <Icon>{n.icon}</Icon>
               <span className="text-[11px] font-semibold leading-none">{n.short}</span>

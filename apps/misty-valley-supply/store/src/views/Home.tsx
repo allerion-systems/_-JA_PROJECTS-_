@@ -184,8 +184,10 @@ export default function Home({
       <div className="mb-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {hot.map(p => (
           <button key={p.sku} onClick={() => onShop(p.cat)} className="card lift p-3 text-left">
-            <div className="mb-2 flex aspect-[3/2] items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
-              <Glyph sku={p.sku} cat={p.cat} className="h-[76%] w-[76%]" />
+            <div className="mb-2 flex aspect-[3/2] items-center justify-center overflow-hidden plate rounded-[6px] border border-[hsl(var(--rule))]">
+              {p.img
+                ? <img src={p.img} alt={p.name} className="h-full w-full object-contain" />
+                : <Glyph sku={p.sku} cat={p.cat} className="h-[76%] w-[76%]" />}
             </div>
             <div className="text-[13px] font-semibold leading-[1.3]">{p.name}</div>
             <div className="mono mt-1 text-[11px] text-[hsl(var(--safety-2))]">{p.osha}</div>

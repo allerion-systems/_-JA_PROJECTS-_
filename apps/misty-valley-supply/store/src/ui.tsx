@@ -49,7 +49,7 @@ export function Btn({
   const base = "rounded-[6px] font-semibold inline-flex items-center justify-center gap-2 border transition-all select-none disabled:opacity-40 disabled:shadow-none active:translate-y-px";
   const sizes = { sm: "h-11 px-4 text-[13px] sm:h-10", md: "h-11 px-6 text-[15px] sm:h-10" };
   const vars = {
-    solid: "bg-[hsl(var(--safety-2))] border-[hsl(var(--safety-2))] text-white shadow-[0_1px_2px_hsl(21_94%_20%/.25)] hover:bg-[hsl(var(--safety-press))] hover:border-[hsl(var(--safety-press))] hover:shadow-[0_3px_10px_-2px_hsl(21_94%_30%/.4)]",
+    solid: "bg-[hsl(var(--safety-2))] border-[hsl(var(--safety-2))] text-white shadow-[0_1px_2px_hsl(222_70%_12%/.25)] hover:bg-[hsl(var(--safety-press))] hover:border-[hsl(var(--safety-press))] hover:shadow-[0_3px_10px_-2px_hsl(222_70%_18%/.4)]",
     line: "bg-[hsl(var(--panel))] border-[hsl(var(--field))] text-[hsl(var(--ink))] shadow-[0_1px_2px_hsl(218_20%_13%/.05)] hover:border-[hsl(var(--ink))] hover:bg-[hsl(var(--panel-2))]",
     ghost: "bg-transparent border-transparent text-[hsl(var(--ink-2))] hover:text-[hsl(var(--ink))]",
   };

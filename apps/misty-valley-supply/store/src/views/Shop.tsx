@@ -73,8 +73,10 @@ function Row({
     <article className="grid grid-cols-[84px_1fr] gap-3.5 border-b border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-3 transition-colors hover:bg-[hsl(var(--panel-2))]/60 sm:grid-cols-[128px_1fr_200px] sm:gap-5 sm:p-4">
       {/* image */}
       <button onClick={onSpec}
-        className="flex aspect-square items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
-        <Glyph sku={p.sku} cat={p.cat} className="h-[78%] w-[78%]" />
+        className="flex aspect-square items-center justify-center overflow-hidden plate rounded-[6px] border border-[hsl(var(--rule))]">
+        {p.img
+          ? <img src={p.img} alt={p.name} className="h-full w-full object-contain" />
+          : <Glyph sku={p.sku} cat={p.cat} className="h-[78%] w-[78%]" />}
       </button>
 
       {/* detail */}

@@ -78,11 +78,15 @@ export default function ProductView({
               <Tag tone={fulfilTone(p.fulfil) as never}>{fulfilName(p.fulfil)}</Tag>
             </div>
             <div className="flex h-full w-full items-center justify-center">
-              <Glyph sku={p.sku} cat={p.cat} className="h-[76%] w-[76%]" />
+              {p.img
+                ? <img src={p.img} alt={p.name} className="h-full w-full object-contain" />
+                : <Glyph sku={p.sku} cat={p.cat} className="h-[76%] w-[76%]" />}
             </div>
           </div>
           <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
-            Representative drawing. Supplier photography drops in per SKU as it arrives.
+            {p.img
+              ? "Representative image, AI-generated for the prototype. Supplier photography replaces these per SKU before launch."
+              : "Representative drawing. Supplier photography drops in per SKU as it arrives."}
           </p>
         </div>
 
@@ -183,8 +187,10 @@ export default function ProductView({
             {related.map(r => (
               <button key={r.sku} onClick={() => onProduct(r.sku)}
                 className="card lift group flex min-h-[44px] items-center gap-3 rounded-[10px] p-3 text-left sm:flex-col sm:items-stretch sm:gap-0 sm:p-0">
-                <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))] sm:h-auto sm:w-full sm:aspect-[2/1] sm:rounded-none sm:rounded-t-[10px] sm:border-0 sm:border-b">
-                  <Glyph sku={r.sku} cat={r.cat} className="h-[64%] w-auto max-h-full" />
+                <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden plate rounded-[6px] border border-[hsl(var(--rule))] sm:h-auto sm:w-full sm:aspect-[2/1] sm:rounded-none sm:rounded-t-[10px] sm:border-0 sm:border-b">
+                  {r.img
+                    ? <img src={r.img} alt={r.name} className="h-full w-full object-contain" />
+                    : <Glyph sku={r.sku} cat={r.cat} className="h-[64%] w-auto max-h-full" />}
                 </div>
                 <div className="min-w-0 sm:p-4">
                   <div className="text-[15px] font-semibold leading-[1.3] text-[hsl(var(--ink))] group-hover:text-[hsl(var(--marine))]">

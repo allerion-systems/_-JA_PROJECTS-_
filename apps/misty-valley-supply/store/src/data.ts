@@ -1,6 +1,8 @@
 /* Misty Valley Supply — prototype catalog and operating data.
    Prices are placeholders for layout. Standards and OSHA cites are real. */
 
+import { PRODUCT_IMAGES } from "@/assets/products/productImages";
+
 export type Fulfil = "dropship" | "stock" | "fabricate";
 
 export type Product = {
@@ -18,6 +20,7 @@ export type Product = {
   lead: string;
   moq?: number;
   hot?: boolean;
+  img?: string;          // representative image (AI-generated for the prototype)
 };
 
 export const CATEGORIES = [
@@ -281,6 +284,10 @@ export const PRODUCTS: Product[] = [
     note: "Forklift-set. Gate access, flagger shelter, tool crib.",
     why: "A booth is bought for the person in it: out of traffic, out of weather, sightlines to the gate. Set it where the site plan puts the flagger and the truck route, not where the crane happened to be that day." },
 ];
+
+/* Attach representative imagery by SKU. Products without a generated image
+   keep their drawn Glyph in every view. */
+for (const p of PRODUCTS) p.img = PRODUCT_IMAGES[p.sku];
 
 // ---- the fabricated hero -------------------------------------------------
 
