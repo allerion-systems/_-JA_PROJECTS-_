@@ -192,29 +192,103 @@ export const PRODUCTS: Product[] = [
 // ---- the fabricated hero -------------------------------------------------
 
 export const ROOFSCREEN = {
-  title: "Shop-Fabricated Roof Screen Frame",
+  title: "Shop-Fabricated Roof Screen",
   proof: "Lee Street",
-  cost: 6000,
+
+  /* The real Lee Street job. Misty Valley had the frame shop-fabricated for
+     $6,000 and bought roughly $1,000 of panel. It sold to R&B Roofing for
+     $12,000. Those three numbers are the whole business case and every rate
+     below is derived from them, not guessed. */
+  lee: {
+    frameCost: 6000,
+    panelCost: 1000,
+    sell: 12000,
+    height: 3.5,        // 3'-6" screen per detail 6/A160
+    bay: 5,             // 5'-0" post spacing
+    lf: 156,            // implied by the frame cost at the rate below
+  },
+
+  /* Basis of design named on the drawings. We fabricate an EQUAL. We do not
+     sell, relabel or represent ourselves as the named manufacturer. */
+  bod: {
+    frame: "RoofScreen SC3",
+    frameNote: "3-member cantilevered galvanized round tube, stainless connectors, square base supports",
+    panel: "RoofScreen 7.2 Rib",
+    panelNote: "7.2 in module, 1-1/2 in deep rib",
+    detail: "Detail 6/A160 — RTU screen, 3'-6\" above deck, hat channel behind panel",
+  },
+
   bullets: [
-    "Entire roof screen frame shop-fabricated to the project's basis of design",
-    "Fabricated flat, delivered in labeled sections, set in one crane pick",
-    "Galvanized structural framing with your specified infill",
-    "Delegated design and sealed calculations by a licensed engineer, per the spec section",
+    "Whole frame shop-fabricated flat to the project basis of design",
+    "Delivered in labeled sections and set in one pick",
+    "Buy the kit, or buy frame, panel, hat channel and fasteners separately",
+    "Shop drawings and sealed calculations quoted as their own line",
   ],
-  heights: [4, 6, 8, 10, 12],
+
+  heights: [3.5, 4, 6, 8, 10, 12],
+
+  /* Frame fabrication cost per LF. Anchored on Lee Street: 14 + 7h gives
+     $38.50/LF at 3'-6", and 156 LF x $38.50 = $6,006. */
+  frameCostLf: (h: number) => 14 + 7 * h,
+
   mounts: [
-    { id: "curb", name: "Curb mount", note: "Fastened to a structural curb — least deflection" },
-    { id: "sleeper", name: "Sleeper / rail", note: "Distributes load across the deck" },
-    { id: "ballast", name: "Non-penetrating ballast", note: "No roof penetration; needs uplift calc" },
+    { id: "base",  name: "Square base support",        note: "Bolted post base on the deck or curb — what Lee Street used", adder: 0 },
+    { id: "sleeper", name: "Sleeper / rail",           note: "Spreads load across the deck", adder: 8 },
+    { id: "ballast", name: "Non-penetrating ballast",  note: "No penetration; needs an uplift calc and a lot of weight", adder: 14 },
   ],
-  infills: [
-    { id: "louver", name: "Aluminum louver", adder: 42 },
-    { id: "perf", name: "Perforated metal panel", adder: 31 },
-    { id: "corr", name: "Corrugated panel", adder: 24 },
-    { id: "frame", name: "Frame only", adder: 0 },
+
+  /* Panel cost per square foot of screen face. */
+  panels: [
+    { id: "p26", name: "26 ga rib panel", ga: 26, thick: 0.0187, costSf: 1.85,
+      note: "Commercial standard. What a 7.2 Rib basis of design expects.", spec: true },
+    { id: "p29", name: "29 ga rib panel", ga: 29, thick: 0.0142, costSf: 1.35,
+      note: "Agricultural grade. Cheaper, thinner, dents. Not for a specified screen.", spec: false },
+    { id: "perf", name: "Perforated panel", ga: 22, thick: 0.0299, costSf: 4.60,
+      note: "Where the architect wants air through the screen.", spec: true },
+    { id: "none", name: "Frame only", ga: 0, thick: 0, costSf: 0,
+      note: "You are supplying or reusing the panel.", spec: true },
   ],
-  baseLf: 88, // $/LF of frame before infill
+
+  /* Everything that is not frame or panel, per LF of screen unless noted. */
+  hardware: {
+    hatChannelLf: 1.95,      // per LF of hat channel run
+    hatRows: (h: number) => Math.max(2, Math.ceil(h / 2)),
+    baseEach: 46,            // square base support, one per post
+    screwsPerLf: 0.62,       // panel screws with bonded washer
+  },
+
+  /* Engineering, priced as its own line because it is its own liability. */
+  shopDrawings: { base: 850, perLf: 3.25,
+    note: "Shop drawings plus calculations sealed by an engineer licensed in the project state." },
+
+  /* Realized markup on Lee Street: $12,000 on $7,000 of cost. */
+  defaultMarkup: 0.714,
 };
+
+/* Roof screen parts, sold as a kit or by the piece. Prices are unit SELL at the
+   Lee Street markup; the configurator recomputes them if you move the markup. */
+export type ScreenPart = {
+  sku: string; name: string; uom: string; cost: number; kit: boolean; note: string;
+};
+
+export const SCREEN_PARTS: ScreenPart[] = [
+  { sku: "MVS-RSF-SC3", name: "Screen frame, 3-member galvanized tube (SC3 equal)", uom: "LF", cost: 38.50, kit: true,
+    note: "Round galvanized tube posts, rails and kickers with stainless connectors. Cut and labeled." },
+  { sku: "MVS-RSB-SQ",  name: "Square base support, adjustable for roof slope", uom: "EA", cost: 46.00, kit: true,
+    note: "One per post. Bolted through the deck with a flashed, watertight connection." },
+  { sku: "MVS-RSH-HAT", name: "Hat channel, 20 ga galvanized", uom: "LF", cost: 1.95, kit: true,
+    note: "Horizontal runs behind the panel. Sets the panel plane and the screw pattern." },
+  { sku: "MVS-RSP-26",  name: "Rib panel, 26 ga, 7.2 in module, 1-1/2 in rib", uom: "SF", cost: 1.85, kit: true,
+    note: "Commercial gauge. Kynar or SMP finish, standard colors." },
+  { sku: "MVS-RSP-29",  name: "Rib panel, 29 ga, 7.2 in module", uom: "SF", cost: 1.35, kit: false,
+    note: "Budget gauge. Read the gauge warning before you spec this on a commercial roof." },
+  { sku: "MVS-RSS-STC", name: "Panel screw, #12 self-drill, bonded washer, painted head", uom: "EA", cost: 0.62, kit: true,
+    note: "Color matched to the panel. Ordered by panel SF, not guessed." },
+  { sku: "MVS-RSA-ANC", name: "Certified roof anchor, 5,000 lb, ANSI/ASSP Z359.18 Type D", uom: "EA", cost: 268.00, kit: false,
+    note: "Separate rated anchor on the same deck attachment pattern. A screen base is NOT a fall-arrest anchor." },
+  { sku: "MVS-RSE-SHP", name: "Shop drawings and sealed calculations", uom: "LOT", cost: 850.00, kit: false,
+    note: "Per project. Required for a substitution against a named basis of design." },
+];
 
 // ---- classifieds ---------------------------------------------------------
 
@@ -249,6 +323,26 @@ export const LISTINGS: Listing[] = [
     where: "Clarksville, IN", when: "3d ago", who: "TRH GC — subcontract",
     body: "Tear-off and load. Must have own Z87 and Class 2. Start Monday." },
 ];
+
+// ---- seller payout accounts ----------------------------------------------
+// A listing can only take a protected payment when we have a signed seller
+// agreement and a Stripe connected account to pay. See src/payments.ts.
+
+export type SellerAccount = {
+  acct: string; agreement: boolean; onboarded: boolean; payouts: boolean;
+  since: string; deals: number;
+};
+
+export const SELLERS: Record<string, SellerAccount> = {
+  "Hardin Interiors LLC":   { acct: "acct_1QyHrd", agreement: true,  onboarded: true,  payouts: true,  since: "Mar 2025", deals: 7 },
+  "Barren River Drywall":   { acct: "acct_1QyBrd", agreement: true,  onboarded: true,  payouts: true,  since: "Jan 2025", deals: 12 },
+  "E. Vargas":              { acct: "acct_1QyVrg", agreement: true,  onboarded: false, payouts: false, since: "Aug 2025", deals: 0 },
+  "Nelson Co. Mechanical":  { acct: "acct_1QyNco", agreement: true,  onboarded: true,  payouts: true,  since: "Feb 2025", deals: 4 },
+  "Cumberland Sheet Metal": { acct: "acct_1QyCsm", agreement: true,  onboarded: true,  payouts: true,  since: "Apr 2025", deals: 3 },
+  "Salt River Roofing":     { acct: "acct_1QySrr", agreement: true,  onboarded: true,  payouts: true,  since: "May 2025", deals: 6 },
+  "J. Meredith":            { acct: "acct_1QyJmr", agreement: false, onboarded: false, payouts: false, since: "Sep 2025", deals: 0 },
+  "TRH GC — subcontract":   { acct: "acct_1QyTrh", agreement: true,  onboarded: true,  payouts: false, since: "Jul 2025", deals: 1 },
+};
 
 export const LISTING_KINDS = ["All", "Equipment", "Surplus", "Crews", "Trucks", "Tools", "Wanted"];
 

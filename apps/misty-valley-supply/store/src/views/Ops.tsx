@@ -123,7 +123,7 @@ export default function Ops() {
 
       {/* odoo */}
       <div className="mt-10">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-3 border-b-2 border-[hsl(var(--ink))] pb-2">
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
           <h3 className="disp text-[22px] font-semibold">§ Odoo — what to actually configure</h3>
           <Tag tone="safety">Not built in a browser tab</Tag>
         </div>

@@ -25,7 +25,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
   const [tab, setTab] = React.useState<Tab>("Orders");
 
   if (!user) return (
-    <Panel className="mx-auto max-w-[520px] border-2 border-[hsl(var(--ink))] text-center" pad={false}>
+    <Panel className="mx-auto max-w-[520px] card-hi text-center" pad={false}>
       <div className="tape h-1.5" />
       <div className="p-6">
         <h2 className="disp text-[28px] font-bold leading-none">Sign in to your account</h2>
@@ -44,7 +44,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
   return (
     <div>
       {/* header */}
-      <div className="mb-5 border-2 border-[hsl(var(--ink))] bg-[hsl(var(--panel))]">
+      <div className="mb-5 card-hi">
         <div className="tape h-1.5" />
         <div className="flex flex-wrap items-start justify-between gap-4 p-4 sm:p-5">
           <div>
@@ -74,7 +74,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
       </div>
 
       {/* tabs */}
-      <div className="mb-4 flex gap-0 overflow-x-auto border-b-2 border-[hsl(var(--ink))]">
+      <div className="mb-4 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
         {TABS.map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={cx("disp whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[16px] font-semibold -mb-0.5",

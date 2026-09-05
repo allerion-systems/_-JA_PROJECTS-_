@@ -73,7 +73,7 @@ function Row({
     <article className="grid grid-cols-[68px_1fr] gap-3 border-b border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-3 sm:grid-cols-[92px_1fr_190px] sm:gap-4 sm:p-4">
       {/* image */}
       <button onClick={onSpec}
-        className="flex aspect-square items-center justify-center border border-[hsl(var(--rule))] bg-white text-[hsl(var(--ink-2))]">
+        className="flex aspect-square items-center justify-center plate rounded-[4px] border border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]">
         <Glyph sku={p.sku} cat={p.cat} className="h-[62%] w-[62%]" />
       </button>
 
@@ -181,7 +181,7 @@ export default function Shop({
 
   const Filters = (
     <>
-      <div className="flex items-center justify-between border-b-2 border-[hsl(var(--ink))] pb-2">
+      <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] pb-2">
         <span className="disp text-[17px] font-bold">Filter</span>
         {activeCount > 0 && (
           <button onClick={clear} className="lab text-[hsl(var(--safety))]">Clear {activeCount}</button>
@@ -310,7 +310,7 @@ export default function Shop({
               <button onClick={() => setOpen(null)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
             </div>
             <div className="mb-4 flex gap-4">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center border border-[hsl(var(--rule))] bg-white text-[hsl(var(--ink-2))]">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center plate rounded-[4px] border border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]">
                 <Glyph sku={open.sku} cat={open.cat} className="h-[62%] w-[62%]" />
               </div>
               <h3 className="disp text-[24px] font-bold leading-[1.05] sm:text-[28px]">{open.name}</h3>

@@ -9,22 +9,34 @@ import Yard from "@/views/Yard";
 import Account from "@/views/Account";
 import Ops from "@/views/Ops";
 import Agents from "@/views/Agents";
+import Dashboard from "@/views/Dashboard";
+import Users from "@/views/Users";
+const Earth = React.lazy(() => import("@/views/Earth"));
+import type { Perm } from "@/rbac";
+import { InstallBar } from "@/pwa";
 
-type View = "home" | "shop" | "screen" | "yard" | "account" | "ops" | "agents";
+type View = "home" | "dash" | "shop" | "screen" | "earth" | "yard" | "account" | "users" | "ops" | "agents";
 type CartLine = { sku: string; qty: number };
 
-const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode; bar?: boolean }[] = [
+const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
+             bar?: boolean; need?: Perm; auth?: boolean }[] = [
   { id: "home", label: "Home", short: "Home", sub: "Start here", bar: true,
     icon: <path d="M3 11 12 3l9 8M6 10v11h12V10" /> },
+  { id: "dash", label: "Dashboard", short: "Home", sub: "Your work, by role", auth: true,
+    icon: <path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-5H3zM13 8h8V3h-8z" /> },
   { id: "shop", label: "Catalog", short: "Shop", sub: "Safety & edge protection", bar: true,
     icon: <path d="M3 6h18M6 6v13h12V6M9 10h6" /> },
+  { id: "earth", label: "Job Site Earth", short: "Earth", sub: "Live from the deck", bar: true,
+    icon: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18" /></> },
   { id: "screen", label: "Roof Screens", short: "Screens", sub: "Shop fabrication", bar: true,
     icon: <path d="M3 19h18M5 19V8l7-4 7 4v11M9 19v-6h6v6" /> },
-  { id: "yard", label: "The Yard", short: "Yard", sub: "Marketplace", bar: true,
+  { id: "yard", label: "The Yard", short: "Yard", sub: "Marketplace",
     icon: <path d="M4 5h16M4 12h16M4 19h10" /> },
   { id: "account", label: "My Account", short: "Account", sub: "Orders, invoices, lists", bar: true,
     icon: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></> },
-  { id: "ops", label: "Operations", short: "Ops", sub: "Back office",
+  { id: "users", label: "Users & Roles", short: "Users", sub: "Who can do what", need: "user.invite",
+    icon: <><circle cx="9" cy="8" r="3.4" /><path d="M2 21c0-3.9 3.1-6.2 7-6.2s7 2.3 7 6.2M17 4.5a3.4 3.4 0 0 1 0 7M18 21h4c0-2.7-1.4-4.5-3.6-5.4" /></> },
+  { id: "ops", label: "Operations", short: "Ops", sub: "Back office", need: "report.company",
     icon: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /> },
   { id: "agents", label: "Agent API", short: "API", sub: "MCP interface",
     icon: <path d="M8 6 3 12l5 6M16 6l5 6-5 6M13 4l-2 16" /> },
@@ -36,7 +48,7 @@ const Icon = ({ children }: { children: React.ReactNode }) => (
 );
 
 function Inner() {
-  const { user, branch } = useAuth();
+  const { user, person, role, can, branch } = useAuth();
   const [view, setView] = React.useState<View>("home");
   const [cart, setCart] = React.useState<CartLine[]>([]);
   const [openCart, setOpenCart] = React.useState(false);
@@ -58,12 +70,23 @@ function Inner() {
     return () => { document.body.style.overflow = ""; };
   }, [openCart, modal]);
 
-  const bar = NAV.filter(n => n.bar);
+  const visible = NAV.filter(n =>
+    (!n.need || can(n.need)) && (!n.auth || !!person));
+  const bar = visible.filter(n => n.bar).slice(0, 5);
+
+  // landing on sign-in: each role has a home view
+  const prevPerson = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    const id = person?.id ?? null;
+    if (id && id !== prevPerson.current && role) go(role.home as View);
+    prevPerson.current = id;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [person?.id]);
 
   return (
     <div className="min-h-full pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-0">
       {/* ---------------------------------------------------------- header */}
-      <header className="sticky top-0 z-40 border-b-2 border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white">
+      <header className="sticky top-0 z-40 border-b border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white">
         <div className="tape h-1" />
 
         {/* utility strip */}
@@ -79,8 +102,9 @@ function Inner() {
             </button>
             <div className="ml-auto flex items-center gap-3">
               {user ? (
-                <button onClick={() => go("account")} className="mono text-[11px] text-white/70 hover:text-white">
-                  {user.company} · <span className="text-[hsl(var(--safety))]">{user.discountPct}% off list</span>
+                <button onClick={() => go(role?.home === "account" ? "account" : "dash")}
+                  className="mono text-[11px] text-white/70 hover:text-white">
+                  {person?.name} · <span className="text-[hsl(var(--safety))]">{role?.name}</span>
                 </button>
               ) : (
                 <>
@@ -148,7 +172,7 @@ function Inner() {
       {/* ------------------------------------------------------------ body */}
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:flex">
         <nav className="sticky top-[140px] hidden h-[calc(100vh-140px)] w-[210px] shrink-0 border-r border-[hsl(var(--rule))] py-6 pr-5 lg:block">
-          {NAV.map(n => (
+          {visible.map(n => (
             <button key={n.id} onClick={() => go(n.id)}
               className={cx("mb-1 flex w-full items-center gap-2.5 border-l-2 py-2 pl-3 text-left",
                 view === n.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
@@ -171,11 +195,21 @@ function Inner() {
         </nav>
 
         <main className="min-w-0 flex-1 py-5 sm:py-6 lg:pl-8">
-          {view === "home" && <Home onShop={goShop} onScreens={() => go("screen")} onYard={() => go("yard")}
+          {view === "home" && <Home onShop={goShop} onScreens={() => go("screen")} onYard={() => go("yard")} onEarth={() => go("earth")}
             onSignIn={() => setModal("signin")} onSearch={search} />}
           {view === "shop" && <Shop cart={cart} setCart={setCart} query={query} setQuery={setQuery}
             preCat={preCat} onSignIn={() => setModal("signin")} />}
+          {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
           {view === "screen" && <Screen />}
+          {view === "earth" && (
+            <React.Suspense fallback={
+              <div className="flex h-[46vh] items-center justify-center card-hi bg-[hsl(var(--panel-2))]">
+                <span className="lab text-[hsl(var(--ink-3))]">Loading the map…</span>
+              </div>}>
+              <Earth onSignIn={() => setModal("signin")} />
+            </React.Suspense>
+          )}
+          {view === "users" && <Users onSignIn={() => setModal("signin")} />}
           {view === "yard" && <Yard />}
           {view === "account" && <Account onSignIn={() => setModal("signin")} />}
           {view === "ops" && <Ops />}
@@ -183,22 +217,23 @@ function Inner() {
         </main>
       </div>
 
-      <footer className="mt-8 border-t-2 border-[hsl(var(--ink))]">
+      <footer className="mt-8 border-t border-[hsl(var(--ink))]">
         <div className="mx-auto max-w-[1400px] px-4 py-5 sm:px-6">
           <div className="mb-3 flex flex-wrap gap-x-5 gap-y-2 lg:hidden">
-            {NAV.filter(n => !n.bar).map(n => (
+            {visible.filter(n => !bar.includes(n)).map(n => (
               <button key={n.id} onClick={() => go(n.id)} className="lab text-[hsl(var(--ink-2))]">{n.label}</button>
             ))}
           </div>
           <div className="mono text-[11px] leading-[1.7] text-[hsl(var(--ink-3))]">
             Misty Valley Supply · Bonnieville, Kentucky · prototype build<br />
+            Platform and agent interface by Allerion Technologies LLC · payments by Stripe Connect<br />
             Standards and OSHA citations are accurate. Prices, stock and suppliers are placeholders.
           </div>
         </div>
       </footer>
 
       {/* -------------------------------------------------- mobile tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-[hsl(var(--ink))] bg-[hsl(var(--panel))] pb-[env(safe-area-inset-bottom)] lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[hsl(var(--ink))] bg-[hsl(var(--panel))] pb-[env(safe-area-inset-bottom)] lg:hidden">
         <div className="grid grid-cols-5">
           {bar.map(n => (
             <button key={n.id} onClick={() => go(n.id)} aria-current={view === n.id}
@@ -217,7 +252,7 @@ function Inner() {
         <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={() => setOpenCart(false)}>
           <div className="flex h-full w-full flex-col bg-[hsl(var(--ground))] sm:max-w-[460px] sm:border-l-2 sm:border-[hsl(var(--safety))]"
             onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between border-b-2 border-[hsl(var(--ink))] p-4 sm:p-5">
+            <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] p-4 sm:p-5">
               <h3 className="disp text-[24px] font-bold">Order</h3>
               <button onClick={() => setOpenCart(false)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
             </div>
@@ -249,7 +284,7 @@ function Inner() {
               ))}
             </div>
 
-            <div className="border-t-2 border-[hsl(var(--ink))] p-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:p-5">
+            <div className="border-t border-[hsl(var(--ink))] p-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:p-5">
               {user && listTotal > 0 && (
                 <div className="mono mb-1.5 flex items-baseline justify-between text-[12px] text-[hsl(var(--ink-3))]">
                   <span>List {money(listTotal)}</span>
@@ -278,6 +313,7 @@ function Inner() {
         </div>
       )}
 
+      <InstallBar />
       <AuthModals modal={modal} setModal={setModal} />
     </div>
   );

@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Btn, Lab, Panel, Rule, cx, money } from "@/ui";
+import { Btn, Lab, Panel, Rule, Tag, cx, money } from "@/ui";
+import { DIRECTORY, hasPerm, roleById, type Perm, type Person, type Role } from "@/rbac";
 
 /* -------------------------------------------------------------- branches */
 
@@ -51,9 +52,13 @@ export const DEMO: Account = {
 
 type Ctx = {
   user: Account | null;
+  person: Person | null;
+  role: Role | null;
+  can: (p: Perm) => boolean;
   branch: Branch;
   setBranch: (b: Branch) => void;
   signIn: () => void;
+  signInAs: (personId: string) => void;
   signOut: () => void;
   net: (list: number) => number;
 };
@@ -65,14 +70,35 @@ export const useAuth = () => {
   return c;
 };
 
+/** The demo customer account attaches to anyone signing in on the customer side. */
+const accountFor = (p: Person): Account =>
+  p.company === "R&B Roofing" ? { ...DEMO, name: p.name }
+  : { ...DEMO, name: p.name, company: p.company, acct: `MV-${40000 + Number(p.id.slice(2))}` };
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<Account | null>(null);
+  const [person, setPerson] = React.useState<Person | null>(null);
   const [branch, setBranch] = React.useState<Branch>(BRANCHES[0]);
+
+  const role = person ? roleById(person.roleId) : null;
+  const user = person ? accountFor(person) : null;
+  const can = (p: Perm) => (role ? hasPerm(role, p) : false);
+
+  const signInAs = (id: string) => {
+    const found = DIRECTORY.find(d => d.id === id);
+    if (!found) return;
+    setPerson(found);
+    const b = BRANCHES.find(x => x.id === found.branch);
+    if (b) setBranch(b);
+  };
+
   const value: Ctx = {
-    user, branch, setBranch,
-    signIn: () => setUser(DEMO),
-    signOut: () => setUser(null),
-    net: (list) => user ? Math.round(list * (1 - user.discountPct / 100) * 100) / 100 : list,
+    user, person, role, can, branch, setBranch,
+    signIn: () => signInAs("u-011"),
+    signInAs,
+    signOut: () => setPerson(null),
+    net: (list) => (can("price.contract") && user)
+      ? Math.round(list * (1 - user.discountPct / 100) * 100) / 100
+      : list,
   };
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }
@@ -89,7 +115,7 @@ function Shell({
       <div onClick={e => e.stopPropagation()}
         className={cx("max-h-[92vh] w-full overflow-y-auto border-t-2 border-[hsl(var(--safety))] bg-[hsl(var(--ground))] sm:border-2",
           wide ? "sm:max-w-[720px]" : "sm:max-w-[440px]")}>
-        <div className="flex items-start justify-between gap-4 border-b-2 border-[hsl(var(--ink))] p-4">
+        <div className="flex items-start justify-between gap-4 border-b border-[hsl(var(--ink))] p-4">
           <div>
             <h3 className="disp text-[24px] font-bold leading-none">{title}</h3>
             {sub && <p className="mt-1.5 text-[13px] text-[hsl(var(--ink-2))]">{sub}</p>}
@@ -105,7 +131,7 @@ function Shell({
 const field = "h-11 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[14px] outline-none focus:border-[hsl(var(--safety))]";
 
 export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Modal) => void }) {
-  const { signIn, branch, setBranch } = useAuth();
+  const { signIn, signInAs, branch, setBranch } = useAuth();
   const [step, setStep] = React.useState(1);
 
   React.useEffect(() => { setStep(1); }, [modal]);
@@ -113,27 +139,53 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
   const close = () => setModal(null);
 
   if (modal === "signin") return (
-    <Shell title="Sign in" sub="Your contract pricing, order history and open invoices." onClose={close}>
-      <div className="grid gap-3">
+    <Shell wide title="Sign in" sub="Different jobs see different screens. Pick who you are." onClose={close}>
+      <div className="grid gap-3 sm:grid-cols-2">
         <label className="grid gap-1.5"><Lab>Email</Lab>
           <input className={field} defaultValue="joey@rbroofing.com" /></label>
         <label className="grid gap-1.5"><Lab>Password</Lab>
-          <input className={field} type="password" defaultValue="········" /></label>
-        <Btn className="mt-1 w-full" onClick={() => { signIn(); close(); }}>Sign in</Btn>
-        <button className="lab py-1 text-[hsl(var(--ink-2))]">Forgot password</button>
-        <Rule className="my-1" />
-        <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
-          No account yet?{" "}
-          <button onClick={() => setModal("register")} className="font-semibold text-[hsl(var(--safety))] underline">
-            Create one
-          </button>{" "}
-          to see pricing, or{" "}
-          <button onClick={() => setModal("credit")} className="font-semibold text-[hsl(var(--safety))] underline">
-            open a credit account
-          </button>{" "}
-          to buy on terms.
-        </p>
+          <input className={field} type="password" defaultValue="\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7" /></label>
       </div>
+      <Btn className="mt-3 w-full" onClick={() => { signIn(); close(); }}>Sign in</Btn>
+
+      <Rule className="my-4" />
+      <Lab className="mb-2">Or step into a role — this is a working prototype</Lab>
+      {(["internal", "customer", "marketplace"] as const).map(side => (
+        <div key={side} className="mb-3">
+          <div className="mono mb-1.5 text-[10.5px] uppercase tracking-[0.14em] text-[hsl(var(--ink-3))]">
+            {side === "internal" ? "Misty Valley staff"
+              : side === "customer" ? "Contractor side" : "Marketplace"}
+          </div>
+          <div className="grid gap-1.5 sm:grid-cols-2">
+            {DIRECTORY.filter(d => roleById(d.roleId).side === side && d.status === "Active").map(d => {
+              const r = roleById(d.roleId);
+              return (
+                <button key={d.id} onClick={() => { signInAs(d.id); close(); }}
+                  className="border border-[hsl(var(--rule))] p-2.5 text-left hover:border-[hsl(var(--safety))]">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="disp text-[15px] font-semibold leading-none">{d.name}</span>
+                    <Tag tone={side === "internal" ? "safety" : side === "customer" ? "steel" : "good"}>{r.name}</Tag>
+                  </div>
+                  <div className="mt-1 text-[12px] leading-[1.4] text-[hsl(var(--ink-2))]">{r.blurb}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      <Rule className="my-3" />
+      <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+        No account yet?{" "}
+        <button onClick={() => setModal("register")} className="font-semibold text-[hsl(var(--safety))] underline">
+          Create one
+        </button>{" "}
+        to see pricing, or{" "}
+        <button onClick={() => setModal("credit")} className="font-semibold text-[hsl(var(--safety))] underline">
+          open a credit account
+        </button>{" "}
+        to buy on terms.
+      </p>
     </Shell>
   );
 
@@ -258,17 +310,17 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
 export function Price({
   list, uom, onSignIn, size = "md",
 }: { list: number; uom: string; onSignIn: () => void; size?: "sm" | "md" }) {
-  const { user, net } = useAuth();
+  const { user, net, can } = useAuth();
   const yours = net(list);
   const big = size === "md" ? "text-[26px]" : "text-[24px]";
 
-  if (!user) return (
+  if (!user || !can("price.contract")) return (
     <div>
       <div className={cx("disp font-bold leading-none text-[hsl(var(--ink-2))]", big)}>{money(list)}</div>
       <div className="lab mt-1">list · per {uom}</div>
       <button onClick={onSignIn}
         className="lab mt-1.5 block text-left font-semibold text-[hsl(var(--safety))] underline">
-        Sign in for your price
+        {user ? "Ask your admin for pricing" : "Sign in for your price"}
       </button>
     </div>
   );
