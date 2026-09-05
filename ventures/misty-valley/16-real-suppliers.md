@@ -1,3 +1,14 @@
+> **CONFIRMED BY JOEY (5 Sep 2026): the incumbent supplier is _Superior Metals_ —
+> "who we get cheap fab and metal from."** Almost certainly the shop behind the
+> $6,000 Lee Street frame fabrication. Action: Superior Metals moves to the TOP
+> of the Monday call list — before any new relationship, get their current
+> dealer/volume price sheet on 29ga/26ga panel, tube, and fab time, and ask
+> whether they will fabricate-to-spec under a standing account. Open items to
+> confirm with Joey/Ben: exact town and phone (several businesses share the
+> name; the Amish-owned "Superior Metal Roofing" of Middlefield, OH is NOT
+> assumed to be it). Policy: this name stays in internal docs only — the cheap
+> fab source is a competitive moat and does not go on the storefront.
+
 # 16 — Real Suppliers Misty Valley Can Sign With Now
 
 **Misty Valley Supply — Bonnieville, KY (Hart County, I-65 exit 71 corridor)**
