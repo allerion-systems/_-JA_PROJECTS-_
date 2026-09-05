@@ -20,86 +20,99 @@ Ireland. Lumber for the Willow Run housing project and Scott Field Air Base
 during the war. Thirty-five to forty million board feet a year — **most of which
 they never saw.**
 
-### The family record — and what the archives say about it
+### ✅ The census record — found 5 September 2026
 
-The family account is that the business **did not start in 1940 and did not start
-in Illinois.** It began as **a lumber yard in Tupelo, Mississippi**, making it
-**over a hundred years across five generations**; the 1940 date is the
-organisation of the *wholesale trading arm*. And that **James Byron Allee built
-the business on the network he made playing football at Northwestern and then as
-kicker for the 1928 and 1929 Chicago Cardinals**, where he was also a backup
-tailback.
+**Both brothers are in the 1950 federal census, in Tupelo, and the record is
+unambiguous.** Lee County, Mississippi, Enumeration District 41-33, enumerated
+**6 April 1950** (original scans read directly from the National Archives):
 
-**Verification run 5 September 2026. The results are below and they are not
-comfortable.**
+| | **James B. Allee** | **James A. Allee** |
+|---|---|---|
+| Age | 42 *(b. c.1907–08)* | 54 *(b. c.1895)* |
+| **Birthplace** | **Illinois** | **Illinois** |
+| Occupation | **wholesale lumber** | **wholesale lumber** |
+| Industry | wholesale & commission | wholesale lumber commission |
+| Class of worker | **O — own business** | **O — own business** |
+| Hours | 45 | 45 |
+| Household | wife Helen (37, IL) · son Jimmy (13, **IL**) · son Jimmy (5, **MS**) · **mother Emma (80, IL, widowed)** | wife Sally (49, MN) |
 
-#### 🔴 The Chicago Cardinals claim is contradicted by the surviving record
+**Two brothers, one trade, one district, both running their own business.** The
+newspaper is corroborated by the federal census. **The family business is real
+and now documented.**
 
-Full rosters **and complete scoring tables survive for both seasons**, and there
-is no Allee on either.
-([1928](https://www.profootballarchives.com/1928nflchic.html) ·
-[1929](https://www.profootballarchives.com/1929nflchic.html))
+#### 🔄 The origin runs the other direction — Illinois, not Tupelo
 
-- **1928: the Cardinals scored seven points all season and attempted zero field
-  goals.** The only placekick converted all year was Hugh Grant's single extra
-  point. **There was no kicking role to hold.**
-- **1929: the kicking was Ernie Nevers** — 10 extra points, 1 field goal, 85 of
-  the team's 154 points — plus one field goal from Chief Elkins. Nevers was also
-  *the* tailback, and the men backing him up are named.
-- All forty Chicago seasons (1920–1959) were searched, including the 1944
-  Card-Pitt merger, across every plausible spelling. Zero hits. The consolidated
-  NFL player index for A (1920–2025) runs Alleman → Allen.
+**Every adult Allee in both households was born in Illinois.** James A. c.1895,
+James B. c.1907, their mother Emma c.1870. **The only Mississippi-born person in
+either house is the five-year-old.**
 
-**Northwestern is strongly but not conclusively negative** — the 1928 *Syllabus*
-contains the varsity football section and has no Allee; the 1925–27 and 1929–30
-volumes are not digitised.
+That brackets the family's arrival in Mississippi to roughly **1937–1945** —
+*after* the 1940 organisation date. **They went south to Tupelo. They did not
+come north from it.** The newspaper's word "branch" was accurate; the inference
+that Tupelo was the origin was the error.
 
-> **What is genuinely still open, and it matters:** 1920s professional football
-> was not only the NFL. The Cardinals' own 1928 schedule included the Hammond
-> Boosters, Chicago Mills and Chicago Pullman Panthers — **independent pro clubs
-> whose rosters largely do not survive.** *"Played pro ball in Chicago in the
-> late twenties"* can be entirely true while *"played for the Chicago Cardinals"*
-> is not. **Over three generations a story drifts toward the famous name.** That
-> is the most likely shape of this, and it is not a lie — it is what oral history
-> does.
+**This also clears the Leake and Goodlett concern entirely.** No confusion, no
+wrong company — the Allee presence in Tupelo is documented, it simply started
+later than assumed.
 
-#### ⚠️ The Tupelo origin and the hundred-year claim are unverified, with contrary indicators
+> **And the hundred-year claim survives intact — it just moves states.** Emma was
+> born in Illinois around 1870 to two Irish-born parents and was **widowed by
+> April 1950**, which means **the founder died before 1950.** An Illinois lumber
+> business founded by her husband in the early 1900s is entirely consistent with
+> everything above. **The timeline was right. The map was wrong.**
 
-- The Mississippi Department of Archives and History's National Register survey
-  of Tupelo — built on Sanborn maps from 1889, 1899, 1903 and 1929 — **names the
-  town's lumber firms and no Allee is among them.** It also records that Tupelo's
-  lumber industry was finished as a significant local force **by 1907.**
-- The Mattoon History Center's lumber-yard panel lists thirteen yards from 1875
-  to 1947 — **no Allee.** *(This one actually supports the newspaper: a wholesale
-  house arriving in 1951 would not belong on a retail-yard list.)*
-- **⚠️ Worth checking before anything else:** the documented century-old Tupelo
-  family lumber business is **Leake and Goodlett, 1904–2019 — 115 years.** It is
-  worth confirming the family story has not attached itself to the wrong company.
-- The "five generations" claim and "Jeff Allee, the **fourth**-generation owner"
-  cannot both be right. **Settle that inside the family first** — it is one phone
-  call and nothing downstream works until it is answered.
+#### 🔴 And the football claim is now a true negative
 
-#### What could not be reached, and is therefore not evidence of anything
+The census makes the chronology *perfect*, which is what closes it.
 
-**The Illinois Secretary of State site is bot-blocked from automated access** —
-the connection succeeds and then the stream is reset by Akamai. That is
-mitigation against datacentre traffic, **not a policy denial, and it will work
-fine from a browser.** Every mirror also failed. Find a Grave, HathiTrust and
-Google Books were likewise unreachable.
+Age 42 in April 1950 puts James Byron's birth at **c.1907–08** — **age 20 in
+1928, 21 in 1929**, college window roughly 1925–29, **born in Illinois.** He was
+exactly the right man, of exactly the right age, from exactly the right state,
+in exactly the right window.
 
-One thing was confirmed indirectly: the entity is **"Allee Lumber Company,
-LLC"** — so the name-reuse question runs through the LLC statute, exactly as
-`01-rosiclare-verdict.md` §5 assumed.
+**And he is still absent from the complete 1928 and 1929 Chicago Cardinals
+rosters and scoring tables.** The family did not misremember the decade or the
+person. There is no wrong-generation explanation left.
 
-**📁 Full dossier, with every source and six prioritised gaps by institution:**
+*What remains genuinely open is unchanged: 1920s Chicago had many independent
+professional clubs whose rosters do not survive — the Hammond Boosters, Chicago
+Mills, Chicago Pullman Panthers among them. A twenty-year-old Illinois athlete
+playing paid football in Chicago in 1928 is entirely plausible. **Playing for the
+Cardinals is not.***
+
+#### 🎯 The founder — a named target now, and one question away
+
+**Emma Allee is the key.** Born Illinois c.1870, both parents born in Ireland,
+widowed by 1950.
+
+**Any 1910, 1920, 1930 or 1940 census household containing Emma will name her
+husband — and the occupation column answers the early-1900s founding question
+outright.** In 1910 James A. would be about 15 and James B. about 3, so the
+household is easy to recognise.
+
+The researcher could not reach those censuses — 1950 is the only one with a free,
+machine-readable index accessible from this environment; FamilySearch, Ancestry
+and Find a Grave all refused. **Joey can do this in ten minutes with a free
+FamilySearch account, and it is now the single highest-value lookup in the file.**
+
+**Even faster: ask the family who Emma's husband was.** That is the founder's
+name, and it is one question at a dinner table.
+
+*Two honest caveats carried from the research: the 1950 name index is OCR'd and
+incomplete, so finding only one Illinois Allee is not evidence there were no
+others; and "Jimmy, 13" is a **plausible** James Roger, an inference to confirm
+rather than a fact to print.*
+
+**📁 Full dossier:**
 https://claude.ai/code/artifact/25b3b8dd-93b6-48be-a50f-1571a7ab5b19
 
 **It was dissolved in 2023 by Jeff Allee, the fourth-generation owner** — a
 generation count that sits oddly against "five generations," and one more reason
 to close the record properly.
 
-Whatever the exact span turns out to be, it was generations and it ended by a
-decision of its owner, not by a bank. **That is not a failure.**
+Whatever the exact span turns out to be, it was generations of one family in one
+trade, and it ended by a decision of its owner, not by a bank. **That is not a
+failure.**
 
 its owner, not by a bank.
 

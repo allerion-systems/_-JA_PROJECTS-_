@@ -281,9 +281,10 @@ It worked for eighty years and sixteen states. The teletype is a phone now.
 ---
 
 *The article: Allee Wholesale Lumber Company, Mattoon, Illinois — James A.
-("Big Jim") and James Byron ("Little Jim") Allee. Organised 1940 per the article;
-an earlier Tupelo origin is claimed by the family but is **unverified** — see
-`ventures/allee/00-the-case.md`. Tupelo,
+("Big Jim") and James Byron ("Little Jim") Allee — both **born in Illinois**, both
+recorded as "wholesale lumber, own business" in the 1950 census at Tupelo. The
+family's origin is Illinois, not Mississippi; Tupelo was a southern branch opened
+c.1937-45. See `ventures/allee/00-the-case.md`. Tupelo,
 Mississippi branch; main office to Mattoon July 1951. Sixteen states,
 hardwoods exported to Ireland, lumber for the Willow Run housing project and
 Scott Field Air Base during the war.*

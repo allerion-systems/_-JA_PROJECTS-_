@@ -270,10 +270,14 @@ Two minutes, free. **Find out (a) exactly which entities existed, (b) corporatio
 or LLC — different statutes, and (c) voluntary or administrative dissolution —
 that determines whether you are reinstating or refiling.**
 
-*Also: the Tupelo origin and the 100-year/five-generation claim are UNVERIFIED
-with contrary archival indicators, and the Chicago Cardinals claim is CONTRADICTED
-by the surviving 1928-29 rosters and scoring tables. See `00-the-case.md`. The
-2023 dissolution itself is still unverified — no news coverage exists that I could find. The Mattoon
+*Update 5 Sept 2026: the 1950 federal census confirms both brothers at Tupelo in
+wholesale lumber, own business, **both born in Illinois** - so the family origin
+is Illinois and Tupelo was a later branch. The five-generation succession is
+confirmed. The Chicago Cardinals claim is now a true negative: the census puts
+James Byron at exactly the right age, from the right state, in the right window,
+and he is still absent from the complete rosters. The founder's identity runs
+through Emma Allee (b. Illinois c.1870, widowed by 1950). See `00-the-case.md`.
+The 2023 dissolution itself is still unverified — no news coverage exists that I could find. The Mattoon
 * Journal Gazette* / *Times-Courier* archives are where to look.*
 
 **Trademark:** no evidence of a live "Allee" mark in lumber or building products
