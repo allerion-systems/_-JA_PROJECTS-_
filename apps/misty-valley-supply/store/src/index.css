@@ -88,7 +88,9 @@ body {
 .disp { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; letter-spacing: -.005em; line-height: 1; }
 .mono, .ident { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-variant-numeric: tabular-nums; }
 .num  { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
-.lab  { font-size: 11px; font-weight: 500; line-height: 1.35; letter-spacing: .005em; color: hsl(var(--ink-3)); }
+@layer components {
+  .lab { font-size: 11px; font-weight: 500; line-height: 1.35; letter-spacing: .005em; color: hsl(var(--ink-3)); }
+}
 .eyebrow { font-size: 11px; font-weight: 600; line-height: 1; letter-spacing: .06em; text-transform: uppercase; }
 
 /* ---------------------------------------------------------- surfaces */
@@ -130,6 +132,8 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 
 :focus-visible { outline: 2px solid hsl(var(--safety)); outline-offset: 2px; }
+/* On --ink / photo / black surfaces the safety outline can vanish — use a light ring there. */
+.focus-light:focus-visible { outline: 2px solid hsl(var(--on-dark)); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
 /* ------------------------------------------------- Job Site Earth pins */
@@ -137,7 +141,8 @@ body {
 .mvs-pin {
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  width: 26px; height: 26px; cursor: pointer; background: none; border: 0;
+  /* 44px hit area; the visible dot stays 22px */
+  width: 44px; height: 44px; cursor: pointer; background: none; border: 0; padding: 0;
 }
 .mvs-pin-dot {
   position: relative; z-index: 2;
@@ -150,7 +155,7 @@ body {
   box-shadow: 0 1px 6px rgb(0 0 0 / 0.45);
 }
 .mvs-pin-ring {
-  position: absolute; inset: -6px; z-index: 1;
+  position: absolute; inset: 3px; z-index: 1;
   border: 2px solid transparent;
 }
 .mvs-pin-ring.live {
@@ -159,7 +164,7 @@ body {
 }
 .mvs-pin:hover .mvs-pin-dot { background: hsl(var(--safety)); }
 .mvs-pin-name {
-  position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+  position: absolute; top: 36px; left: 50%; transform: translateX(-50%);
   white-space: nowrap;
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 10px; letter-spacing: 0.02em;
@@ -171,3 +176,6 @@ body {
   100% { transform: scale(1.9);  opacity: 0; }
 }
 .maplibregl-ctrl-attrib { font-size: 10px; }
+/* MapLibre's default zoom controls are 29px — bring them to the 44px tap minimum.
+   (extra specificity: maplibre's stylesheet loads after this one) */
+.maplibregl-ctrl.maplibregl-ctrl-group button { width: 44px; height: 44px; }

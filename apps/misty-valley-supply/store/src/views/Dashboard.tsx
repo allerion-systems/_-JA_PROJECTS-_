@@ -49,7 +49,7 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
             <p className="mt-2 max-w-[62ch] text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">{role.blurb}</p>
           </div>
           <button onClick={() => setShowPerms(!showPerms)}
-            className="lab shrink-0 border border-[hsl(var(--rule))] px-3 py-2 text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]">
+            className="lab min-h-[44px] shrink-0 border border-[hsl(var(--rule))] px-3 py-2 !text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]">
             {permCount(role)} permissions {showPerms ? "▴" : "▾"}
           </button>
         </div>
@@ -101,7 +101,7 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
                         ? <span className="font-semibold">{c}</span>
                         : <span className="text-[13px] text-[hsl(var(--ink-2))]">{c}</span>);
                     if (q.cta) cells.push(
-                      <button className="lab text-[hsl(var(--safety-2))] underline">{q.cta}</button>);
+                      <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">{q.cta}</button>);
                     return cells;
                   })}
                 />

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { KPI, ODOO_MAP, ORDERS, PRODUCTS, SUPPLIERS } from "@/data";
 import { DataTable, Head, Lab, Panel, Rule, Tag, money } from "@/ui";
 
@@ -44,7 +43,7 @@ export default function Ops() {
           cols={["Order", "Customer", "Job", "Placed", "Route", "Lines", "Sell", "Cost", "GM%", "Status"]}
           right={[5, 6, 7, 8]}
           rows={ORDERS.map(o => [
-            <span className="mono text-[hsl(var(--safety))]">{o.id}</span>,
+            <span className="mono text-[hsl(var(--safety-2))]">{o.id}</span>,
             o.customer,
             <span className="text-[hsl(var(--ink-2))]">{o.job}</span>,
             <span className="text-[13px]">{o.placed}</span>,
@@ -140,7 +139,7 @@ export default function Ops() {
             cols={["Screen", "Odoo module", "Note"]}
             rows={ODOO_MAP.map(m => [
               <span className="disp text-[15px] font-semibold">{m.screen}</span>,
-              <span className="text-[13px] text-[hsl(var(--safety))]">{m.module}</span>,
+              <span className="text-[13px] text-[hsl(var(--safety-2))]">{m.module}</span>,
               <span className="text-[13px] text-[hsl(var(--ink-2))]">{m.note}</span>,
             ])}
           />

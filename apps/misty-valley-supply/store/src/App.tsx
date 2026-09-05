@@ -1,9 +1,10 @@
 import * as React from "react";
-import { PRODUCTS } from "@/data";
+import { PRODUCTS, type Product } from "@/data";
 import { AuthModals, AuthProvider, useAuth, type Modal } from "@/auth";
 import { Btn, Lab, Rule, cx, money } from "@/ui";
 import Home from "@/views/Home";
 import Shop from "@/views/Shop";
+import ProductView from "@/views/Product";
 import Screen from "@/views/Screen";
 import Yard from "@/views/Yard";
 import Account from "@/views/Account";
@@ -15,7 +16,7 @@ const Earth = React.lazy(() => import("@/views/Earth"));
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
 
-type View = "home" | "dash" | "shop" | "screen" | "earth" | "yard" | "account" | "users" | "ops" | "agents";
+type View = "home" | "dash" | "shop" | "product" | "screen" | "earth" | "yard" | "account" | "users" | "ops" | "agents";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -55,6 +56,7 @@ function Inner() {
   const [query, setQuery] = React.useState("");
   const [preCat, setPreCat] = React.useState<string | undefined>();
   const [modal, setModal] = React.useState<Modal>(null);
+  const [productSku, setProductSku] = React.useState<string | null>(null);
 
   const lines = cart.map(c => ({ ...c, p: PRODUCTS.find(p => p.sku === c.sku)! })).filter(l => l.p);
   const listTotal = lines.reduce((s, l) => s + l.p.price * l.qty, 0);
@@ -64,6 +66,20 @@ function Inner() {
   const go = (v: View) => { setView(v); window.scrollTo({ top: 0 }); };
   const goShop = (cat?: string) => { setPreCat(cat); go("shop"); };
   const search = (q: string) => { setQuery(q); setPreCat(undefined); go("shop"); };
+  const openProduct = (sku: string) => { setProductSku(sku); go("product"); };
+
+  /** Add a line to the order and open the drawer so the add is visible. */
+  const addLine = (sku: string, qty: number) => {
+    const at = cart.find(c => c.sku === sku);
+    setCart(at ? cart.map(c => c.sku === sku ? { ...c, qty: c.qty + qty } : c) : [...cart, { sku, qty }]);
+    setOpenCart(true);
+  };
+
+  React.useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenCart(false); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, []);
 
   React.useEffect(() => {
     document.body.style.overflow = openCart || modal ? "hidden" : "";
@@ -72,6 +88,7 @@ function Inner() {
 
   const visible = NAV.filter(n =>
     (!n.need || can(n.need)) && (!n.auth || !!person));
+  const isActive = (id: View) => view === id || (id === "shop" && view === "product");
   const bar = visible.filter(n => n.bar).slice(0, 5);
 
   // landing on sign-in: each role has a home view
@@ -124,17 +141,17 @@ function Inner() {
 
         {/* brand + cart */}
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-3 py-2 sm:gap-5 sm:px-6 sm:py-2.5">
-          <button onClick={() => go("home")} className="flex min-w-0 items-baseline gap-1.5 text-left sm:gap-2.5">
+          <button onClick={() => go("home")} className="flex min-h-[44px] min-w-0 items-baseline gap-1.5 text-left sm:gap-2.5">
             <span className="disp truncate text-[18px] font-bold leading-none sm:text-[22px]">Misty Valley</span>
             <span className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety-hi))] sm:text-[22px]">Supply</span>
           </button>
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <button onClick={() => go("account")} aria-label="My account"
-              className="hidden h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3.5 text-[13px] font-medium hover:border-white/60 sm:flex">
+              className="hidden h-11 items-center gap-2 rounded-[6px] border border-white/25 px-3.5 text-[13px] font-medium hover:border-white/60 sm:flex">
               {user ? "Account" : "Sign in"}
             </button>
             <button onClick={() => setOpenCart(true)} aria-label="Open order"
-              className="flex h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3.5 text-[13px] font-medium hover:border-white/60">
+              className="flex h-11 items-center gap-2 rounded-[6px] border border-white/25 px-3.5 text-[13px] font-medium hover:border-white/60">
               Order
               <span className={cx("num rounded-full px-2 py-px text-[11px] font-bold",
                 count ? "bg-[hsl(var(--safety))] text-white" : "bg-white/15")}>{count}</span>
@@ -175,14 +192,14 @@ function Inner() {
           {visible.map(n => (
             <button key={n.id} onClick={() => go(n.id)}
               className={cx("mb-1 flex w-full items-center gap-2.5 border-l-2 py-2 pl-3 text-left",
-                view === n.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
-                              : "border-transparent hover:border-[hsl(var(--rule))]")}>
-              <span className={view === n.id ? "text-[hsl(var(--safety))]" : "text-[hsl(var(--ink-3))]"}>
+                isActive(n.id) ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
+                               : "border-transparent hover:border-[hsl(var(--rule))]")}>
+              <span className={isActive(n.id) ? "text-[hsl(var(--safety))]" : "text-[hsl(var(--ink-3))]"}>
                 <Icon>{n.icon}</Icon>
               </span>
               <span className="min-w-0">
                 <span className={cx("block text-[15px] font-semibold leading-[1.2]",
-                  view === n.id ? "text-[hsl(var(--ink))]" : "text-[hsl(var(--ink-2))]")}>{n.label}</span>
+                  isActive(n.id) ? "text-[hsl(var(--ink))]" : "text-[hsl(var(--ink-2))]")}>{n.label}</span>
                 <span className="mt-1 block text-[11px] leading-[1.3] text-[hsl(var(--ink-3))]">{n.sub}</span>
               </span>
             </button>
@@ -198,7 +215,11 @@ function Inner() {
           {view === "home" && <Home onShop={goShop} onScreens={() => go("screen")} onYard={() => go("yard")} onEarth={() => go("earth")}
             onSignIn={() => setModal("signin")} onSearch={search} />}
           {view === "shop" && <Shop cart={cart} setCart={setCart} query={query} setQuery={setQuery}
-            preCat={preCat} onSignIn={() => setModal("signin")} />}
+            preCat={preCat} onSignIn={() => setModal("signin")} onProduct={openProduct} />}
+          {view === "product" && productSku && (
+            <ProductView key={productSku} sku={productSku} onAdd={addLine}
+              onBack={() => go("shop")} onProduct={openProduct} onSignIn={() => setModal("signin")} />
+          )}
           {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
           {view === "screen" && <Screen />}
           {view === "earth" && (
@@ -236,9 +257,9 @@ function Inner() {
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[hsl(var(--ink))] bg-[hsl(var(--panel))] pb-[env(safe-area-inset-bottom)] lg:hidden">
         <div className="grid grid-cols-5">
           {bar.map(n => (
-            <button key={n.id} onClick={() => go(n.id)} aria-current={view === n.id}
+            <button key={n.id} onClick={() => go(n.id)} aria-current={isActive(n.id)}
               className={cx("-mt-0.5 flex h-[60px] flex-col items-center justify-center gap-1 border-t-2",
-                view === n.id ? "border-[hsl(var(--safety))] text-[hsl(var(--safety))]"
+                isActive(n.id) ? "border-[hsl(var(--safety))] text-[hsl(var(--safety))]"
                               : "border-transparent text-[hsl(var(--ink-3))]")}>
               <Icon>{n.icon}</Icon>
               <span className="text-[11px] font-semibold leading-none">{n.short}</span>
@@ -249,42 +270,359 @@ function Inner() {
 
       {/* ------------------------------------------------------------ cart */}
       {openCart && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={() => setOpenCart(false)}>
-          <div className="flex h-full w-full flex-col bg-[hsl(var(--ground))] sm:max-w-[460px] sm:border-l-2 sm:border-[hsl(var(--safety))]"
-            onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] p-4 sm:p-5">
-              <h3 className="disp text-[22px] font-bold">Order</h3>
-              <button onClick={() => setOpenCart(false)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
-            </div>
+        <CartDrawer
+          lines={lines} cart={cart} setCart={setCart}
+          listTotal={listTotal} netTotal={netTotal}
+          onClose={() => setOpenCart(false)}
+          onSignIn={() => { setOpenCart(false); setModal("signin"); }}
+        />
+      )}
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5">
+      <InstallBar />
+      <AuthModals modal={modal} setModal={setModal} />
+    </div>
+  );
+}
+
+
+/* ------------------------------------------------------------- checkout */
+
+let NEXT_SO = 1043;
+
+/** The next n weekdays, for the delivery window picker. */
+function nextBusinessDays(n: number) {
+  const out: { day: string; date: string; full: string }[] = [];
+  const d = new Date();
+  while (out.length < n) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() === 0 || d.getDay() === 6) continue;
+    out.push({
+      day: d.toLocaleDateString("en-US", { weekday: "short" }),
+      date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      full: d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+    });
+  }
+  return out;
+}
+
+/** "4471" reads as "PO 4471"; "PO-4471" stays as typed. */
+const poLabel = (po: string) => (/^po\b|^po-/i.test(po.trim()) ? po.trim() : `PO ${po.trim()}`);
+
+type DrawerLine = CartLine & { p: Product };
+type ShipTo = { id: string; label: string; addr: string };
+
+const drawerField =
+  "h-11 w-full rounded-[6px] border border-[hsl(var(--field))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety-2))]";
+
+const optCls = (on: boolean) =>
+  cx("w-full min-h-[44px] rounded-[6px] border bg-[hsl(var(--panel))] p-3 text-left transition-colors",
+    on ? "border-[hsl(var(--safety-2))] shadow-[0_0_0_1px_hsl(var(--safety-2))]"
+       : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink)/0.3)]");
+
+function CartDrawer({
+  lines, cart, setCart, listTotal, netTotal, onClose, onSignIn,
+}: {
+  lines: DrawerLine[]; cart: CartLine[]; setCart: (c: CartLine[]) => void;
+  listTotal: number; netTotal: number;
+  onClose: () => void; onSignIn: () => void;
+}) {
+  const { user, branch } = useAuth();
+
+  // 0 = order · 1 = ship-to · 2 = terms + window · 3 = review
+  const [step, setStep] = React.useState(0);
+  const [extraSites, setExtraSites] = React.useState<ShipTo[]>([]);
+  const [shipToId, setShipToId] = React.useState(user?.shipTos[0]?.id ?? "");
+  const [addingSite, setAddingSite] = React.useState(false);
+  const [siteLabel, setSiteLabel] = React.useState("");
+  const [siteAddr, setSiteAddr] = React.useState("");
+  const [terms, setTerms] = React.useState<"net30" | "card">("net30");
+  const [po, setPo] = React.useState("");
+  const days = React.useMemo(() => nextBusinessDays(5), []);
+  const [dayIx, setDayIx] = React.useState(0);
+  const [win, setWin] = React.useState<"AM" | "PM">("AM");
+  const [placed, setPlaced] = React.useState<null | {
+    so: string; total: number; saved: number; lineCount: number;
+    shipTo: string; when: string; termsLabel: string;
+  }>(null);
+
+  const allSites = [...(user?.shipTos ?? []), ...extraSites];
+  const shipTo = allSites.find(x => x.id === shipToId);
+  const winLabel = (w: "AM" | "PM") => (w === "AM" ? "AM · 7:00–12:00" : "PM · 12:00–4:00");
+
+  const saveSite = () => {
+    if (!siteLabel.trim() || !siteAddr.trim()) return;
+    const site = { id: `new-${Date.now()}`, label: siteLabel.trim(), addr: siteAddr.trim() };
+    setExtraSites([...extraSites, site]);
+    setShipToId(site.id);
+    setAddingSite(false); setSiteLabel(""); setSiteAddr("");
+  };
+
+  const placeOrder = () => {
+    if (!shipTo) return;
+    setPlaced({
+      so: `SO-${NEXT_SO++}`,
+      total: netTotal,
+      saved: Math.round((listTotal - netTotal) * 100) / 100,
+      lineCount: lines.length,
+      shipTo: `${shipTo.label} — ${shipTo.addr}`,
+      when: `${days[dayIx].full}, ${winLabel(win)}`,
+      termsLabel: terms === "net30" ? `Net 30 on account · ${poLabel(po)}` : "Card · Stripe",
+    });
+    setCart([]);
+  };
+
+  const stepTitle =
+    placed ? "Order placed"
+    : step === 0 ? "Order"
+    : step === 1 ? "Where it's going"
+    : step === 2 ? "Terms and delivery"
+    : "Review and place";
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={onClose}>
+      <div className="flex h-full w-full flex-col bg-[hsl(var(--ground))] sm:max-w-[460px] sm:border-l-2 sm:border-[hsl(var(--safety))]"
+        onClick={e => e.stopPropagation()}>
+
+        {/* header */}
+        <div className="border-b border-[hsl(var(--ink))] p-4 sm:p-5">
+          <div className="flex items-center justify-between">
+            <h3 className="disp text-[22px] font-bold">{stepTitle}</h3>
+            <button onClick={onClose} className="lab flex h-11 min-w-[44px] items-center justify-center px-2 text-[hsl(var(--ink-2))]">
+              Close ✕
+            </button>
+          </div>
+          {!placed && step > 0 && (
+            <div className="mt-2.5">
+              <div className="mb-1.5 text-[11px] font-medium text-[hsl(var(--ink-3))]">
+                Checkout · step {step} of 3
+              </div>
+              <div className="flex gap-1">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className={cx("h-1.5 flex-1 rounded-[4px]",
+                    i <= step ? "bg-[hsl(var(--safety))]" : "bg-[hsl(var(--panel-2))]")} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* body */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5">
+
+          {/* ---------------------------------------------- confirmation */}
+          {placed && (
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-[4px] border border-[hsl(var(--good)/0.25)] bg-[hsl(var(--good-soft))] px-2.5 py-1.5 text-[13px] font-semibold text-[hsl(var(--good))]">
+                <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden /> On the board
+              </div>
+              <div className="ident text-[22px] text-[hsl(var(--ink))]">{placed.so}</div>
+              <p className="mt-2 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
+                {placed.lineCount} {placed.lineCount === 1 ? "line" : "lines"} · {money(placed.total)}
+                {placed.saved > 0 && <> · you saved {money(placed.saved)} off list</>}
+              </p>
+              <div className="card mt-4 overflow-hidden rounded-[6px]">
+                {[["Deliver to", placed.shipTo], ["Window", placed.when], ["Terms", placed.termsLabel]].map(([k, v], i) => (
+                  <div key={k} className={cx("px-3 py-2.5", i < 2 && "border-b border-[hsl(var(--rule))]")}>
+                    <div className="text-[11px] font-medium text-[hsl(var(--ink-3))]">{k}</div>
+                    <div className="mt-0.5 text-[13px] text-[hsl(var(--ink))]">{v}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
+                The {branch.name} branch will confirm each supplier's cut-off and lock your
+                delivery window — if a line can't make the truck, you'll hear from a person,
+                not a status page.
+              </p>
+            </div>
+          )}
+
+          {/* --------------------------------------------------- step 0 */}
+          {!placed && step === 0 && (
+            <>
               {lines.length === 0 && <p className="text-[hsl(var(--ink-2))]">Nothing on the order yet.</p>}
               {lines.map(l => (
                 <div key={l.sku} className="mb-4 border-b border-[hsl(var(--rule))] pb-4 last:border-0">
                   <div className="mono mb-1 text-[11px] text-[hsl(var(--ink-3))]">{l.sku}</div>
                   <div className="disp mb-1 text-[18px] font-semibold leading-[1.1]">{l.p.name}</div>
-                  <div className="mono mb-2.5 text-[11px] text-[hsl(var(--safety))]">{l.p.osha}</div>
+                  <div className="mono mb-2.5 text-[11px] text-[hsl(var(--safety-2))]">{l.p.osha}</div>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-1.5">
-                      <button aria-label="Decrease" className="h-10 w-10 border border-[hsl(var(--rule))] text-[15px]"
+                      <button aria-label="Decrease" className="h-11 w-11 rounded-[6px] border border-[hsl(var(--rule))] text-[15px]"
                         onClick={() => setCart(cart.map(c => c.sku === l.sku
                           ? { ...c, qty: Math.max(l.p.moq ?? 1, c.qty - (l.p.moq ?? 1)) } : c))}>–</button>
-                      <span className="w-12 text-center text-[15px]">{l.qty}</span>
-                      <button aria-label="Increase" className="h-10 w-10 border border-[hsl(var(--rule))] text-[15px]"
+                      <span className="num w-12 text-center text-[15px]">{l.qty}</span>
+                      <button aria-label="Increase" className="h-11 w-11 rounded-[6px] border border-[hsl(var(--rule))] text-[15px]"
                         onClick={() => setCart(cart.map(c => c.sku === l.sku
                           ? { ...c, qty: c.qty + (l.p.moq ?? 1) } : c))}>+</button>
-                      <button className="lab ml-1 h-10 px-2 text-[hsl(var(--ink-3))]"
+                      <button className="lab ml-1 h-11 px-2 text-[hsl(var(--ink-3))]"
                         onClick={() => setCart(cart.filter(c => c.sku !== l.sku))}>Remove</button>
                     </div>
-                    <div className="text-[15px]">
+                    <div className="num text-[15px]">
                       {money((user ? l.p.price * (1 - user.discountPct / 100) : l.p.price) * l.qty)}
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
+            </>
+          )}
 
-            <div className="border-t border-[hsl(var(--ink))] p-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:p-5">
+          {/* --------------------------------------------------- step 1 */}
+          {!placed && step === 1 && (
+            <div className="grid gap-2">
+              <p className="mb-1 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+                Pick a jobsite or the shop. Delivery runs out of the {branch.name} branch.
+              </p>
+              {allSites.map(sTo => (
+                <button key={sTo.id} onClick={() => setShipToId(sTo.id)} className={optCls(shipToId === sTo.id)}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-[15px] font-semibold text-[hsl(var(--ink))]">{sTo.label}</span>
+                    {shipToId === sTo.id && <span className="text-[11px] font-semibold text-[hsl(var(--safety-2))]">Selected</span>}
+                  </div>
+                  <div className="mt-0.5 text-[13px] text-[hsl(var(--ink-2))]">{sTo.addr}</div>
+                </button>
+              ))}
+              {!addingSite ? (
+                <button onClick={() => setAddingSite(true)}
+                  className="min-h-[44px] rounded-[6px] border border-dashed border-[hsl(var(--field))] p-3 text-left text-[13px] font-medium text-[hsl(var(--marine))] hover:border-[hsl(var(--marine))]">
+                  + Add a jobsite
+                </button>
+              ) : (
+                <div className="card grid gap-3 rounded-[6px] p-3">
+                  <label className="grid gap-1.5"><Lab>Jobsite name</Lab>
+                    <input className={drawerField} value={siteLabel} onChange={e => setSiteLabel(e.target.value)}
+                      placeholder="Hotel — Bowling Green" /></label>
+                  <label className="grid gap-1.5"><Lab>Street address</Lab>
+                    <input className={drawerField} value={siteAddr} onChange={e => setSiteAddr(e.target.value)}
+                      placeholder="Street, city, state" /></label>
+                  <div className="flex gap-2">
+                    <Btn variant="line" size="sm" className="h-11" onClick={() => setAddingSite(false)}>Cancel</Btn>
+                    <Btn size="sm" className="h-11 flex-1" disabled={!siteLabel.trim() || !siteAddr.trim()}
+                      onClick={saveSite}>Save jobsite</Btn>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* --------------------------------------------------- step 2 */}
+          {!placed && step === 2 && (
+            <div>
+              <div className="mb-2 text-[13px] font-semibold text-[hsl(var(--ink))]">How you're paying</div>
+              <div className="grid gap-2">
+                <button onClick={() => setTerms("net30")} className={optCls(terms === "net30")}>
+                  <div className="text-[15px] font-semibold text-[hsl(var(--ink))]">{user?.terms ?? "Net 30"} on account</div>
+                  <div className="mt-0.5 text-[13px] text-[hsl(var(--ink-2))]">
+                    Bills to {user?.company} · {money((user?.creditLimit ?? 0) - (user?.creditUsed ?? 0))} of credit open · PO required
+                  </div>
+                </button>
+                <button onClick={() => setTerms("card")} className={optCls(terms === "card")}>
+                  <div className="text-[15px] font-semibold text-[hsl(var(--ink))]">Card</div>
+                  <div className="mt-0.5 text-[13px] text-[hsl(var(--ink-2))]">Pay now, no PO needed</div>
+                </button>
+              </div>
+
+              {terms === "net30" ? (
+                <label className="mt-4 grid gap-1.5"><Lab>PO number — required on account orders</Lab>
+                  <input className={drawerField} value={po} onChange={e => setPo(e.target.value)}
+                    placeholder="Job or PO reference" aria-required="true" />
+                </label>
+              ) : (
+                <p className="card mt-4 rounded-[6px] p-3 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
+                  Card checkout runs on Stripe in production. This prototype doesn't take card
+                  details — the order posts to your account and the branch collects on delivery.
+                </p>
+              )}
+
+              <div className="mb-2 mt-5 text-[13px] font-semibold text-[hsl(var(--ink))]">Delivery window</div>
+              <div className="grid grid-cols-5 gap-1.5">
+                {days.map((d, i) => (
+                  <button key={d.date} onClick={() => setDayIx(i)}
+                    className={cx("min-h-[52px] rounded-[6px] border px-1 py-2 text-center transition-colors",
+                      dayIx === i ? "border-[hsl(var(--safety-2))] bg-[hsl(var(--panel))] shadow-[0_0_0_1px_hsl(var(--safety-2))]"
+                                  : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] hover:border-[hsl(var(--ink)/0.3)]")}>
+                    <div className="text-[11px] font-medium text-[hsl(var(--ink-3))]">{d.day}</div>
+                    <div className="mt-0.5 whitespace-nowrap text-[13px] font-semibold text-[hsl(var(--ink))]">{d.date}</div>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-1.5">
+                {(["AM", "PM"] as const).map(w => (
+                  <button key={w} onClick={() => setWin(w)}
+                    className={cx("h-11 rounded-[6px] border text-[13px] font-semibold transition-colors",
+                      win === w ? "border-[hsl(var(--safety-2))] bg-[hsl(var(--panel))] text-[hsl(var(--ink))] shadow-[0_0_0_1px_hsl(var(--safety-2))]"
+                                : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink)/0.3)]")}>
+                    {winLabel(w)}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                Windows are held until the branch confirms supplier cut-offs for each line.
+              </p>
+            </div>
+          )}
+
+          {/* --------------------------------------------------- step 3 */}
+          {!placed && step === 3 && (
+            <div>
+              <div className="card overflow-hidden rounded-[6px]">
+                {lines.map(l => (
+                  <div key={l.sku} className="flex items-baseline justify-between gap-3 border-b border-[hsl(var(--rule))] px-3 py-2.5">
+                    <div className="min-w-0">
+                      <div className="truncate text-[13px] font-medium text-[hsl(var(--ink))]">{l.p.name}</div>
+                      <div className="ident mt-0.5 text-[11px] text-[hsl(var(--ink-3))]">{l.sku} · qty {l.qty}</div>
+                    </div>
+                    <div className="num shrink-0 text-[13px] font-medium text-[hsl(var(--ink))]">
+                      {money((user ? l.p.price * (1 - user.discountPct / 100) : l.p.price) * l.qty)}
+                    </div>
+                  </div>
+                ))}
+                <div className="bg-[hsl(var(--panel-2))] px-3 py-2.5">
+                  <div className="flex items-baseline justify-between text-[13px] text-[hsl(var(--ink-2))]">
+                    <span>List price</span><span className="num line-through">{money(listTotal)}</span>
+                  </div>
+                  <div className="flex items-baseline justify-between text-[13px] font-medium text-[hsl(var(--good))]">
+                    <span>Contract savings</span><span className="num">−{money(listTotal - netTotal)}</span>
+                  </div>
+                  <div className="mt-1.5 flex items-baseline justify-between">
+                    <span className="text-[15px] font-semibold text-[hsl(var(--ink))]">Material</span>
+                    <span className="num text-[18px] font-bold text-[hsl(var(--ink))]">{money(netTotal)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card mt-3 overflow-hidden rounded-[6px]">
+                {[
+                  ["Deliver to", shipTo ? `${shipTo.label} — ${shipTo.addr}` : "—", 1],
+                  ["Window", `${days[dayIx].full} · ${winLabel(win)}`, 2],
+                  ["Terms", terms === "net30" ? `${user?.terms ?? "Net 30"} on account · ${poLabel(po)}` : "Card · Stripe", 2],
+                ].map(([k, v, editStep], i) => (
+                  <div key={k as string} className={cx("flex items-center justify-between gap-3 px-3 py-2",
+                    i < 2 && "border-b border-[hsl(var(--rule))]")}>
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-medium text-[hsl(var(--ink-3))]">{k}</div>
+                      <div className="mt-0.5 text-[13px] text-[hsl(var(--ink))]">{v}</div>
+                    </div>
+                    <button onClick={() => setStep(editStep as number)}
+                      className="flex h-11 shrink-0 items-center px-2 text-[13px] font-medium text-[hsl(var(--marine))] hover:underline">
+                      Edit
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                Placing the order sends it to the {branch.name} branch for routing. Nothing
+                ships until a person confirms the promise date.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* footer */}
+        <div className="border-t border-[hsl(var(--ink))] p-4 pb-[calc(16px+env(safe-area-inset-bottom))] sm:p-5">
+          {placed ? (
+            <Btn className="w-full" onClick={onClose}>Done</Btn>
+          ) : step === 0 ? (
+            <>
               {user && listTotal > 0 && (
                 <div className="mb-1.5 flex items-baseline justify-between text-[13px] text-[hsl(var(--ink-3))]">
                   <span>List {money(listTotal)}</span>
@@ -293,28 +631,36 @@ function Inner() {
               )}
               <div className="mb-2.5 flex items-baseline justify-between">
                 <span className="disp text-[18px] font-bold">Material</span>
-                <span className="disp text-[28px] font-bold leading-none">{money(netTotal)}</span>
+                <span className="disp num text-[28px] font-bold leading-none">{money(netTotal)}</span>
               </div>
               {!user && (
-                <p className="mb-3 text-[13px] leading-[1.5] text-[hsl(var(--safety))]">
+                <p className="mb-3 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
                   Showing list price.{" "}
-                  <button onClick={() => { setOpenCart(false); setModal("signin"); }} className="font-semibold underline">
+                  <button onClick={onSignIn} className="font-semibold text-[hsl(var(--safety-2))] underline">
                     Sign in
                   </button>{" "}
                   to see your contract price.
                 </p>
               )}
               <Btn className="w-full" disabled={!lines.length}
-                onClick={() => { if (!user) { setOpenCart(false); setModal("signin"); } }}>
-                {user ? "Continue to PO number" : "Sign in to check out"}
+                onClick={() => { if (!user) onSignIn(); else setStep(1); }}>
+                {user ? "Continue to checkout" : "Sign in to check out"}
               </Btn>
+            </>
+          ) : (
+            <div className="flex gap-2">
+              <Btn variant="line" onClick={() => setStep(step - 1)}>Back</Btn>
+              {step === 1 && <Btn className="flex-1" disabled={!shipTo} onClick={() => setStep(2)}>Continue to terms</Btn>}
+              {step === 2 && (
+                <Btn className="flex-1" disabled={terms === "net30" && !po.trim()} onClick={() => setStep(3)}>
+                  Review order
+                </Btn>
+              )}
+              {step === 3 && <Btn className="flex-1" onClick={placeOrder}>Place order</Btn>}
             </div>
-          </div>
+          )}
         </div>
-      )}
-
-      <InstallBar />
-      <AuthModals modal={modal} setModal={setModal} />
+      </div>
     </div>
   );
 }

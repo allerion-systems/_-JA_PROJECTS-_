@@ -77,7 +77,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
       <div className="mb-4 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
         {TABS.map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={cx("disp whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[15px] font-semibold -mb-0.5",
+            className={cx("disp min-h-[44px] whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[15px] font-semibold -mb-0.5",
               tab === t ? "border-[hsl(var(--safety))] text-[hsl(var(--ink))]"
                         : "border-transparent text-[hsl(var(--ink-3))]")}>
             {t}
@@ -91,13 +91,13 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
             cols={["Order", "Job", "Placed", "Route", "Total", "Status", ""]}
             right={[4]}
             rows={ORDERS.map(o => [
-              <span className="mono text-[hsl(var(--safety))]">{o.id}</span>,
+              <span className="mono text-[hsl(var(--safety-2))]">{o.id}</span>,
               o.job,
               <span className="text-[13px]">{o.placed}</span>,
               <span className="text-[13px]">{o.route}</span>,
               money(o.total),
               <Tag tone={o.status === "Delivered" || o.status === "Invoiced" ? "good" : "steel"}>{o.status}</Tag>,
-              <button className="lab text-[hsl(var(--safety-2))] underline">Reorder</button>,
+              <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">Reorder</button>,
             ])}
           />
         </Panel>
@@ -127,7 +127,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
                 <span className="text-[13px]">{i.due}</span>,
                 money(i.amt),
                 <Tag tone={i.status === "Paid" ? "good" : i.status === "Past due" ? "warn" : "steel"}>{i.status}</Tag>,
-                i.status !== "Paid" ? <button className="lab text-[hsl(var(--safety-2))] underline">Pay</button> : <span />,
+                i.status !== "Paid" ? <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">Pay</button> : <span />,
               ])}
             />
           </Panel>
@@ -150,7 +150,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
             </Panel>
           ))}
           <Panel className="flex items-center justify-center border-dashed">
-            <button className="lab text-[hsl(var(--safety))]">＋ New list</button>
+            <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))]">＋ New list</button>
           </Panel>
         </div>
       )}
@@ -169,7 +169,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
             </Panel>
           ))}
           <Panel className="flex items-center justify-center border-dashed">
-            <button className="lab text-[hsl(var(--safety))]">＋ Add a job site</button>
+            <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))]">＋ Add a job site</button>
           </Panel>
         </div>
       )}
@@ -181,11 +181,11 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
             rows={user.users.map(u => [
               <span className="font-semibold">{u.name}</span>,
               <span className="text-[13px] text-[hsl(var(--ink-2))]">{u.role}</span>,
-              <button className="lab text-[hsl(var(--safety-2))] underline">Edit</button>,
+              <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">Edit</button>,
             ])}
           />
           <div className="border-t border-[hsl(var(--rule))] p-3">
-            <button className="lab text-[hsl(var(--safety))]">＋ Invite someone</button>
+            <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))]">＋ Invite someone</button>
           </div>
         </Panel>
       )}

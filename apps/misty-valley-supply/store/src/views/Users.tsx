@@ -46,7 +46,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
       <div className="mb-4 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
         {([["people", "People"], ["roles", "Roles"], ["matrix", "Permission matrix"]] as const).map(([id, label]) => (
           <button key={id} onClick={() => setTab(id)}
-            className={cx("disp -mb-0.5 whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
+            className={cx("disp -mb-0.5 min-h-[44px] whitespace-nowrap border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
               tab === id ? "border-[hsl(var(--safety))] text-[hsl(var(--ink))]"
                          : "border-transparent text-[hsl(var(--ink-3))]")}>
             {label}
@@ -58,7 +58,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
         <>
           <input value={q} onChange={e => setQ(e.target.value)}
             placeholder="Search name, company or role"
-            className="mb-3 h-10 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))] sm:max-w-[380px]" />
+            aria-label="Search people" className="mb-3 h-11 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))] sm:max-w-[380px]" />
           <Panel pad={false}>
             <DataTable
               cols={["Name", "Company", "Role", "Branch", "Last seen", "Status", ""]}
@@ -75,7 +75,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
                   <span className="text-[13px] text-[hsl(var(--ink-2))]">{d.last}</span>,
                   <Tag tone={d.status === "Active" ? "good" : d.status === "Invited" ? "steel" : "warn"}>{d.status}</Tag>,
                   can("user.roles")
-                    ? <button className="lab text-[hsl(var(--safety-2))] underline">Change role</button>
+                    ? <button className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">Change role</button>
                     : <span />,
                 ];
               })}

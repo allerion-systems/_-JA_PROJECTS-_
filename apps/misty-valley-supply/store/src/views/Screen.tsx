@@ -81,7 +81,7 @@ export default function Screen() {
       <div className="mb-5 flex gap-0 border-b border-[hsl(var(--ink))]">
         {(["kit", "parts"] as const).map(t => (
           <button key={t} onClick={() => setMode(t)}
-            className={cx("disp -mb-0.5 border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
+            className={cx("disp -mb-0.5 min-h-[44px] border-b-[3px] px-4 py-2.5 text-[15px] font-semibold",
               mode === t ? "border-[hsl(var(--safety))] text-[hsl(var(--ink))]"
                          : "border-transparent text-[hsl(var(--ink-3))]")}>
             {t === "kit" ? "Configure a kit" : "Buy by the piece"}
@@ -96,7 +96,7 @@ export default function Screen() {
               cols={["SKU", "Item", "UOM", "Unit cost", "Your price", "In kit"]}
               right={[3, 4]}
               rows={SCREEN_PARTS.map(sp => [
-                <span className="mono text-[hsl(var(--safety))]">{sp.sku}</span>,
+                <span className="mono text-[hsl(var(--safety-2))]">{sp.sku}</span>,
                 <span>
                   <span className="font-semibold">{sp.name}</span>
                   <span className="mt-0.5 block text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">{sp.note}</span>
@@ -128,7 +128,7 @@ export default function Screen() {
               <div className="flex flex-wrap gap-1.5">
                 {RS.heights.map(x => (
                   <button key={x} onClick={() => setH(x)}
-                    className={cx("h-9 min-w-[52px] flex-1 border px-1 text-[13px]",
+                    className={cx("h-11 min-w-[52px] flex-1 border px-1 text-[13px]",
                       h === x ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
                               : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
                     {x === 3.5 ? "3′-6″" : `${x}′`}
@@ -143,7 +143,7 @@ export default function Screen() {
               <div className="grid gap-1.5">
                 {RS.mounts.map(x => (
                   <button key={x.id} onClick={() => setMount(x.id)}
-                    className={cx("border p-2.5 text-left",
+                    className={cx("min-h-[44px] border p-2.5 text-left",
                       mount === x.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
                                      : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
                     <div className="disp text-[15px] font-semibold">{x.name}</div>
@@ -156,7 +156,7 @@ export default function Screen() {
               <div className="grid gap-1.5">
                 {RS.panels.map(x => (
                   <button key={x.id} onClick={() => setPanel(x.id)}
-                    className={cx("border p-2.5 text-left",
+                    className={cx("min-h-[44px] border p-2.5 text-left",
                       panel === x.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
                                      : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
                     <div className="flex items-baseline justify-between gap-2">
@@ -179,8 +179,8 @@ export default function Screen() {
 
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
             <Field label="Shop drawings and sealed calculations">
-              <button onClick={() => setDrawings(!drawings)}
-                className={cx("flex w-full items-start gap-2.5 border p-2.5 text-left",
+              <button onClick={() => setDrawings(!drawings)} aria-pressed={drawings}
+                className={cx("flex min-h-[44px] w-full items-start gap-2.5 border p-2.5 text-left",
                   drawings ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
                            : "border-[hsl(var(--rule))]")}>
                 <span className={cx("mt-px flex h-5 w-5 shrink-0 items-center justify-center border",
@@ -190,8 +190,8 @@ export default function Screen() {
               </button>
             </Field>
             <Field label={`Markup — ${markup}%`}>
-              <input type="range" min={0} max={150} value={markup}
-                onChange={e => setMarkup(Number(e.target.value))} className="mt-2 w-full" />
+              <input type="range" min={0} max={150} value={markup} aria-label="Markup percent"
+                onChange={e => setMarkup(Number(e.target.value))} className="mt-2 h-11 w-full" />
               <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
                 <span>cost</span>
                 <span>Lee Street ran {Math.round(RS.defaultMarkup * 100)}%</span>
@@ -268,7 +268,7 @@ export default function Screen() {
             why people tie off to them. Do not. OSHA requires a personal fall arrest anchorage to
             hold <strong>5,000 lb per attached worker</strong>, or to be designed and used under a
             qualified person with a safety factor of two —{" "}
-            <span className="text-[hsl(var(--safety))]">29 CFR 1926.502(d)(15)</span>. A screen
+            <span className="text-[hsl(var(--safety-2))]">29 CFR 1926.502(d)(15)</span>. A screen
             post base is sized for wind on a panel, not for arresting a falling body. We sell a
             rated anchor (<span className="mono">MVS-RSA-ANC</span>, ANSI/ASSP Z359.18 Type D) that
             uses the same deck attachment and is certified for the load. Sell that as its own line

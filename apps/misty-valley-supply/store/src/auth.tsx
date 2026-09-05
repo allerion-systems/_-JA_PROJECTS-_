@@ -110,9 +110,14 @@ export type Modal = null | "signin" | "register" | "credit" | "branch";
 function Shell({
   title, sub, onClose, children, wide,
 }: { title: string; sub?: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) {
+  React.useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 sm:items-center" onClick={onClose}>
-      <div onClick={e => e.stopPropagation()}
+      <div onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={title}
         className={cx("max-h-[92vh] w-full overflow-y-auto border-t-2 border-[hsl(var(--safety))] bg-[hsl(var(--ground))] sm:border-2",
           wide ? "sm:max-w-[720px]" : "sm:max-w-[440px]")}>
         <div className="flex items-start justify-between gap-4 border-b border-[hsl(var(--ink))] p-4">
@@ -120,7 +125,8 @@ function Shell({
             <h3 className="disp text-[22px] font-bold leading-none">{title}</h3>
             {sub && <p className="mt-1.5 text-[13px] text-[hsl(var(--ink-2))]">{sub}</p>}
           </div>
-          <button onClick={onClose} className="lab h-10 shrink-0 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
+          <button onClick={onClose} aria-label={`Close ${title.toLowerCase()} dialog`}
+            className="lab inline-flex h-11 min-w-[44px] shrink-0 items-center justify-center px-2 !text-[hsl(var(--ink-2))]">Close ✕</button>
         </div>
         <div className="p-4 pb-[calc(16px+env(safe-area-inset-bottom))]">{children}</div>
       </div>
@@ -152,7 +158,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
       <Lab className="mb-2">Or step into a role — this is a working prototype</Lab>
       {(["internal", "customer", "marketplace"] as const).map(side => (
         <div key={side} className="mb-3">
-          <div className="mb-1.5 text-[11px] uppercase tracking-[0.14em] text-[hsl(var(--ink-3))]">
+          <div className="eyebrow mb-1.5 text-[hsl(var(--ink-3))]">
             {side === "internal" ? "Misty Valley staff"
               : side === "customer" ? "Contractor side" : "Marketplace"}
           </div>
@@ -161,7 +167,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
               const r = roleById(d.roleId);
               return (
                 <button key={d.id} onClick={() => { signInAs(d.id); close(); }}
-                  className="border border-[hsl(var(--rule))] p-2.5 text-left hover:border-[hsl(var(--safety))]">
+                  className="min-h-[44px] border border-[hsl(var(--rule))] p-2.5 text-left hover:border-[hsl(var(--safety))]">
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="disp text-[15px] font-semibold leading-none">{d.name}</span>
                     <Tag tone={side === "internal" ? "safety" : side === "customer" ? "steel" : "good"}>{r.name}</Tag>
@@ -255,11 +261,11 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
               <strong>the household that signs it should know the number before it is signed.</strong>
             </p>
           </Panel>
-          <label className="flex items-start gap-2.5 text-[13px]">
+          <label className="flex min-h-[44px] items-start gap-2.5 py-1.5 text-[13px]">
             <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[hsl(var(--safety))]" />
             <span>I authorise Misty Valley Supply to obtain credit reports and contact the references above.</span>
           </label>
-          <label className="flex items-start gap-2.5 text-[13px]">
+          <label className="flex min-h-[44px] items-start gap-2.5 py-1.5 text-[13px]">
             <input type="checkbox" className="mt-0.5 h-4 w-4 accent-[hsl(var(--safety))]" />
             <span>I agree to the personal guarantee and terms of sale.</span>
           </label>
@@ -285,7 +291,8 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
       <div className="grid gap-1.5">
         {BRANCHES.map(b => (
           <button key={b.id} onClick={() => { setBranch(b); close(); }}
-            className={cx("flex items-start justify-between gap-3 border p-3 text-left",
+            aria-label={`Choose the ${b.name} branch, ${b.city}${branch.id === b.id ? " (current branch)" : ""}`}
+            className={cx("flex min-h-[44px] items-start justify-between gap-3 border p-3 text-left",
               branch.id === b.id ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
                                  : "border-[hsl(var(--rule))]")}>
             <div>
@@ -319,7 +326,7 @@ export function Price({
       <div className={cx("num font-bold leading-none text-[hsl(var(--ink))]", big)}>{money(list)}</div>
       <div className="mt-1 text-[13px] text-[hsl(var(--ink-2))]">List price · per {uom}</div>
       <button onClick={onSignIn}
-        className="lab mt-1.5 block text-left font-semibold text-[hsl(var(--safety-2))] underline">
+        className="lab mt-1.5 inline-flex min-h-[44px] items-center text-left font-semibold !text-[hsl(var(--safety-2))] underline">
         {user ? "Ask your admin for pricing" : "Sign in for your price"}
       </button>
     </div>

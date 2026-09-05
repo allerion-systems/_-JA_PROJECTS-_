@@ -1,4 +1,3 @@
-import * as React from "react";
 import { CATEGORIES, PRODUCTS } from "@/data";
 import { Glyph } from "@/glyph";
 import hero from "@/assets/site/lee-screen-1.jpg";
@@ -38,7 +37,7 @@ export default function Home({
             <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--ink))]/70 to-transparent" />
             <div className="tape absolute inset-x-0 top-0 h-1.5" />
             <div className="relative w-full p-5 pt-16 text-white sm:p-7 sm:pt-20">
-              <span className="lab mb-2 block text-[hsl(var(--safety))]">
+              <span className="lab mb-2 block !text-[hsl(var(--safety-hi))]">
                 {user ? `${user.company} · ${user.terms} · ${user.discountPct}% off list` : "Trade supply · the I-65 corridor"}
               </span>
               <h1 className="disp max-w-[17ch] text-[40px] font-bold leading-[0.94] [text-wrap:balance] sm:text-[52px] xl:text-[52px]">
@@ -52,16 +51,17 @@ export default function Home({
                 <Btn onClick={() => onShop()}>Shop the catalog</Btn>
                 {!user && (
                   <button onClick={onSignIn}
-                    className="disp inline-flex h-11 items-center justify-center rounded-[5px] border border-white/35 px-5 text-[15px] text-white transition-colors hover:bg-white hover:text-[hsl(var(--ink))] sm:h-10">
+                    className="disp focus-light inline-flex h-11 items-center justify-center rounded-[5px] border border-white/35 px-5 text-[15px] text-white transition-colors hover:bg-white hover:text-[hsl(var(--ink))] sm:h-10">
                     Sign in for your price
                   </button>
                 )}
               </div>
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
                 {[["Try", "1926.501"], ["or", "Z87+"], ["or", "cut level A4"]].map(([a, b]) => (
-                  <button key={b} onClick={() => onSearch(b)} className="text-left">
-                    <span className="lab text-white/45">{a}</span>{" "}
-                    <span className="text-[13px] text-[hsl(var(--safety-2))] underline decoration-[hsl(var(--safety))]/50 underline-offset-2">{b}</span>
+                  <button key={b} onClick={() => onSearch(b)} aria-label={`Search for ${b}`}
+                    className="focus-light inline-flex min-h-[44px] items-center text-left">
+                    <span className="lab !text-white/70">{a}</span>{" "}
+                    <span className="ml-1 text-[13px] text-[hsl(var(--safety-hi))] underline decoration-[hsl(var(--safety-hi))]/50 underline-offset-2">{b}</span>
                   </button>
                 ))}
               </div>
@@ -111,7 +111,7 @@ export default function Home({
                 </div>
               ))}
             </div>
-            <button onClick={onEarth} className="lab mt-3 text-[hsl(var(--safety-2))] underline underline-offset-2">
+            <button onClick={onEarth} className="lab mt-3 inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline underline-offset-2">
               Open Job Site Earth
             </button>
           </div>
@@ -178,7 +178,7 @@ export default function Home({
               <Glyph sku={p.sku} cat={p.cat} className="h-[76%] w-[76%]" />
             </div>
             <div className="text-[13px] font-semibold leading-[1.3]">{p.name}</div>
-            <div className="mono mt-1 text-[11px] text-[hsl(var(--safety))]">{p.osha}</div>
+            <div className="mono mt-1 text-[11px] text-[hsl(var(--safety-2))]">{p.osha}</div>
             <div className="disp mt-1.5 text-[18px] font-bold">
               {user ? money(Math.round(p.price * 0.82 * 100) / 100) : money(p.price)}
               <span className="lab ml-1.5">{user ? "your price" : "list"}</span>

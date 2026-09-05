@@ -47,7 +47,7 @@ export function Btn({
   className?: string; type?: "button" | "submit"; disabled?: boolean;
 }) {
   const base = "rounded-[6px] font-semibold inline-flex items-center justify-center gap-2 border transition-all select-none disabled:opacity-40 disabled:shadow-none active:translate-y-px";
-  const sizes = { sm: "h-9 px-4 text-[13px]", md: "h-11 px-6 text-[15px] sm:h-10" };
+  const sizes = { sm: "h-11 px-4 text-[13px] sm:h-10", md: "h-11 px-6 text-[15px] sm:h-10" };
   const vars = {
     solid: "bg-[hsl(var(--safety-2))] border-[hsl(var(--safety-2))] text-white shadow-[0_1px_2px_hsl(21_94%_20%/.25)] hover:bg-[hsl(var(--safety-press))] hover:border-[hsl(var(--safety-press))] hover:shadow-[0_3px_10px_-2px_hsl(21_94%_30%/.4)]",
     line: "bg-[hsl(var(--panel))] border-[hsl(var(--field))] text-[hsl(var(--ink))] shadow-[0_1px_2px_hsl(218_20%_13%/.05)] hover:border-[hsl(var(--ink))] hover:bg-[hsl(var(--panel-2))]",
@@ -81,7 +81,7 @@ export function Field({ label, children }: { label: string; children: React.Reac
 }
 
 export const inputCls =
-  "h-10 w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none " +
+  "h-11 w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none " +
   "transition-shadow focus:border-[hsl(var(--safety))] focus:shadow-[0_0_0_3px_hsl(var(--safety)/.14)]";
 
 /** A dense industrial data table. Stacks into labelled cards on phones. */

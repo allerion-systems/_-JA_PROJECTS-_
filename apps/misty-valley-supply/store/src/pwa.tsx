@@ -50,8 +50,8 @@ export function InstallBar() {
         <button onClick={() => {
             setGone(true);
             try { localStorage.setItem("mvs-install", "no"); } catch { /* private mode */ }
-          }} aria-label="Not now"
-          className="shrink-0 px-1 text-[hsl(var(--ink-3))]">✕</button>
+          }} aria-label="Dismiss install suggestion"
+          className="grid h-11 w-11 shrink-0 place-items-center text-[hsl(var(--ink-3))]">✕</button>
       </div>
     </div>
   );
@@ -74,8 +74,8 @@ export function InstallBar() {
           </p>
         </div>
         <Btn size="sm" onClick={() => { evt.prompt(); setGone(true); }}>Install</Btn>
-        <button onClick={dismiss} aria-label="Not now"
-          className="lab shrink-0 px-1 text-[hsl(var(--ink-3))]">✕</button>
+        <button onClick={dismiss} aria-label="Dismiss install suggestion"
+          className="lab grid h-11 w-11 shrink-0 place-items-center text-[hsl(var(--ink-3))]">✕</button>
       </div>
     </div>
   );

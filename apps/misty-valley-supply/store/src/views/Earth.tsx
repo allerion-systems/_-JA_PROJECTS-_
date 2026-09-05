@@ -58,7 +58,8 @@ function Story({ site, onClose }: { site: Site; onClose: () => void }) {
   }, [onClose, posts.length]);
 
   return (
-    <div className="fixed inset-0 z-[70] flex flex-col bg-black" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[70] flex flex-col bg-black" role="dialog" aria-modal="true"
+      aria-label={`${site.name} story`} onClick={e => e.stopPropagation()}>
       {/* progress */}
       <div className="flex gap-1 px-2 pt-[calc(8px+env(safe-area-inset-top))]">
         {posts.map((_, k) => (
@@ -74,7 +75,7 @@ function Story({ site, onClose }: { site: Site; onClose: () => void }) {
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             {isLive(site) && (
-              <span className="bg-[hsl(var(--safety))] px-1.5 py-px text-[11px] font-bold uppercase tracking-[0.1em]">
+              <span className="eyebrow bg-[hsl(var(--safety-2))] px-1.5 py-1 text-white">
                 Live
               </span>
             )}
@@ -85,7 +86,7 @@ function Story({ site, onClose }: { site: Site; onClose: () => void }) {
           </div>
         </div>
         <button onClick={onClose} aria-label="Close story"
-          className="lab shrink-0 px-2 py-1 text-white/80">Close ✕</button>
+          className="lab focus-light inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center px-2 !text-white/80">Close ✕</button>
       </div>
 
       {/* frame */}
@@ -100,11 +101,11 @@ function Story({ site, onClose }: { site: Site; onClose: () => void }) {
           </div>
         )}
         {/* tap zones */}
-        <button aria-label="Previous" onClick={() => setI(x => Math.max(x - 1, 0))}
-          className="absolute inset-y-0 left-0 w-1/3" />
-        <button aria-label="Next"
+        <button aria-label="Previous post" onClick={() => setI(x => Math.max(x - 1, 0))}
+          className="focus-light absolute inset-y-0 left-0 w-1/3" />
+        <button aria-label={i + 1 < posts.length ? "Next post" : "Close story"}
           onClick={() => (i + 1 < posts.length ? setI(i + 1) : onClose())}
-          className="absolute inset-y-0 right-0 w-2/3" />
+          className="focus-light absolute inset-y-0 right-0 w-2/3" />
       </div>
 
       {/* caption */}
@@ -158,7 +159,9 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
     for (const s of sites) {
       const el = document.createElement("button");
       el.className = "mvs-pin";
-      el.setAttribute("aria-label", s.name);
+      el.setAttribute("type", "button");
+      el.setAttribute("aria-label",
+        `${s.name} — ${s.posts.length} post${s.posts.length === 1 ? "" : "s"}${isLive(s) ? ", live now" : ""}`);
       el.innerHTML =
         `<span class="mvs-pin-ring${isLive(s) ? " live" : ""}"></span>` +
         `<span class="mvs-pin-dot">${s.posts.length}</span>` +
@@ -174,6 +177,14 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
     if (!map.current) return;
     map.current.setStyle(BASEMAPS[base].style);
   }, [base]);
+
+  /* the capture-preview overlay closes on Escape (the story viewer handles its own) */
+  React.useEffect(() => {
+    if (!shot) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") setShot(null); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [shot]);
 
   const go = (s: Site) => {
     setFocus(s.id);
@@ -201,9 +212,10 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
           </span>
           <div className="flex border border-[hsl(var(--rule))]">
             {(Object.keys(BASEMAPS) as BaseId[]).map(b => (
-              <button key={b} onClick={() => setBase(b)}
-                className={cx("lab px-2.5 py-2",
-                  base === b ? "bg-[hsl(var(--ink))] text-white" : "text-[hsl(var(--ink-2))]")}>
+              <button key={b} onClick={() => setBase(b)} aria-pressed={base === b}
+                aria-label={`${BASEMAPS[b].label} basemap`}
+                className={cx("lab min-h-[44px] min-w-[44px] px-3 py-2",
+                  base === b ? "bg-[hsl(var(--ink))] !text-white" : "!text-[hsl(var(--ink-2))]")}>
                 {BASEMAPS[b].label}
               </button>
             ))}
@@ -241,14 +253,15 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
                     <div className="flex shrink-0 gap-2">
                       <Btn size="sm" onClick={() => setOpen(focused)}>Watch the story</Btn>
                       {can("site.post") ? (
-                        <label className="lab flex h-9 cursor-pointer items-center border border-[hsl(var(--ink))] px-3">
+                        <label className="lab flex h-11 cursor-pointer items-center border border-[hsl(var(--ink))] px-3 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[hsl(var(--safety))] sm:h-10">
                           Go live
-                          <input type="file" accept="image/*" capture="environment" className="hidden"
+                          <input type="file" accept="image/*" capture="environment" className="sr-only"
+                            aria-label={`Take a photo and go live at ${focused.name}`}
                             onChange={e => capture(e, focused)} />
                         </label>
                       ) : (
                         <button onClick={onSignIn}
-                          className="lab h-9 border border-[hsl(var(--rule))] px-3 text-[hsl(var(--ink-2))]">
+                          className="lab h-11 border border-[hsl(var(--rule))] px-3 !text-[hsl(var(--ink-2))] sm:h-10">
                           Sign in to post
                         </button>
                       )}
@@ -324,6 +337,7 @@ export default function Earth({ onSignIn }: { onSignIn: () => void }) {
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4"
           onClick={() => setShot(null)}>
           <div className="max-h-[90vh] w-full max-w-[420px] overflow-y-auto border-2 border-[hsl(var(--safety))] bg-[hsl(var(--ground))]"
+            role="dialog" aria-modal="true" aria-label={`Posting to ${shot.site}`}
             onClick={e => e.stopPropagation()}>
             <div className="tape h-1.5" />
             <img src={shot.url} alt="Your capture" className="max-h-[52vh] w-full object-contain bg-black" />

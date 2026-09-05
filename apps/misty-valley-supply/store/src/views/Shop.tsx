@@ -1,8 +1,8 @@
 import * as React from "react";
 import { CATEGORIES, PRODUCTS, type Product } from "@/data";
 import { Glyph } from "@/glyph";
-import { Price, useAuth } from "@/auth";
-import { Btn, Panel, Tag, cx, money } from "@/ui";
+import { Price } from "@/auth";
+import { Btn, Tag, cx, money } from "@/ui";
 
 type CartLine = { sku: string; qty: number };
 
@@ -137,22 +137,31 @@ function Row({
 
 /* ---------------------------------------------------------------- shop */
 
+function useEscape(onClose: () => void, active: boolean) {
+  React.useEffect(() => {
+    if (!active) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [onClose, active]);
+}
+
 export default function Shop({
-  cart, setCart, query, setQuery, preCat, onSignIn,
+  cart, setCart, query, setQuery, preCat, onSignIn, onProduct,
 }: {
   cart: CartLine[]; setCart: (c: CartLine[]) => void;
   query: string; setQuery: (q: string) => void;
   preCat?: string; onSignIn: () => void;
+  onProduct: (sku: string) => void;
 }) {
-  const { user, net } = useAuth();
   const [cats, setCats] = React.useState<string[]>(preCat ? [preCat] : []);
   React.useEffect(() => { if (preCat) setCats([preCat]); }, [preCat]);
   const [stds, setStds] = React.useState<string[]>([]);
   const [fulfils, setFulfils] = React.useState<string[]>([]);
   const [maxPrice, setMaxPrice] = React.useState(0);
   const [sort, setSort] = React.useState("rel");
-  const [open, setOpen] = React.useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = React.useState(false);
+  useEscape(() => setFiltersOpen(false), filtersOpen);
 
   const toggle = (arr: string[], set: (v: string[]) => void, v: string) =>
     set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
@@ -184,7 +193,7 @@ export default function Shop({
       <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] pb-2">
         <span className="disp text-[18px] font-bold">Filter</span>
         {activeCount > 0 && (
-          <button onClick={clear} className="lab text-[hsl(var(--safety))]">Clear {activeCount}</button>
+          <button onClick={clear} className="lab flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline underline-offset-2">Clear {activeCount}</button>
         )}
       </div>
       <Facet title="Category">
@@ -242,13 +251,13 @@ export default function Shop({
               <span className="text-[hsl(var(--ink-3))]"> of {PRODUCTS.length} items</span>
             </span>
             <button onClick={() => setFiltersOpen(true)}
-              className="lab flex h-9 items-center gap-2 border border-[hsl(var(--ink))] px-3 lg:hidden">
+              className="lab flex h-11 items-center gap-2 rounded-[6px] border border-[hsl(var(--ink))] px-3.5 !text-[hsl(var(--ink))] lg:hidden">
               Filter {activeCount > 0 && <span className="bg-[hsl(var(--safety))] px-1.5 text-white">{activeCount}</span>}
             </button>
             <label className="ml-auto flex items-center gap-2">
               <span className="lab hidden sm:inline">Sort</span>
               <select value={sort} onChange={e => setSort(e.target.value)}
-                className="h-9 border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-2 text-[13px]">
+                className="h-11 rounded-[6px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-2 text-[13px] sm:h-10">
                 {SORTS.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
               </select>
             </label>
@@ -262,7 +271,7 @@ export default function Shop({
                 ...fulfils.map(f => [f, fulfilName(f as Product["fulfil"]), () => toggle(fulfils, setFulfils, f)] as const),
               ].map(([id, label, off]) => (
                 <button key={id} onClick={off}
-                  className="lab flex items-center gap-1.5 border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-2 py-1.5">
+                  className="lab flex min-h-[44px] items-center gap-1.5 rounded-[6px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-2.5 sm:min-h-[36px]">
                   {label} <span className="text-[hsl(var(--ink-3))]">✕</span>
                 </button>
               ))}
@@ -272,7 +281,7 @@ export default function Shop({
           {/* rows */}
           <div className="border border-[hsl(var(--rule))]">
             {list.map(p => (
-              <Row key={p.sku} p={p} onAdd={add} onSpec={() => setOpen(p)} onSignIn={onSignIn} />
+              <Row key={p.sku} p={p} onAdd={add} onSpec={() => onProduct(p.sku)} onSignIn={onSignIn} />
             ))}
             {list.length === 0 && (
               <div className="p-8 text-center">
@@ -300,47 +309,6 @@ export default function Shop({
         </div>
       )}
 
-      {/* spec drawer */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={() => setOpen(null)}>
-          <div className="h-full w-full overflow-y-auto bg-[hsl(var(--ground))] p-4 sm:max-w-[520px] sm:border-l-2 sm:border-[hsl(var(--safety))] sm:p-6"
-            onClick={e => e.stopPropagation()}>
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div className="mono text-[11px] text-[hsl(var(--ink-3))]">{open.sku}</div>
-              <button onClick={() => setOpen(null)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
-            </div>
-            <div className="mb-4 flex gap-4">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center plate rounded-[6px] border border-[hsl(var(--rule))]">
-                <Glyph sku={open.sku} cat={open.cat} className="h-[62%] w-[62%]" />
-              </div>
-              <h3 className="disp text-[22px] font-bold leading-[1.05] sm:text-[28px]">{open.name}</h3>
-            </div>
-            <Panel pad={false} className="mb-4">
-              {[["Standard", open.std], ["OSHA cite", open.osha], ["Availability", fulfilName(open.fulfil)],
-                ["Source", open.supplier], ["Lead time", open.lead], ["Unit", open.uom],
-                ["Minimum", String(open.moq ?? 1)],
-                ["Unit price", user ? `${money(net(open.price))} (list ${money(open.price)})` : `${money(open.price)} list`]].map(([k, v], i) => (
-                <div key={k} className={cx("flex items-start justify-between gap-3 px-3 py-2.5",
-                  i !== 7 && "border-b border-[hsl(var(--rule))]")}>
-                  <span className="lab pt-[3px]">{k}</span>
-                  <span className={cx("text-right text-[13px]",
-                    k === "OSHA cite" && "text-[hsl(var(--safety))]")}>{v}</span>
-                </div>
-              ))}
-            </Panel>
-            <Panel className="mb-4 border-l-2 border-l-[hsl(var(--safety))]">
-              <div className="lab mb-2 !text-[hsl(var(--safety))]">Why this matters</div>
-              <p className="text-[13px] leading-[1.55]">{open.note}</p>
-            </Panel>
-            <div className="flex gap-2">
-              <Btn className="flex-1" onClick={() => { add(open.sku, open.moq ?? 1); setOpen(null); }}>
-                Add {open.moq ?? 1} to order
-              </Btn>
-              <Btn variant="line" onClick={() => setOpen(null)}>Back</Btn>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

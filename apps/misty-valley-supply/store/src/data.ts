@@ -12,6 +12,7 @@ export type Product = {
   std: string;          // the consensus standard the product is built to
   osha: string;         // the rule that requires it on a jobsite
   note: string;
+  why: string;         // plain-English: what the OSHA rule actually requires
   fulfil: Fulfil;
   supplier: string;
   lead: string;
@@ -35,30 +36,35 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-RG-1000", name: "Non-Penetrating Roof Guardrail — 10 ft Section", cat: "roof",
     price: 289, uom: "section", std: "OSHA 1926.502(b)", osha: "1926.501(b)(10)",
     note: "Top rail 42 in ±3 in, withstands 200 lb applied outward or downward. No roof penetration — counterweighted base.",
+    why: "OSHA 1926.501(b)(10) lets a crew on a low-slope roof use a guardrail system instead of tying everyone off. 1926.502(b) sets the numbers this section is built to: a top rail 42 in above the deck, plus or minus 3 in, that withstands 200 lb applied outward or downward, and a midrail at 21 in that withstands 150 lb.",
     fulfil: "dropship", supplier: "Midwest Safety Group", lead: "3–5 days", hot: true,
   },
   {
     sku: "MVS-RG-BASE", name: "Guardrail Counterweight Base — 90 lb", cat: "roof",
     price: 148, uom: "each", std: "OSHA 1926.502(b)", osha: "1926.501(b)(10)",
     note: "Rubber-footed cast base. Spacing per manufacturer's engineered layout — do not eyeball it.",
+    why: "The counterweight base is what makes a non-penetrating rail hold its rating. Under 1926.502(b) the top rail must take a 200 lb outward or downward force without deflecting below 39 in, and that only holds when the bases sit at the spacing in the manufacturer's engineered layout — follow the layout, not your eye.",
     fulfil: "dropship", supplier: "Midwest Safety Group", lead: "3–5 days",
   },
   {
     sku: "MVS-WL-600", name: "Warning Line System — 600 ft Kit", cat: "roof",
     price: 1240, uom: "kit", std: "OSHA 1926.502(f)", osha: "1926.501(b)(10)",
     note: "Stanchions plus line. Erected not less than 6 ft from edge, flagged at 6 ft intervals, 34–39 in high.",
+    why: "On a low-slope roof, 1926.501(b)(10) allows a warning line used with a safety monitor in place of rail or harnesses. 1926.502(f) writes the line's spec: rigged 34 to 39 in high, flagged at intervals of not more than 6 ft, resisting 16 lb of tipping force, minimum 500 lb tensile strength, and set back at least 6 ft from the edge.",
     fulfil: "dropship", supplier: "Midwest Safety Group", lead: "5–7 days",
   },
   {
     sku: "MVS-SKY-48", name: "Skylight Screen — 4 ft × 8 ft", cat: "roof",
     price: 412, uom: "each", std: "OSHA 1926.502(i)", osha: "1926.501(b)(4)",
     note: "Covers capable of supporting twice the maximum intended load. Marked HOLE or COVER.",
+    why: "OSHA treats an unguarded skylight as a hole in the roof. 1926.501(b)(4) requires protection from falling through any hole more than 6 ft above a lower level, and 1926.502(i) requires the cover to support at least twice the weight of the workers, equipment and material that could ever be on it, to be secured against displacement, and to be marked or color-coded so nobody pulls it.",
     fulfil: "fabricate", supplier: "Misty Valley shop", lead: "7–10 days",
   },
   {
     sku: "MVS-ANC-DL", name: "Reusable Roof Anchor — Standing Seam Clamp", cat: "roof",
     price: 386, uom: "each", std: "ANSI/ASSP Z359.18 Type A", osha: "1926.502(d)(15)",
     note: "5,000 lb anchorage per attached worker, or engineered to 2:1 with a qualified person.",
+    why: "1926.502(d)(15) requires a fall-arrest anchorage to hold 5,000 lb for each worker attached — or to be designed with a safety factor of two under the supervision of a qualified person. A pipe stub or a screen post is not an anchorage; this clamp is rated, tested and documented as one, to ANSI/ASSP Z359.18.",
     fulfil: "dropship", supplier: "Ridgeline Fall Protection", lead: "4–6 days",
   },
 
@@ -67,24 +73,28 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-YG-10", name: "Yellow Steel Guardrail — 10 ft Rail", cat: "guard",
     price: 172, uom: "each", std: "OSHA 1926.502(b)", osha: "1926.501(b)(1)",
     note: "Powder-coated safety yellow. Top rail 42 in, mid rail at 21 in, toe board where material can fall.",
+    why: "1926.501(b)(1) requires fall protection at every unprotected side or edge 6 ft or more above a lower level, and guardrail is the option that protects everyone without gearing anyone up. 1926.502(b) sets the build: top rail at 42 in plus or minus 3 in withstanding 200 lb, midrail at 21 in withstanding 150 lb.",
     fulfil: "dropship", supplier: "Ohio Valley Rail Products", lead: "5–8 days", hot: true,
   },
   {
     sku: "MVS-YG-POST", name: "Guardrail Post — Bolt-Down, Yellow", cat: "guard",
     price: 96, uom: "each", std: "OSHA 1926.502(b)", osha: "1926.501(b)(1)",
     note: "Baseplate with four anchors. Deflection under 200 lb must not bring top rail below 39 in.",
+    why: "The post carries the whole guardrail load path. Under 1926.502(b) the top rail must take 200 lb outward or downward without deflecting below 39 in, which is a post-and-anchor problem, not a rail problem. This bolt-down baseplate with four anchors is how the system passes that test on concrete or steel.",
     fulfil: "dropship", supplier: "Ohio Valley Rail Products", lead: "5–8 days",
   },
   {
     sku: "MVS-YG-TOE", name: "Toe Board — 4 in × 10 ft, Yellow", cat: "guard",
     price: 64, uom: "each", std: "OSHA 1926.502(j)", osha: "1926.501(b)(1)",
     note: "Minimum 3½ in vertical, withstands 50 lb. Required wherever people work or pass below.",
+    why: "Where people work or pass below an edge, the hazard is falling material, not falling workers. 1926.502(j) requires a toeboard at least 3 1/2 in tall, able to withstand 50 lb of downward or outward force, with not more than 1/4 in of clearance above the walking surface.",
     fulfil: "dropship", supplier: "Ohio Valley Rail Products", lead: "5–8 days",
   },
   {
     sku: "MVS-HOLE-4", name: "Floor Hole Cover — 4 ft × 4 ft, Marked", cat: "guard",
     price: 128, uom: "each", std: "OSHA 1926.502(i)", osha: "1926.501(b)(4)",
     note: "Secured against displacement. Pre-marked HOLE. Twice the maximum intended load.",
+    why: "1926.501(b)(4) requires every walking-surface hole more than 6 ft above a lower level to be covered or guarded. 1926.502(i) sets the cover's spec: support at least twice the maximum intended load, secured so it cannot slide, and marked HOLE or COVER so nobody lifts it without knowing what is under it.",
     fulfil: "fabricate", supplier: "Misty Valley shop", lead: "5–7 days",
   },
 
@@ -93,18 +103,21 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-HH-C1", name: "Hard Hat — Cap Style, Type I Class E", cat: "head",
     price: 19.5, uom: "each", std: "ANSI/ISEA Z89.1 Type I Class E", osha: "1926.100(a)",
     note: "Type I protects the crown only. Class E tested to 20,000 V. Four-point ratchet.",
+    why: "1926.100(a) requires a protective helmet wherever there is a possible danger of head injury from impact, from falling or flying objects, or from electrical shock and burns. Type I is tested for crown impact only; Class E is dielectric-tested to 20,000 volts, per the ANSI Z89.1 standard OSHA incorporates at 1926.100(b).",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12, hot: true,
   },
   {
     sku: "MVS-HH-T2V", name: "Safety Helmet — Type II Class E, Vented", cat: "head",
     price: 89, uom: "each", std: "ANSI/ISEA Z89.1 Type II Class E", osha: "1926.100(a)",
     note: "Type II adds lateral impact protection. Chin strap, accessory rails. Vented models are Class C unless stated — read the shell mark.",
+    why: "1926.100(a) is the trigger: possible head injury from impact, falling or flying objects, or electrical shock means a helmet, full stop. Type II adds tested lateral-impact protection to the Type I crown test under ANSI Z89.1. Read the shell mark before electrical work — vented shells are typically Class C, with no voltage rating at all.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", hot: true,
   },
   {
     sku: "MVS-HH-BRIM", name: "Hard Hat — Full Brim, Type I Class G", cat: "head",
     price: 27, uom: "each", std: "ANSI/ISEA Z89.1 Type I Class G", osha: "1926.100(a)",
     note: "Class G tested to 2,200 V. Full brim sheds water and sun — the roofer's default.",
+    why: "Same rule as every hard hat on site: 1926.100(a) requires head protection where impact, falling objects or electrical shock are possible, built to the ANSI Z89.1 standard named in 1926.100(b). Class G is proof-tested at 2,200 volts — general trades work, not line work near high voltage; that is Class E.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12,
   },
 
@@ -113,18 +126,21 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-SG-CLR", name: "Safety Glasses — Clear, Anti-Fog", cat: "eye",
     price: 6.4, uom: "each", std: "ANSI/ISEA Z87.1 Z87+", osha: "1926.102(b)(1)",
     note: "The + means high impact: 6.35 mm steel ball at 150 ft/s, plus a 500 g pointed drop from 50 in. No mark, no protection.",
+    why: "1926.102(a)(1) requires eye and face protection whenever the work can injure an eye — flying particles, dust, chips, splash. OSHA accepts protectors built to the ANSI/ISEA Z87.1 standard it lists at 1926.102(b)(1). The Z87+ mark means high-impact tested, including a 6.35 mm steel ball fired at 150 ft/s. An unmarked lens is not protection.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12, hot: true,
   },
   {
     sku: "MVS-SG-SMK", name: "Safety Glasses — Smoke, Z87+", cat: "eye",
     price: 6.9, uom: "each", std: "ANSI/ISEA Z87.1 Z87+", osha: "1926.102(b)(1)",
     note: "Outdoor tint. Frame and lens both carry the mark — check both, that is where counterfeits fail.",
+    why: "The rule is 1926.102(a)(1): eye protection wherever the operation can injure an eye, built to the ANSI/ISEA Z87.1 standard OSHA lists at 1926.102(b)(1). The smoke tint handles outdoor glare; the Z87+ mark on both frame and lens is what makes the pair compliant — counterfeits usually miss one of the two.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12,
   },
   {
     sku: "MVS-GG-SEAL", name: "Sealed Safety Goggle — Indirect Vent", cat: "eye",
     price: 14.75, uom: "each", std: "ANSI/ISEA Z87.1 Z87+ D3", osha: "1926.102(a)(1)",
     note: "D3 splash rating. Required where grinding, cutting or chemical splash is present.",
+    why: "1926.102(a)(1) requires eye and face protection matched to the hazard, and for chemical splash or heavy grinding dust a spectacle is not a match — the rule effectively demands a sealed goggle. The D3 mark under ANSI/ISEA Z87.1 means the goggle passed the droplet and splash test.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days",
   },
 
@@ -133,18 +149,21 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-GL-A4", name: "Cut-Resistant Glove — Level A4, PU Palm", cat: "hand",
     price: 8.2, uom: "pair", std: "ANSI/ISEA 105 Cut Level A4", osha: "1926.95(a)",
     note: "A4 is 1,500–2,199 g of cut resistance. The right default for sheet metal and stud handling.",
+    why: "Construction has no numbered glove rule; 1926.95(a) is the requirement — protective equipment wherever hazards of the work or environment are capable of causing injury. ANSI/ISEA 105 grades cut resistance A1 through A9. A4 means the test blade needs 1,500 to 2,199 g of load to cut through: the working default for sheet metal and stud.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12, hot: true,
   },
   {
     sku: "MVS-GL-A6", name: "Cut-Resistant Glove — Level A6, Nitrile", cat: "hand",
     price: 13.4, uom: "pair", std: "ANSI/ISEA 105 Cut Level A6", osha: "1926.95(a)",
     note: "A6 is 3,000–3,999 g. Glass handling, heavy gauge steel, demo.",
+    why: "1926.95(a) requires hand protection wherever the task presents a hazard capable of causing injury, and a cut hazard is exactly that. On the ANSI/ISEA 105 scale, A6 means 3,000 to 3,999 g of cut load — the tier for glass, heavy-gauge steel edges and demolition, where an A4 palm gives up.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12,
   },
   {
     sku: "MVS-GL-LEA", name: "Leather Driver Glove — Grain Cowhide", cat: "hand",
     price: 5.6, uom: "pair", std: "No cut rating claimed", osha: "1926.95(a)",
     note: "General handling only. If the task has a cut hazard, this is not the glove — and we will tell you so.",
+    why: "1926.95(a) requires protective equipment matched to the hazard, and this glove claims no cut rating at all — it is for general handling, abrasion and splinters. If the task can slice, an unrated leather driver does not satisfy the rule; move up to an ANSI/ISEA 105 rated cut glove.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12,
   },
 
@@ -153,18 +172,21 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-VS-C2", name: "Hi-Vis Vest — Class 2, Type R", cat: "hivis",
     price: 11.9, uom: "each", std: "ANSI/ISEA 107 Type R Class 2", osha: "1926.201(a)",
     note: "Class 2 for traffic under 50 mph and complex backgrounds. Type R = roadway.",
+    why: "1926.201(a) requires flagger signaling to conform to the MUTCD, and the MUTCD puts flaggers in high-visibility apparel meeting ANSI/ISEA 107 Class 2 at minimum. Class 2, Type R is the standard roadway work-zone garment; where traffic is fast or light is poor, the step up is Class 3.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 12, hot: true,
   },
   {
     sku: "MVS-VS-C3", name: "Hi-Vis Long-Sleeve — Class 3, Type R", cat: "hivis",
     price: 34.5, uom: "each", std: "ANSI/ISEA 107 Type R Class 3", osha: "1926.201(a)",
     note: "Class 3 required over 50 mph, poor visibility, or where the worker must be seen through a full range of motion.",
+    why: "1926.201(a) points flagger operations at the MUTCD, which calls for stepping up from Class 2 as risk rises — night work, poor weather, high-speed traffic. Under ANSI/ISEA 107, Class 3 adds sleeves and more reflective area so the wearer reads as a person, in motion, from a full 1,280 ft.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days",
   },
   {
     sku: "MVS-VS-O1", name: "Hi-Vis Vest — Class 1, Type O", cat: "hivis",
     price: 9.4, uom: "each", std: "ANSI/ISEA 107 Type O Class 1", osha: "1926.95(a)",
     note: "Type O is off-road only. Not legal on a public right of way — a common and expensive mix-up.",
+    why: "1926.95(a) is the general PPE rule this vest answers: a visible worker where equipment moves off the public way. Type O under ANSI/ISEA 107 is off-road only — it does not meet the Class 2 roadway garment the MUTCD flagger rules call for, which is the expensive mix-up this label exists to prevent.",
     fulfil: "dropship", supplier: "Bluegrass PPE Distributors", lead: "2–4 days", moq: 24,
   },
 
@@ -173,18 +195,21 @@ export const PRODUCTS: Product[] = [
     sku: "MVS-FH-5PT", name: "Full Body Harness — 5-Point, Universal", cat: "fall",
     price: 118, uom: "each", std: "ANSI/ASSP Z359.11", osha: "1926.502(d)",
     note: "Arrest force limited to 1,800 lb, free fall limited to 6 ft, deceleration distance 3.5 ft.",
+    why: "1926.502(d) writes the personal fall arrest spec: a full body harness — body belts have been banned for arrest since 1998 — limiting the arresting force on the worker to 1,800 lb, with free fall limited to 6 ft and deceleration distance to 3.5 ft. ANSI/ASSP Z359.11 is the consensus standard the harness itself is built and tested to.",
     fulfil: "dropship", supplier: "Ridgeline Fall Protection", lead: "4–6 days", hot: true,
   },
   {
     sku: "MVS-SRL-11", name: "Self-Retracting Lifeline — 11 ft, Class 2", cat: "fall",
     price: 268, uom: "each", std: "ANSI/ASSP Z359.14 Class 2", osha: "1926.502(d)(16)",
     note: "Class 2 permits up to 24 in arrest distance. Check clearance below before you spec any SRL.",
+    why: "1926.502(d)(16) requires the system to limit arresting force to 1,800 lb with a harness, to limit free fall, and to stop the worker before any contact with a lower level. An SRL arrests in inches instead of feet, which is why it wins on low roofs — but verify the manufacturer's clearance chart below the anchor before you spec it.",
     fulfil: "dropship", supplier: "Ridgeline Fall Protection", lead: "4–6 days",
   },
   {
     sku: "MVS-LY-SA6", name: "Shock-Absorbing Lanyard — 6 ft, Double Leg", cat: "fall",
     price: 142, uom: "each", std: "ANSI/ASSP Z359.13", osha: "1926.502(d)(16)",
     note: "Needs 18.5 ft of clearance below the anchor. On a low roof this is the wrong product — use an SRL.",
+    why: "1926.502(d)(16) limits arresting force to 1,800 lb, free fall to 6 ft, and requires the rig to stop the worker before contact with a lower level. A 6 ft shock-absorbing lanyard needs roughly 18.5 ft of clearance below the anchor to honor that — on a low roof it cannot, and the right answer is an SRL.",
     fulfil: "dropship", supplier: "Ridgeline Fall Protection", lead: "4–6 days",
   },
 ];

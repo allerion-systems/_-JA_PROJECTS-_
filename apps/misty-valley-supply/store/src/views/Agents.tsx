@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PRODUCTS } from "@/data";
-import { Btn, DataTable, Head, Lab, Panel, Rule, Tag, cx } from "@/ui";
+import { Btn, DataTable, Head, Lab, Panel, Rule, Tag } from "@/ui";
 
 const TOOLS = [
   { name: "search_products", args: "query, category, standard, max_price",
@@ -78,7 +78,7 @@ export default function Agents() {
             <DataTable
               cols={["Tool", "Arguments", "Returns", "Note"]}
               rows={TOOLS.map(t => [
-                <span className="text-[13px] text-[hsl(var(--safety))]">{t.name}</span>,
+                <span className="text-[13px] text-[hsl(var(--safety-2))]">{t.name}</span>,
                 <span className="text-[11px] text-[hsl(var(--ink-2))]">{t.args}</span>,
                 <span className="text-[11px]">{t.ret}</span>,
                 <span className="text-[13px] text-[hsl(var(--ink-2))]">{t.note}</span>,
@@ -104,7 +104,7 @@ export default function Agents() {
             <div className="p-5">
               <div className="mb-3 flex items-center justify-between">
                 <Lab>Offer manifest</Lab>
-                <button onClick={copy} className="lab text-[hsl(var(--safety))] hover:underline">
+                <button onClick={copy} className="lab inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] hover:underline">
                   {copied ? "Copied ✓" : "Copy JSON"}
                 </button>
               </div>

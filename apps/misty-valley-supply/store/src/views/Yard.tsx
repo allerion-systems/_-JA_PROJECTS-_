@@ -40,13 +40,13 @@ function MoneyModel() {
           <span className="lab">Sale amount</span>
           <input type="number" min={1} value={usd}
             onChange={e => setUsd(Math.max(0, Number(e.target.value) || 0))}
-            className="mt-1 h-10 w-full border border-[hsl(var(--rule))] bg-white px-2.5 text-[15px]" />
+            className="mt-1 h-11 w-full border border-[hsl(var(--rule))] bg-white px-2.5 text-[15px]" />
         </label>
         {rows.map(([l, v, t]) => (
           <div key={l} className="mb-1.5 flex items-baseline justify-between gap-3">
             <span className="text-[13px] text-[hsl(var(--ink-2))]">{l}</span>
             <span className={cx("text-[13px]",
-              t === "safety" && "text-[hsl(var(--safety))]",
+              t === "safety" && "text-[hsl(var(--safety-2))]",
               t === "warn" && "text-[hsl(var(--warn))]")}>
               {v < 0 ? `−${dollars(Math.abs(v))}` : dollars(v)}
             </span>
@@ -140,7 +140,7 @@ function ProtectedSale({ l }: { l: Listing }) {
               <span className="">{dollars(s.platformFee)}</span> to Misty Valley.
               We held your money for zero seconds.
             </p>
-            <button onClick={() => setPhase("idle")} className="lab mt-3 text-[hsl(var(--safety-2))] underline">
+            <button onClick={() => setPhase("idle")} className="lab mt-3 inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">
               Reset the demo
             </button>
           </div>
@@ -155,14 +155,14 @@ function ProtectedSale({ l }: { l: Listing }) {
               The authorization is cancelled. No charge was ever made, so there is
               nothing to refund.
             </p>
-            <button onClick={() => setPhase("idle")} className="lab mt-3 text-[hsl(var(--safety-2))] underline">
+            <button onClick={() => setPhase("idle")} className="lab mt-3 inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">
               Reset the demo
             </button>
           </div>
         </Panel>
       )}
 
-      <button onClick={() => setShow(!show)} className="lab mt-3 text-[hsl(var(--ink-3))] underline">
+      <button onClick={() => setShow(!show)} className="lab mt-3 inline-flex min-h-[44px] items-center !text-[hsl(var(--ink-2))] underline">
         {show ? "Hide" : "Show"} the actual API calls
       </button>
       {show && (
@@ -195,7 +195,7 @@ function Card({ l, onOpen }: { l: Listing; onOpen: () => void }) {
         <span className="absolute left-2 top-2"><Tag tone={tone(l.kind) as never}>{l.kind}</Tag></span>
       </div>
       <div className="flex flex-1 flex-col p-3">
-        <div className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety))]">{l.price}</div>
+        <div className="disp text-[18px] font-bold leading-none text-[hsl(var(--safety-2))]">{l.price}</div>
         <h3 className="mt-1.5 line-clamp-2 text-[13px] font-semibold leading-[1.35] group-hover:underline">
           {l.title}
         </h3>
@@ -220,6 +220,14 @@ export default function Yard() {
   const [msg, setMsg] = React.useState("");
   const [sent, setSent] = React.useState(false);
 
+  /* the listing drawer closes on Escape */
+  React.useEffect(() => {
+    if (!open) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(null); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [open]);
+
   const list = LISTINGS.filter(l =>
     (kind === "All" || l.kind === kind) &&
     (q.trim() === "" || `${l.title} ${l.body} ${l.where} ${l.who}`.toLowerCase().includes(q.toLowerCase())));
@@ -241,12 +249,12 @@ export default function Yard() {
           {/* controls */}
           <div className="mb-4 grid gap-2 sm:grid-cols-[1fr_auto]">
             <input value={q} onChange={e => setQ(e.target.value)}
-              placeholder="Search the yard — scissor lift, stud, crew…"
-              className="h-10 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))]" />
-            <label className="flex items-center gap-2 border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3">
+              placeholder="Search the yard — scissor lift, stud, crew…" aria-label="Search the yard"
+              className="h-11 w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 text-[15px] outline-none focus:border-[hsl(var(--safety))]" />
+            <label className="flex min-h-[44px] items-center gap-2 border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3">
               <span className="text-[11px] font-medium whitespace-nowrap">Within</span>
               <select value={radius} onChange={e => setRadius(Number(e.target.value))}
-                className="h-9 bg-transparent text-[13px] outline-none">
+                aria-label="Search radius" className="h-11 bg-transparent text-[13px] outline-none">
                 {[25, 60, 150, 500].map(r => <option key={r} value={r}>{r} mi</option>)}
               </select>
             </label>
@@ -254,10 +262,10 @@ export default function Yard() {
 
           <div className="mb-4 flex flex-wrap gap-1.5">
             {LISTING_KINDS.map(k => (
-              <button key={k} onClick={() => setKind(k)}
-                className={cx("lab border px-2.5 py-2",
-                  kind === k ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
-                             : "border-[hsl(var(--rule))] text-[hsl(var(--ink-2))]")}>
+              <button key={k} onClick={() => setKind(k)} aria-pressed={kind === k}
+                className={cx("lab inline-flex min-h-[44px] items-center border px-3 py-2",
+                  kind === k ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] !text-white"
+                             : "border-[hsl(var(--rule))] !text-[hsl(var(--ink-2))]")}>
                 {k}
               </button>
             ))}
@@ -303,10 +311,11 @@ export default function Yard() {
       {open && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={() => setOpen(null)}>
           <div className="h-full w-full overflow-y-auto bg-[hsl(var(--ground))] sm:max-w-[520px] sm:border-l-2 sm:border-[hsl(var(--safety))]"
+            role="dialog" aria-modal="true" aria-label={open.title}
             onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-[hsl(var(--ink))] p-4">
               <span className="mono text-[11px] text-[hsl(var(--ink-3))]">{open.id}</span>
-              <button onClick={() => setOpen(null)} className="lab h-10 px-2 text-[hsl(var(--ink-2))]">Close ✕</button>
+              <button onClick={() => setOpen(null)} className="lab inline-flex h-11 min-w-[44px] items-center justify-center px-2 !text-[hsl(var(--ink-2))]" aria-label="Close listing details">Close ✕</button>
             </div>
 
             <div className="flex aspect-[16/9] items-center justify-center plate border-b border-[hsl(var(--rule))]">
@@ -345,12 +354,13 @@ export default function Yard() {
               ) : (
                 <>
                   <textarea value={msg} onChange={e => setMsg(e.target.value)} rows={3}
+                    aria-label="Message the seller"
                     placeholder="Is this still available? I can pick up Saturday."
                     className="w-full border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2.5 text-[15px] outline-none focus:border-[hsl(var(--safety))]" />
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {["Still available?", "Can you deliver?", "Will you take less?"].map(t => (
                       <button key={t} onClick={() => setMsg(t)}
-                        className="lab border border-[hsl(var(--rule))] px-2 py-1.5">{t}</button>
+                        className="lab inline-flex min-h-[44px] items-center border border-[hsl(var(--rule))] px-2.5">{t}</button>
                     ))}
                   </div>
                   <Btn variant="line" className="mt-2 w-full" disabled={!msg.trim()}
