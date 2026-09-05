@@ -151,8 +151,18 @@ collapse and how many mills have closed; how many mills already compete for logs
 within 100 miles of Hardin County; and whether hardwood actually moves by barge
 on the Ohio today and what a private dock costs to permit.
 
-**[RESEARCH PENDING]** — this section gets rewritten when it lands, and I will
-report what it says whether or not it supports the plan.
+**RESOLVED — see `01-rosiclare-verdict.md`.** It came back and it does not
+support the plan. Peer-reviewed modelling (Virginia Tech / USDA Forest Service)
+puts hardwood sawmills at **exactly zero profit** at 4, 8 and 12 MMBF; at a
+return to the **all-time record** hardwood price of June 2022, a 12 MMBF mill
+earns ~$856K against ~$2.9M of debt service on a $20M greenfield build. Eastern
+production in 2026 is projected to be the **lowest since records began in 1960**.
+**35 mills closed in 2025.** Rosiclare has ~1,270 employed people in the whole
+county, no rail, no four-lane, no commercial river terminal, and half its log
+procurement radius across an unbridged river.
+
+**The name, however, is recoverable for about $250 and the window is closing
+right now.** That is the one action this week.
 
 ### 5.4 The version that is not crazy
 
@@ -200,7 +210,5 @@ Get in front of it. Don't get in the middle of it.
 
 ---
 
-*Research pending on the Illinois corporate record, Rosiclare and Hardin County
-infrastructure, hardwood sawmill capex and minimum viable scale, 2026 hardwood
-market conditions, and Ohio River lumber movement. This document will be updated
-when it lands.*
+*Research complete. See `01-rosiclare-verdict.md` — it resolves §5.3 and
+supersedes the open questions in §5.4.*
