@@ -43,6 +43,29 @@ const NAV: { id: View; label: string; short: string; sub: string; icon: React.Re
     icon: <path d="M8 6 3 12l5 6M16 6l5 6-5 6M13 4l-2 16" /> },
 ];
 
+
+/* Department tree per brand/NAV-ARCHITECTURE.md: 5-7 departments, PPE under
+   one roof, fabrication first, the marketplace as its own divider. The left
+   rail sells; the workspace group is where the software lives. */
+const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string };
+                     cats?: string[]; kids?: { label: string; cat: string }[] }[] = [
+  { label: "Roof Screens", sub: "Shop-fabricated · kits or parts", go: { view: "screen" } },
+  { label: "Fall Protection", sub: "Harnesses, SRLs, anchors", go: { view: "shop", cat: "fall" }, cats: ["fall"] },
+  { label: "Roof Safety", sub: "Warning line, covers, screens", go: { view: "shop", cat: "roof" }, cats: ["roof"] },
+  { label: "Guardrail & Edge", sub: "Non-penetrating systems", go: { view: "shop", cat: "guard" }, cats: ["guard"] },
+  { label: "PPE", sub: "Head, eye, hand, hi-vis", go: { view: "shop", cat: "head" },
+    cats: ["head", "eye", "hand", "hivis"],
+    kids: [
+      { label: "Head Protection", cat: "head" },
+      { label: "Eye Protection", cat: "eye" },
+      { label: "Hand Protection", cat: "hand" },
+      { label: "Hi-Vis Apparel", cat: "hivis" },
+    ] },
+];
+
+const deptCount = (cats?: string[]) =>
+  cats ? PRODUCTS.filter(p => cats.includes(p.cat)).length : 0;
+
 const Icon = ({ children }: { children: React.ReactNode }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
     strokeLinecap="square" className="h-[22px] w-[22px] shrink-0">{children}</svg>
@@ -117,6 +140,14 @@ function Inner() {
               <span className="hidden sm:inline">Branch:</span> {branch.name}
               <span className="text-white/40">▾</span>
             </button>
+            <a href={`tel:${branch.phone.replace(/[^0-9+]/g, "")}`}
+              className="hidden min-h-[44px] items-center gap-1.5 text-[13px] font-medium text-white/85 hover:text-white sm:flex">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+              </svg>
+              {branch.phone}
+              <span className="hidden text-[12px] font-normal text-white/55 lg:inline">· talk to a person</span>
+            </a>
             <div className="ml-auto flex items-center gap-3">
               {user ? (
                 <button onClick={() => go(role?.home === "account" ? "account" : "dash")}
@@ -188,26 +219,76 @@ function Inner() {
 
       {/* ------------------------------------------------------------ body */}
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:flex">
-        <nav className="sticky top-[140px] hidden h-[calc(100vh-140px)] w-[210px] shrink-0 border-r border-[hsl(var(--rule))] py-6 pr-5 lg:block">
-          {visible.map(n => (
+        <nav className="sticky top-[140px] hidden h-[calc(100vh-140px)] w-[228px] shrink-0 overflow-y-auto border-r border-[hsl(var(--rule))] py-6 pr-5 lg:block">
+          <Lab kicker className="mb-2.5">Catalog</Lab>
+          {DEPARTMENTS.map(d => {
+            const active = (d.go.view === "screen" && view === "screen") ||
+              (d.go.view === "shop" && view === "shop" && !!d.cats?.length && !!preCat && d.cats.includes(preCat));
+            return (
+              <div key={d.label} className="mb-0.5">
+                <button
+                  onClick={() => d.go.view === "screen" ? go("screen") : goShop(d.go.cat)}
+                  className={cx("flex min-h-[44px] w-full items-center justify-between gap-2 rounded-[6px] px-2.5 py-2 text-left",
+                    active ? "bg-[hsl(var(--safety-soft))]" : "hover:bg-[hsl(var(--panel))]")}>
+                  <span className="min-w-0">
+                    <span className={cx("block text-[15px] font-semibold leading-[1.2]",
+                      active ? "text-[hsl(var(--safety-2))]" : "text-[hsl(var(--ink))]")}>{d.label}</span>
+                    <span className="mt-0.5 block text-[11px] leading-[1.3] text-[hsl(var(--ink-3))]">{d.sub}</span>
+                  </span>
+                  {d.cats && (
+                    <span className="num shrink-0 text-[11px] text-[hsl(var(--ink-3))]">{deptCount(d.cats)}</span>
+                  )}
+                </button>
+                {d.kids && (
+                  <div className="mb-1 ml-2.5 border-l border-[hsl(var(--rule))] pl-2.5">
+                    {d.kids.map(k => (
+                      <button key={k.cat} onClick={() => goShop(k.cat)}
+                        className={cx("flex min-h-[36px] w-full items-center justify-between gap-2 rounded-[4px] px-2 py-1 text-left text-[13px]",
+                          view === "shop" && preCat === k.cat
+                            ? "font-semibold text-[hsl(var(--safety-2))]"
+                            : "text-[hsl(var(--ink-2))] hover:text-[hsl(var(--ink))]")}>
+                        {k.label}
+                        <span className="num text-[11px] text-[hsl(var(--ink-3))]">{deptCount([k.cat])}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          <button onClick={() => goShop(undefined)}
+            className="mt-1 flex min-h-[44px] w-full items-center rounded-[6px] px-2.5 text-[13px] font-medium text-[hsl(var(--marine))] hover:underline">
+            Shop everything ({PRODUCTS.length}) →
+          </button>
+
+          <Rule className="my-4" />
+          <Lab kicker className="mb-2.5">Marketplace</Lab>
+          <button onClick={() => go("yard")}
+            className={cx("flex min-h-[44px] w-full items-center justify-between rounded-[6px] px-2.5 py-2 text-left",
+              view === "yard" ? "bg-[hsl(var(--safety-soft))]" : "hover:bg-[hsl(var(--panel))]")}>
+            <span className="min-w-0">
+              <span className={cx("block text-[15px] font-semibold leading-[1.2]",
+                view === "yard" ? "text-[hsl(var(--safety-2))]" : "text-[hsl(var(--ink))]")}>The Yard</span>
+              <span className="mt-0.5 block text-[11px] text-[hsl(var(--ink-3))]">Used &amp; surplus, pay on pickup</span>
+            </span>
+          </button>
+
+          <Rule className="my-4" />
+          <Lab kicker className="mb-2.5">Workspace</Lab>
+          {visible.filter(n => ["dash", "earth", "users", "ops"].includes(n.id)).map(n => (
             <button key={n.id} onClick={() => go(n.id)}
-              className={cx("mb-1 flex w-full items-center gap-2.5 border-l-2 py-2 pl-3 text-left",
-                isActive(n.id) ? "border-[hsl(var(--safety))] bg-[hsl(var(--panel))]"
-                               : "border-transparent hover:border-[hsl(var(--rule))]")}>
-              <span className={isActive(n.id) ? "text-[hsl(var(--safety))]" : "text-[hsl(var(--ink-3))]"}>
+              className={cx("flex min-h-[40px] w-full items-center gap-2.5 rounded-[6px] px-2.5 py-1.5 text-left",
+                isActive(n.id) ? "bg-[hsl(var(--panel))] text-[hsl(var(--ink))]" : "text-[hsl(var(--ink-2))] hover:text-[hsl(var(--ink))]")}>
+              <span className={isActive(n.id) ? "text-[hsl(var(--safety-2))]" : "text-[hsl(var(--ink-3))]"}>
                 <Icon>{n.icon}</Icon>
               </span>
-              <span className="min-w-0">
-                <span className={cx("block text-[15px] font-semibold leading-[1.2]",
-                  isActive(n.id) ? "text-[hsl(var(--ink))]" : "text-[hsl(var(--ink-2))]")}>{n.label}</span>
-                <span className="mt-1 block text-[11px] leading-[1.3] text-[hsl(var(--ink-3))]">{n.sub}</span>
-              </span>
+              <span className="text-[13px] font-medium">{n.label}</span>
             </button>
           ))}
-          <Rule className="my-5" />
-          <Lab className="mb-2">Prototype</Lab>
-          <p className="text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
-            Placeholder pricing. Standards and OSHA cites are real.
+
+          <Rule className="my-4" />
+          <p className="px-2.5 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+            Prototype. Placeholder pricing; standards and OSHA cites are real.
           </p>
         </nav>
 
