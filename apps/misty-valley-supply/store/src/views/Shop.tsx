@@ -1,6 +1,7 @@
 import * as React from "react";
 import { CATEGORIES, PRODUCTS, type Product } from "@/data";
 import { Glyph } from "@/glyph";
+import { Price, useAuth } from "@/auth";
 import { Btn, Panel, Tag, cx, money } from "@/ui";
 
 type CartLine = { sku: string; qty: number };
@@ -64,8 +65,8 @@ function Check({
 /* ----------------------------------------------------------------- rows */
 
 function Row({
-  p, onAdd, onSpec,
-}: { p: Product; onAdd: (sku: string, qty: number) => void; onSpec: () => void }) {
+  p, onAdd, onSpec, onSignIn,
+}: { p: Product; onAdd: (sku: string, qty: number) => void; onSpec: () => void; onSignIn: () => void }) {
   const min = p.moq ?? 1;
   const [qty, setQty] = React.useState(min);
   return (
@@ -106,10 +107,7 @@ function Row({
 
         {/* mobile price + buy */}
         <div className="mt-3 flex flex-wrap items-end justify-between gap-3 sm:hidden">
-          <div>
-            <div className="disp text-[24px] font-bold leading-none">{money(p.price)}</div>
-            <div className="lab mt-1">per {p.uom}{min > 1 ? ` · min ${min}` : ""}</div>
-          </div>
+          <Price list={p.price} uom={p.uom} onSignIn={onSignIn} size="sm" />
           <div className="flex items-center gap-1.5">
             <input type="number" min={min} step={min} value={qty}
               onChange={e => setQty(Math.max(min, Number(e.target.value) || min))}
@@ -121,8 +119,7 @@ function Row({
 
       {/* desktop price + buy */}
       <div className="hidden border-l border-[hsl(var(--rule))] pl-4 sm:block">
-        <div className="disp text-[26px] font-bold leading-none">{money(p.price)}</div>
-        <div className="lab mt-1">per {p.uom}</div>
+        <Price list={p.price} uom={p.uom} onSignIn={onSignIn} />
         {min > 1 && <div className="mono mt-1 text-[11px] text-[hsl(var(--warn))]">min order {min}</div>}
         <div className="mt-3 flex items-center gap-1.5">
           <input type="number" min={min} step={min} value={qty}
@@ -141,12 +138,15 @@ function Row({
 /* ---------------------------------------------------------------- shop */
 
 export default function Shop({
-  cart, setCart, query, setQuery,
+  cart, setCart, query, setQuery, preCat, onSignIn,
 }: {
   cart: CartLine[]; setCart: (c: CartLine[]) => void;
   query: string; setQuery: (q: string) => void;
+  preCat?: string; onSignIn: () => void;
 }) {
-  const [cats, setCats] = React.useState<string[]>([]);
+  const { user, net } = useAuth();
+  const [cats, setCats] = React.useState<string[]>(preCat ? [preCat] : []);
+  React.useEffect(() => { if (preCat) setCats([preCat]); }, [preCat]);
   const [stds, setStds] = React.useState<string[]>([]);
   const [fulfils, setFulfils] = React.useState<string[]>([]);
   const [maxPrice, setMaxPrice] = React.useState(0);
@@ -272,7 +272,7 @@ export default function Shop({
           {/* rows */}
           <div className="border border-[hsl(var(--rule))]">
             {list.map(p => (
-              <Row key={p.sku} p={p} onAdd={add} onSpec={() => setOpen(p)} />
+              <Row key={p.sku} p={p} onAdd={add} onSpec={() => setOpen(p)} onSignIn={onSignIn} />
             ))}
             {list.length === 0 && (
               <div className="p-8 text-center">
@@ -318,7 +318,8 @@ export default function Shop({
             <Panel pad={false} className="mb-4">
               {[["Standard", open.std], ["OSHA cite", open.osha], ["Availability", fulfilName(open.fulfil)],
                 ["Source", open.supplier], ["Lead time", open.lead], ["Unit", open.uom],
-                ["Minimum", String(open.moq ?? 1)], ["Unit price", money(open.price)]].map(([k, v], i) => (
+                ["Minimum", String(open.moq ?? 1)],
+                ["Unit price", user ? `${money(net(open.price))} (list ${money(open.price)})` : `${money(open.price)} list`]].map(([k, v], i) => (
                 <div key={k} className={cx("flex items-start justify-between gap-3 px-3 py-2.5",
                   i !== 7 && "border-b border-[hsl(var(--rule))]")}>
                   <span className="lab pt-[3px]">{k}</span>
