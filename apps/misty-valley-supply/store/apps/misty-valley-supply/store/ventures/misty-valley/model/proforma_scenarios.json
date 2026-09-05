@@ -1,0 +1,729 @@
+{
+  "_README": [
+    "Pro forma assumptions for Misty Valley Supply. Every number here is an",
+    "ASSUMPTION until Ben replaces it with a real quote, a real invoice, or a",
+    "real payroll number. The point of the model is not to predict -- it is to",
+    "show which assumptions the business is actually sensitive to.",
+    "",
+    "Unit basis: one road-legal truckload = ~95,000 linear feet of stud and",
+    "track at a blended 0.463 lb/ft across a representative commercial job mix,",
+    "against a 44,000 lb road-legal dray limit. See container_model.py.",
+    "",
+    "Pricing basis: distributor-to-contractor of $0.70-0.95/LF triangulated in",
+    "04-unit-economics.md, against verified Louisville retail of $1.268/LF",
+    "(Home Depot ProSTUD 25, 3-5/8in x 10ft, checked 2026-09-04).",
+    "",
+    "Volume basis: 04-unit-economics.md sizes total corridor demand at 40-100",
+    "loads/month and realistic new-entrant capture at 0.5-3/month in years 1-2.",
+    "The base case ramps inside that range and does not assume otherwise.",
+    "",
+    "SERVICE PRICING BASIS (revised 2026-09-04 after market research):",
+    "The cut/kit premium is capped by the value it creates. Peer-reviewed field",
+    "measurement puts saw-trigger time at 13.2 sec/stud and average saw use at",
+    "only ~6.2 minutes per worker per day (Schutt et al., Annals of Work",
+    "Exposures and Health 68(8), 2024). Full cut-cycle time plus avoided waste",
+    "is worth roughly $1.00-1.30/stud; a supplier can sustainably capture a",
+    "third to a half of that, which caps the premium at 3-7% of material price.",
+    "$0.05/LF against $0.80/LF material is 6.25% -- at the top of that band.",
+    "The 30-60% labour savings quoted in the industry belong to PANELIZED",
+    "assemblies, not pre-cut loose material. Do not price off those figures.",
+    "",
+    "WORKING CAPITAL WARNING: base_case assumes 30 days of supplier terms. That is",
+    "NOT what a new entity gets by default -- see the no_mill_terms scenario. Mill",
+    "credit, earned on Contracting's payment history, is a precondition of the plan,",
+    "not a nicety.",
+    "",
+    "BORROWING BASE WARNING: the OCC's Accounts Receivable and Inventory Financing",
+    "handbook notes that commodity raw materials carry the best inventory advance",
+    "rates while work-in-process is 'frequently excluded'. CUT-TO-LENGTH, job-specific",
+    "bundles look like work-in-process to a lender. Cut to order rather than to stock,",
+    "and negotiate the eligibility definition in the loan agreement up front."
+  ],
+  "scenarios": {
+    "base_case": {
+      "name": "Domestic-first, value-added packages",
+      "notes": "The plan in 06-the-stronger-play.md. Buy domestic steel, cut and kit it, deliver sequenced packages. No duty, no AD/CVD tail, no customs bond, Buy America eligible. Ramps from half a load a month to five over three years -- inside the researched capture range.",
+      "volume": {
+        "segments": [
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 1.5
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 2.5
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 4.0
+          },
+          {
+            "months": 3,
+            "loads": 4.5
+          },
+          {
+            "months": 6,
+            "loads": 5.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 1500.0,
+          "yard_and_shop_wages": 3800.0,
+          "driver_wages": 0.0,
+          "admin_wages": 0.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2000.0,
+          "insurance": 1800.0,
+          "truck_payment": 1400.0,
+          "equipment_payment": 600.0,
+          "utilities_and_maintenance": 700.0,
+          "software_and_admin": 350.0,
+          "professional_fees": 900.0,
+          "marketing": 400.0,
+          "other": 300.0
+        },
+        {
+          "owner_salary": 6000.0,
+          "yard_and_shop_wages": 8000.0,
+          "driver_wages": 9000.0,
+          "admin_wages": 3500.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2500.0,
+          "insurance": 2800.0,
+          "truck_payment": 2800.0,
+          "equipment_payment": 900.0,
+          "utilities_and_maintenance": 1000.0,
+          "software_and_admin": 500.0,
+          "professional_fees": 700.0,
+          "marketing": 800.0,
+          "other": 500.0
+        },
+        {
+          "owner_salary": 8000.0,
+          "yard_and_shop_wages": 12000.0,
+          "driver_wages": 13500.0,
+          "admin_wages": 5000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 3200.0,
+          "insurance": 3600.0,
+          "truck_payment": 3500.0,
+          "equipment_payment": 1200.0,
+          "utilities_and_maintenance": 1300.0,
+          "software_and_admin": 700.0,
+          "professional_fees": 800.0,
+          "marketing": 1200.0,
+          "other": 700.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 45.0,
+        "days_receivable": 65.0,
+        "days_payable": 30.0
+      },
+      "capital": {
+        "equity_injection": 175000.0,
+        "term_debt": 200000.0,
+        "term_rate_annual": 0.105,
+        "term_years": 7,
+        "line_of_credit_limit": 700000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 185000.0,
+      "tax_rate": 0.0
+    },
+    "lean": {
+      "name": "Self-funded, no debt, slow ramp",
+      "notes": "What the business looks like with no bank at all -- used equipment, Ben taking almost nothing out, growth funded only by retained cash. Slower and smaller, but it cannot be killed by a covenant. Run this before deciding to borrow.",
+      "volume": {
+        "segments": [
+          {
+            "months": 6,
+            "loads": 0.5
+          },
+          {
+            "months": 6,
+            "loads": 1.0
+          },
+          {
+            "months": 6,
+            "loads": 1.5
+          },
+          {
+            "months": 6,
+            "loads": 2.0
+          },
+          {
+            "months": 6,
+            "loads": 2.5
+          },
+          {
+            "months": 6,
+            "loads": 3.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 0.0,
+          "yard_and_shop_wages": 3200.0,
+          "driver_wages": 0.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 1500.0,
+          "insurance": 1600.0,
+          "truck_payment": 0.0,
+          "equipment_payment": 0.0,
+          "utilities_and_maintenance": 600.0,
+          "software_and_admin": 250.0,
+          "professional_fees": 800.0,
+          "marketing": 200.0,
+          "other": 250.0
+        },
+        {
+          "owner_salary": 3500.0,
+          "yard_and_shop_wages": 6500.0,
+          "driver_wages": 7500.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 1800.0,
+          "insurance": 2200.0,
+          "utilities_and_maintenance": 800.0,
+          "software_and_admin": 350.0,
+          "professional_fees": 600.0,
+          "marketing": 400.0,
+          "other": 350.0
+        },
+        {
+          "owner_salary": 5500.0,
+          "yard_and_shop_wages": 9000.0,
+          "driver_wages": 10000.0,
+          "admin_wages": 3000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2200.0,
+          "insurance": 2800.0,
+          "utilities_and_maintenance": 1000.0,
+          "software_and_admin": 500.0,
+          "professional_fees": 700.0,
+          "marketing": 700.0,
+          "other": 500.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 35.0,
+        "days_receivable": 60.0,
+        "days_payable": 30.0
+      },
+      "capital": {
+        "equity_injection": 150000.0,
+        "term_debt": 0.0,
+        "line_of_credit_limit": 350000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 95000.0,
+      "tax_rate": 0.0
+    },
+    "import_lane": {
+      "name": "Phase 2 -- compliant import sourcing added",
+      "notes": "Same business, but material sourced through a verified import lane once a code-compliant supplier and a compliance function exist. Material cost drops, but the cash cycle gets much worse: suppliers are paid before shipment, so payable days go to zero and inventory days include ocean transit. Compare peak cash against base_case before deciding the cheaper steel is actually cheaper.",
+      "volume": {
+        "segments": [
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 1.5
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 2.5
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 4.0
+          },
+          {
+            "months": 3,
+            "loads": 4.5
+          },
+          {
+            "months": 6,
+            "loads": 5.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.5,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 1500.0,
+          "yard_and_shop_wages": 3800.0,
+          "driver_wages": 0.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2000.0,
+          "insurance": 3200.0,
+          "truck_payment": 1400.0,
+          "equipment_payment": 600.0,
+          "utilities_and_maintenance": 700.0,
+          "software_and_admin": 350.0,
+          "professional_fees": 2400.0,
+          "marketing": 400.0,
+          "other": 300.0
+        },
+        {
+          "owner_salary": 6000.0,
+          "yard_and_shop_wages": 8000.0,
+          "driver_wages": 9000.0,
+          "admin_wages": 3500.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2500.0,
+          "insurance": 4400.0,
+          "truck_payment": 2800.0,
+          "equipment_payment": 900.0,
+          "utilities_and_maintenance": 1000.0,
+          "software_and_admin": 500.0,
+          "professional_fees": 2200.0,
+          "marketing": 800.0,
+          "other": 500.0
+        },
+        {
+          "owner_salary": 8000.0,
+          "yard_and_shop_wages": 12000.0,
+          "driver_wages": 13500.0,
+          "admin_wages": 5000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 3200.0,
+          "insurance": 5200.0,
+          "truck_payment": 3500.0,
+          "equipment_payment": 1200.0,
+          "utilities_and_maintenance": 1300.0,
+          "software_and_admin": 700.0,
+          "professional_fees": 2400.0,
+          "marketing": 1200.0,
+          "other": 700.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 85.0,
+        "days_receivable": 65.0,
+        "days_payable": 0.0
+      },
+      "capital": {
+        "equity_injection": 175000.0,
+        "term_debt": 200000.0,
+        "term_rate_annual": 0.105,
+        "term_years": 7,
+        "line_of_credit_limit": 850000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 205000.0,
+      "tax_rate": 0.0
+    },
+    "stress": {
+      "name": "Stress -- price war and slow pay",
+      "notes": "Material price compressed 10% (GMS reported steel framing price/mix at -10.4% in FY2025, so this is a lived number, not a hypothetical), receivables stretched to 90 days, and the service uplift halved because a competitor copied it. This is the case the plan has to survive, not the case it hopes for.",
+      "volume": {
+        "segments": [
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 6,
+            "loads": 1.5
+          },
+          {
+            "months": 6,
+            "loads": 2.0
+          },
+          {
+            "months": 6,
+            "loads": 2.5
+          },
+          {
+            "months": 12,
+            "loads": 3.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.72,
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.025,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 1500.0,
+          "yard_and_shop_wages": 3800.0,
+          "driver_wages": 0.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2000.0,
+          "insurance": 1800.0,
+          "truck_payment": 1400.0,
+          "equipment_payment": 600.0,
+          "utilities_and_maintenance": 700.0,
+          "software_and_admin": 350.0,
+          "professional_fees": 900.0,
+          "marketing": 400.0,
+          "other": 300.0
+        },
+        {
+          "owner_salary": 6000.0,
+          "yard_and_shop_wages": 8000.0,
+          "driver_wages": 9000.0,
+          "admin_wages": 3500.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2500.0,
+          "insurance": 2800.0,
+          "truck_payment": 2800.0,
+          "equipment_payment": 900.0,
+          "utilities_and_maintenance": 1000.0,
+          "software_and_admin": 500.0,
+          "professional_fees": 700.0,
+          "marketing": 800.0,
+          "other": 500.0
+        },
+        {
+          "owner_salary": 6000.0,
+          "yard_and_shop_wages": 10000.0,
+          "driver_wages": 11000.0,
+          "admin_wages": 4000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 3200.0,
+          "insurance": 3600.0,
+          "truck_payment": 3500.0,
+          "equipment_payment": 1200.0,
+          "utilities_and_maintenance": 1300.0,
+          "software_and_admin": 700.0,
+          "professional_fees": 800.0,
+          "marketing": 1200.0,
+          "other": 700.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 55.0,
+        "days_receivable": 90.0,
+        "days_payable": 30.0
+      },
+      "capital": {
+        "equity_injection": 75000.0,
+        "term_debt": 150000.0,
+        "term_rate_annual": 0.105,
+        "term_years": 7,
+        "line_of_credit_limit": 300000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 185000.0,
+      "tax_rate": 0.0
+    },
+    "no_mill_terms": {
+      "name": "No mill terms -- the credit-application risk",
+      "notes": "Identical to base_case except the supplier gives no terms. A brand-new entity normally pays cash or COD until it builds history, and GMS runs 41.5 days of payables precisely because it has decades of mill relationships. Losing 30 days of payables pushes the cash conversion cycle from 80 to 110 days and peak cash from $708k to $1.05m -- the $700k line runs dry. The mitigation is free and must happen BEFORE launch: submit mill credit applications using Misty Valley Contracting's ten-year payment history as the trade reference, and attach the approved limits to the loan package as third-party validation.",
+      "volume": {
+        "segments": [
+          {
+            "months": 3,
+            "loads": 0.5
+          },
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 1.5
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 2.5
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 4.0
+          },
+          {
+            "months": 3,
+            "loads": 4.5
+          },
+          {
+            "months": 6,
+            "loads": 5.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.6,
+        "service_price_per_lf": 0.05,
+        "service_cost_per_lf": 0.025,
+        "delivery_cost_per_load": 1100.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 1500.0,
+          "yard_and_shop_wages": 3800.0,
+          "driver_wages": 0.0,
+          "admin_wages": 0.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2000.0,
+          "insurance": 1800.0,
+          "truck_payment": 1400.0,
+          "equipment_payment": 600.0,
+          "utilities_and_maintenance": 700.0,
+          "software_and_admin": 350.0,
+          "professional_fees": 900.0,
+          "marketing": 400.0,
+          "other": 300.0
+        },
+        {
+          "owner_salary": 6000.0,
+          "yard_and_shop_wages": 8000.0,
+          "driver_wages": 9000.0,
+          "admin_wages": 3500.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 2500.0,
+          "insurance": 2800.0,
+          "truck_payment": 2800.0,
+          "equipment_payment": 900.0,
+          "utilities_and_maintenance": 1000.0,
+          "software_and_admin": 500.0,
+          "professional_fees": 700.0,
+          "marketing": 800.0,
+          "other": 500.0
+        },
+        {
+          "owner_salary": 8000.0,
+          "yard_and_shop_wages": 12000.0,
+          "driver_wages": 13500.0,
+          "admin_wages": 5000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 3200.0,
+          "insurance": 3600.0,
+          "truck_payment": 3500.0,
+          "equipment_payment": 1200.0,
+          "utilities_and_maintenance": 1300.0,
+          "software_and_admin": 700.0,
+          "professional_fees": 800.0,
+          "marketing": 1200.0,
+          "other": 700.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 45.0,
+        "days_receivable": 65.0,
+        "days_payable": 0.0
+      },
+      "capital": {
+        "equity_injection": 175000.0,
+        "term_debt": 200000.0,
+        "term_rate_annual": 0.105,
+        "term_years": 7,
+        "line_of_credit_limit": 700000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 185000.0,
+      "tax_rate": 0.0
+    },
+    "direct_ship": {
+      "name": "Direct-ship trading -- the Allee model",
+      "notes": "Buy from the mill, sell before or as it ships, have the mill deliver straight to the job site. Never take possession. Thinner margin per load, but no yard, no truck, no forklift, no cut-shop payroll, and -- the point -- NO INVENTORY. The cash conversion cycle collapses from 80 days to 35, so volume stops being rationed by capital. This is what Allee Wholesale Lumber did with 35-40 million board feet a year, two brothers and a teletype.",
+      "volume": {
+        "segments": [
+          {
+            "months": 3,
+            "loads": 1.0
+          },
+          {
+            "months": 3,
+            "loads": 2.0
+          },
+          {
+            "months": 3,
+            "loads": 3.5
+          },
+          {
+            "months": 3,
+            "loads": 5.0
+          },
+          {
+            "months": 3,
+            "loads": 7.0
+          },
+          {
+            "months": 3,
+            "loads": 9.0
+          },
+          {
+            "months": 3,
+            "loads": 11.0
+          },
+          {
+            "months": 3,
+            "loads": 13.0
+          },
+          {
+            "months": 3,
+            "loads": 15.0
+          },
+          {
+            "months": 3,
+            "loads": 17.0
+          },
+          {
+            "months": 6,
+            "loads": 20.0
+          }
+        ]
+      },
+      "load": {
+        "linear_feet_per_load": 95000.0,
+        "material_price_per_lf": 0.8,
+        "material_cost_per_lf": 0.695,
+        "service_price_per_lf": 0.015,
+        "service_cost_per_lf": 0.004,
+        "delivery_cost_per_load": 0.0
+      },
+      "opex_by_year": [
+        {
+          "owner_salary": 4000.0,
+          "admin_wages": 3200.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 700.0,
+          "insurance": 900.0,
+          "software_and_admin": 900.0,
+          "professional_fees": 900.0,
+          "marketing": 600.0,
+          "other": 400.0
+        },
+        {
+          "owner_salary": 7000.0,
+          "yard_and_shop_wages": 5200.0,
+          "admin_wages": 4200.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 1100.0,
+          "insurance": 1400.0,
+          "software_and_admin": 1400.0,
+          "professional_fees": 900.0,
+          "marketing": 1200.0,
+          "other": 700.0
+        },
+        {
+          "owner_salary": 9000.0,
+          "yard_and_shop_wages": 11000.0,
+          "admin_wages": 7000.0,
+          "payroll_burden_pct": 0.24,
+          "facility_lease": 1600.0,
+          "insurance": 2200.0,
+          "software_and_admin": 2200.0,
+          "professional_fees": 1200.0,
+          "marketing": 2000.0,
+          "other": 1100.0
+        }
+      ],
+      "working_capital": {
+        "days_inventory": 0.0,
+        "days_receivable": 65.0,
+        "days_payable": 30.0
+      },
+      "capital": {
+        "equity_injection": 60000.0,
+        "term_debt": 0.0,
+        "line_of_credit_limit": 900000.0,
+        "line_rate_annual": 0.095
+      },
+      "startup_cost": 35000.0,
+      "tax_rate": 0.0
+    }
+  }
+}
