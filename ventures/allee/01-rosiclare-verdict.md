@@ -258,7 +258,7 @@ and the name may have been available since 2023.**
 Either way: **when it is available, it is available to anyone.**
 
 > **~$150 to file, $75/yr to hold, plus the domain. That is a $250 option on
-> a century of your family's name, and it expires the moment somebody
+> generations of your family's name, and it expires the moment somebody
 > else types it into the form.**
 >
 > **Do it whether or not you ever build anything.**
@@ -270,10 +270,10 @@ Two minutes, free. **Find out (a) exactly which entities existed, (b) corporatio
 or LLC — different statutes, and (c) voluntary or administrative dissolution —
 that determines whether you are reinstating or refiling.**
 
-*Also UNVERIFIED and now actively contested: the 1940 founding (the family record
-says the business began earlier as a yard in Tupelo, Mississippi, making it 100+
-years and five generations), the generation count, James Byron Allee's Northwestern
-and Chicago Cardinals football career, and the 2023 dissolution itself — no news coverage exists that I could find. The Mattoon
+*Also: the Tupelo origin and the 100-year/five-generation claim are UNVERIFIED
+with contrary archival indicators, and the Chicago Cardinals claim is CONTRADICTED
+by the surviving 1928-29 rosters and scoring tables. See `00-the-case.md`. The
+2023 dissolution itself is still unverified — no news coverage exists that I could find. The Mattoon
 * Journal Gazette* / *Times-Courier* archives are where to look.*
 
 **Trademark:** no evidence of a live "Allee" mark in lumber or building products
@@ -290,7 +290,7 @@ certain.
 
 ### A. Re-launch the trading business — which is what it actually was
 
-For a hundred years the family made money as a **wholesale trading firm, not
+For generations the family made money as a **wholesale trading firm, not
 a manufacturer.** Near-zero fixed capital, scales with working capital, and —
 the part that matters now — **it gets structurally stronger in a consolidating
 market.**
