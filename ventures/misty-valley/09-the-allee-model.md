@@ -125,11 +125,12 @@ Being ruthless about this matters more than being inspired by it.
   on teletype and long distance — enormous money then — because *speed of
   information was the moat*. Everyone has that now, instantly, free. **Whatever
   Misty Valley's edge is, it cannot be "we know the price."**
-- **The diverting point may not work the same way.** Mid-century rail transit
+- **🔴 CORRECTED — see `10-the-channel-problem.md`. The diverting point still exists in rail tariffs, but the model does not port to cold-formed steel: CFS mills sell exclusively through authorized distributors, there is no rail substrate, and you inherit specification liability. The diverting point may not work the same way.** Mid-century rail transit
   privileges under ICC tariffs were a specific regulatory artifact.
-  **[RESEARCH PENDING]** — I have this being checked for the modern
-  equivalent. Do not assume a truckload can be re-billed in transit the way a
-  boxcar could.
+  **RESOLVED — and worse than "may not."** The rail mechanism survives (UP
+  publishes a lumber diversion rule effective 1 Feb 2026), but cold-formed
+  steel moves by truck, direct, and there is no mode that sells in-transit
+  destination optionality with rate protection. See `10`.
 - **Thin margin is unforgiving.** At 14.2% gross, one bad receivable eats the
   profit on ten loads. In the stocking model at 25%, it eats four. **Credit
   discipline stops being important and becomes existential.**
@@ -192,7 +193,9 @@ That is the sequence. It was in the family the whole time.
   highest-priority action in the entire plan, because it is the gate on
   everything downstream.
 - Confirm each mill will **ship direct to job site**, and at what minimum.
-  **This is the make-or-break question.** [RESEARCH PENDING]
+  **ANSWERED, and it is no — not to a trader.** CFS mills sell exclusively
+  through authorized distributors. The question to ask instead is whether they
+  will *appoint* Misty Valley Supply. See `10-the-channel-problem.md`.
 - Sell the first direct-ship loads into Contracting's own jobs. Zero customer
   risk, real transaction history.
 - Build the piece tally: what you bought, how it loaded, who might want it.
@@ -283,6 +286,6 @@ Mississippi branch; main office to Mattoon July 1951. Sixteen states,
 hardwoods exported to Ireland, lumber for the Willow Run housing project and
 Scott Field Air Base during the war.*
 
-*Research pending on modern rail diversion practice, direct mill shipment
+*Research complete. See `10-the-channel-problem.md` — it corrects §4 and §6 of this document.*
 minimums in cold-formed steel, and currently operating wholesale trading
 comparables. This document will be updated when it lands.*

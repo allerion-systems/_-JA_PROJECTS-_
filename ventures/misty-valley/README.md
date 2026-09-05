@@ -176,6 +176,13 @@ Full checklist in **`05-first-container-gate.md`**. The five that can't wait:
 | **`04-unit-economics.md`** | Container capacity, real market pricing, the working-capital wall, competitor benchmarks. |
 | **`05-first-container-gate.md`** | The pre-wire checklist. Gates 2 and 3 for scaling. |
 | **`06-the-stronger-play.md`** | The strategic reframe and the three tests that would disprove it. |
+| **`07-logistics-routing.md`** | Barge, rail and truck routing to Bonnieville. Why barge is out and what the road-legal payload cap really is. |
+| **`08-financing-and-benchmarks.md`** | The SBA rulebook, mill terms, borrowing base, and the ratios a lender will run. |
+| **`09-the-allee-model.md`** | The direct-ship trading model, drawn from Allee Wholesale Lumber. |
+| **`10-the-channel-problem.md`** | 🔴 Corrects `09`. CFS is a franchised channel; the trading model does not port. The door is an authorized-distributor appointment. |
+| **`business-plan/`** | Lender-grade plan and three-year pro forma. |
+| **`website/`** | Deployable static site. |
+| **`canvas/`** | Business model canvas plate and its design philosophy. |
 | **`model/`** | A landed-cost and working-capital calculator. Run any supplier quote through the real duty stack instead of estimating by hand. |
 
 ```bash
