@@ -166,13 +166,62 @@ function StaffDoor({ onPick }: { onPick: (id: string) => void }) {
 export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Modal) => void }) {
   const { signIn, signInAs, branch, setBranch } = useAuth();
   const [step, setStep] = React.useState(1);
+  const [authStep, setAuthStep] = React.useState<"choose" | "in" | "up">("choose");
+  const [moreApps, setMoreApps] = React.useState(false);
 
-  React.useEffect(() => { setStep(1); }, [modal]);
+  React.useEffect(() => { setStep(1); setAuthStep("choose"); }, [modal]);
   if (!modal) return null;
   const close = () => setModal(null);
 
+  if (modal === "signin" && authStep === "choose") return (
+    <Shell title="Welcome" sub="Sign in, or set up an account in two minutes." onClose={close}>
+      <div className="grid gap-2.5">
+        <Btn className="w-full" onClick={() => setAuthStep("in")}>Sign in</Btn>
+        <Btn variant="line" className="w-full" onClick={() => setAuthStep("up")}>Sign up</Btn>
+      </div>
+      <StaffDoor onPick={id => { signInAs(id); close(); }} />
+    </Shell>
+  );
+
+  if (modal === "signin" && authStep === "up") return (
+    <Shell title="Sign up" sub="Pick the account that fits how you buy." onClose={close}>
+      <div className="grid gap-2.5">
+        <button onClick={() => setModal("register")}
+          className="card lift p-4 text-left">
+          <div className="disp text-[18px] font-bold">Cash &amp; card account</div>
+          <div className="mt-1 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+            Buy today, pay by card. Your price, saved lists, order history.
+          </div>
+        </button>
+        <button onClick={() => setModal("credit")}
+          className="card lift p-4 text-left">
+          <div className="disp text-[18px] font-bold">Credit account — Net 30</div>
+          <div className="mt-1 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+            A guided application; decision in two business days.
+          </div>
+        </button>
+        <button onClick={() => setMoreApps(!moreApps)}
+          className="card lift p-4 text-left">
+          <div className="disp text-[18px] font-bold">Other applications {moreApps ? "▾" : "▸"}</div>
+          {moreApps && (
+            <div className="mt-2 grid gap-2">
+              {["Government & institutional purchasing", "Tax-exempt setup", "Builder & national programs"].map(a => (
+                <div key={a} className="border-t border-[hsl(var(--rule))] pt-2 text-[13px]">
+                  <div className="font-semibold">{a}</div>
+                  <div className="text-[hsl(var(--ink-2))]">Call {BRANCHES[0].phone} — the application goes out same day.</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </button>
+      </div>
+      <button onClick={() => setAuthStep("choose")}
+        className="mt-3 text-[13px] font-medium text-[hsl(var(--marine))] underline underline-offset-2">← Back</button>
+    </Shell>
+  );
+
   if (modal === "signin") return (
-    <Shell wide title="Sign in" sub="Different jobs see different screens. Pick who you are." onClose={close}>
+    <Shell wide title="Sign in" sub="" onClose={close}>
       {/* social sign-in first \u2014 one tap on a phone at the counter */}
       <div className="grid gap-2 sm:grid-cols-2">
         <button onClick={() => { signIn(); close(); }}
@@ -211,23 +260,8 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
           <input className={field} type="password" defaultValue="\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7\u00b7" /></label>
       </div>
       <Btn className="mt-3 w-full" onClick={() => { signIn(); close(); }}>Sign in</Btn>
-
-      {/* Staff role-switching lives on the Dashboard for signed-in staff — the
-          customer sign-in stays clean. Demo roles: triple-tap the wordmark. */}
-      <StaffDoor onPick={id => { signInAs(id); close(); }} />
-
-      <Rule className="my-3" />
-      <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
-        No account yet?{" "}
-        <button onClick={() => setModal("register")} className="font-semibold text-[hsl(var(--safety-2))] underline">
-          Create one
-        </button>{" "}
-        to see pricing, or{" "}
-        <button onClick={() => setModal("credit")} className="font-semibold text-[hsl(var(--safety-2))] underline">
-          open a credit account
-        </button>{" "}
-        to buy on terms.
-      </p>
+      <button onClick={() => setAuthStep("choose")}
+        className="mt-3 text-[13px] font-medium text-[hsl(var(--marine))] underline underline-offset-2">← Back</button>
     </Shell>
   );
 
