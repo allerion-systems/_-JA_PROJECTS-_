@@ -6,7 +6,7 @@ at best.** The play is not "printing is cheap" — it isn't
 the honest read) — the play is that the expensive steel was already in a crane-served
 building's budget, the nomad kit amortizes across many jobs the way COBOD amortizes a
 whole $420k machine, and every job eliminates the mobile-crane spread from erection.
-Run the numbers yourself: `model/rg_model.py` (all assumptions are flags; 12 tests).
+Run the numbers yourself: `model/rg_model.py` (all assumptions are flags; 17 tests).
 
 ## 1. Anchor prices (cited)
 
