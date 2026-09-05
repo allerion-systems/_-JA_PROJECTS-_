@@ -349,6 +349,36 @@ export const LISTINGS: Listing[] = [
     body: "Tear-off and load. Must have own Z87 and Class 2. Start Monday." },
 ];
 
+
+// ---- rentals -------------------------------------------------------------
+// Day / week / 4-week, the trade convention. Rates are placeholders until the
+// rental benchmarking lands; the flow is reserve-request, never online payment.
+
+export type Rental = {
+  sku: string; name: string; uom: string;
+  day: number; week: number; month: number;   // month = 4-week
+  minQty?: number; deposit: number;
+  note: string; inspect?: boolean;
+};
+
+export const RENTALS: Rental[] = [
+  { sku: "MVS-RG-1000", name: "Non-Penetrating Guardrail — 10 ft Section", uom: "section",
+    day: 9, week: 24, month: 62, minQty: 10, deposit: 60,
+    note: "Bases included one-per-section. Cheaper than buying for a single job; buy it if the yard keeps needing it." },
+  { sku: "MVS-RG-BASE", name: "Extra Counterweight Base — 90 lb", uom: "each",
+    day: 3, week: 8, month: 20, deposit: 25,
+    note: "For corners and gates beyond the one-per-section allowance." },
+  { sku: "MVS-WL-600", name: "Warning Line System — 600 ft Kit", uom: "kit",
+    day: 22, week: 60, month: 155, deposit: 150,
+    note: "Stanchions, flagged line and end anchors, ready to set." },
+  { sku: "MVS-HOLE-4", name: "Hole Cover Set — 4 covers", uom: "set",
+    day: 6, week: 16, month: 40, deposit: 40,
+    note: "Marked and load-rated. Count them back on the truck." },
+  { sku: "MVS-SRL-11", name: "Self-Retracting Lifeline — 11 ft", uom: "each",
+    day: 12, week: 32, month: 80, deposit: 120, inspect: true,
+    note: "Function-tested and documented before every rental and on return." },
+];
+
 // ---- seller payout accounts ----------------------------------------------
 // A listing can only take a protected payment when we have a signed seller
 // agreement and a Stripe connected account to pay. See src/payments.ts.

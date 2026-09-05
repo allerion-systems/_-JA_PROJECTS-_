@@ -341,7 +341,11 @@ const BY_CAT: Record<string, string> = {
 };
 
 export function Glyph({ sku, cat, className }: { sku?: string; cat?: string; className?: string }) {
-  const key = (sku && BY_SKU.find(([re]) => re.test(sku))?.[1])
+  // Match against the SKU with the company prefix stripped: every SKU starts
+  // with "MVS-", whose tail "VS-" is also the vest family prefix. Matching the
+  // raw string put a hi-vis vest on every SKU tested after the vest rule.
+  const bare = sku ? sku.replace(/^MVS-/, "") : undefined;
+  const key = (bare && BY_SKU.find(([re]) => re.test(bare))?.[1])
     || (cat && BY_CAT[cat]) || (sku && M[sku] ? sku : "guardrail");
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden

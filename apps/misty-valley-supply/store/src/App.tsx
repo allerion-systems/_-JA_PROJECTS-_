@@ -9,6 +9,7 @@ import Screen from "@/views/Screen";
 import Yard from "@/views/Yard";
 import Account from "@/views/Account";
 import Ops from "@/views/Ops";
+import Rent from "@/views/Rent";
 import Agents from "@/views/Agents";
 import Dashboard from "@/views/Dashboard";
 import Users from "@/views/Users";
@@ -16,7 +17,7 @@ const Earth = React.lazy(() => import("@/views/Earth"));
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
 
-type View = "home" | "dash" | "shop" | "product" | "screen" | "earth" | "yard" | "account" | "users" | "ops" | "agents";
+type View = "home" | "dash" | "shop" | "product" | "screen" | "rent" | "earth" | "yard" | "account" | "users" | "ops" | "agents";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -53,6 +54,7 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
   { label: "Fall Protection", sub: "Harnesses, SRLs, anchors", go: { view: "shop", cat: "fall" }, cats: ["fall"] },
   { label: "Roof Safety", sub: "Warning line, covers, screens", go: { view: "shop", cat: "roof" }, cats: ["roof"] },
   { label: "Guardrail & Edge", sub: "Non-penetrating systems", go: { view: "shop", cat: "guard" }, cats: ["guard"] },
+  { label: "Rentals", sub: "Day, week, 4-week", go: { view: "rent" } },
   { label: "PPE", sub: "Head, eye, hand, hi-vis", go: { view: "shop", cat: "head" },
     cats: ["head", "eye", "hand", "hivis"],
     kids: [
@@ -222,12 +224,12 @@ function Inner() {
         <nav className="sticky top-[140px] hidden h-[calc(100vh-140px)] w-[228px] shrink-0 overflow-y-auto border-r border-[hsl(var(--rule))] py-6 pr-5 lg:block">
           <Lab kicker className="mb-2.5">Catalog</Lab>
           {DEPARTMENTS.map(d => {
-            const active = (d.go.view === "screen" && view === "screen") ||
+            const active = (d.go.view !== "shop" && view === d.go.view) ||
               (d.go.view === "shop" && view === "shop" && !!d.cats?.length && !!preCat && d.cats.includes(preCat));
             return (
               <div key={d.label} className="mb-0.5">
                 <button
-                  onClick={() => d.go.view === "screen" ? go("screen") : goShop(d.go.cat)}
+                  onClick={() => d.go.view === "shop" ? goShop(d.go.cat) : go(d.go.view)}
                   className={cx("flex min-h-[44px] w-full items-center justify-between gap-2 rounded-[6px] px-2.5 py-2 text-left",
                     active ? "bg-[hsl(var(--safety-soft))]" : "hover:bg-[hsl(var(--panel))]")}>
                   <span className="min-w-0">
@@ -312,6 +314,7 @@ function Inner() {
             </React.Suspense>
           )}
           {view === "users" && <Users onSignIn={() => setModal("signin")} />}
+          {view === "rent" && <Rent onSignIn={() => setModal("signin")} />}
           {view === "yard" && <Yard />}
           {view === "account" && <Account onSignIn={() => setModal("signin")} />}
           {view === "ops" && <Ops />}

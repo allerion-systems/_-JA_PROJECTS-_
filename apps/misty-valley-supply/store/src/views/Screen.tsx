@@ -12,6 +12,15 @@ export default function Screen() {
   const [drawings, setDrawings] = React.useState(true);
   const [markup, setMarkup] = React.useState(Math.round(RS.defaultMarkup * 100));
   const [mode, setMode] = React.useState<"kit" | "parts">("kit");
+  const [shots, setShots] = React.useState<{ name: string; url: string }[]>([]);
+  const [notes, setNotes] = React.useState("");
+  const [reqSent, setReqSent] = React.useState(false);
+
+  const addShots = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fs = Array.from(e.target.files ?? []).slice(0, 6 - shots.length);
+    setShots(x => [...x, ...fs.map(f => ({ name: f.name, url: URL.createObjectURL(f) }))]);
+    e.target.value = "";
+  };
 
   const p = RS.panels.find(x => x.id === panel)!;
   const m = RS.mounts.find(x => x.id === mount)!;
@@ -248,11 +257,51 @@ export default function Screen() {
                 <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
                 <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>
               </div>
-              <Btn className="mt-4 w-full">Send the roof plan</Btn>
-              <p className="mt-3 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
-                Budget only. A real number needs the roof plan, the equipment schedule and the
-                wind load for the site. We quote in two business days.
-              </p>
+              <Rule className="my-4" />
+              {reqSent ? (
+                <div>
+                  <Lab kicker className="mb-1.5">Sent</Lab>
+                  <p className="text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
+                    Your photos and this configuration are with the shop. A real quote
+                    follows in two business days.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <Lab kicker className="mb-2">Design it with us</Lab>
+                  <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+                    Add photos of the roof and anything you want it to look like — a screen
+                    you saw, a drawing detail, the units to hide.
+                  </p>
+                  {shots.length > 0 && (
+                    <div className="mt-2.5 grid grid-cols-3 gap-1.5">
+                      {shots.map((f, i) => (
+                        <span key={i} className="relative block overflow-hidden rounded-[4px] border border-[hsl(var(--rule))]">
+                          <img src={f.url} alt={f.name} className="aspect-square w-full object-cover" />
+                          <button onClick={() => setShots(x => x.filter((_, k) => k !== i))}
+                            aria-label={`Remove ${f.name}`}
+                            className="absolute right-0.5 top-0.5 grid h-7 w-7 place-items-center rounded-[4px] bg-black/55 text-[11px] text-white">✕</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <label className="mt-2.5 flex min-h-[44px] cursor-pointer items-center justify-center rounded-[6px] border border-dashed border-[hsl(var(--field))] text-[13px] font-medium text-[hsl(var(--marine))] hover:border-[hsl(var(--marine))]">
+                    ＋ Add photos ({shots.length}/6)
+                    <input type="file" accept="image/*" multiple onChange={addShots}
+                      aria-label="Add roof and inspiration photos" className="sr-only" />
+                  </label>
+                  <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
+                    placeholder="Anything the photos don't say — height limits, colors, the architect's mood…"
+                    className="mt-2 w-full rounded-[5px] border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2.5 text-[13px] outline-none focus:border-[hsl(var(--safety-2))]" />
+                  <Btn className="mt-2.5 w-full" onClick={() => setReqSent(true)}>
+                    Send the roof plan &amp; photos
+                  </Btn>
+                  <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                    Budget only until we see the roof plan, equipment schedule and wind load.
+                    Photos stay on your device in this prototype.
+                  </p>
+                </div>
+              )}
             </div>
           </Panel>
         </div>
