@@ -26,6 +26,7 @@ import type { ContainerParams } from "@/bimContainer";
 import type { DockParams } from "@/bimDock";
 import type { BarndoParams } from "@/bimBarndo";
 import type { WarehouseParams } from "@/bimWarehouse";
+import type { GarageParams } from "@/bimGarage";
 import type { ProgramParams } from "@/programMath";
 import type { QuoteConfig } from "@/views/Screen";
 
@@ -39,8 +40,9 @@ const Dock = React.lazy(() => import("@/views/Dock"));
 const Barndo = React.lazy(() => import("@/views/Barndo"));
 const Warehouse = React.lazy(() => import("@/views/Warehouse"));
 const Program = React.lazy(() => import("@/views/Program"));
+const Garage = React.lazy(() => import("@/views/Garage"));
 
-type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "container" | "dock" | "barndo" | "warehouse" | "program" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
+type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "container" | "dock" | "barndo" | "warehouse" | "program" | "garage" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -122,6 +124,7 @@ const DESIGN_TOOLS: { view: View; label: string; chip: string; sub: string; sku:
   { view: "screen", label: "Roof Screens", chip: "Screens", sub: "Rooftop equipment screens", sku: "MVS-RSF-SC3" },
   { view: "container", label: "Containers", chip: "Containers", sub: "Offices, storage, interior layouts", sku: "MVS-CX-20OT" },
   { view: "dock", label: "Lake Docks", chip: "Docks", sub: "Floating docks — Nolin, Rough, Barren", sku: "MVS-DK-SEC410" },
+  { view: "garage", label: "Garages & Carports", chip: "New", sub: "Carports to fully enclosed — every option", sku: "MVS-PB-CARP21" },
   { view: "barndo", label: "Barndominiums", chip: "Barndos", sub: "Shop + living quarters, one shell", sku: "MVS-PB-4060" },
   { view: "warehouse", label: "Warehouses", chip: "Warehouse", sub: "Clear-span distribution shells", sku: "MVS-PB-50100" },
   { view: "program", label: "Modular Projects", chip: "Modular", sub: "Hotels, schools, offices, apartments", sku: "MVS-ST-GLO20" },
@@ -269,7 +272,7 @@ function Inner() {
 
   /* The Design Center is an app, not a page — when a design tool is open the
      header sheds the utility strip and search so the model owns the screen. */
-  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program";
+  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program" || view === "garage";
 
   return (
     <div className="min-h-full pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-0">
@@ -503,7 +506,7 @@ function Inner() {
               <MyDesigns onOpen={openDesign} />
             </div>
           )}
-          {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program") && (
+          {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program" || view === "garage") && (
             <>
               {/* in a tool: a quiet way back + sibling tools */}
               <div className="-mx-3 mb-4 flex items-center gap-1.5 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
@@ -535,6 +538,7 @@ function Inner() {
                 {view === "barndo" && <Barndo key={toolKey("barndo")} initial={toolInit("barndo") as Partial<BarndoParams> | undefined} />}
                 {view === "warehouse" && <Warehouse key={toolKey("warehouse")} initial={toolInit("warehouse") as Partial<WarehouseParams> | undefined} />}
                 {view === "program" && <Program key={toolKey("program")} initial={toolInit("program") as Partial<ProgramParams> | undefined} />}
+                {view === "garage" && <Garage key={toolKey("garage")} initial={toolInit("garage") as Partial<GarageParams> | undefined} />}
               </React.Suspense>
             </>
           )}
