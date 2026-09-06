@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { spaced, rafterLen, SHED_DOOR, SHED_WIN, type ShedParams } from "@/bim";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Parametric 3D shed. Feet are world units. Length runs along X, width
@@ -223,7 +225,7 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   if (p.roof === "metal") {
     const rib = makeRibTexture(roofHex);
     rib.repeat.set(Math.max(6, Math.round((L + 1) / 0.75)), 1); // rib every ~9 in
-    roofMat = new THREE.MeshStandardMaterial({ map: rib, roughness: 0.45, metalness: 0.55 });
+    roofMat = new THREE.MeshStandardMaterial({ map: rib, roughness: 0.35, metalness: 0.7, envMapIntensity: 0.8 });
   } else {
     // "ready" = sheathed + underlayment only; reads as OSB tan
     roofMat = new THREE.MeshStandardMaterial({ color: OSB_TAN, roughness: 0.95 });
@@ -231,12 +233,18 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   const roofEdge = new THREE.MeshStandardMaterial({
     color: p.roof === "metal" ? shade(roofHex, 0.8) : shade("#c9a35e", 0.85),
     roughness: 0.7, metalness: p.roof === "metal" ? 0.4 : 0,
+    envMapIntensity: p.roof === "metal" ? 0.8 : 0.3,
   });
 
   const trimMat = new THREE.MeshStandardMaterial({ color: TRIM, roughness: 0.6 });
   const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.5, metalness: 0.3 });
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0x9fc4dd, roughness: 0.08, metalness: 0.6 });
-  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
+  // transmission-look glass: opacity + low roughness + env reflection (real
+  // transmission is too costly for this budget)
+  const glassMat = new THREE.MeshStandardMaterial({
+    color: 0xbcd6e6, roughness: 0.05, metalness: 0,
+    transparent: true, opacity: 0.55, envMapIntensity: 1,
+  });
+  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00, envMapIntensity: 0.8 });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.5, metalness: 0.4 });
   const gravelMat = new THREE.MeshStandardMaterial({ color: 0xa9a598, roughness: 1 });
 
@@ -580,6 +588,10 @@ export default function ShedScene(p: ShedSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); // DPR capped at 2
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -591,6 +603,15 @@ export default function ShedScene(p: ShedSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xd9e4ef, 160, 900);
+
+    // real specular for metal/glass: PMREM room environment, built once in
+    // this setup effect — it lives OUTSIDE the disposable group, so option
+    // clicks rebuild geometry without ever touching it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
 
     const groundGeo = new THREE.PlaneGeometry(2000, 2000);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
@@ -682,6 +703,8 @@ export default function ShedScene(p: ShedSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -750,6 +773,16 @@ export default function ShedScene(p: ShedSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("birdseye")}>Birds-eye</button>
+      </div>
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-shed.glb"); }}
+        >
+          3D file
+        </button>
       </div>
       <div
         aria-hidden

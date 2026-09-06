@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { CONTAINER_DIMS, containerDerived, type ContainerParams } from "@/bimContainer";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Parametric 3D container. Feet are world units. Length runs along X,
@@ -180,8 +182,8 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
   const corrNear = makeCorrugationTexture(hex);
   corrNear.repeat.set(Math.max(8, Math.round(L / 0.9)), 1);
 
-  const steel = new THREE.MeshStandardMaterial({ map: corrLong, roughness: 0.55, metalness: 0.35 });
-  const steelEnd = new THREE.MeshStandardMaterial({ map: corrEnd, roughness: 0.55, metalness: 0.35 });
+  const steel = new THREE.MeshStandardMaterial({ map: corrLong, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
+  const steelEnd = new THREE.MeshStandardMaterial({ map: corrEnd, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
   // the CUTAWAY: near long wall reads as ghosted steel
   const steelGhost = new THREE.MeshStandardMaterial({
     map: corrNear, roughness: 0.55, metalness: 0.35,
@@ -191,14 +193,18 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
     color: new THREE.Color(shade(hex, 0.9)), roughness: 0.6, metalness: 0.3,
     transparent: true, opacity: 0.3, depthWrite: false, side: THREE.DoubleSide,
   });
-  const frameMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(hex, 0.62)), roughness: 0.5, metalness: 0.45 });
+  const frameMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(hex, 0.62)), roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
   const linerMat = new THREE.MeshStandardMaterial({ color: 0xf3f2ee, roughness: 0.85 });
   const partMat = new THREE.MeshStandardMaterial({ color: 0xfafaf7, roughness: 0.8 });
   const plyMat = new THREE.MeshStandardMaterial({ color: 0x6e5636, roughness: 0.95 });
   const lvpMat = new THREE.MeshStandardMaterial({ color: 0xcdb894, roughness: 0.7 });
   const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.5, metalness: 0.3 });
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0x9fc4dd, roughness: 0.08, metalness: 0.6 });
-  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
+  // transmission-look glass: opacity + low roughness + env reflection
+  const glassMat = new THREE.MeshStandardMaterial({
+    color: 0xbcd6e6, roughness: 0.05, metalness: 0,
+    transparent: true, opacity: 0.55, envMapIntensity: 1,
+  });
+  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00, envMapIntensity: 0.8 });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.5, metalness: 0.4 });
   const whiteBoxMat = new THREE.MeshStandardMaterial({ color: 0xeef0f2, roughness: 0.4 });
   const gravelMat = new THREE.MeshStandardMaterial({ color: 0xa9a598, roughness: 1 });
@@ -483,6 +489,10 @@ export default function ContainerScene(p: ContainerSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -494,6 +504,14 @@ export default function ContainerScene(p: ContainerSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xd9e4ef, 160, 900);
+
+    // real specular for corten steel: PMREM room environment, built once —
+    // OUTSIDE the disposable group, so option clicks never touch it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
 
     const groundGeo = new THREE.PlaneGeometry(2000, 2000);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
@@ -585,6 +603,8 @@ export default function ContainerScene(p: ContainerSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -656,6 +676,16 @@ export default function ContainerScene(p: ContainerSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("inside")}>Inside</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
+      </div>
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-container.glb"); }}
+        >
+          3D file
+        </button>
       </div>
       <div
         aria-hidden

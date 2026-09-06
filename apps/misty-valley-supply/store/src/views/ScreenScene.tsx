@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Parametric 3D roof-screen scene. Feet are world units. The screen runs
@@ -129,12 +131,12 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
   const half = L / 2;
 
   // ---- materials -------------------------------------------------------
-  const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, metalness: 0.55, roughness: 0.42 });
+  const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, metalness: 0.55, roughness: 0.42, envMapIntensity: 0.8 });
   const panelMat = new THREE.MeshStandardMaterial({
-    color: 0xc7ccd2, metalness: 0.78, roughness: 0.34, side: THREE.DoubleSide,
+    color: 0xc7ccd2, metalness: 0.78, roughness: 0.34, side: THREE.DoubleSide, envMapIntensity: 0.8,
   });
   const ribMat = new THREE.MeshStandardMaterial({
-    color: gauge === 29 ? 0xd9dde1 : 0xd2d7dc, metalness: 0.8, roughness: 0.3,
+    color: gauge === 29 ? 0xd9dde1 : 0xd2d7dc, metalness: 0.8, roughness: 0.3, envMapIntensity: 0.8,
   });
   const deckMat = new THREE.MeshStandardMaterial({ color: 0xbfc2c6, roughness: 0.96, metalness: 0.04 });
   const parapetMat = new THREE.MeshStandardMaterial({ color: 0xb0b3b8, roughness: 0.92 });
@@ -271,6 +273,10 @@ export default function ScreenScene(props: ScreenSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -282,6 +288,15 @@ export default function ScreenScene(props: ScreenSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xdbe4ee, 220, 1400);
+
+    // real specular for the galvanized panel field: PMREM room environment,
+    // built once — OUTSIDE the disposable group, so option clicks never
+    // touch it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
 
     // distant ground so the horizon reads as street level, not empty sky
     const groundGeo = new THREE.PlaneGeometry(4000, 4000);
@@ -379,6 +394,8 @@ export default function ScreenScene(props: ScreenSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -421,6 +438,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
     core.controls.update();
   }, [lf, heightFt, bayFt, frameOnly, gauge]);
 
+  const btnCls = "rounded-[5px] border border-white/25 bg-[hsl(var(--marine))]/80 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm transition-colors hover:bg-[hsl(var(--marine))]";
   return (
     <div className="relative h-full w-full">
       <div
@@ -429,6 +447,16 @@ export default function ScreenScene(props: ScreenSceneProps) {
         role="img"
         aria-label={`3D preview — ${lf} LF roof screen, ${heightFt} ft high, posts every ${bayFt} ft, ${frameOnly ? "frame only" : `${gauge} gauge panel`}`}
       />
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-screen.glb"); }}
+        >
+          3D file
+        </button>
+      </div>
       <div
         aria-hidden
         className={"pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[hsl(var(--marine))]/70 px-3 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm transition-opacity duration-700 " + (hint ? "opacity-100" : "opacity-0")}

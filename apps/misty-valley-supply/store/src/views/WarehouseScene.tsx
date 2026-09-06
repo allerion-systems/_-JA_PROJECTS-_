@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { WAREHOUSE_SHELLS, OFFICE, type WarehouseParams } from "@/bimWarehouse";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Parametric 3D warehouse shell. Feet are world units. Length runs along
@@ -200,21 +202,21 @@ function buildWorld(p: WarehouseSceneProps): THREE.Group {
   const ribWall = (runFt: number) => {
     const tex = makeRibTexture(wallHex);
     tex.repeat.set(Math.max(4, Math.round(runFt)), 1); // major rib per ft
-    return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.55, metalness: 0.35 });
+    return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
   };
   const roofTex = makeRibTexture(roofHex);
   roofTex.repeat.set(Math.round(L), 1);
-  const roofMat = new THREE.MeshStandardMaterial({ map: roofTex, roughness: 0.45, metalness: 0.5 });
+  const roofMat = new THREE.MeshStandardMaterial({ map: roofTex, roughness: 0.35, metalness: 0.65, envMapIntensity: 0.8 });
   const trimMat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.5, metalness: 0.3 });
   const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
   const concMat = new THREE.MeshStandardMaterial({ color: 0xb9b6ad, roughness: 0.95 });
   const asphMat = new THREE.MeshStandardMaterial({ color: 0x55575a, roughness: 1 });
   const glassMat = new THREE.MeshStandardMaterial({
-    color: 0x9fc4dd, roughness: 0.12, metalness: 0.4,
-    transparent: true, opacity: 0.32, depthWrite: false,
+    color: 0x9fc4dd, roughness: 0.06, metalness: 0,
+    transparent: true, opacity: 0.32, depthWrite: false, envMapIntensity: 1,
   });
-  const doorMat = new THREE.MeshStandardMaterial({ map: makePanelTexture("#eef0f2"), roughness: 0.6, metalness: 0.3 });
-  const rollMat = new THREE.MeshStandardMaterial({ map: makePanelTexture("#c8ccd0"), roughness: 0.55, metalness: 0.5 });
+  const doorMat = new THREE.MeshStandardMaterial({ map: makePanelTexture("#eef0f2"), roughness: 0.6, metalness: 0.3, envMapIntensity: 0.8 });
+  const rollMat = new THREE.MeshStandardMaterial({ map: makePanelTexture("#c8ccd0"), roughness: 0.45, metalness: 0.6, envMapIntensity: 0.8 });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x24262a, roughness: 0.9 });
   const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf2f0ea, roughness: 0.85 });
 
@@ -466,6 +468,10 @@ export default function WarehouseScene(p: WarehouseSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -477,6 +483,15 @@ export default function WarehouseScene(p: WarehouseSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xd9e4ef, 320, 1400);
+
+    // real specular for PBR panels + window band: PMREM room environment,
+    // built once — OUTSIDE the disposable group, so option clicks never
+    // touch it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
 
     const groundGeo = new THREE.PlaneGeometry(3000, 3000);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
@@ -572,6 +587,8 @@ export default function WarehouseScene(p: WarehouseSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -651,6 +668,16 @@ export default function WarehouseScene(p: WarehouseSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("dock")}>Dock side</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
+      </div>
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-warehouse.glb"); }}
+        >
+          3D file
+        </button>
       </div>
       <div
         aria-hidden

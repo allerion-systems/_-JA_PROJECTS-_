@@ -1,9 +1,11 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import {
   MODULE_GSF, MODULE_L_FT, MODULE_W_FT, program, programStories, type ProgramParams,
 } from "@/programMath";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Modular massing study — NOT architecture. Stacked 14×62 module boxes
@@ -207,10 +209,10 @@ function buildWorld(p: ProgramParams): THREE.Group {
   const parapetMat = new THREE.MeshStandardMaterial({ color: 0xb9bcc1, roughness: 0.8 });
   const plinthMat = new THREE.MeshStandardMaterial({ color: 0x9fa2a6, roughness: 0.95 });
   const glassTex = makeGlassTexture();
-  const canopyMat = new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.5, metalness: 0.4 });
-  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.45, metalness: 0.5, envMapIntensity: 0.8 });
+  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00, envMapIntensity: 0.8 });
   const plazaMat = new THREE.MeshStandardMaterial({ color: 0xbfc1c2, roughness: 1 });
-  const doorGlass = new THREE.MeshStandardMaterial({ color: 0x28405a, roughness: 0.15, metalness: 0.5 });
+  const doorGlass = new THREE.MeshStandardMaterial({ color: 0x28405a, roughness: 0.1, metalness: 0.5, envMapIntensity: 0.9 });
 
   const M = new THREE.Matrix4();
   const y0 = PLINTH_H;
@@ -258,7 +260,7 @@ function buildWorld(p: ProgramParams): THREE.Group {
     tex.repeat.set(Math.max(2, Math.round(w / 4)), 1); // a mullion every ~4 ft
     const band = new THREE.Mesh(
       new THREE.BoxGeometry(w, 3.4, 0.14),
-      new THREE.MeshStandardMaterial({ map: tex, roughness: 0.25, metalness: 0.35 }),
+      new THREE.MeshStandardMaterial({ map: tex, roughness: 0.15, metalness: 0.35, envMapIntensity: 0.9 }),
     );
     band.position.set(x, y, z);
     group.add(band);
@@ -405,6 +407,10 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -416,6 +422,14 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xdde5ee, 400, 2400);
+
+    // real specular for the glass bands: PMREM room environment, built once —
+    // OUTSIDE the disposable group, so option clicks never touch it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.5;
 
     const groundGeo = new THREE.PlaneGeometry(5000, 5000);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0x9aa287, roughness: 1 });
@@ -506,6 +520,8 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -576,6 +592,16 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
       <div className="absolute left-2 top-2 flex gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("street")}>Street</button>
         <button type="button" className={btnCls} onClick={() => flyTo("aerial")}>Aerial</button>
+      </div>
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-program.glb"); }}
+        >
+          3D file
+        </button>
       </div>
       <div className="pointer-events-none absolute right-2 top-2 rounded-[4px] bg-[hsl(var(--marine))]/70 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/85 backdrop-blur-sm">
         Massing study — not architecture

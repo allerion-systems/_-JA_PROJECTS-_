@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { DockParams } from "@/bimDock";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Parametric 3D floating dock in a stylized Nolin cove. Feet are world
@@ -177,11 +179,11 @@ function buildDock(p: DockSceneProps): { group: THREE.Group; bob: THREE.Group } 
   group.add(bob);
   const { walk, plats, xEnd, all } = layout(p);
 
-  const galvMat = new THREE.MeshStandardMaterial({ color: GALV, roughness: 0.55, metalness: 0.6 });
+  const galvMat = new THREE.MeshStandardMaterial({ color: GALV, roughness: 0.45, metalness: 0.75, envMapIntensity: 0.8 });
   const floatMat = new THREE.MeshStandardMaterial({ color: FLOAT_BLK, roughness: 0.9 });
   const bumpMat = new THREE.MeshStandardMaterial({ color: BUMP, roughness: 0.85 });
-  const cleatMat = new THREE.MeshStandardMaterial({ color: CLEAT, roughness: 0.4, metalness: 0.8 });
-  const alumMat = new THREE.MeshStandardMaterial({ color: ALUM, roughness: 0.4, metalness: 0.7 });
+  const cleatMat = new THREE.MeshStandardMaterial({ color: CLEAT, roughness: 0.35, metalness: 0.9, envMapIntensity: 0.8 });
+  const alumMat = new THREE.MeshStandardMaterial({ color: ALUM, roughness: 0.35, metalness: 0.85, envMapIntensity: 0.8 });
 
   const wood = p.decking === "wood";
   const base = wood ? "#b08a55" : "#7a736b";
@@ -402,6 +404,10 @@ export default function DockScene(p: DockSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -413,6 +419,15 @@ export default function DockScene(p: DockSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xd3e2e2, 180, 900);
+
+    // real specular for galvanized/aluminum/water: PMREM room environment,
+    // built once here — OUTSIDE the disposable group, so option clicks
+    // rebuild the dock without ever touching it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
 
     const ambient = new THREE.AmbientLight(0xe6eef6, 0.75);
     const hemi = new THREE.HemisphereLight(0xcfdeea, 0x4e6a60, 0.6);
@@ -515,6 +530,8 @@ export default function DockScene(p: DockSceneProps) {
       scene.remove(water);
       water.geometry.dispose();
       (water.material as THREE.Material).dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -585,6 +602,16 @@ export default function DockScene(p: DockSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("shore")}>Shore</button>
         <button type="button" className={btnCls} onClick={() => flyTo("above")}>Above</button>
         <button type="button" className={btnCls} onClick={() => flyTo("waterline")}>Water-level</button>
+      </div>
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-dock.glb"); }}
+        >
+          3D file
+        </button>
       </div>
       <div
         aria-hidden

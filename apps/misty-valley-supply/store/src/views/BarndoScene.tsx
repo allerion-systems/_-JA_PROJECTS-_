@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { barndoGeometry, type BarndoParams } from "@/bimBarndo";
+import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
    Parametric 3D barndominium. Feet are world units. Length runs along X,
@@ -232,20 +234,24 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   const ribbedMat = (lenFt: number) => {
     const tex = makeRibTexture(wallHex);
     tex.repeat.set(Math.max(4, Math.round(lenFt / 0.75)), 1); // rib every ~9 in
-    return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.55, metalness: 0.35 });
+    return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
   };
   const lapMat = () =>
     new THREE.MeshStandardMaterial({ map: makeLapTexture(quartersHex, H), roughness: 0.75 });
   const lapPlain = new THREE.MeshStandardMaterial({ color: new THREE.Color(quartersHex), roughness: 0.75 });
   const wainscotMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(shade(wallHex, 0.62)), roughness: 0.5, metalness: 0.4,
+    color: new THREE.Color(shade(wallHex, 0.62)), roughness: 0.45, metalness: 0.5, envMapIntensity: 0.8,
   });
   const trimMat = new THREE.MeshStandardMaterial({ color: TRIM, roughness: 0.6 });
   const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.5, metalness: 0.3 });
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0x9fc4dd, roughness: 0.08, metalness: 0.6 });
-  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
+  // transmission-look glass: opacity + low roughness + env reflection
+  const glassMat = new THREE.MeshStandardMaterial({
+    color: 0xbcd6e6, roughness: 0.05, metalness: 0,
+    transparent: true, opacity: 0.55, envMapIntensity: 1,
+  });
+  const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00, envMapIntensity: 0.8 });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.5, metalness: 0.4 });
-  const steelPost = new THREE.MeshStandardMaterial({ color: 0x565c66, roughness: 0.45, metalness: 0.5 });
+  const steelPost = new THREE.MeshStandardMaterial({ color: 0x565c66, roughness: 0.4, metalness: 0.6, envMapIntensity: 0.8 });
   const concrete = new THREE.MeshStandardMaterial({ color: 0xb9b7ae, roughness: 0.95 });
 
   // ---- ground dressing (excluded from camera fit) ----------------------
@@ -437,7 +443,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   ([1, -1] as const).forEach(sideZ => {
     const m = new THREE.Mesh(
       new THREE.BoxGeometry(roofL, 0.12, rafter),
-      new THREE.MeshStandardMaterial({ map: roofTex(), roughness: 0.45, metalness: 0.55 }),
+      new THREE.MeshStandardMaterial({ map: roofTex(), roughness: 0.35, metalness: 0.65, envMapIntensity: 0.8 }),
     );
     m.rotation.x = sideZ * slope;
     m.position.copy(slopeMid(sideZ));
@@ -459,7 +465,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
 
   const ridge = new THREE.Mesh(
     new THREE.BoxGeometry(roofL + 0.1, 0.16, 0.5),
-    new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(roofHex, 0.8)), roughness: 0.5, metalness: 0.5 }),
+    new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(roofHex, 0.8)), roughness: 0.45, metalness: 0.6, envMapIntensity: 0.8 }),
   );
   ridge.position.set(0, ridgeY + 0.12, 0);
   ridge.castShadow = true;
@@ -477,7 +483,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
     pTex.repeat.set(Math.max(6, Math.round(pLen / 0.75)), 1);
     const pRoof = new THREE.Mesh(
       new THREE.BoxGeometry(pLen, 0.11, pRun),
-      new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.45, metalness: 0.55 }),
+      new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.35, metalness: 0.65, envMapIntensity: 0.8 }),
     );
     pRoof.rotation.x = pSlope;
     pRoof.position.set(px0 + pLen / 2, highY - 1 + 0.06, halfW + (Math.cos(pSlope) * pRun) / 2 - 0.2);
@@ -529,6 +535,10 @@ export default function BarndoScene(p: BarndoSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
@@ -540,6 +550,14 @@ export default function BarndoScene(p: BarndoSceneProps) {
     const bg = makeSky();
     scene.background = bg;
     scene.fog = new THREE.Fog(0xd9e4ef, 200, 1100);
+
+    // real specular for steel panels: PMREM room environment, built once —
+    // OUTSIDE the disposable group, so option clicks never touch it
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
 
     const groundGeo = new THREE.PlaneGeometry(2400, 2400);
     const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
@@ -635,6 +653,8 @@ export default function BarndoScene(p: BarndoSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -715,6 +735,16 @@ export default function BarndoScene(p: BarndoSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("quarters")}>Quarters</button>
+      </div>
+      <div className="absolute bottom-2 right-2">
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .glb — opens in Omniverse, Blender, SketchUp, Revit"
+          onClick={() => { const g = coreRef.current?.group; if (g) exportGroupAsGlb(g, "mvs-barndo.glb"); }}
+        >
+          3D file
+        </button>
       </div>
       <div
         aria-hidden
