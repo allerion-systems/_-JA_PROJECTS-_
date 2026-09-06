@@ -141,18 +141,27 @@ function bootDesign(): { tool: View; params: Record<string, unknown>; seq: numbe
   return tool ? { tool, params: d.params, seq: 0 } : null;
 }
 
+/** The product carried by a #/p/<sku> deep link (feed links, agents),
+    if the SKU is real. Unknown SKUs fall through to the home page. */
+function bootProduct(): string | null {
+  const m = location.hash.match(/^#\/p\/([^/]+)$/);
+  if (!m) return null;
+  const sku = decodeURIComponent(m[1]);
+  return PRODUCTS.some(p => p.sku === sku) ? sku : null;
+}
+
 function Inner() {
   const { user, person, role, can, branch } = useAuth();
   // a share link opens straight into its tool; a bad link opens the picker
   const [pending, setPending] = React.useState(bootDesign);
   const [view, setView] = React.useState<View>(() =>
-    pending?.tool ?? (location.hash.startsWith("#d=") ? "design" : "home"));
+    pending?.tool ?? (location.hash.startsWith("#d=") ? "design" : bootProduct() ? "product" : "home"));
   const [cart, setCart] = React.useState<CartLine[]>([]);
   const [openCart, setOpenCart] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [preCat, setPreCat] = React.useState<string | undefined>();
   const [modal, setModal] = React.useState<Modal>(null);
-  const [productSku, setProductSku] = React.useState<string | null>(null);
+  const [productSku, setProductSku] = React.useState<string | null>(bootProduct);
   const [kitNote, setKitNote] = React.useState<string | null>(null);
 
   const lines = cart.map(c => ({ ...c, p: PRODUCTS.find(p => p.sku === c.sku)! })).filter(l => l.p);
@@ -175,6 +184,27 @@ function Inner() {
   const goShop = (cat?: string) => { setPreCat(cat); go("shop"); };
   const search = (q: string) => { setQuery(q); setPreCat(undefined); go("shop"); };
   const openProduct = (sku: string) => { setProductSku(sku); go("product"); };
+
+  // schema.org Product JSON-LD for the open product — what feed-following
+  // agents and crawlers read. Availability stays honest per fulfillment lane.
+  React.useEffect(() => {
+    document.getElementById("mvs-jsonld")?.remove();
+    const p = view === "product" && productSku ? PRODUCTS.find(x => x.sku === productSku) : undefined;
+    if (!p) return;
+    const avail = p.sku.startsWith("MVS-IM-") ? "https://schema.org/PreOrder"
+      : p.fulfil === "fabricate" ? undefined : "https://schema.org/InStock";
+    const s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.id = "mvs-jsonld";
+    s.text = JSON.stringify({
+      "@context": "https://schema.org", "@type": "Product",
+      sku: p.sku, name: p.name,
+      brand: { "@type": "Brand", name: "Misty Valley Supply" },
+      offers: { "@type": "Offer", price: p.price.toFixed(2), priceCurrency: "USD", ...(avail ? { availability: avail } : {}) },
+    });
+    document.head.appendChild(s);
+    return () => { document.getElementById("mvs-jsonld")?.remove(); };
+  }, [view, productSku]);
 
   /** Add a line to the order and open the drawer so the add is visible. */
   const addLine = (sku: string, qty: number) => {
