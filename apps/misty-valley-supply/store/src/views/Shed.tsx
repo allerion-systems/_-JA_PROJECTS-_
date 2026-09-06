@@ -81,7 +81,6 @@ export function BomTable({ elements }: { elements: Element[] }) {
   const { total } = rollup(elements);
   return (
     <Panel pad={false}>
-      <div className="tape h-1.5" />
       <div className="flex items-center justify-between gap-3 px-4 pt-3">
         <Lab kicker>5D bill of material</Lab>
         <Tag tone="marine">IFC ISO 16739</Tag>
@@ -314,7 +313,6 @@ export default function Shed() {
       <PriceBar label={`Shed — ${widthFt} × ${lengthFt} · ${wallHFt} ft walls · ${pitch}:12 gable`} total={total} />
 
       <Panel pad={false} className="card-hi mb-4">
-        <div className="tape h-1.5" />
         <div className="h-[380px] sm:h-[480px]">
           <React.Suspense fallback={
             <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">

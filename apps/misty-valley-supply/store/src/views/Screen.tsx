@@ -673,50 +673,6 @@ export default function Screen() {
         total={sell}
       />
 
-      <Head
-        eyebrow="Shop fabrication"
-        title="Roof Screens, Built Flat and Sold by the Piece"
-        sub="We fabricate the whole screen frame to the project's basis of design and deliver it labeled and ready to set. Buy it as a kit, or buy the frame, the panel, the hat channel and the fasteners separately."
-      />
-
-      {/* ------------------------------------------------- Lee Street proof */}
-      <div className="mb-8 card-hi">
-        <div className="tape h-1.5" />
-        <div className="p-5">
-          <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Built and installed — {RS.proof}</Lab>
-          <p className="max-w-[70ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
-            {internal ? (
-              <>A {RS.lee.height}′ RTU screen on {RS.bod.detail}. Basis of design{" "}
-                <strong>{RS.bod.frame}</strong> frame with a <strong>{RS.bod.panel}</strong> panel.
-                Misty Valley had the frame shop-fabricated, bought the panel, and sold the package
-                to the roofing contractor. These are the actual numbers.</>
-            ) : (
-              <>A real {RS.lee.lf} LF screen, shop-fabricated and set in one pick.</>
-            )}
-          </p>
-        </div>
-        <div className={cx("grid gap-px border-t border-[hsl(var(--rule))] bg-[hsl(var(--rule))]",
-          internal ? "sm:grid-cols-4" : "sm:grid-cols-2")}>
-          {(internal ? [
-            ["Frame fabrication", money(RS.lee.frameCost), "cost"],
-            ["Panel", money(RS.lee.panelCost), "cost"],
-            ["Sold for", money(RS.lee.sell), "price"],
-            ["Gross margin", money(RS.lee.sell - RS.lee.frameCost - RS.lee.panelCost),
-              `${Math.round(((RS.lee.sell - RS.lee.frameCost - RS.lee.panelCost) / RS.lee.sell) * 100)}% of the sale`],
-          ] : [
-            ["Screen length", `${RS.lee.lf} LF`, "delivered in labeled sections"],
-            ["Installed", "1 day", "set in one pick"],
-          ]).map(([k, v, s], i) => (
-            <div key={k} className="bg-[hsl(var(--panel))] p-4">
-              <Lab className="mb-1.5">{k}</Lab>
-              <div className={cx("disp text-[28px] font-bold leading-none",
-                i === 3 && "text-[hsl(var(--safety))]")}>{v}</div>
-              <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">{s}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* ------------------------------------------------------- kit / parts */}
       <div className="mb-5 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
         {(["design", "kit", "drawing", "parts"] as const).map(t => (
@@ -735,7 +691,6 @@ export default function Screen() {
           {/* --------------------------------------------- canvas + controls */}
           <div className="min-w-0">
             <div className="card-hi overflow-hidden rounded-[8px]">
-              <div className="tape h-1.5" />
               <div className="h-[320px] md:h-[460px]">
                 <React.Suspense fallback={
                   <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
@@ -1182,6 +1137,38 @@ export default function Screen() {
           </Panel>
         </div>
       </div>
+      )}
+
+      {/* --------------------------- Lee Street numbers — internal eyes only */}
+      {internal && (
+        <div className="mt-8 card-hi">
+          <div className="tape h-1.5" />
+          <div className="p-5">
+            <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Built and installed — {RS.proof}</Lab>
+            <p className="max-w-[70ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
+              A {RS.lee.height}′ RTU screen on {RS.bod.detail}. Basis of design{" "}
+              <strong>{RS.bod.frame}</strong> frame with a <strong>{RS.bod.panel}</strong> panel.
+              Misty Valley had the frame shop-fabricated, bought the panel, and sold the package
+              to the roofing contractor. These are the actual numbers.
+            </p>
+          </div>
+          <div className="grid gap-px border-t border-[hsl(var(--rule))] bg-[hsl(var(--rule))] sm:grid-cols-4">
+            {([
+              ["Frame fabrication", money(RS.lee.frameCost), "cost"],
+              ["Panel", money(RS.lee.panelCost), "cost"],
+              ["Sold for", money(RS.lee.sell), "price"],
+              ["Gross margin", money(RS.lee.sell - RS.lee.frameCost - RS.lee.panelCost),
+                `${Math.round(((RS.lee.sell - RS.lee.frameCost - RS.lee.panelCost) / RS.lee.sell) * 100)}% of the sale`],
+            ] as const).map(([k, v, s], i) => (
+              <div key={k} className="bg-[hsl(var(--panel))] p-4">
+                <Lab className="mb-1.5">{k}</Lab>
+                <div className={cx("disp text-[28px] font-bold leading-none",
+                  i === 3 && "text-[hsl(var(--safety))]")}>{v}</div>
+                <div className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">{s}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* -------------------------------------------------- the two warnings */}

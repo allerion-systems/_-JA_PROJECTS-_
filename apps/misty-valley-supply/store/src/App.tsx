@@ -17,6 +17,7 @@ import Users from "@/views/Users";
 
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
+import { Glyph } from "@/glyph";
 
 // The three Design Center tools carry three.js — they stay out of the main
 // bundle and load on demand.
@@ -24,7 +25,7 @@ const Screen = React.lazy(() => import("@/views/Screen"));
 const Shed = React.lazy(() => import("@/views/Shed"));
 const Deck = React.lazy(() => import("@/views/Deck"));
 
-type View = "home" | "dash" | "shop" | "product" | "screen" | "shed" | "deck" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
+type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -35,7 +36,7 @@ const NAV: { id: View; label: string; short: string; sub: string; icon: React.Re
     icon: <path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-5H3zM13 8h8V3h-8z" /> },
   { id: "shop", label: "Catalog", short: "Shop", sub: "Safety & edge protection", bar: true,
     icon: <path d="M3 6h18M6 6v13h12V6M9 10h6" /> },
-  { id: "screen", label: "Design Center", short: "Design", sub: "Build it in 3D, priced live", bar: true,
+  { id: "design", label: "Design Center", short: "Design", sub: "Build it in 3D, priced live", bar: true,
     icon: <path d="M3 19h18M5 19V8l7-4 7 4v11M9 19v-6h6v6" /> },
   { id: "runs", label: "Delivery", short: "Delivery", sub: "Any counter in town, today", bar: true,
     icon: <path d="M2 16V7h11v9M13 10h5l4 4v2h-2M2 16h2m5 0h6" /> },
@@ -85,7 +86,7 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
       { label: "Site Structures", cat: "structures" },
       { label: "Short-Term Rental Units", cat: "str" },
     ] },
-  { label: "Design Center", sub: "Screens, studios, decks — in 3D", go: { view: "screen" },
+  { label: "Design Center", sub: "Screens, studios, decks — in 3D", go: { view: "design" },
     tools: [
       { label: "Roof Screens", view: "screen" },
       { label: "Backyard Studios", view: "shed" },
@@ -98,12 +99,12 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
 const deptCount = (cats?: string[]) =>
   cats ? PRODUCTS.filter(p => cats.includes(p.cat)).length : 0;
 
-/* The three Design Center tools, switchable from the one "Design" tab so
-   they're reachable on every device without extra tab-bar slots. */
-const DESIGN_TOOLS: { view: View; label: string }[] = [
-  { view: "screen", label: "Roof Screens" },
-  { view: "shed", label: "Backyard Studios" },
-  { view: "deck", label: "Decks" },
+/* The Design Center tools. The Design tab opens a picker — no tool is the
+   default; the customer chooses what they're building. */
+const DESIGN_TOOLS: { view: View; label: string; sub: string; sku: string }[] = [
+  { view: "shed", label: "Backyard Studios", sub: "Sheds, studios, small buildings", sku: "MVS-STR-CAB1236" },
+  { view: "deck", label: "Decks", sub: "PT decks, framed to code", sku: "MVS-PT-5412" },
+  { view: "screen", label: "Roof Screens", sub: "Rooftop equipment screens", sku: "MVS-RSF-SC3" },
 ];
 
 const Icon = ({ children }: { children: React.ReactNode }) => (
@@ -163,6 +164,10 @@ function Inner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [person?.id]);
 
+  /* The Design Center is an app, not a page — when a design tool is open the
+     header sheds the utility strip and search so the model owns the screen. */
+  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck";
+
   return (
     <div className="min-h-full pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-0">
       {/* ---------------------------------------------------------- header */}
@@ -170,7 +175,7 @@ function Inner() {
         <div className="h-1 bg-[hsl(var(--safety-hi))]" />
 
         {/* utility strip */}
-        <div className="border-b border-white/10">
+        <div className="border-b border-white/10" hidden={inDesign}>
           <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-3 py-1.5 sm:px-6">
             <button onClick={() => setModal("branch")}
               className="flex items-center gap-1.5 text-[13px] text-[hsl(var(--on-dark-2))] hover:text-white">
@@ -239,7 +244,7 @@ function Inner() {
         </div>
 
         {/* search */}
-        <div className="pb-2.5 sm:pb-3">
+        <div className="pb-2.5 sm:pb-3" hidden={inDesign}>
           <div className="mx-auto flex max-w-[1400px] px-3 sm:px-6">
             <div className="relative flex-1">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -364,7 +369,7 @@ function Inner() {
         </nav>
 
         <main className="min-w-0 flex-1 py-5 sm:py-6 lg:pl-8">
-          {view === "home" && <Home onShop={goShop} onScreens={() => go("screen")} onYard={() => go("yard")} onEarth={() => go("runs")}
+          {view === "home" && <Home onShop={goShop} onScreens={() => go("design")} onYard={() => go("yard")} onEarth={() => go("runs")}
             onSignIn={() => setModal("signin")} onSearch={search} />}
           {view === "shop" && <Shop cart={cart} setCart={setCart} query={query} setQuery={setQuery}
             preCat={preCat} onSignIn={() => setModal("signin")} onProduct={openProduct} />}
@@ -373,10 +378,35 @@ function Inner() {
               onBack={() => go("shop")} onProduct={openProduct} onSignIn={() => setModal("signin")} />
           )}
           {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
+          {view === "design" && (
+            /* The picker: one question, equal doors. */
+            <div className="mx-auto max-w-[720px]">
+              <h1 className="disp mb-5 mt-2 text-center text-[26px] font-bold leading-[1.05] sm:text-[34px]">
+                What are you building?
+              </h1>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {DESIGN_TOOLS.map(t => (
+                  <button key={t.view} onClick={() => go(t.view)}
+                    className="card lift flex min-h-[150px] flex-col items-center justify-center gap-2.5 p-5 text-center">
+                    <Glyph sku={t.sku} className="h-16 w-16" />
+                    <span className="disp text-[17px] font-bold leading-[1.05]">{t.label}</span>
+                    <span className="text-[12px] text-[hsl(var(--ink-3))]">{t.sub}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-5 text-center text-[13px] text-[hsl(var(--ink-2))]">
+                Pick one — it's priced live as you design, and the quote is free.
+              </p>
+            </div>
+          )}
           {(view === "screen" || view === "shed" || view === "deck") && (
             <>
-              {/* Design Center tool switcher — all three tools from one tab */}
-              <div className="mb-4 flex flex-wrap gap-1.5">
+              {/* in a tool: a quiet way back + sibling tools */}
+              <div className="mb-4 flex flex-wrap items-center gap-1.5">
+                <button onClick={() => go("design")}
+                  className="min-h-[44px] rounded-[6px] px-3 text-[14px] font-semibold text-[hsl(var(--marine))] hover:bg-[hsl(var(--marine-soft))]">
+                  ‹ Design Center
+                </button>
                 {DESIGN_TOOLS.map(t => (
                   <button key={t.view} onClick={() => go(t.view)}
                     aria-current={view === t.view}
