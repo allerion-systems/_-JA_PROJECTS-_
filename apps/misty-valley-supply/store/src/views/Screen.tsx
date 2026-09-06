@@ -2,7 +2,8 @@ import * as React from "react";
 import { ROOFSCREEN as RS, SCREEN_PARTS } from "@/data";
 import { pickBool, pickNum, pickOne } from "@/designStore";
 import { Btn, DataTable, Field, Head, Lab, Panel, Rule, Tag, cx, inputCls, money } from "@/ui";
-import { SaveShare } from "@/views/Shed";
+import { SaveShare, SpecButton } from "@/views/Shed";
+import type { SpecLine } from "@/views/SpecSheet"; // type-only, erased at build
 import { useAuth } from "@/auth";
 import { useAnimatedNumber } from "@/useAnimatedNumber";
 
@@ -688,6 +689,24 @@ export default function Screen({ initial }: { initial?: Partial<QuoteConfig> }) 
     lf, height: h, bay, mount, panel: p.id, gauge: p.ga, drawings, markupPct: markup,
   };
 
+  /* Printable spec sheet: description/qty only per line — line economics
+     (frame rate, adders, markup) are internal; the sheet totals at sell. */
+  const specParamRows: [string, string][] = [
+    ["Screen length", `${lf} LF`],
+    ["Height above deck", fmtFtIn(h)],
+    ["Bay spacing", fmtFtIn(bay)],
+    ["Mount", m.name],
+    ["Panel", p.id === "none" ? "Frame only — panel by others" : p.name],
+    ["Shop drawings + calcs", drawings ? "Sealed — included" : "Not included"],
+  ];
+  const specLines: SpecLine[] = [
+    { name: "Screen frame package — tube posts, bases, hat channel, fasteners", qty: lf, unit: "LF" },
+    { name: `Post assemblies @ ${fmtFtIn(bay)} bays`, qty: posts, unit: "EA" },
+    { name: "Hat channel — horizontal rows", qty: hatLf, unit: "LF" },
+    ...(p.id === "none" ? [] : [{ name: `Screen panel — ${p.name}`, qty: faceSf, unit: "SF" }]),
+    ...(drawings ? [{ name: "Sealed shop drawings + calculations — licensed partner engineers", qty: 1, unit: "LS" }] : []),
+  ];
+
   const rows: [string, string, number][] = [
     ["Frame package", `${lf} LF × ${h}′ @ ${usd2(RS.frameCostLf(h))}/LF — tube, ${posts} bases, ${hatLf.toLocaleString()} LF hat channel, fasteners`, cost.frame],
     ["Mount adder", m.adder ? m.name.toLowerCase() : "square base — included", cost.mount],
@@ -738,8 +757,11 @@ export default function Screen({ initial }: { initial?: Partial<QuoteConfig> }) 
               </div>
             </div>
 
-            <div className="mt-3">
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
               <SaveShare tool="screen" params={{ ...quoteConfig }} label={`Roof screen ${lf} LF × ${fmtFtIn(h)}`} />
+              <SpecButton toolLabel="Roof Screens" designName={`Roof screen ${lf} LF × ${fmtFtIn(h)}`}
+                paramRows={specParamRows} lines={specLines} total={sell}
+                totalLabel="Your price — screen system" />
             </div>
 
             {/* controls — the same shared state every tab prices from */}

@@ -6,7 +6,7 @@ import {
 } from "@/bimContainer";
 import { pickBool, pickOne } from "@/designStore";
 import { Btn, Lab, Panel, cx } from "@/ui";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
 
 // three.js stays in its own lazy chunk — loaded only when the container renders
 const ContainerScene = React.lazy(() => import("@/views/ContainerScene"));
@@ -111,6 +111,22 @@ export default function Container({ initial }: { initial?: Partial<ContainerPara
   const d = containerDerived(params);
   const layoutName = LAYOUTS.find(([id]) => id === layout)?.[1] ?? layout;
 
+  // human-readable configuration for the printable spec sheet
+  const systems = [
+    (electrical || d.electrical) && "Electrical package",
+    (hvac || d.hvac) && "Mini-split HVAC",
+    floor && "LVP floor",
+    leanTo && "Lean-to roof — 8 ft",
+  ].filter(Boolean).join(", ") || "None";
+  const specRows: [string, string][] = [
+    ["Box", size === "20" ? "20 ft One-Trip" : "40 ft High-Cube"],
+    ["Count", count > 1 ? `${count} — side-by-side` : "1"],
+    ["Layout", layoutName],
+    ["Windows / man-doors", `${windows} / ${manDoors}`],
+    ["Systems + finish", systems],
+    ["Box color", BOX_COLORS.find(([, hex]) => hex === containerColor)?.[0] ?? ""],
+  ];
+
   const toggles = [
     ["Electrical package", electrical, setElectrical, d.electrical && !electrical],
     ["Mini-split HVAC", hvac, setHvac, d.hvac && !hvac],
@@ -189,8 +205,13 @@ export default function Container({ initial }: { initial?: Partial<ContainerPara
         )}
         {step === 3 && <QuoteGate tool="container" params={{ ...params }} total={total} />}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <SaveShare tool="container" params={{ ...params }}
-            label={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`} />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SaveShare tool="container" params={{ ...params }}
+              label={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`} />
+            <SpecButton toolLabel="Containers"
+              designName={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`}
+              paramRows={specRows} lines={elements} total={total} building />
+          </div>
           {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
           )}

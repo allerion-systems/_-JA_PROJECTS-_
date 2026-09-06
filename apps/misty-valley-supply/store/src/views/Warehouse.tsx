@@ -2,7 +2,7 @@ import * as React from "react";
 import { rollup } from "@/bim";
 import { warehouseTakeoff, type WarehouseParams } from "@/bimWarehouse";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
 import { Btn, Lab, Panel, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the warehouse renders
@@ -78,6 +78,17 @@ export default function Warehouse({ initial }: { initial?: Partial<WarehousePara
     [size, dockDoors, driveInDoors, insulated, officeCorner]);
   const { total } = rollup(elements);
 
+  // human-readable configuration for the printable spec sheet
+  const specRows: [string, string][] = [
+    ["Shell", "50 × 100 × 16 ft eave"],
+    ["Dock door packages", String(dockDoors)],
+    ["Drive-in roll-ups 12×14", String(driveInDoors)],
+    ["Shell insulation", insulated ? "Roof + walls" : "None"],
+    ["Office corner", officeCorner ? "20 × 20" : "None"],
+    ["Wall / roof color",
+      `${WALL_COLORS.find(([, hx]) => hx === wallColor)?.[0] ?? ""} / ${ROOF_COLORS.find(([, hx]) => hx === roofColor)?.[0] ?? ""}`],
+  ];
+
   return (
     <div>
       <PriceBar
@@ -142,7 +153,11 @@ export default function Warehouse({ initial }: { initial?: Partial<WarehousePara
           </div>
         )}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <SaveShare tool="warehouse" params={{ ...params }} label={`Warehouse 50×100`} />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SaveShare tool="warehouse" params={{ ...params }} label={`Warehouse 50×100`} />
+            <SpecButton toolLabel="Warehouses" designName="Warehouse 50 × 100"
+              paramRows={specRows} lines={elements} total={total} building />
+          </div>
           {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
           )}

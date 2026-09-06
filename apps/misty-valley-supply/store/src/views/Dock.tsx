@@ -2,7 +2,7 @@ import * as React from "react";
 import { rollup } from "@/bim";
 import { DOCK_WALKWAYS, dockTakeoff, type DockParams } from "@/bimDock";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
 import { Btn, Lab, Panel, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the dock renders
@@ -65,6 +65,16 @@ export default function Dock({ initial }: { initial?: Partial<DockParams> }) {
   const shapeLabel = shape === "straight" ? "Straight" : `${shape}-shape`;
   const platLabel = platform === "none" ? "" : platform === "8x10" ? " · 8×10 platform" : " · double platform";
 
+  // human-readable configuration for the printable spec sheet
+  const hardware = [gangway && "20-ft gangway", ladder && "Swim ladder"].filter(Boolean).join(", ") || "None";
+  const specRows: [string, string][] = [
+    ["Shape", shapeLabel],
+    ["Walkway", `${walkwayFt} ft`],
+    ["Platform", platform === "none" ? "None" : platform === "8x10" ? "8 × 10" : "Double 8 × 10"],
+    ["Decking", decking === "wood" ? "PT wood" : "Composite"],
+    ["Hardware", hardware],
+  ];
+
   return (
     <div>
       <PriceBar label={`Lake dock — ${shapeLabel} · ${walkwayFt} ft walkway${platLabel}`} total={total} />
@@ -124,7 +134,11 @@ export default function Dock({ initial }: { initial?: Partial<DockParams> }) {
           </div>
         )}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <SaveShare tool="dock" params={{ ...params }} label={`Dock — ${shapeLabel} ${walkwayFt} ft`} />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SaveShare tool="dock" params={{ ...params }} label={`Dock — ${shapeLabel} ${walkwayFt} ft`} />
+            <SpecButton toolLabel="Lake Docks" designName={`Dock — ${shapeLabel} ${walkwayFt} ft`}
+              paramRows={specRows} lines={elements} total={total} />
+          </div>
           {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
           )}

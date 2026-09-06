@@ -2,7 +2,7 @@ import * as React from "react";
 import { rollup } from "@/bim";
 import { barndoTakeoff, type BarndoParams } from "@/bimBarndo";
 import { pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
 import { Btn, Lab, Panel, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the barndo renders
@@ -81,6 +81,18 @@ export default function Barndo({ initial }: { initial?: Partial<BarndoParams> })
   const { total } = rollup(elements);
 
   const fracLabel = quartersFraction === 0.25 ? "1/4" : "1/2";
+
+  // human-readable configuration for the printable spec sheet
+  const specRows: [string, string][] = [
+    ["Shell", size === "30x40" ? "30 × 40 × 12 ft" : "40 × 60 × 14 ft"],
+    ["Living quarters", `${fracLabel} of the shell`],
+    ["Porch bays", porchBays === 0 ? "None" : `${porchBays} × 12 ft`],
+    ["Quarters windows", String(quartersWindows)],
+    ["Bathrooms", String(bathrooms)],
+    ["Wall / roof color",
+      `${WALL_COLORS.find(([, hx]) => hx === wallColor)?.[0] ?? ""} / ${ROOF_COLORS.find(([, hx]) => hx === roofColor)?.[0] ?? ""}`],
+  ];
+
   return (
     <div>
       <PriceBar
@@ -132,7 +144,11 @@ export default function Barndo({ initial }: { initial?: Partial<BarndoParams> })
           </div>
         )}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <SaveShare tool="barndo" params={{ ...params }} label={`Barndo ${size}`} />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SaveShare tool="barndo" params={{ ...params }} label={`Barndo ${size}`} />
+            <SpecButton toolLabel="Barndominiums" designName={`Barndo ${size.replace("x", " × ")}`}
+              paramRows={specRows} lines={elements} total={total} building />
+          </div>
           {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
           )}

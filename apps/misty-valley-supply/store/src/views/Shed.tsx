@@ -8,6 +8,9 @@ import { useAnimatedNumber } from "@/useAnimatedNumber";
 
 // three.js stays in its own lazy chunk — loaded only when the shed renders
 const ShedScene = React.lazy(() => import("@/views/ShedScene"));
+// the printable spec sheet is its own lazy chunk — loaded on first open only
+const SpecSheet = React.lazy(() => import("@/views/SpecSheet"));
+import type { SpecLine, SpecProgram } from "@/views/SpecSheet"; // type-only, erased at build
 
 /* ------------------------------------------------------------------------
    Shed Designer — visual-first wizard on the shared 5D core (bim.ts).
@@ -97,6 +100,51 @@ export function SaveShare({ tool, params, label }: {
         {note ?? ""}
       </span>
     </div>
+  );
+}
+
+// ---- shared: the printable spec sheet ------------------------------------
+
+/* "Spec sheet" sits beside SaveShare on every tool. The click captures the
+   visible 3D canvas (every scene renders with preserveDrawingBuffer, so the
+   last frame is still in the buffer) and opens SpecSheet.tsx — a printable
+   one-page document. Pricing on the sheet follows the PriceBar/BomTable
+   gate exactly: guests get qty/description only. */
+export function SpecButton({ toolLabel, designName, paramRows, lines, total, totalLabel, program, building }: {
+  toolLabel: string;
+  designName: string;
+  paramRows: readonly (readonly [string, string])[];
+  lines?: SpecLine[];
+  total?: number;
+  totalLabel?: string;
+  program?: SpecProgram;
+  building?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [snapshot, setSnapshot] = React.useState<string | null>(null);
+  const openSheet = () => {
+    let snap: string | null = null;
+    try {
+      const canvas = document.querySelector<HTMLCanvasElement>("main canvas")
+        ?? document.querySelector<HTMLCanvasElement>("canvas");
+      if (canvas && canvas.width > 0) snap = canvas.toDataURL("image/png");
+    } catch {
+      /* tainted or lost context — the sheet still opens, textual only */
+    }
+    setSnapshot(snap);
+    setOpen(true);
+  };
+  return (
+    <>
+      <Btn variant="line" size="sm" onClick={openSheet}>Spec sheet</Btn>
+      {open && (
+        <React.Suspense fallback={null}>
+          <SpecSheet toolLabel={toolLabel} designName={designName} paramRows={paramRows}
+            lines={lines} total={total} totalLabel={totalLabel} program={program}
+            building={building} snapshot={snapshot} onClose={() => setOpen(false)} />
+        </React.Suspense>
+      )}
+    </>
   );
 }
 
@@ -458,6 +506,22 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
     [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac]);
   const { total } = rollup(elements);
 
+  // human-readable configuration for the printable spec sheet
+  const addOns = [ramp && "4-ft ramp", loft && "Storage loft", cupola && "Cupola",
+    wainscot && "Stone wainscot", hvac && "Mini-split + power"].filter(Boolean).join(", ") || "None";
+  const specRows: [string, string][] = [
+    ["Footprint", `${widthFt} × ${lengthFt} ft`],
+    ["Wall height", `${wallHFt} ft`],
+    ["Roof pitch", `${pitch}:12 gable`],
+    ["Doors / windows", `${doors} / ${windows}`],
+    ["Siding", siding === "vinyl"
+      ? `Vinyl — ${SIDING_COLORS.find(([, hx]) => hx === sidingColor)?.[0] ?? ""}` : "Housewrap only"],
+    ["Roof", roof === "metal"
+      ? `Metal, cut to length — ${ROOF_COLORS.find(([, hx]) => hx === roofColor)?.[0] ?? ""}` : "Sheathed only"],
+    ["Roof framing", framing === "stick" ? "Stick rafters" : "Engineered trusses"],
+    ["Add-ons", addOns],
+  ];
+
   return (
     <div>
       <PriceBar label={`Shed — ${widthFt} × ${lengthFt} · ${wallHFt} ft walls · ${pitch}:12 gable`} total={total} />
@@ -528,7 +592,11 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
         )}
         {step === 3 && <QuoteGate tool="shed" params={{ ...params }} total={total} />}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <SaveShare tool="shed" params={{ ...params }} label={`Shed ${widthFt}×${lengthFt}`} />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SaveShare tool="shed" params={{ ...params }} label={`Shed ${widthFt}×${lengthFt}`} />
+            <SpecButton toolLabel="Backyard Studios" designName={`Shed ${widthFt} × ${lengthFt}`}
+              paramRows={specRows} lines={elements} total={total} building />
+          </div>
           {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
           )}

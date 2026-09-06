@@ -1,7 +1,7 @@
 import * as React from "react";
 import { pickOne } from "@/designStore";
 import { Btn, Lab, Panel, Tag } from "@/ui";
-import { QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
+import { QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
 import {
   APT_STORIES, APT_UNITS, EMS_BAYS, EMS_QUARTERS_GSF, HOTEL_ROOMS, HOTEL_STORIES,
   OFFICE_GSF, OFFICE_STORIES, SCHOOL_CLASSROOMS, fmtMillions, program, programStories,
@@ -64,6 +64,21 @@ export default function Program({ initial }: { initial?: Partial<ProgramParams> 
 
   const pick = (t: ProgramType) => { setType(t); setStep(1); };
   const label = type ? TYPES.find(t => t.type === type)!.label : null;
+
+  /* Human-readable configuration for the printable spec sheet. This tool
+     never shows a retail price — the sheet carries the planning ranges +
+     design-build intake language via the `program` prop instead of a BoM. */
+  const specRows: [string, string][] = !params ? [] : (() => {
+    const head: [string, string] = ["Program", label ?? params.type];
+    switch (params.type) {
+      case "hotel": return [head, ["Guest rooms", String(params.rooms)], ["Stories", String(params.stories)]] as [string, string][];
+      case "office":
+      case "government": return [head, ["Gross square feet", params.gsf.toLocaleString("en-US")], ["Stories", String(params.stories)]] as [string, string][];
+      case "school": return [head, ["Classrooms", String(params.classrooms)]] as [string, string][];
+      case "apartments": return [head, ["Units", String(params.units)], ["Stories", String(params.stories)]] as [string, string][];
+      case "emergency": return [head, ["Apparatus bays", String(params.bays)], ["Quarters", `${params.quartersGsf.toLocaleString("en-US")} sf`]] as [string, string][];
+    }
+  })();
 
   return (
     <div>
@@ -177,7 +192,15 @@ export default function Program({ initial }: { initial?: Partial<ProgramParams> 
 
         {type && params && (
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <SaveShare tool="program" params={{ ...params }} label={`Modular — ${label ?? type}`} />
+            <div className="flex flex-wrap items-center gap-1.5">
+              <SaveShare tool="program" params={{ ...params }} label={`Modular — ${label ?? type}`} />
+              {result && (
+                <SpecButton toolLabel="Modular Projects" designName={`Modular — ${label ?? type}`}
+                  paramRows={specRows} building
+                  program={{ gsf: result.gsf, modules: result.modules, craneWeeks: result.craneWeeks,
+                    rangeLow: result.rangeLow, rangeHigh: result.rangeHigh, perGsf: result.perGsf }} />
+              )}
+            </div>
             {step < 2 && (
               <Btn size="sm" onClick={() => setStep(step + 1)}>
                 {step === 1 ? "Review the program" : "Next"}

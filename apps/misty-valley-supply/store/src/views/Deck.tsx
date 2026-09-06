@@ -1,7 +1,7 @@
 import * as React from "react";
 import { deckTakeoff, guardRequired, rollup, type DeckParams } from "@/bim";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
 
 // three.js stays in its own lazy chunk — loaded only when the deck renders
 const DeckScene = React.lazy(() => import("@/views/DeckScene"));
@@ -35,6 +35,15 @@ export default function Deck({ initial }: { initial?: Partial<DeckParams> }) {
   const elements = React.useMemo(() => deckTakeoff(params),
     [widthFt, depthFt, heightFt, effRailing, stairs]);
   const { total } = rollup(elements);
+
+  // human-readable configuration for the printable spec sheet
+  const specRows: [string, string][] = [
+    ["Footprint", `${widthFt} × ${depthFt} ft`],
+    ["Height above grade", `${heightFt} ft`],
+    ["Guard rail", effRailing ? (guardForced ? "Yes — required, IRC R312.1.1" : "Yes") : "No"],
+    ["Stairs", stairs ? "Yes" : "No"],
+    ["Decking", "5/4×6 PT, 5.5″ exposure"],
+  ];
 
   return (
     <div>
@@ -84,7 +93,11 @@ export default function Deck({ initial }: { initial?: Partial<DeckParams> }) {
         )}
         {step === 3 && <QuoteGate tool="deck" params={{ ...params }} total={total} />}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <SaveShare tool="deck" params={{ ...params }} label={`Deck ${widthFt}×${depthFt}`} />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <SaveShare tool="deck" params={{ ...params }} label={`Deck ${widthFt}×${depthFt}`} />
+            <SpecButton toolLabel="Decks" designName={`Deck ${widthFt} × ${depthFt}`}
+              paramRows={specRows} lines={elements} total={total} />
+          </div>
           {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
           )}
