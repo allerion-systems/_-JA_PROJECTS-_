@@ -413,6 +413,28 @@ export const PRODUCTS: Product[] = [
     note: "Decouples the board from the framing — the cheap way to buy STC points.",
     why: "Sound moves through screws — RC-1's single flexible leg breaks that path. Screw the board to the channel only; hit the stud through it and the rating is gone." },
 
+  // ---- import-direct units (preorder; aggregated to container bookings) --
+  // Landed-cost pricing per research/TARIFF-STUDS-CHINA-VS-WORLD.md: FOB +
+  // ~85% China duty stack + ocean/inland freight, then the 60% floor. Only
+  // categories that BEAT domestic after duty get listed. Broker-confirmed
+  // HTS + AD/CVD screen required before any actual booking. Never DDP
+  // double-invoice offers — walk.
+  { sku: "MVS-IM-EXP37", name: "Expandable Container House — 37 ft, 3-Room, Preorder", cat: "str",
+    price: 28500, uom: "EA", std: "Imported unit — not a certified dwelling", osha: "Local permit for habitable use", fulfil: "dropship",
+    supplier: "Import program — container booking", lead: "12-16 weeks", hot: true,
+    note: "Folds out to three rooms with kitchen and bath rough-in. Preorder — units ship when the container booking fills.",
+    why: "Expandable units arrive as structures, not certified dwellings — office, farm and jobsite use is straightforward; living in one runs through your county's permit path, and we say that up front instead of after delivery." },
+  { sku: "MVS-IM-EXP19", name: "Expandable Container House — 19 ft, 1-Room, Preorder", cat: "str",
+    price: 16900, uom: "EA", std: "Imported unit — not a certified dwelling", osha: "Local permit for habitable use", fulfil: "dropship",
+    supplier: "Import program — container booking", lead: "12-16 weeks",
+    note: "One room, wired, insulated panels. The lowest-cost enclosed square footage on the site.",
+    why: "The economics only work because this category's factory price survives the full import duty stack — most imported building kits don't, and we don't list the ones that lose to domestic." },
+  { sku: "MVS-IM-FOLD20", name: "Folding Container Unit — 20 ft, Flat-Pack, Preorder", cat: "str",
+    price: 13500, uom: "EA", std: "Imported unit — site storage/office class", osha: "Local permit rules", fulfil: "dropship",
+    supplier: "Import program — container booking", lead: "12-16 weeks",
+    note: "Ships flat, unfolds in an hour with two people. Four units ride in one container slot.",
+    why: "Flat-pack is the freight cheat: four units per container position drops the landed freight per unit to a quarter of a welded box — that's why this one prices under everything else with a roof." },
+
   // ---- drawing packages (paid add-on on every Design Center quote) -------
   { sku: "MVS-DP-PERMIT", name: "Permit Drawing Package — Drafted from Your Model", cat: "structures",
     price: 450, uom: "EA", std: "Plan, elevations, sections + IFC data", osha: "Drafted — not sealed", fulfil: "fabricate",
