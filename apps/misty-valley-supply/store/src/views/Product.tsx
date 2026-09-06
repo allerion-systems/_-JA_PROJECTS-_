@@ -32,14 +32,25 @@ function Stepper({
   );
 }
 
+/** Which Design Center tool customizes this SKU, if any. */
+const designerFor = (sku: string): { view: string; label: string } | null => {
+  if (/^MVS-(CX|CI)-/.test(sku)) return { view: "container", label: "Customize it in the Container Designer" };
+  if (/^MVS-DK-/.test(sku)) return { view: "dock", label: "Design your dock around it" };
+  if (/^MVS-PB-(3040|4060|PORCH)/.test(sku)) return { view: "barndo", label: "Customize it in the Barndo Builder" };
+  if (/^MVS-(PB-(RUN|SHED)|STR-CAB|SC)-?/.test(sku)) return { view: "shed", label: "Customize it in Backyard Studios" };
+  if (/^MVS-RS/.test(sku)) return { view: "screen", label: "Design your screen around it" };
+  return null;
+};
+
 export default function ProductView({
-  sku, onAdd, onBack, onProduct, onSignIn,
+  sku, onAdd, onBack, onProduct, onSignIn, onDesign,
 }: {
   sku: string;
   onAdd: (sku: string, qty: number) => void;
   onBack: () => void;
   onProduct: (sku: string) => void;
   onSignIn: () => void;
+  onDesign?: (view: string) => void;
 }) {
   const { user, net } = useAuth();
   const p = PRODUCTS.find(x => x.sku === sku);
@@ -161,10 +172,17 @@ export default function ProductView({
             </div>
 
             <Btn className="mt-3 w-full !h-12" onClick={() => onAdd(p.sku, qty)}>
-              Add to order
+              {p.fulfil === "dropship" ? "Preorder" : "Add to order"}
             </Btn>
+            {(() => { const d = designerFor(p.sku); return d && onDesign ? (
+              <Btn variant="line" className="mt-2 w-full" onClick={() => onDesign(d.view)}>
+                {d.label}
+              </Btn>
+            ) : null; })()}
             <p className="mt-2.5 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
-              Your branch confirms the supplier cut-off when the order is placed.
+              {p.fulfil === "dropship"
+                ? "Preorder — your branch confirms supplier stock and ship date before your card is captured."
+                : "Your branch confirms the supplier cut-off when the order is placed."}
             </p>
           </div>
         </div>

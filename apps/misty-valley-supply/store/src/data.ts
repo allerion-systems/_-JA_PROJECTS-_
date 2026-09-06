@@ -413,6 +413,23 @@ export const PRODUCTS: Product[] = [
     note: "Decouples the board from the framing — the cheap way to buy STC points.",
     why: "Sound moves through screws — RC-1's single flexible leg breaks that path. Screw the board to the channel only; hit the stud through it and the rating is gone." },
 
+  // ---- barndominium shell + interior (Barndo Builder) --------------------
+  { sku: "MVS-PB-4060", name: "Barndominium Shell — 40 ft × 60 ft × 14 ft, Bolt-Up Kit", cat: "structures",
+    price: 38500, uom: "EA", std: "Engineered per order to IBC loads", osha: "KRS 198B permit", fulfil: "fabricate",
+    supplier: "Steel building fabricator — KY", lead: "8-12 weeks", hot: true,
+    note: "The barndo workhorse: shop bay one end, living quarters the other. Stamped drawings included.",
+    why: "A barndominium is a permitted dwelling, not an ag building — the shell ships with engineering sealed to your county's loads, and the living-quarters buildout is inspected like any house." },
+  { sku: "MVS-PB-PORCH12", name: "Porch Roof Kit — per 12-ft Bay", cat: "structures",
+    price: 1850, uom: "EA", std: "Matches shell engineering", osha: "Included in shell permit", fulfil: "fabricate",
+    supplier: "Steel building fabricator — KY", lead: "with shell",
+    note: "Adds a covered porch bay off the eave side. Ordered with the shell.",
+    why: "A porch designed with the shell shares its engineering and its permit — bolted on later, it's a new structural review." },
+  { sku: "MVS-IN-R19", name: "Fiberglass Batt R-19 — per 100 sq ft", cat: "sheathing",
+    price: 68, uom: "EA", std: "Kraft-faced batt", osha: "—", fulfil: "dropship",
+    supplier: "Insulation distributor — KY", lead: "2-4 days",
+    note: "Walls of conditioned space. Sold by the hundred square feet.",
+    why: "R-19 in a 2x6 or furred steel wall is the baseline the Kentucky energy code expects for conditioned rooms — insulate the quarters, not the shop, and the numbers work." },
+
   // ---- container interior components (Container Designer options) --------
   { sku: "MVS-CI-PART8", name: "Container Partition Kit — Steel Stud, per 8-ft Wall", cat: "structures",
     price: 185, uom: "EA", std: "20-ga steel stud + track", osha: "Component — no permit item", fulfil: "dropship",

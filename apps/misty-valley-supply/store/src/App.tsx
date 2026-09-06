@@ -26,8 +26,9 @@ const Shed = React.lazy(() => import("@/views/Shed"));
 const Deck = React.lazy(() => import("@/views/Deck"));
 const Container = React.lazy(() => import("@/views/Container"));
 const Dock = React.lazy(() => import("@/views/Dock"));
+const Barndo = React.lazy(() => import("@/views/Barndo"));
 
-type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "container" | "dock" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
+type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "container" | "dock" | "barndo" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -109,6 +110,7 @@ const DESIGN_TOOLS: { view: View; label: string; chip: string; sub: string; sku:
   { view: "screen", label: "Roof Screens", chip: "Screens", sub: "Rooftop equipment screens", sku: "MVS-RSF-SC3" },
   { view: "container", label: "Containers", chip: "Containers", sub: "Offices, storage, interior layouts", sku: "MVS-CX-20OT" },
   { view: "dock", label: "Lake Docks", chip: "Docks", sub: "Floating docks — Nolin, Rough, Barren", sku: "MVS-DK-SEC410" },
+  { view: "barndo", label: "Barndominiums", chip: "Barndos", sub: "Shop + living quarters, one shell", sku: "MVS-PB-4060" },
 ];
 
 const Icon = ({ children }: { children: React.ReactNode }) => (
@@ -172,7 +174,7 @@ function Inner() {
 
   /* The Design Center is an app, not a page — when a design tool is open the
      header sheds the utility strip and search so the model owns the screen. */
-  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock";
+  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo";
 
   return (
     <div className="min-h-full pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-0">
@@ -381,7 +383,7 @@ function Inner() {
             preCat={preCat} onSignIn={() => setModal("signin")} onProduct={openProduct} />}
           {view === "product" && productSku && (
             <ProductView key={productSku} sku={productSku} onAdd={addLine}
-              onBack={() => go("shop")} onProduct={openProduct} onSignIn={() => setModal("signin")} />
+              onBack={() => go("shop")} onProduct={openProduct} onSignIn={() => setModal("signin")} onDesign={v => go(v as View)} />
           )}
           {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
           {view === "design" && (
@@ -405,7 +407,7 @@ function Inner() {
               </p>
             </div>
           )}
-          {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock") && (
+          {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo") && (
             <>
               {/* in a tool: a quiet way back + sibling tools */}
               <div className="mb-4 flex flex-wrap items-center gap-1.5">
@@ -434,6 +436,7 @@ function Inner() {
                 {view === "deck" && <Deck />}
                 {view === "container" && <Container />}
                 {view === "dock" && <Dock />}
+                {view === "barndo" && <Barndo />}
               </React.Suspense>
             </>
           )}
