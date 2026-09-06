@@ -87,3 +87,18 @@ security lighting — half of it is already in the catalog.
 - Every SKU real, unknown SKU throws; hand-check per tool, penny-exact.
 - Copy budget ≤3 sentences; compliance line stays; no invented certs.
 - Each tool lands in the MCP server next version so agents can drive it.
+
+## Shipped log — designer elevation waves (Sept 2026)
+- **Wave 1**: saved designs + shareable #d= links on all 8 tools
+  (guest-accessible; validated localStorage store; My designs on the
+  picker), CAD dimension callouts with Dims toggle (Shed/Deck/Container).
+- **Wave 2**: printable spec sheet on all 8 tools — config table, 3D
+  snapshot, full BoM, disclosures block; guest-gated estimate; Modular
+  Projects shows planning ranges only; Print/Save PDF stylesheet.
+- **Wave 3**: opening placement in Backyard Studios — per-opening wall
+  picker + position slider, corner clearance + overlap nudge, BoM proven
+  invariant, placements carried by share links and spec sheets, hostile
+  payloads fall back to defaults.
+- Next designer candidates: placement for Container/Barndo openings,
+  design comparison view, crawlable product URLs + schema.org (bulletproof
+  gap 3), MCP exposure of placements/spec-sheet data.
