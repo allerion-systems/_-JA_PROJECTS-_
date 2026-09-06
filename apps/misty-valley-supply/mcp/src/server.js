@@ -238,6 +238,11 @@ function shedTakeoff(p) {
   if (p.ramp) out.push(el("IfcRamp", "Shed ramp — 4 ft, 1,000-lb rated", "MVS-SC-RAMP4", 1));
   if (p.loft) out.push(el("IfcSlab", "Loft kit — gable-end bays", "MVS-SC-LOFT8", Math.max(1, Math.ceil(p.lengthFt / 8) - 1)));
   if (p.cupola) out.push(el("IfcCovering", "Cupola — 24 in vented", "MVS-SC-CUP24", 1));
+  if (p.wainscot) out.push(el("IfcCovering", "Stone-veneer wainscot — full perimeter", "MVS-SC-WAIN8", Math.ceil(g.perimeter / 8)));
+  if (p.hvac) {
+    out.push(el("IfcDistributionElement", "Mini-split — 12k BTU heat/cool", "MVS-CI-HVAC12", 1));
+    out.push(el("IfcDistributionElement", "Electrical package — panel + circuits", "MVS-CI-ELEC", 1));
+  }
 
   return out;
 }
@@ -584,14 +589,16 @@ export function buildServer() {
       ramp: z.boolean().optional().describe("Add a 4-ft 1,000-lb ramp kit"),
       loft: z.boolean().optional().describe("Add gable-end loft kit(s)"),
       cupola: z.boolean().optional().describe("Add a 24-in vented cupola"),
+      wainscot: z.boolean().optional().describe("Add stone-veneer wainscot around the full perimeter (one 8-ft section per 8 ft)"),
+      hvac: z.boolean().optional().describe("Add a 12k BTU mini-split plus the electrical package (panel + circuits)"),
     },
   }, async ({ widthFt, lengthFt, wallHFt = 8, pitch = 4, doors = 1, windows = 0,
               siding = "vinyl", roof = "ready", framing = "stick",
-              ramp = false, loft = false, cupola = false }) => {
-    const params = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola };
+              ramp = false, loft = false, cupola = false, wainscot = false, hvac = false }) => {
+    const params = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac };
     const elements = shedTakeoff(params);
     const { total } = rollup(elements);
-    const addons = [ramp && "ramp", loft && "loft", cupola && "cupola"].filter(Boolean);
+    const addons = [ramp && "ramp", loft && "loft", cupola && "cupola", wainscot && "stone wainscot", hvac && "mini-split + electrical"].filter(Boolean);
     const summary =
       `A ${widthFt}×${lengthFt} ft gable shed with ${wallHFt} ft walls at a ${pitch}:12 pitch, ` +
       `${framing}-framed on PT skids, with ${doors} door${doors > 1 ? "s" : ""} and ${windows} window${windows === 1 ? "" : "s"}, ` +
