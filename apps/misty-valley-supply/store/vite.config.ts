@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rolldownOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        designer: path.resolve(__dirname, "designer.html"),
+      },
       output: {
         // keep three.js out of the entry chunk — it loads with the lazy
         // 3D scenes (ScreenScene / ShedScene / DeckScene) only
