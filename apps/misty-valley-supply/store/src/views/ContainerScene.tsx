@@ -5,6 +5,11 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { CONTAINER_DIMS, containerDerived, type ContainerParams } from "@/bimContainer";
 import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
+import {
+  applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
+  makeComposer, makeGrassTexture, makeGroundPlane, makeSky, sharedRoughnessMap,
+  tuneSunShadow, type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Parametric 3D container. Feet are world units. Length runs along X,
@@ -44,22 +49,8 @@ type Core = {
   fitR: number;
   fitC: THREE.Vector3;
   fly: Fly | null;
+  post: ComposerRig | null;
 };
-
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#a9c4e2");
-  grad.addColorStop(0.55, "#d9e4ef");
-  grad.addColorStop(1, "#eef0e6");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 // ---- tiny canvas textures (generated, never fetched — CSP-safe) ----------
 
@@ -69,38 +60,36 @@ function shade(hex: string, f: number): string {
   return `rgb(${ch(n >> 16)},${ch((n >> 8) & 255)},${ch(n & 255)})`;
 }
 
-/** Vertical corrugation: one trapezoid rib per repeat, uniform top to bottom. */
+/** Vertical corrugation: one trapezoid rib per repeat, uniform top to bottom.
+    Slopes shade with smooth gradients so the steel reads roll-formed. */
 function makeCorrugationTexture(color: string): THREE.CanvasTexture {
   const c = document.createElement("canvas");
-  c.width = 64; c.height = 8;
+  c.width = 256; c.height = 32;
   const g = c.getContext("2d")!;
+  const px = (f: number) => f * 4;        // legacy 64-wide layout, scaled up
   g.fillStyle = shade(color, 1);          // flat pan
-  g.fillRect(0, 0, 64, 8);
-  g.fillStyle = shade(color, 0.72);       // rising slope in shadow
-  g.fillRect(8, 0, 10, 8);
-  g.fillStyle = shade(color, 1.22);       // rib crest catches light
-  g.fillRect(18, 0, 14, 8);
-  g.fillStyle = shade(color, 0.86);       // falling slope
-  g.fillRect(32, 0, 10, 8);
+  g.fillRect(0, 0, 256, 32);
+  const rise = g.createLinearGradient(px(8), 0, px(18), 0);   // rising slope in shadow
+  rise.addColorStop(0, shade(color, 0.95));
+  rise.addColorStop(1, shade(color, 0.68));
+  g.fillStyle = rise;
+  g.fillRect(px(8), 0, px(10), 32);
+  const crest = g.createLinearGradient(px(18), 0, px(32), 0); // crest catches light
+  crest.addColorStop(0, shade(color, 1.28));
+  crest.addColorStop(0.5, shade(color, 1.16));
+  crest.addColorStop(1, shade(color, 1.24));
+  g.fillStyle = crest;
+  g.fillRect(px(18), 0, px(14), 32);
+  const fall = g.createLinearGradient(px(32), 0, px(42), 0);  // falling slope
+  fall.addColorStop(0, shade(color, 0.82));
+  fall.addColorStop(1, shade(color, 0.98));
+  g.fillStyle = fall;
+  g.fillRect(px(32), 0, px(10), 32);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   return tex;
-}
-
-/** Soft radial contact shadow under the box. */
-function makeShadowTexture(): THREE.CanvasTexture {
-  const c = document.createElement("canvas");
-  c.width = 128; c.height = 128;
-  const g = c.getContext("2d")!;
-  const grad = g.createRadialGradient(64, 64, 8, 64, 64, 64);
-  grad.addColorStop(0, "rgba(20,24,18,0.55)");
-  grad.addColorStop(0.65, "rgba(20,24,18,0.28)");
-  grad.addColorStop(1, "rgba(20,24,18,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 128, 128);
-  return new THREE.CanvasTexture(c);
 }
 
 function disposeGroup(group: THREE.Group) {
@@ -183,8 +172,9 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
   const corrNear = makeCorrugationTexture(hex);
   corrNear.repeat.set(Math.max(8, Math.round(L / 0.9)), 1);
 
-  const steel = new THREE.MeshStandardMaterial({ map: corrLong, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
-  const steelEnd = new THREE.MeshStandardMaterial({ map: corrEnd, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
+  const steel = new THREE.MeshStandardMaterial({ map: corrLong, roughness: 0.45, metalness: 0.55, envMapIntensity: 1.0, roughnessMap: rough });
+  const steelEnd = new THREE.MeshStandardMaterial({ map: corrEnd, roughness: 0.45, metalness: 0.55, envMapIntensity: 1.0, roughnessMap: rough });
   // the CUTAWAY: near long wall reads as ghosted steel
   const steelGhost = new THREE.MeshStandardMaterial({
     map: corrNear, roughness: 0.55, metalness: 0.35,
@@ -194,7 +184,7 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
     color: new THREE.Color(shade(hex, 0.9)), roughness: 0.6, metalness: 0.3,
     transparent: true, opacity: 0.3, depthWrite: false, side: THREE.DoubleSide,
   });
-  const frameMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(hex, 0.62)), roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
+  const frameMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(shade(hex, 0.62)), roughness: 0.45, metalness: 0.55, envMapIntensity: 1.0 });
   const linerMat = new THREE.MeshStandardMaterial({ color: 0xf3f2ee, roughness: 0.85 });
   const partMat = new THREE.MeshStandardMaterial({ color: 0xfafaf7, roughness: 0.8 });
   const plyMat = new THREE.MeshStandardMaterial({ color: 0x6e5636, roughness: 0.95 });
@@ -213,9 +203,10 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
   const M = new THREE.Matrix4();
 
   // ---- grass disc + contact shadow + gravel pad ------------------------
+  const grassR = Math.max(L, W) * 1.6 + 10;
   const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(Math.max(L, W) * 1.6 + 10, 48),
-    new THREE.MeshStandardMaterial({ color: 0x7fa065, roughness: 1 }),
+    new THREE.CircleGeometry(grassR, 48),
+    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#7fa065", Math.max(2, grassR / 14)), roughness: 1 }),
   );
   grass.rotation.x = -Math.PI / 2;
   grass.position.y = 0.015;
@@ -223,14 +214,7 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
   grass.userData.noFit = true;
   group.add(grass);
 
-  const contact = new THREE.Mesh(
-    new THREE.PlaneGeometry(L + 9, W + 9),
-    new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false, opacity: 0.85 }),
-  );
-  contact.rotation.x = -Math.PI / 2;
-  contact.position.y = 0.03;
-  contact.userData.noFit = true;
-  group.add(contact);
+  group.add(contactShadow(L + 9, W + 9));
 
   const pad = new THREE.Mesh(new THREE.BoxGeometry(L + 4, 0.18, W + 4), gravelMat);
   pad.position.y = 0.09;
@@ -279,6 +263,7 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
   near.rotation.y = Math.PI;
   near.position.set(0, y0 + H / 2, halfW - t / 2);
   near.userData.noShadow = true;
+  near.userData.noAO = true; // ghosted cutaway — keep out of the SAO pre-pass
   group.add(near);
 
   // Closed end (−X).
@@ -336,6 +321,7 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
   roof.rotation.x = -Math.PI / 2;
   roof.position.set(0, y0 + H - 0.06, 0);
   roof.userData.noShadow = true;
+  roof.userData.noAO = true; // ghosted cutaway — keep out of the SAO pre-pass
   group.add(roof);
 
   // ---- interior floor: LVP over the insulated run, marine ply elsewhere -
@@ -502,12 +488,8 @@ export default function ContainerScene(p: ContainerSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.12);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -526,11 +508,8 @@ export default function ContainerScene(p: ContainerSceneProps) {
     scene.environment = envRT.texture;
     scene.environmentIntensity = 0.55;
 
-    const groundGeo = new THREE.PlaneGeometry(2000, 2000);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    // soft-edged textured ground that melts into the horizon haze
+    const ground = makeGroundPlane({ radius: 900, base: "#8a9a6e", horizon: "#e2e6d8" });
     scene.add(ground);
 
     const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
@@ -542,10 +521,7 @@ export default function ContainerScene(p: ContainerSceneProps) {
     const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
     sun.position.set(20, 30, 20);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 200;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 2000);
@@ -571,12 +547,16 @@ export default function ContainerScene(p: ContainerSceneProps) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
-    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null, post };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const h = el.clientHeight || 1;
       renderer.setSize(w, h, false);
+      post?.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       frameTo(core, 0);
@@ -597,7 +577,8 @@ export default function ContainerScene(p: ContainerSceneProps) {
         if (t >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
     coreRef.current = core;
@@ -614,8 +595,8 @@ export default function ContainerScene(p: ContainerSceneProps) {
       hemi.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(ground);
-      groundGeo.dispose();
-      groundMat.dispose();
+      disposeObject(ground);
+      post?.dispose();
       scene.environment = null;
       envRT.dispose();
       bg.dispose();
@@ -640,12 +621,11 @@ export default function ContainerScene(p: ContainerSceneProps) {
     const dg = group.getObjectByName(DIMS_NAME);
     if (dg) dg.visible = showDimsRef.current;
 
-    // the persistent sun follows the footprint; its one shadow map re-covers it
+    // the persistent sun follows the footprint; its one shadow map is
+    // re-fitted tight to the new model bounds
     core.sun.position.set(dims.lengthFt * 0.5 + 14, 26, 20);
-    const s = Math.max(dims.lengthFt, dims.widthFt * count + (leanTo ? 9 : 0)) + 12;
-    const sc = core.sun.shadow.camera;
-    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
-    sc.updateProjectionMatrix();
+    fitShadowCamera(core.sun, group);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 
     core.controls.maxDistance = Math.max(70, dims.lengthFt * 4);
     // re-fit on every rebuild: snap on first build, glide after option clicks

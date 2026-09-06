@@ -4,6 +4,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { barndoGeometry, type BarndoParams } from "@/bimBarndo";
 import { exportGroupAsGlb } from "@/exportModel";
+import {
+  applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
+  makeComposer, makeGrassTexture, makeGroundPlane, makeLapTexture, makeRibTexture,
+  makeSky, sharedRoughnessMap, tuneSunShadow, type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Parametric 3D barndominium. Feet are world units. Length runs along X,
@@ -46,22 +51,8 @@ type Core = {
   fitC: THREE.Vector3;
   fly: Fly | null;
   reduced: boolean;
+  post: ComposerRig | null;
 };
-
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#a9c4e2");
-  grad.addColorStop(0.55, "#d9e4ef");
-  grad.addColorStop(1, "#eef0e6");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 // ---- tiny canvas textures (generated, never fetched — CSP-safe) ----------
 
@@ -77,47 +68,6 @@ function shadeHex(hex: string, f: number): string {
   const ch = (v: number) => Math.max(0, Math.min(255, Math.round(v * f)));
   const to2 = (v: number) => v.toString(16).padStart(2, "0");
   return `#${to2(ch(n >> 16))}${to2(ch((n >> 8) & 255))}${to2(ch(n & 255))}`;
-}
-
-/** Vertical rib stripes for steel panels — one rib per texture repeat. */
-function makeRibTexture(color: string): THREE.CanvasTexture {
-  const c = document.createElement("canvas");
-  c.width = 64; c.height = 8;
-  const g = c.getContext("2d")!;
-  g.fillStyle = shade(color, 1);
-  g.fillRect(0, 0, 64, 8);
-  g.fillStyle = shade(color, 1.35);
-  g.fillRect(0, 0, 5, 8);          // rib highlight
-  g.fillStyle = shade(color, 0.6);
-  g.fillRect(5, 0, 3, 8);          // rib shadow
-  g.fillStyle = shade(color, 0.9);
-  g.fillRect(34, 0, 2, 8);         // minor stiffening rib
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  return tex;
-}
-
-/** Horizontal lap-siding suggestion for the quarters end. */
-function makeLapTexture(color: string, wallHFt: number): THREE.CanvasTexture {
-  const courses = Math.max(10, Math.round(wallHFt * 2)); // ~6-in exposure
-  const c = document.createElement("canvas");
-  c.width = 8; c.height = 512;
-  const g = c.getContext("2d")!;
-  const ch = 512 / courses;
-  for (let i = 0; i < courses; i++) {
-    const y = i * ch;
-    const grad = g.createLinearGradient(0, y, 0, y + ch);
-    grad.addColorStop(0, shade(color, 1.08));
-    grad.addColorStop(0.8, shade(color, 0.97));
-    grad.addColorStop(1, shade(color, 0.8));
-    g.fillStyle = grad;
-    g.fillRect(0, y, 8, ch);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
 }
 
 /** Horizontal slat lines suggesting a sectional roll-up door. */
@@ -139,20 +89,6 @@ function makeRollupTexture(): THREE.CanvasTexture {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
-}
-
-/** Soft radial contact shadow under the building. */
-function makeShadowTexture(): THREE.CanvasTexture {
-  const c = document.createElement("canvas");
-  c.width = 128; c.height = 128;
-  const g = c.getContext("2d")!;
-  const grad = g.createRadialGradient(64, 64, 8, 64, 64, 64);
-  grad.addColorStop(0, "rgba(20,24,18,0.5)");
-  grad.addColorStop(0.65, "rgba(20,24,18,0.25)");
-  grad.addColorStop(1, "rgba(20,24,18,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 128, 128);
-  return new THREE.CanvasTexture(c);
 }
 
 function disposeGroup(group: THREE.Group) {
@@ -231,13 +167,14 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   const t = 0.35; // steel wall thickness (girts + panel)
 
   // ---- materials -------------------------------------------------------
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
   const ribbedMat = (lenFt: number) => {
     const tex = makeRibTexture(wallHex);
     tex.repeat.set(Math.max(4, Math.round(lenFt / 0.75)), 1); // rib every ~9 in
-    return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, metalness: 0.55, envMapIntensity: 0.8 });
+    return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, metalness: 0.55, envMapIntensity: 1.0, roughnessMap: rough });
   };
   const lapMat = () =>
-    new THREE.MeshStandardMaterial({ map: makeLapTexture(quartersHex, H), roughness: 0.75 });
+    new THREE.MeshStandardMaterial({ map: makeLapTexture(quartersHex, H), roughness: 0.75, roughnessMap: rough });
   const lapPlain = new THREE.MeshStandardMaterial({ color: new THREE.Color(quartersHex), roughness: 0.75 });
   const wainscotMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(shade(wallHex, 0.62)), roughness: 0.45, metalness: 0.5, envMapIntensity: 0.8,
@@ -255,9 +192,10 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   const concrete = new THREE.MeshStandardMaterial({ color: 0xb9b7ae, roughness: 0.95 });
 
   // ---- ground dressing (excluded from camera fit) ----------------------
+  const grassR = Math.max(L, W) * 1.6 + 14;
   const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(Math.max(L, W) * 1.6 + 14, 48),
-    new THREE.MeshStandardMaterial({ color: 0x7fa065, roughness: 1 }),
+    new THREE.CircleGeometry(grassR, 48),
+    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#7fa065", Math.max(2, grassR / 14)), roughness: 1 }),
   );
   grass.rotation.x = -Math.PI / 2;
   grass.position.y = 0.015;
@@ -265,14 +203,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   grass.userData.noFit = true;
   group.add(grass);
 
-  const contact = new THREE.Mesh(
-    new THREE.PlaneGeometry(L + 14, W + 20),
-    new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false, opacity: 0.85 }),
-  );
-  contact.rotation.x = -Math.PI / 2;
-  contact.position.y = 0.03;
-  contact.userData.noFit = true;
-  group.add(contact);
+  group.add(contactShadow(L + 14, W + 20));
 
   // ---- slab ------------------------------------------------------------
   const slab = new THREE.Mesh(new THREE.BoxGeometry(L + 1.5, SLAB_TOP, W + 1.5), concrete);
@@ -415,7 +346,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   const shopTriTex = makeRibTexture(wallHex);
   shopTriTex.repeat.set(1 / 0.75, 1);
   const shopTri = new THREE.Mesh(triGeo, new THREE.MeshStandardMaterial({
-    map: shopTriTex, roughness: 0.55, metalness: 0.35,
+    map: shopTriTex, roughness: 0.55, metalness: 0.35, envMapIntensity: 1.0, roughnessMap: rough,
   }));
   shopTri.rotation.y = Math.PI / 2;
   shopTri.position.set(halfL - t, y0 + H, 0);
@@ -443,7 +374,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   ([1, -1] as const).forEach(sideZ => {
     const m = new THREE.Mesh(
       new THREE.BoxGeometry(roofL, 0.12, rafter),
-      new THREE.MeshStandardMaterial({ map: roofTex(), roughness: 0.35, metalness: 0.65, envMapIntensity: 0.8 }),
+      new THREE.MeshStandardMaterial({ map: roofTex(), roughness: 0.35, metalness: 0.65, envMapIntensity: 1.0, roughnessMap: rough }),
     );
     m.rotation.x = sideZ * slope;
     m.position.copy(slopeMid(sideZ));
@@ -483,7 +414,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
     pTex.repeat.set(Math.max(6, Math.round(pLen / 0.75)), 1);
     const pRoof = new THREE.Mesh(
       new THREE.BoxGeometry(pLen, 0.11, pRun),
-      new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.35, metalness: 0.65, envMapIntensity: 0.8 }),
+      new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.35, metalness: 0.65, envMapIntensity: 1.0, roughnessMap: rough }),
     );
     pRoof.rotation.x = pSlope;
     pRoof.position.set(px0 + pLen / 2, highY - 1 + 0.06, halfW + (Math.cos(pSlope) * pRun) / 2 - 0.2);
@@ -535,12 +466,8 @@ export default function BarndoScene(p: BarndoSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.1);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -559,11 +486,8 @@ export default function BarndoScene(p: BarndoSceneProps) {
     scene.environment = envRT.texture;
     scene.environmentIntensity = 0.55;
 
-    const groundGeo = new THREE.PlaneGeometry(2400, 2400);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    // soft-edged textured ground that melts into the horizon haze
+    const ground = makeGroundPlane({ radius: 1100, base: "#8a9a6e", horizon: "#e2e6d8" });
     scene.add(ground);
 
     const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
@@ -575,10 +499,7 @@ export default function BarndoScene(p: BarndoSceneProps) {
     const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
     sun.position.set(30, 44, 28);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 300;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 2400);
@@ -604,16 +525,20 @@ export default function BarndoScene(p: BarndoSceneProps) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
     const core: Core = {
       renderer, scene, camera, controls, sun, group: null, bg, raf: 0,
       ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(),
-      fly: null, reduced,
+      fly: null, reduced, post,
     };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const h = el.clientHeight || 1;
       renderer.setSize(w, h, false);
+      post?.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       frameTo(core, 0);
@@ -634,7 +559,8 @@ export default function BarndoScene(p: BarndoSceneProps) {
         if (t >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
     coreRef.current = core;
@@ -651,8 +577,8 @@ export default function BarndoScene(p: BarndoSceneProps) {
       hemi.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(ground);
-      groundGeo.dispose();
-      groundMat.dispose();
+      disposeObject(ground);
+      post?.dispose();
       scene.environment = null;
       envRT.dispose();
       bg.dispose();
@@ -672,13 +598,12 @@ export default function BarndoScene(p: BarndoSceneProps) {
     core.scene.add(group);
     core.group = group;
 
-    // the persistent sun follows the footprint; its one shadow map re-covers it
+    // the persistent sun follows the footprint; its one shadow map is
+    // re-fitted tight to the new model bounds
     const g = barndoGeometry(p);
     core.sun.position.set(g.lengthFt * 0.55 + 16, 34 + g.eaveFt, 26);
-    const s = Math.max(g.lengthFt, g.widthFt) + 20;
-    const sc = core.sun.shadow.camera;
-    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
-    sc.updateProjectionMatrix();
+    fitShadowCamera(core.sun, group);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 
     core.controls.maxDistance = Math.max(140, g.lengthFt * 4);
     // re-fit on every rebuild: snap on first build, glide after option clicks

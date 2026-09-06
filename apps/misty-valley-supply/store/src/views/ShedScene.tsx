@@ -5,6 +5,11 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { spaced, rafterLen, resolveShedOpenings, shedWallLen, SHED_DOOR, SHED_WIN, type ShedParams, type ShedWall } from "@/bim";
 import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
+import {
+  applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
+  makeComposer, makeGrassTexture, makeGroundPlane, makeLapTexture, makeRibTexture,
+  makeSky, sharedRoughnessMap, tuneSunShadow, type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Parametric 3D shed. Feet are world units. Length runs along X, width
@@ -49,22 +54,8 @@ type Core = {
   fitR: number;            // bounding-sphere radius of the current building
   fitC: THREE.Vector3;     // …and its center
   fly: Fly | null;
+  post: ComposerRig | null;
 };
-
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#a9c4e2");
-  grad.addColorStop(0.55, "#d9e4ef");
-  grad.addColorStop(1, "#eef0e6");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 // ---- tiny canvas textures (generated, never fetched — CSP-safe) ----------
 
@@ -74,62 +65,6 @@ function shade(hex: string, f: number): string {
   return `rgb(${ch(n >> 16)},${ch((n >> 8) & 255)},${ch(n & 255)})`;
 }
 
-/** Horizontal vinyl-lap suggestion: one course band per ~6 in of wall. */
-function makeLapTexture(color: string, wallHFt: number): THREE.CanvasTexture {
-  const courses = Math.max(8, Math.round(wallHFt * 2)); // 6-in exposure
-  const c = document.createElement("canvas");
-  c.width = 8; c.height = 512;
-  const g = c.getContext("2d")!;
-  const ch = 512 / courses;
-  for (let i = 0; i < courses; i++) {
-    const y = i * ch;
-    const grad = g.createLinearGradient(0, y, 0, y + ch);
-    grad.addColorStop(0, shade(color, 1.07));
-    grad.addColorStop(0.8, shade(color, 0.96));
-    grad.addColorStop(1, shade(color, 0.78));
-    g.fillStyle = grad;
-    g.fillRect(0, y, 8, ch);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  return tex;
-}
-
-/** Vertical rib stripes for 29-ga metal panels; repeat along the panel run. */
-function makeRibTexture(color: string): THREE.CanvasTexture {
-  const c = document.createElement("canvas");
-  c.width = 64; c.height = 8;
-  const g = c.getContext("2d")!;
-  g.fillStyle = shade(color, 1);
-  g.fillRect(0, 0, 64, 8);
-  g.fillStyle = shade(color, 1.35);
-  g.fillRect(0, 0, 5, 8);          // rib highlight
-  g.fillStyle = shade(color, 0.6);
-  g.fillRect(5, 0, 3, 8);          // rib shadow
-  g.fillStyle = shade(color, 0.9);
-  g.fillRect(34, 0, 2, 8);         // minor stiffening rib
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  return tex;
-}
-
-/** Soft radial contact shadow under the building. */
-function makeShadowTexture(): THREE.CanvasTexture {
-  const c = document.createElement("canvas");
-  c.width = 128; c.height = 128;
-  const g = c.getContext("2d")!;
-  const grad = g.createRadialGradient(64, 64, 8, 64, 64, 64);
-  grad.addColorStop(0, "rgba(20,24,18,0.55)");
-  grad.addColorStop(0.65, "rgba(20,24,18,0.28)");
-  grad.addColorStop(1, "rgba(20,24,18,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 128, 128);
-  return new THREE.CanvasTexture(c);
-}
 
 function disposeGroup(group: THREE.Group) {
   group.traverse(o => {
@@ -206,30 +141,31 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   const roofHex = p.roofColor ?? "#3a3d42";
 
   // ---- materials -------------------------------------------------------
-  const wood = new THREE.MeshStandardMaterial({ color: 0xc9a06a, roughness: 0.85 });
-  const woodPT = new THREE.MeshStandardMaterial({ color: 0x9d7844, roughness: 0.9 });
-  const osb = new THREE.MeshStandardMaterial({ color: 0xb98d4f, roughness: 0.92 });
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
+  const wood = new THREE.MeshStandardMaterial({ color: 0xc9a06a, roughness: 0.85, roughnessMap: rough });
+  const woodPT = new THREE.MeshStandardMaterial({ color: 0x9d7844, roughness: 0.9, roughnessMap: rough });
+  const osb = new THREE.MeshStandardMaterial({ color: 0xb98d4f, roughness: 0.92, roughnessMap: rough });
 
   let skin: THREE.MeshStandardMaterial;
   let gableSkin: THREE.MeshStandardMaterial;
   if (p.siding === "vinyl") {
     const lap = makeLapTexture(sidingHex, H);
-    skin = new THREE.MeshStandardMaterial({ map: lap, roughness: 0.75 });
-    gableSkin = new THREE.MeshStandardMaterial({ color: new THREE.Color(sidingHex), roughness: 0.75 });
+    skin = new THREE.MeshStandardMaterial({ map: lap, roughness: 0.75, roughnessMap: rough });
+    gableSkin = new THREE.MeshStandardMaterial({ color: new THREE.Color(sidingHex), roughness: 0.75, roughnessMap: rough });
   } else {
     // housewrap — white-green wrap over sheathing, color choice not applied
-    skin = new THREE.MeshStandardMaterial({ color: 0xdde6dc, roughness: 0.88 });
-    gableSkin = new THREE.MeshStandardMaterial({ color: 0xd6e0d6, roughness: 0.88 });
+    skin = new THREE.MeshStandardMaterial({ color: 0xdde6dc, roughness: 0.88, roughnessMap: rough });
+    gableSkin = new THREE.MeshStandardMaterial({ color: 0xd6e0d6, roughness: 0.88, roughnessMap: rough });
   }
 
   let roofMat: THREE.MeshStandardMaterial;
   if (p.roof === "metal") {
     const rib = makeRibTexture(roofHex);
     rib.repeat.set(Math.max(6, Math.round((L + 1) / 0.75)), 1); // rib every ~9 in
-    roofMat = new THREE.MeshStandardMaterial({ map: rib, roughness: 0.35, metalness: 0.7, envMapIntensity: 0.8 });
+    roofMat = new THREE.MeshStandardMaterial({ map: rib, roughness: 0.35, metalness: 0.7, envMapIntensity: 1.0, roughnessMap: rough });
   } else {
     // "ready" = sheathed + underlayment only; reads as OSB tan
-    roofMat = new THREE.MeshStandardMaterial({ color: OSB_TAN, roughness: 0.95 });
+    roofMat = new THREE.MeshStandardMaterial({ color: OSB_TAN, roughness: 0.95, roughnessMap: rough });
   }
   const roofEdge = new THREE.MeshStandardMaterial({
     color: p.roof === "metal" ? shade(roofHex, 0.8) : shade("#c9a35e", 0.85),
@@ -252,9 +188,10 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   const M = new THREE.Matrix4();
 
   // ---- grass disc + contact shadow ------------------------------------
+  const grassR = Math.max(L, W) * 1.6 + 10;
   const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(Math.max(L, W) * 1.6 + 10, 48),
-    new THREE.MeshStandardMaterial({ color: 0x7fa065, roughness: 1 }),
+    new THREE.CircleGeometry(grassR, 48),
+    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#7fa065", Math.max(2, grassR / 14)), roughness: 1 }),
   );
   grass.rotation.x = -Math.PI / 2;
   grass.position.y = 0.015;
@@ -262,14 +199,7 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   grass.userData.noFit = true; // ground dressing — excluded from camera fit
   group.add(grass);
 
-  const contact = new THREE.Mesh(
-    new THREE.PlaneGeometry(L + 9, W + 9),
-    new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false, opacity: 0.85 }),
-  );
-  contact.rotation.x = -Math.PI / 2;
-  contact.position.y = 0.03;
-  contact.userData.noFit = true;
-  group.add(contact);
+  group.add(contactShadow(L + 9, W + 9));
 
   // ---- gravel pad + skids + floor -------------------------------------
   const pad = new THREE.Mesh(new THREE.BoxGeometry(L + 4, 0.18, W + 4), gravelMat);
@@ -669,12 +599,8 @@ export default function ShedScene(p: ShedSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); // DPR capped at 2
-    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.12);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -694,11 +620,8 @@ export default function ShedScene(p: ShedSceneProps) {
     scene.environment = envRT.texture;
     scene.environmentIntensity = 0.55;
 
-    const groundGeo = new THREE.PlaneGeometry(2000, 2000);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    // soft-edged textured ground that melts into the horizon haze
+    const ground = makeGroundPlane({ radius: 900, base: "#8a9a6e", horizon: "#e2e6d8" });
     scene.add(ground);
 
     const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
@@ -710,10 +633,7 @@ export default function ShedScene(p: ShedSceneProps) {
     const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
     sun.position.set(20, 30, 20);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 200;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 2000);
@@ -739,12 +659,16 @@ export default function ShedScene(p: ShedSceneProps) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
-    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null, post };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const h = el.clientHeight || 1;
       renderer.setSize(w, h, false);
+      post?.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       frameTo(core, 0); // keep the building framed when the container reflows
@@ -765,7 +689,8 @@ export default function ShedScene(p: ShedSceneProps) {
         if (t >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
     coreRef.current = core;
@@ -782,8 +707,8 @@ export default function ShedScene(p: ShedSceneProps) {
       hemi.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(ground);
-      groundGeo.dispose();
-      groundMat.dispose();
+      disposeObject(ground);
+      post?.dispose();
       scene.environment = null;
       envRT.dispose();
       bg.dispose();
@@ -809,13 +734,15 @@ export default function ShedScene(p: ShedSceneProps) {
     const dg = group.getObjectByName(DIMS_NAME);
     if (dg) dg.visible = showDimsRef.current;
 
-    // the persistent sun follows the footprint; its one shadow map re-covers it
+    // the persistent sun follows the footprint; its one shadow map is
+    // re-fitted tight to the new model bounds
+    // sun rides high front-left so the cast shadow spills visibly to the
+    // right of the building from the default corner view
     const rise = (widthFt / 2) * (pitch / 12);
-    core.sun.position.set(lengthFt * 0.5 + 14, 26 + rise * 2, 20);
-    const s = Math.max(lengthFt, widthFt) + 12;
-    const sc = core.sun.shadow.camera;
-    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
-    sc.updateProjectionMatrix();
+    core.sun.position.set(-(lengthFt * 0.35 + 12), 26 + rise * 2, lengthFt * 0.5 + 18);
+    fitShadowCamera(core.sun, group);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
+    (window as unknown as Record<string, unknown>).__mvsDebug = core; // TEMP DEBUG
 
     core.controls.maxDistance = Math.max(70, lengthFt * 4);
     // re-fit on every rebuild: snap on first build, glide after option clicks

@@ -6,6 +6,11 @@ import {
   MODULE_GSF, MODULE_L_FT, MODULE_W_FT, program, programStories, type ProgramParams,
 } from "@/programMath";
 import { exportGroupAsGlb } from "@/exportModel";
+import {
+  applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
+  makeComposer, makeGrassTexture, makeGroundPlane, makeSky, sharedRoughnessMap,
+  tuneSunShadow, type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Modular massing study — NOT architecture. Stacked 14×62 module boxes
@@ -47,22 +52,8 @@ type Core = {
   fitR: number;
   fitC: THREE.Vector3;
   fly: Fly | null;
+  post: ComposerRig | null;
 };
-
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#aac3df");
-  grad.addColorStop(0.55, "#dde5ee");
-  grad.addColorStop(1, "#edeee8");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 /** Window band: glass with a mullion rhythm; repeats along the facade. */
 function makeGlassTexture(): THREE.CanvasTexture {
@@ -101,19 +92,6 @@ function makeBayDoorTexture(): THREE.CanvasTexture {
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   return tex;
-}
-
-function makeShadowTexture(): THREE.CanvasTexture {
-  const c = document.createElement("canvas");
-  c.width = 128; c.height = 128;
-  const g = c.getContext("2d")!;
-  const grad = g.createRadialGradient(64, 64, 8, 64, 64, 64);
-  grad.addColorStop(0, "rgba(20,24,18,0.5)");
-  grad.addColorStop(0.65, "rgba(20,24,18,0.25)");
-  grad.addColorStop(1, "rgba(20,24,18,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 128, 128);
-  return new THREE.CanvasTexture(c);
 }
 
 function disposeGroup(group: THREE.Group) {
@@ -204,8 +182,9 @@ function buildWorld(p: ProgramParams): THREE.Group {
   const stories = programStories(p);
 
   // ---- materials: monochrome plus glass --------------------------------
-  const skin = new THREE.MeshStandardMaterial({ color: 0xe3e4e6, roughness: 0.88 });
-  const skinAlt = new THREE.MeshStandardMaterial({ color: 0xd6d8db, roughness: 0.88 });
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
+  const skin = new THREE.MeshStandardMaterial({ color: 0xe3e4e6, roughness: 0.88, roughnessMap: rough });
+  const skinAlt = new THREE.MeshStandardMaterial({ color: 0xd6d8db, roughness: 0.88, roughnessMap: rough });
   const parapetMat = new THREE.MeshStandardMaterial({ color: 0xb9bcc1, roughness: 0.8 });
   const plinthMat = new THREE.MeshStandardMaterial({ color: 0x9fa2a6, roughness: 0.95 });
   const glassTex = makeGlassTexture();
@@ -222,9 +201,10 @@ function buildWorld(p: ProgramParams): THREE.Group {
     ? MODULE_L_FT * 2 + CORRIDOR : MODULE_L_FT;
 
   // ---- ground: grass disc, plaza pad, contact shadow -------------------
+  const grassR = Math.max(fullW, depth) * 1.5 + 60;
   const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(Math.max(fullW, depth) * 1.5 + 60, 48),
-    new THREE.MeshStandardMaterial({ color: 0x86a06a, roughness: 1 }),
+    new THREE.CircleGeometry(grassR, 48),
+    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#86a06a", Math.max(2, grassR / 14)), roughness: 1 }),
   );
   grass.rotation.x = -Math.PI / 2;
   grass.position.y = 0.015;
@@ -238,14 +218,7 @@ function buildWorld(p: ProgramParams): THREE.Group {
   plaza.userData.noFit = true;
   group.add(plaza);
 
-  const contact = new THREE.Mesh(
-    new THREE.PlaneGeometry(fullW + 34, depth + 34),
-    new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false, opacity: 0.8 }),
-  );
-  contact.rotation.x = -Math.PI / 2;
-  contact.position.y = 0.18;
-  contact.userData.noFit = true;
-  group.add(contact);
+  group.add(contactShadow(fullW + 34, depth + 34, { opacity: 0.8, y: 0.18 }));
 
   const addParapet = (w: number, x: number, yTop: number, z: number, d: number) => {
     const cap = new THREE.Mesh(new THREE.BoxGeometry(w + 0.7, 0.5, d + 0.7), parapetMat);
@@ -407,12 +380,8 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.05);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -431,11 +400,8 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
     scene.environment = envRT.texture;
     scene.environmentIntensity = 0.5;
 
-    const groundGeo = new THREE.PlaneGeometry(5000, 5000);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x9aa287, roughness: 1 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    // soft-edged textured ground that melts into the horizon haze
+    const ground = makeGroundPlane({ radius: 2300, base: "#93a07c", horizon: "#e7e9e2" });
     scene.add(ground);
 
     // lights live here, once — never inside the disposable group
@@ -446,10 +412,7 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
     const sun = new THREE.DirectionalLight(0xfff2dc, 2.2);
     sun.position.set(80, 120, 70);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 700;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 1, 5000);
@@ -475,12 +438,16 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
-    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null, post };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const h = el.clientHeight || 1;
       renderer.setSize(w, h, false);
+      post?.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       frameTo(core, 0);
@@ -501,7 +468,8 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
         if (t >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
     coreRef.current = core;
@@ -518,8 +486,8 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
       hemi.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(ground);
-      groundGeo.dispose();
-      groundMat.dispose();
+      disposeObject(ground);
+      post?.dispose();
       scene.environment = null;
       envRT.dispose();
       bg.dispose();
@@ -543,11 +511,9 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
     const sphere = focusBox(group).getBoundingSphere(new THREE.Sphere());
     core.fitR = sphere.radius;
     core.fitC.copy(sphere.center);
-    const s = sphere.radius + 30;
-    const sc = core.sun.shadow.camera;
-    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
-    sc.updateProjectionMatrix();
     core.sun.position.set(sphere.radius * 0.9 + 40, sphere.radius + 80, sphere.radius * 0.7 + 40);
+    fitShadowCamera(core.sun, group, 1.3);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 
     core.controls.maxDistance = Math.max(300, sphere.radius * 6);
     frameTo(core, first ? 0 : 550);

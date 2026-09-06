@@ -4,6 +4,10 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { DockParams } from "@/bimDock";
 import { exportGroupAsGlb } from "@/exportModel";
+import {
+  applyAnisotropy, contactShadow, enhanceRenderer, makeComposer, makeSky,
+  sharedRoughnessMap, tuneSunShadow, type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Parametric 3D floating dock in a stylized Nolin cove. Feet are world
@@ -56,21 +60,6 @@ const onDeck = (x: number, z: number, all: Rect[]) =>
   all.some(r => Math.abs(x - r.cx) < r.lx / 2 - 0.01 && Math.abs(z - r.cz) < r.lz / 2 - 0.01);
 
 // ---- tiny canvas textures (generated, never fetched — CSP-safe) ----------
-
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#9fc0dc");
-  grad.addColorStop(0.55, "#d3e2ea");
-  grad.addColorStop(1, "#e7ecdf");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 /** Deck planks: stripes across the direction of travel. `vertical` puts the
     plank joints along canvas x (for runs whose long axis maps to u). */
@@ -144,6 +133,7 @@ type Core = {
   fitC: THREE.Vector3;
   fly: Fly | null;
   reduced: boolean;
+  post: ComposerRig | null;
 };
 
 /** Re-fit the camera to the dock's bounding sphere, azimuth preserved. */
@@ -179,17 +169,18 @@ function buildDock(p: DockSceneProps): { group: THREE.Group; bob: THREE.Group } 
   group.add(bob);
   const { walk, plats, xEnd, all } = layout(p);
 
-  const galvMat = new THREE.MeshStandardMaterial({ color: GALV, roughness: 0.45, metalness: 0.75, envMapIntensity: 0.8 });
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
+  const galvMat = new THREE.MeshStandardMaterial({ color: GALV, roughness: 0.45, metalness: 0.75, envMapIntensity: 1.0, roughnessMap: rough });
   const floatMat = new THREE.MeshStandardMaterial({ color: FLOAT_BLK, roughness: 0.9 });
   const bumpMat = new THREE.MeshStandardMaterial({ color: BUMP, roughness: 0.85 });
-  const cleatMat = new THREE.MeshStandardMaterial({ color: CLEAT, roughness: 0.35, metalness: 0.9, envMapIntensity: 0.8 });
-  const alumMat = new THREE.MeshStandardMaterial({ color: ALUM, roughness: 0.35, metalness: 0.85, envMapIntensity: 0.8 });
+  const cleatMat = new THREE.MeshStandardMaterial({ color: CLEAT, roughness: 0.35, metalness: 0.9, envMapIntensity: 1.0 });
+  const alumMat = new THREE.MeshStandardMaterial({ color: ALUM, roughness: 0.35, metalness: 0.85, envMapIntensity: 1.0, roughnessMap: rough });
 
   const wood = p.decking === "wood";
   const base = wood ? "#b08a55" : "#7a736b";
   const gap = wood ? "#8a683c" : "#5c5650";
-  const deckU = new THREE.MeshStandardMaterial({ map: makePlankTexture(base, gap, true), roughness: wood ? 0.85 : 0.6 });
-  const deckV = new THREE.MeshStandardMaterial({ map: makePlankTexture(base, gap, false), roughness: wood ? 0.85 : 0.6 });
+  const deckU = new THREE.MeshStandardMaterial({ map: makePlankTexture(base, gap, true), roughness: wood ? 0.85 : 0.6, roughnessMap: rough });
+  const deckV = new THREE.MeshStandardMaterial({ map: makePlankTexture(base, gap, false), roughness: wood ? 0.85 : 0.6, roughnessMap: rough });
 
   // ---- sections: floats at the waterline, frame, deck boards -------------
   for (const r of all) {
@@ -315,6 +306,22 @@ function buildDock(p: DockSceneProps): { group: THREE.Group; bob: THREE.Group } 
     group.add(pad);
   }
 
+  // ---- soft dark patch in the water under the raft — reads as the dock's
+  // shadow + depth below it (anchored to group, not bob, so it never rocks)
+  {
+    let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+    for (const r of all) {
+      minX = Math.min(minX, r.cx - r.lx / 2); maxX = Math.max(maxX, r.cx + r.lx / 2);
+      minZ = Math.min(minZ, r.cz - r.lz / 2); maxZ = Math.max(maxZ, r.cz + r.lz / 2);
+    }
+    if (Number.isFinite(minX)) {
+      const cs = contactShadow(maxX - minX + 7, maxZ - minZ + 7, { opacity: 0.45, y: 0.14 });
+      cs.position.x = (minX + maxX) / 2;
+      cs.position.z = (minZ + maxZ) / 2;
+      group.add(cs);
+    }
+  }
+
   return { group, bob };
 }
 
@@ -404,19 +411,15 @@ export default function DockScene(p: DockSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.1);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
     el.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const bg = makeSky();
+    const bg = makeSky({ top: "#8fb6d8", mid: "#c6dbe6", haze: "#e9f0ec", horizon: "#e2e8da" });
     scene.background = bg;
     scene.fog = new THREE.Fog(0xd3e2e2, 180, 900);
 
@@ -437,10 +440,7 @@ export default function DockScene(p: DockSceneProps) {
     const sun = new THREE.DirectionalLight(0xfff0d8, 2.2);
     sun.position.set(30, 34, 26);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 250;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
 
     const { water, waterBase, statics } = buildCove(scene);
@@ -468,16 +468,20 @@ export default function DockScene(p: DockSceneProps) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
     const core: Core = {
       renderer, scene, camera, controls, sun, group: null, bob: null,
       water, waterBase, bg, raf: 0, ro: null as unknown as ResizeObserver,
-      fitR: 0, fitC: new THREE.Vector3(), fly: null, reduced,
+      fitR: 0, fitC: new THREE.Vector3(), fly: null, reduced, post,
     };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const h = el.clientHeight || 1;
       renderer.setSize(w, h, false);
+      post?.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       frameTo(core, 0);
@@ -509,7 +513,8 @@ export default function DockScene(p: DockSceneProps) {
         if (k >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
     coreRef.current = core;
@@ -524,6 +529,7 @@ export default function DockScene(p: DockSceneProps) {
       sun.dispose();
       ambient.dispose();
       hemi.dispose();
+      post?.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(statics);
       disposeGroup(statics);
@@ -559,6 +565,7 @@ export default function DockScene(p: DockSceneProps) {
     sc.updateProjectionMatrix();
 
     core.controls.maxDistance = Math.max(120, xEnd * 3);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
     const sphere = focusBox(group).getBoundingSphere(new THREE.Sphere());
     core.fitR = sphere.radius;
     core.fitC.copy(sphere.center);

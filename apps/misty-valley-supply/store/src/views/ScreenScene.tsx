@@ -3,6 +3,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { exportGroupAsGlb } from "@/exportModel";
+import {
+  applyAnisotropy, contactShadow, enhanceRenderer, fitShadowCamera, makeComposer,
+  makeSky, sharedRoughnessMap, tuneSunShadow, type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Parametric 3D roof-screen scene. Feet are world units. The screen runs
@@ -45,25 +49,10 @@ type Core = {
   fitR: number;            // bounding-sphere radius of the current screen
   fitC: THREE.Vector3;     // …and its center
   fly: Fly | null;
+  post: ComposerRig | null;
 };
 
 const smooth = (x: number) => x * x * (3 - 2 * x);
-
-/** Soft sky gradient used as the scene background. */
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#aec4de");
-  grad.addColorStop(0.55, "#dbe4ee");
-  grad.addColorStop(1, "#f2f0ea");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 function disposeGroup(group: THREE.Group) {
   group.traverse(o => {
@@ -78,8 +67,13 @@ function disposeGroup(group: THREE.Group) {
     const mesh = o as THREE.Mesh;
     if (mesh.geometry) mesh.geometry.dispose();
     const mat = (mesh as THREE.Mesh).material;
-    if (Array.isArray(mat)) mat.forEach(m => m.dispose());
-    else if (mat) (mat as THREE.Material).dispose();
+    const one = (m: THREE.Material) => {
+      const map = (m as THREE.MeshStandardMaterial).map;
+      if (map) map.dispose(); // the contact-shadow canvas texture lives here
+      m.dispose();
+    };
+    if (Array.isArray(mat)) mat.forEach(one);
+    else if (mat) one(mat as THREE.Material);
   });
 }
 
@@ -131,14 +125,15 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
   const half = L / 2;
 
   // ---- materials -------------------------------------------------------
-  const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, metalness: 0.55, roughness: 0.42, envMapIntensity: 0.8 });
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
+  const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, metalness: 0.55, roughness: 0.42, envMapIntensity: 1.0 });
   const panelMat = new THREE.MeshStandardMaterial({
-    color: 0xc7ccd2, metalness: 0.78, roughness: 0.34, side: THREE.DoubleSide, envMapIntensity: 0.8,
+    color: 0xc7ccd2, metalness: 0.78, roughness: 0.34, side: THREE.DoubleSide, envMapIntensity: 1.0, roughnessMap: rough,
   });
   const ribMat = new THREE.MeshStandardMaterial({
-    color: gauge === 29 ? 0xd9dde1 : 0xd2d7dc, metalness: 0.8, roughness: 0.3, envMapIntensity: 0.8,
+    color: gauge === 29 ? 0xd9dde1 : 0xd2d7dc, metalness: 0.8, roughness: 0.3, envMapIntensity: 1.0,
   });
-  const deckMat = new THREE.MeshStandardMaterial({ color: 0xbfc2c6, roughness: 0.96, metalness: 0.04 });
+  const deckMat = new THREE.MeshStandardMaterial({ color: 0xbfc2c6, roughness: 0.96, metalness: 0.04, roughnessMap: rough });
   const parapetMat = new THREE.MeshStandardMaterial({ color: 0xb0b3b8, roughness: 0.92 });
   const rtuMat = new THREE.MeshStandardMaterial({ color: 0x9ba1a8, roughness: 0.7, metalness: 0.3 });
   const rtuTrimMat = new THREE.MeshStandardMaterial({ color: 0x83898f, roughness: 0.6, metalness: 0.35 });
@@ -185,6 +180,11 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
   const rtuH = Math.max(3, h * 0.85);
   rtu(Math.min(16, L * 0.6), rtuH, 9, -L * 0.16, -9);
   if (L >= 24) rtu(Math.min(12, L * 0.4), rtuH * 0.8, 7, L * 0.2, -11);
+
+  // soft contact shadow across the screen line + RTU field — fake AO on deck
+  const cs = contactShadow(L + 10, 26, { opacity: 0.5, y: 0.06 });
+  cs.position.z = -7;
+  group.add(cs);
 
   // ---- posts (instanced) ----------------------------------------------
   const nPosts = Math.max(2, Math.ceil(L / bay) + 1);
@@ -273,19 +273,15 @@ export default function ScreenScene(props: ScreenSceneProps) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    // CAD-grade output: filmic tone curve + sRGB (r152+ default, asserted here)
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.12);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
     el.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const bg = makeSky();
+    const bg = makeSky({ top: "#88aed4", mid: "#c4d5e6", haze: "#eef1ee", horizon: "#eceada" });
     scene.background = bg;
     scene.fog = new THREE.Fog(0xdbe4ee, 220, 1400);
 
@@ -315,10 +311,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
     const sun = new THREE.DirectionalLight(0xfff4e0, 2.4);
     sun.position.set(30, 50, 34);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 400;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target); // target defaults to origin
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 4000);
@@ -344,12 +337,16 @@ export default function ScreenScene(props: ScreenSceneProps) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
-    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null, post };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const hh = el.clientHeight || 1;
       renderer.setSize(w, hh, false);
+      post?.setSize(w, hh);
       camera.aspect = w / hh;
       camera.updateProjectionMatrix();
       frameTo(core, 0); // keep the screen framed when the container reflows
@@ -370,7 +367,8 @@ export default function ScreenScene(props: ScreenSceneProps) {
         if (t >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
 
@@ -394,6 +392,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
       scene.remove(ground);
       groundGeo.dispose();
       groundMat.dispose();
+      post?.dispose();
       scene.environment = null;
       envRT.dispose();
       bg.dispose();
@@ -420,12 +419,11 @@ export default function ScreenScene(props: ScreenSceneProps) {
 
     const L = Math.max(lf, 4);
     const h = Math.max(heightFt, 2);
-    // the persistent sun follows the configuration; its one shadow map re-covers it
+    // the persistent sun follows the configuration; its one shadow map is
+    // re-fitted to the model (wide pad: the noFit parapet also casts)
     core.sun.position.set(L * 0.35 + 20, Math.max(40, h * 4 + 30), 34);
-    const s = L / 2 + 26;
-    const sc = core.sun.shadow.camera;
-    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
-    sc.updateProjectionMatrix();
+    fitShadowCamera(core.sun, group, 2.3);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 
     core.controls.minDistance = Math.max(8, h * 1.5);
     core.controls.maxDistance = Math.max(90, L * 1.7);

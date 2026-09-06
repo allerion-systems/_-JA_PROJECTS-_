@@ -1,8 +1,14 @@
 import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { deckGeometry, type DeckParams } from "@/bim";
 import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
+import {
+  applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
+  makeComposer, makeGroundPlane, makeSky, sharedRoughnessMap, tuneSunShadow,
+  type ComposerRig,
+} from "@/sceneQuality";
 
 /* ------------------------------------------------------------------------
    Parametric 3D deck. Feet are world units. Width runs along X against a
@@ -34,24 +40,10 @@ type Core = {
   fitR: number;            // bounding-sphere radius of the current deck
   fitC: THREE.Vector3;     // …and its center
   fly: Fly | null;
+  post: ComposerRig | null;
 };
 
 const smooth = (x: number) => x * x * (3 - 2 * x);
-
-function makeSky(): THREE.Texture {
-  const c = document.createElement("canvas");
-  c.width = 16; c.height = 256;
-  const g = c.getContext("2d")!;
-  const grad = g.createLinearGradient(0, 0, 0, 256);
-  grad.addColorStop(0, "#a9c4e2");
-  grad.addColorStop(0.55, "#dbe4ee");
-  grad.addColorStop(1, "#e9ecdf");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 16, 256);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
 
 function disposeGroup(group: THREE.Group) {
   group.traverse(o => {
@@ -126,10 +118,11 @@ function buildWorld(p: DeckParams): THREE.Group {
   const joistTop = deckTop - 1 / 12; // under 5/4 board
 
   // ---- materials -------------------------------------------------------
-  const pt = new THREE.MeshStandardMaterial({ color: 0x9d7844, roughness: 0.9 });
-  const ptLight = new THREE.MeshStandardMaterial({ color: 0xc9a06a, roughness: 0.85 });
-  const board = new THREE.MeshStandardMaterial({ color: 0xbf9a62, roughness: 0.8 });
-  const galv = new THREE.MeshStandardMaterial({ color: 0xaab3c1, metalness: 0.7, roughness: 0.4 });
+  const rough = sharedRoughnessMap(); // module-cached — never disposed here
+  const pt = new THREE.MeshStandardMaterial({ color: 0x9d7844, roughness: 0.9, roughnessMap: rough });
+  const ptLight = new THREE.MeshStandardMaterial({ color: 0xc9a06a, roughness: 0.85, roughnessMap: rough });
+  const board = new THREE.MeshStandardMaterial({ color: 0xbf9a62, roughness: 0.8, roughnessMap: rough });
+  const galv = new THREE.MeshStandardMaterial({ color: 0xaab3c1, metalness: 0.7, roughness: 0.4, envMapIntensity: 1.0 });
   const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.55, metalness: 0.25 });
   const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
   const houseMat = new THREE.MeshStandardMaterial({ color: 0xdcd8cd, roughness: 0.85 });
@@ -306,6 +299,9 @@ function buildWorld(p: DeckParams): THREE.Group {
     });
   }
 
+  // soft contact shadow under the deck footprint — fake AO at grade
+  group.add(contactShadow(W + 7, D + 7));
+
   // ---- dimension callouts — width across the front, depth up the side --
   // Part of the disposable group; visibility is re-applied after rebuilds.
   const dimY = 0.05;
@@ -334,8 +330,8 @@ export default function DeckScene(p: DeckParams) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); // DPR capped at 2
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // CAD-grade output: ACES filmic + sRGB + PCF-soft shadows (shared helper)
+    enhanceRenderer(renderer, 1.1);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -346,11 +342,16 @@ export default function DeckScene(p: DeckParams) {
     scene.background = bg;
     scene.fog = new THREE.Fog(0xdbe4ee, 150, 900);
 
-    const groundGeo = new THREE.PlaneGeometry(2000, 2000);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x93a07e, roughness: 1 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    // real specular for the galvanized hardware: PMREM room environment,
+    // built once — OUTSIDE the disposable group
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    pmrem.dispose();
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
+
+    // soft-edged textured ground that melts into the horizon haze
+    const ground = makeGroundPlane({ radius: 900, base: "#87966c", horizon: "#e2e6d8" });
     scene.add(ground);
 
     const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
@@ -362,10 +363,7 @@ export default function DeckScene(p: DeckParams) {
     const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
     sun.position.set(20, 30, 26);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 200;
-    sun.shadow.bias = -0.0004;
+    tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 2000);
@@ -391,12 +389,16 @@ export default function DeckScene(p: DeckParams) {
     el.addEventListener("wheel", onWheel, { capture: true, passive: true });
     el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
 
-    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
+    // optional SSAO composer — desktop only; mobile keeps plain render
+    const post = makeComposer(renderer, scene, camera);
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null, post };
 
     const resize = () => {
       const w = el.clientWidth || 1;
       const h = el.clientHeight || 1;
       renderer.setSize(w, h, false);
+      post?.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       frameTo(core, 0); // keep the deck framed when the container reflows
@@ -417,7 +419,8 @@ export default function DeckScene(p: DeckParams) {
         if (t >= 1) core.fly = null;
       }
       controls.update();
-      renderer.render(scene, camera);
+      if (core.post) core.post.composer.render();
+      else renderer.render(scene, camera);
     };
     loop();
     coreRef.current = core;
@@ -434,8 +437,10 @@ export default function DeckScene(p: DeckParams) {
       hemi.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(ground);
-      groundGeo.dispose();
-      groundMat.dispose();
+      disposeObject(ground);
+      post?.dispose();
+      scene.environment = null;
+      envRT.dispose();
       bg.dispose();
       renderer.dispose();
       if (renderer.domElement.parentElement === el) el.removeChild(renderer.domElement);
@@ -457,12 +462,11 @@ export default function DeckScene(p: DeckParams) {
     const dg = group.getObjectByName(DIMS_NAME);
     if (dg) dg.visible = showDimsRef.current;
 
-    // the persistent sun follows the footprint; its one shadow map re-covers it
+    // the persistent sun follows the footprint; its one shadow map is
+    // re-fitted tight to the new model bounds
     core.sun.position.set(widthFt * 0.6 + 12, 24 + heightFt, 26);
-    const s = Math.max(widthFt, depthFt) + 14;
-    const sc = core.sun.shadow.camera;
-    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
-    sc.updateProjectionMatrix();
+    fitShadowCamera(core.sun, group);
+    applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 
     core.controls.maxDistance = Math.max(70, widthFt * 4);
     // re-fit on every rebuild: snap on first build, glide after option clicks

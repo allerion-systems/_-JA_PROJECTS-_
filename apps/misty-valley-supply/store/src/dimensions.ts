@@ -65,7 +65,7 @@ function makeLabelSprite(text: string, worldH: number): THREE.Sprite {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: tex, transparent: true, depthTest: false, // reads over the model, CAD-overlay style
+    map: tex, transparent: true, depthTest: false, depthWrite: false, // reads over the model, CAD-overlay style
   }));
   sprite.renderOrder = 20;
   sprite.scale.set(worldH * (c.width / c.height), worldH, 1);
