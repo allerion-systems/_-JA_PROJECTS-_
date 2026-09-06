@@ -53,6 +53,29 @@ Owner's list, sequenced by fastest honest path to revenue:
    the fuel skid is a licensed partner's scope, stated plainly. Never imply
    we supply or certify fuel systems.
 
+## Wave 4 — the apex: PREFABRICATED DATA CENTERS
+Owner's call: the most important item on the roadmap. The AI buildout has
+made prefab data-center capacity the hottest construction product in the
+country, and the I-65 corridor sells its two raw inputs: land and power.
+
+Two honest product tiers, same split discipline as everything above:
+1. **Edge / micro data centers** — a productized single-container unit:
+   racks, UPS, precision cooling, clean-agent fire suppression, security.
+   Rides the Container Designer machinery as an "Edge Compute" build-out
+   tier. Real vendors productize this at roughly $100K–$500K/unit; MVS
+   configures the shell + site package and quotes the integrated unit as a
+   dealer, planning figures until a partner sheet is signed.
+2. **Data hall modules** — multi-module halls in the Modular Projects tool
+   as a "Data Center" building type: modules, MW-class power ask, GSF, and
+   a planning range → design-build intake. Never a retail price.
+
+The red lines, stated on the page: power is the long pole (utility
+interconnect is the buyer's/partner's scope), electrical and mechanical
+are licensed-partner scope, NFPA 75/76 governs, and MVS never claims
+tier certifications or uptime ratings — the partner's paper does.
+Site package is MVS's home turf: pad, fencing, guard shack, containers,
+security lighting — half of it is already in the catalog.
+
 ## Standing rules for every new tool
 - Reuse the shared core: bim helpers, PriceBar (guest-gated), Steps/Seg,
   BomTable, QuoteGate, scene lifecycle (lights-once, frameTo, touch rules).
