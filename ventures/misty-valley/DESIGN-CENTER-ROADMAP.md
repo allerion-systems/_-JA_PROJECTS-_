@@ -1,5 +1,10 @@
 # Design Center roadmap
 
+**The doctrine, in the owner's four words: PORTABLE · MODULAR ·
+CONFIGURABLE · CUSTOMIZABLE.** Every structure MVS sells moves or
+assembles from modules, configures in 3D in the browser, and customizes
+to the buyer's spec — nothing on this roadmap is a fixed catalog object.
+
 *2026-09-06. The committed build order for the configurator suite. One rule
 governs everything: retail-priceable kits get full 5D BoM pricing; regulated
 or architect-scale builds get honest planning ranges into an intake.*
