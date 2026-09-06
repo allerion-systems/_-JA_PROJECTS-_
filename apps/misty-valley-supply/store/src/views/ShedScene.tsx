@@ -9,10 +9,29 @@ import { spaced, rafterLen, SHED_DOOR, SHED_WIN, type ShedParams } from "@/bim";
    from the same bim.ts helpers the estimate uses, so what you see is what
    the sheet prices. Renderer/camera/controls build once; the parametric
    group is rebuilt and disposed on every change (ScreenScene pattern).
+
+   Every priced option renders: doors (trimmed, hinged), windows (frame +
+   glass + muntins), ramp, loft (through the framing cutaway), cupola,
+   metal vs ready roof, vinyl lap vs housewrap, stick vs truss framing.
+   sidingColor / roofColor are cosmetic-only props — never priced.
    ---------------------------------------------------------------------- */
 
 const NAVY = 0x142f63;   // --marine
 const GOLD = 0xfac400;   // --safety-hi
+const TRIM = 0xf4f2ea;   // trim boards / fascia
+const OSB_TAN = 0xc9a35e;
+
+export type ShedSceneProps = ShedParams & {
+  /** Cosmetic only — chosen at order, never priced. CSS hex like "#7d2a26". */
+  sidingColor?: string;
+  roofColor?: string;
+};
+
+type Fly = {
+  fromPos: THREE.Vector3; toPos: THREE.Vector3;
+  fromTgt: THREE.Vector3; toTgt: THREE.Vector3;
+  start: number; dur: number;
+};
 
 type Core = {
   renderer: THREE.WebGLRenderer;
@@ -24,6 +43,7 @@ type Core = {
   raf: number;
   ro: ResizeObserver;
   fitted: boolean;
+  fly: Fly | null;
 };
 
 function makeSky(): THREE.Texture {
@@ -41,40 +61,155 @@ function makeSky(): THREE.Texture {
   return tex;
 }
 
+// ---- tiny canvas textures (generated, never fetched — CSP-safe) ----------
+
+function shade(hex: string, f: number): string {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const ch = (v: number) => Math.max(0, Math.min(255, Math.round(v * f)));
+  return `rgb(${ch(n >> 16)},${ch((n >> 8) & 255)},${ch(n & 255)})`;
+}
+
+/** Horizontal vinyl-lap suggestion: one course band per ~6 in of wall. */
+function makeLapTexture(color: string, wallHFt: number): THREE.CanvasTexture {
+  const courses = Math.max(8, Math.round(wallHFt * 2)); // 6-in exposure
+  const c = document.createElement("canvas");
+  c.width = 8; c.height = 512;
+  const g = c.getContext("2d")!;
+  const ch = 512 / courses;
+  for (let i = 0; i < courses; i++) {
+    const y = i * ch;
+    const grad = g.createLinearGradient(0, y, 0, y + ch);
+    grad.addColorStop(0, shade(color, 1.07));
+    grad.addColorStop(0.8, shade(color, 0.96));
+    grad.addColorStop(1, shade(color, 0.78));
+    g.fillStyle = grad;
+    g.fillRect(0, y, 8, ch);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+/** Vertical rib stripes for 29-ga metal panels; repeat along the panel run. */
+function makeRibTexture(color: string): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 64; c.height = 8;
+  const g = c.getContext("2d")!;
+  g.fillStyle = shade(color, 1);
+  g.fillRect(0, 0, 64, 8);
+  g.fillStyle = shade(color, 1.35);
+  g.fillRect(0, 0, 5, 8);          // rib highlight
+  g.fillStyle = shade(color, 0.6);
+  g.fillRect(5, 0, 3, 8);          // rib shadow
+  g.fillStyle = shade(color, 0.9);
+  g.fillRect(34, 0, 2, 8);         // minor stiffening rib
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+/** Soft radial contact shadow under the building. */
+function makeShadowTexture(): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 128; c.height = 128;
+  const g = c.getContext("2d")!;
+  const grad = g.createRadialGradient(64, 64, 8, 64, 64, 64);
+  grad.addColorStop(0, "rgba(20,24,18,0.55)");
+  grad.addColorStop(0.65, "rgba(20,24,18,0.28)");
+  grad.addColorStop(1, "rgba(20,24,18,0)");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(c);
+}
+
 function disposeGroup(group: THREE.Group) {
   group.traverse(o => {
     const mesh = o as THREE.Mesh;
     if (mesh.geometry) mesh.geometry.dispose();
     const mat = mesh.material;
-    if (Array.isArray(mat)) mat.forEach(m => m.dispose());
-    else if (mat) (mat as THREE.Material).dispose();
+    const one = (m: THREE.Material) => {
+      const map = (m as THREE.MeshStandardMaterial).map;
+      if (map) map.dispose();
+      m.dispose();
+    };
+    if (Array.isArray(mat)) mat.forEach(one);
+    else if (mat) one(mat as THREE.Material);
   });
 }
 
 const FLOOR_TOP = 0.95; // skid 0.3 + 2×8 joist 0.62 + deck
 
-function buildWorld(p: ShedParams): THREE.Group {
+function buildWorld(p: ShedSceneProps): THREE.Group {
   const group = new THREE.Group();
   const L = p.lengthFt, W = p.widthFt, H = p.wallHFt;
   const halfL = L / 2, halfW = W / 2;
   const rise = halfW * (p.pitch / 12);
   const rafter = rafterLen(halfW, p.pitch);
   const slope = Math.atan2(rise, halfW);
+  const sidingHex = p.sidingColor ?? "#e8e4da";
+  const roofHex = p.roofColor ?? "#3a3d42";
 
   // ---- materials -------------------------------------------------------
   const wood = new THREE.MeshStandardMaterial({ color: 0xc9a06a, roughness: 0.85 });
   const woodPT = new THREE.MeshStandardMaterial({ color: 0x9d7844, roughness: 0.9 });
   const osb = new THREE.MeshStandardMaterial({ color: 0xb98d4f, roughness: 0.92 });
-  const skin = new THREE.MeshStandardMaterial({
-    color: p.siding === "vinyl" ? 0xe8e4da : 0xdfe3e8, roughness: 0.8,
+
+  let skin: THREE.MeshStandardMaterial;
+  let gableSkin: THREE.MeshStandardMaterial;
+  if (p.siding === "vinyl") {
+    const lap = makeLapTexture(sidingHex, H);
+    skin = new THREE.MeshStandardMaterial({ map: lap, roughness: 0.75 });
+    gableSkin = new THREE.MeshStandardMaterial({ color: new THREE.Color(sidingHex), roughness: 0.75 });
+  } else {
+    // housewrap — white-green wrap over sheathing, color choice not applied
+    skin = new THREE.MeshStandardMaterial({ color: 0xdde6dc, roughness: 0.88 });
+    gableSkin = new THREE.MeshStandardMaterial({ color: 0xd6e0d6, roughness: 0.88 });
+  }
+
+  let roofMat: THREE.MeshStandardMaterial;
+  if (p.roof === "metal") {
+    const rib = makeRibTexture(roofHex);
+    rib.repeat.set(Math.max(6, Math.round((L + 1) / 0.75)), 1); // rib every ~9 in
+    roofMat = new THREE.MeshStandardMaterial({ map: rib, roughness: 0.45, metalness: 0.55 });
+  } else {
+    // "ready" = sheathed + underlayment only; reads as OSB tan
+    roofMat = new THREE.MeshStandardMaterial({ color: OSB_TAN, roughness: 0.95 });
+  }
+  const roofEdge = new THREE.MeshStandardMaterial({
+    color: p.roof === "metal" ? shade(roofHex, 0.8) : shade("#c9a35e", 0.85),
+    roughness: 0.7, metalness: p.roof === "metal" ? 0.4 : 0,
   });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x565c66, roughness: 0.75, metalness: 0.15, side: THREE.DoubleSide });
+
+  const trimMat = new THREE.MeshStandardMaterial({ color: TRIM, roughness: 0.6 });
   const navyMat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.5, metalness: 0.3 });
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0xaecbe0, roughness: 0.15, metalness: 0.55 });
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x9fc4dd, roughness: 0.08, metalness: 0.6 });
   const goldMat = new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.4, roughness: 0.35, emissive: 0x4a3a00 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x2b2e33, roughness: 0.5, metalness: 0.4 });
   const gravelMat = new THREE.MeshStandardMaterial({ color: 0xa9a598, roughness: 1 });
 
   const M = new THREE.Matrix4();
+
+  // ---- grass disc + contact shadow ------------------------------------
+  const grass = new THREE.Mesh(
+    new THREE.CircleGeometry(Math.max(L, W) * 1.6 + 10, 48),
+    new THREE.MeshStandardMaterial({ color: 0x7fa065, roughness: 1 }),
+  );
+  grass.rotation.x = -Math.PI / 2;
+  grass.position.y = 0.015;
+  grass.receiveShadow = true;
+  group.add(grass);
+
+  const contact = new THREE.Mesh(
+    new THREE.PlaneGeometry(L + 9, W + 9),
+    new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false, opacity: 0.85 }),
+  );
+  contact.rotation.x = -Math.PI / 2;
+  contact.position.y = 0.03;
+  group.add(contact);
 
   // ---- gravel pad + skids + floor -------------------------------------
   const pad = new THREE.Mesh(new THREE.BoxGeometry(L + 4, 0.18, W + 4), gravelMat);
@@ -105,8 +240,8 @@ function buildWorld(p: ShedParams): THREE.Group {
   const t = 0.29; // 2×4 wall thickness
   const y0 = FLOOR_TOP;
 
-  // Three skinned walls: back (−Z), and both... no — back + right end solid,
-  // left end (−X) is the framing cutaway, front (+Z) carries the openings.
+  // back + right end solid; left end (−X) is the framing cutaway,
+  // front (+Z) carries the openings.
   const wall = (w: number, x: number, z: number, rotY: number) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, H, t), skin);
     m.position.set(x, y0 + H / 2, z);
@@ -117,31 +252,105 @@ function buildWorld(p: ShedParams): THREE.Group {
   };
   wall(L, 0, -halfW + t / 2, 0);            // back
   wall(W, halfL - t / 2, 0, Math.PI / 2);   // right end
+  wall(L, 0, halfW - t / 2, 0);             // front
 
-  // Front wall (+Z): skin panel plus door/window cutout shapes sitting proud.
-  wall(L, 0, halfW - t / 2, 0);
-  const doorGeo = new THREE.BoxGeometry(SHED_DOOR.w, SHED_DOOR.h, 0.12);
+  // corner trim boards — verticals at each corner of the box
+  const cornerGeo = new THREE.BoxGeometry(0.4, H, 0.4);
+  const corners = new THREE.InstancedMesh(cornerGeo, trimMat, 4);
+  [[halfL - 0.2, halfW - 0.2], [halfL - 0.2, -halfW + 0.2],
+   [-halfL + 0.2, -halfW + 0.2], [-halfL + 0.2, halfW - 0.2]].forEach(([x, z], i) => {
+    M.makeTranslation(x, y0 + H / 2, z);
+    corners.setMatrixAt(i, M);
+  });
+  corners.instanceMatrix.needsUpdate = true;
+  corners.castShadow = true;
+  group.add(corners);
+
+  // ---- doors: trim casing, slab, hinges, latch -------------------------
+  const doorXs: number[] = [];
   for (let d = 0; d < p.doors; d++) {
     const x = p.doors === 1 ? -L * 0.18 : (d === 0 ? -L * 0.28 : L * 0.05);
-    const door = new THREE.Mesh(doorGeo, navyMat);
-    door.position.set(x, y0 + SHED_DOOR.h / 2, halfW + 0.06);
+    doorXs.push(x);
+    // casing / trim frame proud of the wall
+    const caseFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(SHED_DOOR.w + 0.5, SHED_DOOR.h + 0.35, 0.1), trimMat);
+    caseFrame.position.set(x, y0 + (SHED_DOOR.h + 0.15) / 2, halfW + 0.03);
+    caseFrame.castShadow = true;
+    group.add(caseFrame);
+    // slab
+    const door = new THREE.Mesh(new THREE.BoxGeometry(SHED_DOOR.w, SHED_DOOR.h, 0.12), navyMat);
+    door.position.set(x, y0 + SHED_DOOR.h / 2, halfW + 0.1);
     door.castShadow = true;
     group.add(door);
-    // gold latch dot
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), goldMat);
-    dot.position.set(x + SHED_DOOR.w / 2 - 0.35, y0 + SHED_DOOR.h * 0.48, halfW + 0.14);
+    // Z-brace panel lines
+    const brace = new THREE.Mesh(new THREE.BoxGeometry(SHED_DOOR.w - 0.4, 0.18, 0.05), trimMat);
+    brace.position.set(x, y0 + SHED_DOOR.h * 0.62, halfW + 0.17);
+    group.add(brace);
+    const brace2 = brace.clone();
+    brace2.position.y = y0 + SHED_DOOR.h * 0.3;
+    group.add(brace2);
+    // hinges (left stile) + gold latch
+    [0.22, 0.5, 0.78].forEach(f => {
+      const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.3, 0.06), darkMat);
+      hinge.position.set(x - SHED_DOOR.w / 2 + 0.12, y0 + SHED_DOOR.h * f, halfW + 0.17);
+      group.add(hinge);
+    });
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), goldMat);
+    dot.position.set(x + SHED_DOOR.w / 2 - 0.3, y0 + SHED_DOOR.h * 0.48, halfW + 0.18);
     group.add(dot);
   }
-  const winGeo = new THREE.BoxGeometry(SHED_WIN.w, SHED_WIN.h, 0.1);
+
+  // ---- windows: frame, glass, muntins, sill ----------------------------
   for (let w = 0; w < p.windows; w++) {
-    const x = w === 0 ? L * 0.3 : L * 0.08 + (p.doors === 2 ? L * 0.22 : 0);
-    const win = new THREE.Mesh(winGeo, glassMat);
-    win.position.set(Math.min(x, halfL - SHED_WIN.w / 2 - 0.4), y0 + 3.4 + SHED_WIN.h / 2 - 1.4, halfW + 0.05);
-    group.add(win);
-    const trim = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w + 0.3, SHED_WIN.h + 0.3, 0.06), skin);
-    trim.position.copy(win.position);
-    trim.position.z = halfW + 0.02;
-    group.add(trim);
+    const xRaw = w === 0 ? L * 0.3 : L * 0.08 + (p.doors === 2 ? L * 0.22 : 0);
+    const x = Math.min(xRaw, halfL - SHED_WIN.w / 2 - 0.4);
+    const cy = y0 + 2 + SHED_WIN.h / 2;
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w + 0.4, SHED_WIN.h + 0.4, 0.14), trimMat);
+    frame.position.set(x, cy, halfW + 0.02);
+    frame.castShadow = true;
+    group.add(frame);
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w - 0.15, SHED_WIN.h - 0.15, 0.1), glassMat);
+    glass.position.set(x, cy, halfW + 0.06);
+    group.add(glass);
+    // muntin cross
+    const mv = new THREE.Mesh(new THREE.BoxGeometry(0.08, SHED_WIN.h - 0.1, 0.04), trimMat);
+    mv.position.set(x, cy, halfW + 0.13);
+    group.add(mv);
+    const mh = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w - 0.1, 0.08, 0.04), trimMat);
+    mh.position.set(x, cy, halfW + 0.13);
+    group.add(mh);
+    // sill
+    const sill = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w + 0.55, 0.12, 0.24), trimMat);
+    sill.position.set(x, cy - SHED_WIN.h / 2 - 0.24, halfW + 0.06);
+    group.add(sill);
+  }
+
+  // ---- 4-ft ramp at the first door -------------------------------------
+  if (p.ramp) {
+    const dx = doorXs[0] ?? 0;
+    const run = 4, wRamp = SHED_DOOR.w + 0.4;
+    const wedge = new THREE.Shape();
+    wedge.moveTo(0, 0); wedge.lineTo(0, FLOOR_TOP - 0.06); wedge.lineTo(run, 0); wedge.closePath();
+    const wedgeGeo = new THREE.ExtrudeGeometry(wedge, { depth: wRamp, bevelEnabled: false });
+    const rampM = new THREE.Mesh(wedgeGeo, woodPT);
+    rampM.rotation.y = -Math.PI / 2; // shape x → world +z, depth → world x
+    rampM.position.set(dx + wRamp / 2, 0.04, halfW);
+    rampM.castShadow = true;
+    rampM.receiveShadow = true;
+    group.add(rampM);
+    // cleats across the walking surface
+    const rampSlope = Math.atan2(FLOOR_TOP - 0.06, run);
+    const cleatGeo = new THREE.BoxGeometry(wRamp, 0.09, 0.18);
+    const cleats = new THREE.InstancedMesh(cleatGeo, wood, 3);
+    const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-rampSlope, 0, 0));
+    for (let i = 0; i < 3; i++) {
+      const f = (i + 1) / 4;
+      const pos = new THREE.Vector3(dx, (FLOOR_TOP - 0.06) * (1 - f) + 0.06, halfW + run * f);
+      M.compose(pos, q, new THREE.Vector3(1, 1, 1));
+      cleats.setMatrixAt(i, M);
+    }
+    cleats.instanceMatrix.needsUpdate = true;
+    group.add(cleats);
   }
 
   // Left end (−X): the cutaway — open stud framing, same 16" o.c. count
@@ -165,36 +374,99 @@ function buildWorld(p: ShedParams): THREE.Group {
     group.add(pl);
   });
 
+  // roof framing readout at the cutaway end — trusses carry a bottom chord
+  // and webs; stick framing shows a collar-free rafter pair.
+  const frameX = -halfL + 0.6;
+  if (p.framing === "truss") {
+    const chord = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.29, W - 0.3), wood);
+    chord.position.set(frameX, y0 + H + 0.12, 0);
+    group.add(chord);
+    [-1, 1].forEach(s => {
+      const webLen = Math.hypot(rise * 0.6, halfW * 0.4);
+      const web = new THREE.Mesh(new THREE.BoxGeometry(0.12, webLen, 0.24), wood);
+      web.position.set(frameX, y0 + H + rise * 0.32, s * halfW * 0.22);
+      web.rotation.x = s * Math.atan2(halfW * 0.4, rise * 0.6);
+      group.add(web);
+    });
+  }
+  // rafter pair at the cutaway end, tucked just under each roof plane
+  [-1, 1].forEach(s => {
+    const len = rafter - 1.6;
+    const r = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.29, len), wood);
+    r.position.set(frameX,
+      (y0 + H + rise) - Math.sin(slope) * (len / 2) - 0.22,
+      s * Math.cos(slope) * (len / 2));
+    r.rotation.x = s * slope;
+    group.add(r);
+  });
+
+  // ---- storage loft — visible through the cutaway ----------------------
+  if (p.loft) {
+    const loftDeep = Math.min(4, L / 3);
+    const loftY = y0 + H - 1.5;
+    const loftDeck = new THREE.Mesh(new THREE.BoxGeometry(loftDeep, 0.08, W - 0.7), osb);
+    loftDeck.position.set(-halfL + loftDeep / 2 + 0.35, loftY, 0);
+    group.add(loftDeck);
+    const joistGeo = new THREE.BoxGeometry(loftDeep, 0.24, 0.12);
+    const nJ = Math.max(2, Math.floor(W / 2));
+    const loftJoists = new THREE.InstancedMesh(joistGeo, wood, nJ);
+    for (let i = 0; i < nJ; i++) {
+      M.makeTranslation(-halfL + loftDeep / 2 + 0.35, loftY - 0.16, -halfW + 0.6 + (i * (W - 1.2)) / (nJ - 1));
+      loftJoists.setMatrixAt(i, M);
+    }
+    loftJoists.instanceMatrix.needsUpdate = true;
+    group.add(loftJoists);
+  }
+
   // ---- gable triangles -------------------------------------------------
   const tri = new THREE.Shape();
   tri.moveTo(-halfW, 0); tri.lineTo(halfW, 0); tri.lineTo(0, rise); tri.closePath();
   const triGeo = new THREE.ExtrudeGeometry(tri, { depth: t, bevelEnabled: false });
   // rotated +90° about Y: shape x → world −z, extrude depth → world +x
   [halfL - t, -halfL].forEach(x => {
-    const gable = new THREE.Mesh(triGeo, skin);
+    const gable = new THREE.Mesh(triGeo, gableSkin);
     gable.rotation.y = Math.PI / 2;
     gable.position.set(x, y0 + H, 0);
     gable.castShadow = true;
     group.add(gable);
   });
 
-  // ---- roof planes + ridge --------------------------------------------
+  // ---- roof planes + overhang trim + ridge -----------------------------
   const roofL = L + 1; // rake overhang
-  const planeGeo = new THREE.BoxGeometry(roofL, 0.09, rafter);
+  const planeGeo = new THREE.BoxGeometry(roofL, 0.11, rafter);
   const ridgeY = y0 + H + rise;
-  const mk = (sideZ: 1 | -1) => {
+  const slopeMid = (s: 1 | -1) => {
+    const half = rafter / 2;
+    return new THREE.Vector3(0, ridgeY - Math.sin(slope) * half + 0.06, s * Math.cos(slope) * half);
+  };
+  ([1, -1] as const).forEach(sideZ => {
     const m = new THREE.Mesh(planeGeo, roofMat);
     m.rotation.x = sideZ * slope;
-    // center of plane sits halfway down the slope from the ridge
-    const half = rafter / 2;
-    m.position.set(0, ridgeY - Math.sin(slope) * half + 0.06, sideZ * Math.cos(slope) * half);
+    m.position.copy(slopeMid(sideZ));
     m.castShadow = true;
     m.receiveShadow = true;
     group.add(m);
-  };
-  mk(1); mk(-1);
-  const ridge = new THREE.Mesh(new THREE.BoxGeometry(roofL + 0.1, 0.14, 0.3), navyMat);
-  ridge.position.set(0, ridgeY + 0.1, 0);
+
+    // rake trim boards along both gable edges of this plane
+    [-1, 1].forEach(sx => {
+      const rake = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.32, rafter), trimMat);
+      rake.rotation.x = sideZ * slope;
+      const pos = slopeMid(sideZ);
+      rake.position.set(sx * roofL / 2, pos.y - 0.12, pos.z);
+      rake.castShadow = true;
+      group.add(rake);
+    });
+
+    // fascia along the eave
+    const eaveY = ridgeY - Math.sin(slope) * rafter;
+    const fascia = new THREE.Mesh(new THREE.BoxGeometry(roofL, 0.42, 0.12), trimMat);
+    fascia.position.set(0, eaveY - 0.14, sideZ * (Math.cos(slope) * rafter));
+    fascia.castShadow = true;
+    group.add(fascia);
+  });
+
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(roofL + 0.1, 0.14, 0.34), roofEdge);
+  ridge.position.set(0, ridgeY + 0.12, 0);
   ridge.castShadow = true;
   group.add(ridge);
 
@@ -202,9 +474,42 @@ function buildWorld(p: ShedParams): THREE.Group {
   const eaveGeo = new THREE.BoxGeometry(roofL, 0.07, 0.07);
   [1, -1].forEach(s => {
     const e = new THREE.Mesh(eaveGeo, goldMat);
-    e.position.set(0, ridgeY - Math.sin(slope) * rafter + 0.05, s * Math.cos(slope) * rafter);
+    e.position.set(0, ridgeY - Math.sin(slope) * rafter + 0.08, s * Math.cos(slope) * rafter);
     group.add(e);
   });
+
+  // ---- 24-in cupola on the ridge ---------------------------------------
+  if (p.cupola) {
+    const cw = 2; // 24 in square
+    const baseH = 1.35;
+    const baseY = ridgeY - 0.15;
+    const body = new THREE.Mesh(new THREE.BoxGeometry(cw, baseH, cw), trimMat);
+    body.position.set(0, baseY + baseH / 2, 0);
+    body.castShadow = true;
+    group.add(body);
+    // louvers on all 4 faces
+    const louvGeo = new THREE.BoxGeometry(cw - 0.5, 0.5, 0.06);
+    for (let f = 0; f < 4; f++) {
+      const lv = new THREE.Mesh(louvGeo, darkMat);
+      const a = (f * Math.PI) / 2;
+      lv.position.set(Math.sin(a) * (cw / 2 + 0.02), baseY + baseH * 0.55, Math.cos(a) * (cw / 2 + 0.02));
+      lv.rotation.y = a;
+      group.add(lv);
+    }
+    // pyramidal cap in the roof color + gold finial
+    const capMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(p.roof === "metal" ? roofHex : "#565c66"),
+      roughness: 0.5, metalness: 0.35,
+    });
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(cw * 0.85, 0.9, 4), capMat);
+    cap.rotation.y = Math.PI / 4;
+    cap.position.set(0, baseY + baseH + 0.45, 0);
+    cap.castShadow = true;
+    group.add(cap);
+    const finial = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), goldMat);
+    finial.position.set(0, baseY + baseH + 0.98, 0);
+    group.add(finial);
+  }
 
   // ---- sun -------------------------------------------------------------
   const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
@@ -222,7 +527,9 @@ function buildWorld(p: ShedParams): THREE.Group {
   return group;
 }
 
-export default function ShedScene(p: ShedParams) {
+const smooth = (x: number) => x * x * (3 - 2 * x);
+
+export default function ShedScene(p: ShedSceneProps) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
 
@@ -245,7 +552,7 @@ export default function ShedScene(p: ShedParams) {
     scene.fog = new THREE.Fog(0xd9e4ef, 160, 900);
 
     const groundGeo = new THREE.PlaneGeometry(2000, 2000);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x9aa384, roughness: 1 });
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x98a37f, roughness: 1 });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
@@ -264,7 +571,7 @@ export default function ShedScene(p: ShedParams) {
     controls.minDistance = 8;
     controls.maxDistance = 140;
 
-    const core: Core = { renderer, scene, camera, controls, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitted: false };
+    const core: Core = { renderer, scene, camera, controls, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitted: false, fly: null };
 
     const resize = () => {
       const w = el.clientWidth || 1;
@@ -280,6 +587,14 @@ export default function ShedScene(p: ShedParams) {
 
     const loop = () => {
       core.raf = requestAnimationFrame(loop);
+      if (core.fly) {
+        const f = core.fly;
+        const t = Math.min(1, (performance.now() - f.start) / f.dur);
+        const e = smooth(t);
+        camera.position.lerpVectors(f.fromPos, f.toPos, e);
+        controls.target.lerpVectors(f.fromTgt, f.toTgt, e);
+        if (t >= 1) core.fly = null;
+      }
       controls.update();
       renderer.render(scene, camera);
     };
@@ -301,12 +616,12 @@ export default function ShedScene(p: ShedParams) {
     };
   }, []);
 
-  const { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding } = p;
+  const { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, sidingColor, roofColor } = p;
   React.useEffect(() => {
     const core = coreRef.current;
     if (!core) return;
     if (core.group) { core.scene.remove(core.group); disposeGroup(core.group); }
-    const group = buildWorld({ widthFt, lengthFt, wallHFt, pitch, doors, windows, siding });
+    const group = buildWorld(p);
     core.scene.add(group);
     core.group = group;
 
@@ -319,14 +634,43 @@ export default function ShedScene(p: ShedParams) {
       core.fitted = true;
     }
     core.controls.update();
-  }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding]);
+  }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, sidingColor, roofColor]);
 
+  const flyTo = (preset: "front" | "corner" | "birdseye") => {
+    const core = coreRef.current;
+    if (!core) return;
+    const peak = wallHFt + (widthFt / 2) * (pitch / 12);
+    const tgt = new THREE.Vector3(0, FLOOR_TOP + peak * 0.45, 0);
+    let pos: THREE.Vector3;
+    if (preset === "front") {
+      pos = new THREE.Vector3(0, FLOOR_TOP + wallHFt * 0.6 + 1.5, Math.max(17, lengthFt * 0.95 + widthFt * 0.55 + 6));
+    } else if (preset === "corner") {
+      const d = Math.max(18, lengthFt * 1.15 + widthFt * 0.6);
+      pos = new THREE.Vector3(d * 0.85, peak * 0.9 + 6, d);
+    } else {
+      pos = new THREE.Vector3(lengthFt * 0.15 + 0.5, Math.max(26, lengthFt * 1.9), widthFt * 0.3 + 0.5);
+    }
+    core.fly = {
+      fromPos: core.camera.position.clone(), toPos: pos,
+      fromTgt: core.controls.target.clone(), toTgt: tgt,
+      start: performance.now(), dur: 650,
+    };
+  };
+
+  const btnCls = "rounded-[5px] border border-white/25 bg-[hsl(var(--marine))]/80 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm transition-colors hover:bg-[hsl(var(--marine))]";
   return (
-    <div
-      ref={mountRef}
-      className="h-full w-full touch-none"
-      role="img"
-      aria-label={`3D preview — ${widthFt}×${lengthFt} shed, ${wallHFt} ft walls, ${pitch}:12 gable, ${doors} door(s), ${windows} window(s), ${siding === "vinyl" ? "vinyl siding" : "housewrap only"}`}
-    />
+    <div className="relative h-full w-full">
+      <div
+        ref={mountRef}
+        className="h-full w-full touch-none"
+        role="img"
+        aria-label={`3D preview — ${widthFt}×${lengthFt} shed, ${wallHFt} ft walls, ${pitch}:12 gable, ${doors} door(s), ${windows} window(s), ${siding === "vinyl" ? "vinyl siding" : "housewrap only"}${ramp ? ", ramp" : ""}${cupola ? ", cupola" : ""}`}
+      />
+      <div className="absolute left-2 top-2 flex gap-1.5">
+        <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
+        <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
+        <button type="button" className={btnCls} onClick={() => flyTo("birdseye")}>Birds-eye</button>
+      </div>
+    </div>
   );
 }

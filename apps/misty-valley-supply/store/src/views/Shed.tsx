@@ -1,8 +1,10 @@
 import * as React from "react";
 import { useAuth } from "@/auth";
 import { rollup, shedTakeoff, type Element, type ShedParams } from "@/bim";
-import ShedScene from "@/views/ShedScene";
 import { Btn, Field, Lab, Panel, Tag, cx, inputCls, money } from "@/ui";
+
+// three.js stays in its own lazy chunk — loaded only when the shed renders
+const ShedScene = React.lazy(() => import("@/views/ShedScene"));
 
 /* ------------------------------------------------------------------------
    Shed Designer — visual-first wizard on the shared 5D core (bim.ts).
@@ -236,6 +238,54 @@ const WIDTHS = [8, 10, 12] as const;
 const LENGTHS = [8, 10, 12, 14, 16, 18, 20, 22, 24] as const;
 const STEPS = ["Size", "Style", "Options", "Quote"];
 
+// ---- cosmetic color choices — chosen at order, never priced --------------
+
+const SIDING_COLORS = [
+  ["White", "#f4f1e8"],
+  ["Tan", "#d8c9a3"],
+  ["Clay", "#b98d68"],
+  ["Gray", "#9aa0a6"],
+  ["Barn red", "#7d2a26"],
+  ["Forest", "#2e4a3a"],
+] as const;
+
+const ROOF_COLORS = [
+  ["Charcoal", "#3a3d42"],
+  ["Galvalume", "#b9bec4"],
+  ["Green", "#2f4a3c"],
+  ["Red", "#7a2e28"],
+  ["Brown", "#4e3a2a"],
+  ["Black", "#1e1f22"],
+] as const;
+
+function Swatches({ label, options, value, onChange }: {
+  label: string;
+  options: readonly (readonly [string, string])[];
+  value: string;
+  onChange: (hex: string) => void;
+}) {
+  const current = options.find(([, hex]) => hex === value)?.[0] ?? "";
+  return (
+    <div>
+      <Lab className="mb-1.5">{label} — chosen at order</Lab>
+      <div className="flex flex-wrap items-center gap-1.5">
+        {options.map(([name, hex]) => (
+          <button key={hex} type="button" title={name} aria-label={`${label}: ${name}`}
+            aria-pressed={hex === value}
+            onClick={() => onChange(hex)}
+            className={cx("h-[34px] w-[34px] rounded-full border-2 transition-shadow",
+              hex === value
+                ? "border-[hsl(var(--marine))] ring-2 ring-[hsl(var(--safety-hi))]"
+                : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}
+            style={{ backgroundColor: hex }} />
+        ))}
+        <span className="ml-1 text-[12px] text-[hsl(var(--ink-2))]">{current}</span>
+      </div>
+      <p className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">Color is confirmed at order — no price change.</p>
+    </div>
+  );
+}
+
 export default function Shed() {
   const [step, setStep] = React.useState(0);
   const [widthFt, setWidthFt] = React.useState<ShedParams["widthFt"]>(10);
@@ -245,10 +295,18 @@ export default function Shed() {
   const [doors, setDoors] = React.useState<ShedParams["doors"]>(1);
   const [windows, setWindows] = React.useState<ShedParams["windows"]>(1);
   const [siding, setSiding] = React.useState<ShedParams["siding"]>("vinyl");
+  const [roof, setRoof] = React.useState<ShedParams["roof"]>("metal");
+  const [framing, setFraming] = React.useState<ShedParams["framing"]>("stick");
+  const [ramp, setRamp] = React.useState(false);
+  const [loft, setLoft] = React.useState(false);
+  const [cupola, setCupola] = React.useState(false);
+  // cosmetic only — never enters ShedParams or the takeoff
+  const [sidingColor, setSidingColor] = React.useState<string>(SIDING_COLORS[0][1]);
+  const [roofColor, setRoofColor] = React.useState<string>(ROOF_COLORS[0][1]);
 
-  const params: ShedParams = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding };
+  const params: ShedParams = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola };
   const elements = React.useMemo(() => shedTakeoff(params),
-    [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding]);
+    [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola]);
   const { total } = rollup(elements);
 
   return (
@@ -258,7 +316,13 @@ export default function Shed() {
       <Panel pad={false} className="card-hi mb-4">
         <div className="tape h-1.5" />
         <div className="h-[380px] sm:h-[480px]">
-          <ShedScene {...params} />
+          <React.Suspense fallback={
+            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+              Loading 3D preview…
+            </div>
+          }>
+            <ShedScene {...params} sidingColor={sidingColor} roofColor={roofColor} />
+          </React.Suspense>
         </div>
       </Panel>
 
@@ -277,12 +341,39 @@ export default function Shed() {
             <Seg label="Roof pitch" options={[4, 6] as const} value={pitch} onChange={setPitch} fmt={v => `${v}:12`} />
             <Seg label="Siding" options={["vinyl", "none"] as const} value={siding} onChange={setSiding}
               fmt={v => (v === "vinyl" ? "Vinyl" : "Wrap only")} />
+            {siding === "vinyl" && (
+              <Swatches label="Siding color" options={SIDING_COLORS} value={sidingColor} onChange={setSidingColor} />
+            )}
+            {roof === "metal" && (
+              <Swatches label="Roof color" options={ROOF_COLORS} value={roofColor} onChange={setRoofColor} />
+            )}
           </div>
         )}
         {step === 2 && (
           <div className="grid gap-4 sm:grid-cols-2">
             <Seg label="Doors" options={[1, 2] as const} value={doors} onChange={setDoors} />
             <Seg label="Windows" options={[0, 1, 2] as const} value={windows} onChange={setWindows} />
+            <Seg label="Roof" options={["metal", "ready"] as const} value={roof} onChange={setRoof}
+              fmt={v => (v === "metal" ? "Metal, cut to length" : "Sheathed only")} />
+            <Seg label="Roof framing" options={["stick", "truss"] as const} value={framing} onChange={setFraming}
+              fmt={v => (v === "stick" ? "Stick rafters" : "Engineered trusses")} />
+            <div className="sm:col-span-2">
+              <Lab className="mb-1.5">Add-ons — shipped with the kit</Lab>
+              <div className="flex flex-wrap gap-1.5">
+                {([
+                  ["4-ft ramp", ramp, setRamp],
+                  ["Storage loft", loft, setLoft],
+                  ["Cupola", cupola, setCupola],
+                ] as const).map(([lab, on, set]) => (
+                  <button key={lab} onClick={() => set(!on)}
+                    className={cx("min-h-[42px] rounded-[6px] border px-3 text-[14px] font-semibold transition-colors",
+                      on ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
+                         : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>
+                    {on ? "✓ " : "+ "}{lab}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         {step === 3 && <QuoteGate tool="shed" params={{ ...params }} total={total} />}

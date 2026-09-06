@@ -1,7 +1,9 @@
 import * as React from "react";
 import { deckTakeoff, guardRequired, rollup, type DeckParams } from "@/bim";
-import DeckScene from "@/views/DeckScene";
 import { BomTable, PriceBar, QuoteGate, Seg, Steps } from "@/views/Shed";
+
+// three.js stays in its own lazy chunk — loaded only when the deck renders
+const DeckScene = React.lazy(() => import("@/views/DeckScene"));
 import { Btn, Panel, Tag } from "@/ui";
 
 /* ------------------------------------------------------------------------
@@ -42,7 +44,13 @@ export default function Deck() {
       <Panel pad={false} className="card-hi mb-4">
         <div className="tape h-1.5" />
         <div className="h-[380px] sm:h-[480px]">
-          <DeckScene {...params} />
+          <React.Suspense fallback={
+            <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
+              <span className="lab">Loading the 3D shop…</span>
+            </div>
+          }>
+            <DeckScene {...params} />
+          </React.Suspense>
         </div>
       </Panel>
 

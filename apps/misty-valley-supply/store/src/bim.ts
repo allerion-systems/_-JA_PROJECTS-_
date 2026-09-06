@@ -92,6 +92,11 @@ export type ShedParams = {
   doors: 1 | 2;
   windows: 0 | 1 | 2;
   siding: "vinyl" | "none";
+  roof: "ready" | "metal"; // "ready" = sheathed + underlayment, roofing by others
+  framing: "stick" | "truss";
+  ramp: boolean;
+  loft: boolean;
+  cupola: boolean;
 };
 
 export const SHED_DOOR = { w: 3, h: 6.83 };  // 3-0 × 6-10 shed door
@@ -143,19 +148,33 @@ export function shedTakeoff(p: ShedParams): Element[] {
   // Housewrap: IRC R703.2 water-resistive barrier. 9×100 roll = 900 sf.
   out.push(el("IfcCovering", "Housewrap — full wrap", "MVS-HW-Z90", Math.ceil(g.wallArea / 900)));
 
+  // ---- openings as components --------------------------------------------
+  // Prehung door and mounted window units — dropship parts, one per opening.
+  out.push(el("IfcDoor", "Shed door — 3-0 × 6-10 prehung", "MVS-SC-DOOR3", p.doors));
+  if (p.windows > 0) out.push(el("IfcWindow", "Shed window — 3×4 with J-trim", "MVS-SC-WIN34", p.windows));
+
   // ---- roof --------------------------------------------------------------
-  // Gable rafters 16" o.c. in pairs along the length; length from run,
-  // pitch and a 1-ft eave overhang. One 2×4×8 stick per rafter (max run
-  // 6 ft × 6:12 + overhang = 7.7 ft < 8).
-  const rafterPairs = spaced(p.lengthFt, 16);
-  out.push(el("IfcMember", `Rafter — 2×4, ${p.pitch}:12, 16" o.c. (${rafterPairs} pairs)`, "MVS-STD-248", rafterPairs * 2));
-  out.push(el("IfcBeam", "Ridge board — 2×4", "MVS-STD-248", sticks(p.lengthFt, 8)));
+  if (p.framing === "truss") {
+    // Plated gable trusses 24" o.c. — engineered spacing per the plant's
+    // sealed design sheet; replaces rafters, ridge and ceiling ties.
+    out.push(el("IfcElementAssembly", 'Gable truss — plated, 24" o.c.', "MVS-TR-G12", spaced(p.lengthFt, 24)));
+  } else {
+    // Gable rafters 16" o.c. in pairs along the length; length from run,
+    // pitch and a 1-ft eave overhang. One 2×4×8 stick per rafter (max run
+    // 6 ft × 6:12 + overhang = 7.7 ft < 8).
+    const rafterPairs = spaced(p.lengthFt, 16);
+    out.push(el("IfcMember", `Rafter — 2×4, ${p.pitch}:12, 16" o.c. (${rafterPairs} pairs)`, "MVS-STD-248", rafterPairs * 2));
+    out.push(el("IfcBeam", "Ridge board — 2×4", "MVS-STD-248", sticks(p.lengthFt, 8)));
+  }
   out.push(el("IfcRoof", "Roof sheathing — 7/16 OSB, both planes", "MVS-OSB-716", sheets(g.roofArea)));
   // Underlayment: 10-square roll covers 1,000 sf.
   out.push(el("IfcCovering", "Synthetic underlayment", "MVS-RF-SYN10", Math.ceil(g.roofArea / 1000)));
   // Drip edge: every foot of eave (2 × length) and rake (4 rafter slopes).
   const dripLf = 2 * p.lengthFt + 4 * g.rafter;
   out.push(el("IfcCovering", "Drip edge — eaves + rakes", "MVS-RF-DE10", sticks(dripLf, 10)));
+  // Metal roof option: 29-ga cut-to-length panels bought by the square.
+  if (p.roof === "metal")
+    out.push(el("IfcCovering", "Metal roofing — 29-ga, cut to rafter length", "MVS-RF-MTL29", Math.ceil(g.roofArea / 100)));
 
   // ---- siding ------------------------------------------------------------
   if (p.siding === "vinyl") {
@@ -171,6 +190,11 @@ export function shedTakeoff(p: ShedParams): Element[] {
   const sheathedSf = g.wallArea + g.roofArea + p.widthFt * p.lengthFt;
   out.push(el("IfcFastener", "Exterior screws — framing + sheathing", "MVS-FS-EX9",
     Math.max(2, Math.ceil(sheathedSf / 350))));
+
+  // ---- dropship add-ons ---------------------------------------------------
+  if (p.ramp) out.push(el("IfcRamp", "Shed ramp — 4 ft, 1,000-lb rated", "MVS-SC-RAMP4", 1));
+  if (p.loft) out.push(el("IfcSlab", "Loft kit — gable-end bays", "MVS-SC-LOFT8", Math.max(1, Math.ceil(p.lengthFt / 8) - 1)));
+  if (p.cupola) out.push(el("IfcCovering", "Cupola — 24 in vented", "MVS-SC-CUP24", 1));
 
   return out;
 }

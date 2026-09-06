@@ -5,14 +5,11 @@ import { Btn, Lab, Rule, cx, money } from "@/ui";
 import Home from "@/views/Home";
 import Shop from "@/views/Shop";
 import ProductView from "@/views/Product";
-import Screen from "@/views/Screen";
 import Yard from "@/views/Yard";
 import Account from "@/views/Account";
 import Ops from "@/views/Ops";
 import Rent from "@/views/Rent";
 import Services from "@/views/Services";
-import Shed from "@/views/Shed";
-import Deck from "@/views/Deck";
 import Runs from "@/views/Runs";
 import Agents from "@/views/Agents";
 import Dashboard from "@/views/Dashboard";
@@ -20,6 +17,12 @@ import Users from "@/views/Users";
 
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
+
+// The three Design Center tools carry three.js — they stay out of the main
+// bundle and load on demand.
+const Screen = React.lazy(() => import("@/views/Screen"));
+const Shed = React.lazy(() => import("@/views/Shed"));
+const Deck = React.lazy(() => import("@/views/Deck"));
 
 type View = "home" | "dash" | "shop" | "product" | "screen" | "shed" | "deck" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
@@ -82,10 +85,10 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
       { label: "Site Structures", cat: "structures" },
       { label: "Short-Term Rental Units", cat: "str" },
     ] },
-  { label: "Design Center", sub: "Screens, sheds, decks — in 3D", go: { view: "screen" },
+  { label: "Design Center", sub: "Screens, studios, decks — in 3D", go: { view: "screen" },
     tools: [
       { label: "Roof Screens", view: "screen" },
-      { label: "Sheds", view: "shed" },
+      { label: "Backyard Studios", view: "shed" },
       { label: "Decks", view: "deck" },
     ] },
   { label: "Services", sub: "Drafting, takeoffs, design-build", go: { view: "services" } },
@@ -94,6 +97,14 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
 
 const deptCount = (cats?: string[]) =>
   cats ? PRODUCTS.filter(p => cats.includes(p.cat)).length : 0;
+
+/* The three Design Center tools, switchable from the one "Design" tab so
+   they're reachable on every device without extra tab-bar slots. */
+const DESIGN_TOOLS: { view: View; label: string }[] = [
+  { view: "screen", label: "Roof Screens" },
+  { view: "shed", label: "Backyard Studios" },
+  { view: "deck", label: "Decks" },
+];
 
 const Icon = ({ children }: { children: React.ReactNode }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
@@ -362,12 +373,35 @@ function Inner() {
               onBack={() => go("shop")} onProduct={openProduct} onSignIn={() => setModal("signin")} />
           )}
           {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
-          {view === "screen" && <Screen />}
+          {(view === "screen" || view === "shed" || view === "deck") && (
+            <>
+              {/* Design Center tool switcher — all three tools from one tab */}
+              <div className="mb-4 flex flex-wrap gap-1.5">
+                {DESIGN_TOOLS.map(t => (
+                  <button key={t.view} onClick={() => go(t.view)}
+                    aria-current={view === t.view}
+                    className={cx("min-h-[44px] rounded-[6px] border px-4 text-[14px] font-semibold transition-colors",
+                      view === t.view
+                        ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
+                        : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <React.Suspense fallback={
+                <div className="card grid min-h-[240px] place-items-center rounded-[8px]">
+                  <span className="lab text-[hsl(var(--ink-2))]">Loading the Design Center…</span>
+                </div>
+              }>
+                {view === "screen" && <Screen />}
+                {view === "shed" && <Shed />}
+                {view === "deck" && <Deck />}
+              </React.Suspense>
+            </>
+          )}
           {view === "runs" && <Runs onSignIn={() => setModal("signin")} />}          {view === "users" && <Users onSignIn={() => setModal("signin")} />}
           {view === "rent" && <Rent onSignIn={() => setModal("signin")} />}
           {view === "services" && <Services />}
-          {view === "shed" && <Shed />}
-          {view === "deck" && <Deck />}
           {view === "yard" && <Yard />}
           {view === "account" && <Account onSignIn={() => setModal("signin")} />}
           {view === "ops" && <Ops />}
