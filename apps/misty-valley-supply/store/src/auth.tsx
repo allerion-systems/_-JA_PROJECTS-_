@@ -174,7 +174,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
   const close = () => setModal(null);
 
   if (modal === "signin" && authStep === "choose") return (
-    <Shell title="Welcome" sub="Sign in, or set up an account in two minutes." onClose={close}>
+    <Shell title="Welcome" onClose={close}>
       <div className="grid gap-2.5">
         <Btn className="w-full" onClick={() => setAuthStep("in")}>Sign in</Btn>
         <Btn variant="line" className="w-full" onClick={() => setAuthStep("up")}>Sign up</Btn>
@@ -184,7 +184,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
   );
 
   if (modal === "signin" && authStep === "up") return (
-    <Shell title="Sign up" sub="Pick the account that fits how you buy." onClose={close}>
+    <Shell title="Sign up" onClose={close}>
       <div className="grid gap-2.5">
         <button onClick={() => setModal("register")}
           className="card lift p-4 text-left">
@@ -221,7 +221,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
   );
 
   if (modal === "signin") return (
-    <Shell wide title="Sign in" sub="" onClose={close}>
+    <Shell wide title="Sign in" onClose={close}>
       {/* social sign-in first \u2014 one tap on a phone at the counter */}
       <div className="grid gap-2 sm:grid-cols-2">
         <button onClick={() => { signIn(); close(); }}
@@ -243,8 +243,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
         </button>
       </div>
       <p className="mt-1.5 text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">
-        Prototype: social buttons sign you into the demo buyer account. Live Google/Apple
-        OAuth connects at launch.
+        Prototype — social buttons sign you into the demo buyer account.
       </p>
 
       <div className="my-3 flex items-center gap-3">
@@ -280,8 +279,7 @@ export function AuthModals({ modal, setModal }: { modal: Modal; setModal: (m: Mo
         </label>
         <Btn className="mt-1 w-full" onClick={() => { signIn(); close(); }}>Create account</Btn>
         <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-3))]">
-          A web account shows pricing and history. It does not extend credit — that is the
-          separate application.
+          A web account does not extend credit — that is the separate application.
         </p>
       </div>
     </Shell>

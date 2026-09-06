@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useAuth } from "@/auth";
 import { DASHBOARDS, PERMS, permCount, ALL_PERMS, type Tile } from "@/rbac";
-import { Btn, DataTable, Lab, Panel, Rule, Tag, cx } from "@/ui";
+import { Btn, DataTable, Lab, Panel, Tag, cx } from "@/ui";
 
 const toneCls = (t?: Tile["tone"]) =>
   t === "safety" ? "text-[hsl(var(--safety))]"
@@ -19,8 +19,7 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
       <div className="p-6">
         <h2 className="disp text-[28px] font-bold leading-none">Your dashboard</h2>
         <p className="mx-auto mt-3 max-w-[44ch] text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
-          What you see here depends on what you do. A driver gets a route. A buyer gets
-          cut-off times. An owner gets the whole company. Sign in and it builds itself.
+          What you see depends on your role — sign in and it builds itself.
         </p>
         <Btn className="mt-5 w-full" onClick={onSignIn}>Sign in</Btn>
       </div>
@@ -46,7 +45,6 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
               </span>
             </div>
             <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">{d?.headline ?? "Dashboard"}</h1>
-            <p className="mt-2 max-w-[62ch] text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">{role.blurb}</p>
           </div>
           <button onClick={() => setShowPerms(!showPerms)}
             className="lab min-h-[44px] shrink-0 border border-[hsl(var(--rule))] px-3 py-2 !text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]">
@@ -116,12 +114,6 @@ export default function Dashboard({ onSignIn }: { onSignIn: () => void }) {
           <p className="text-[13px]">No dashboard is configured for this role yet.</p>
         </Panel>
       )}
-
-      <Rule className="my-6" />
-      <p className="text-[13px] leading-[1.55] text-[hsl(var(--ink-3))]">
-        Every screen in this app asks a permission, never a role name. That is why adding
-        a role is a line of data and not a week of edits.
-      </p>
     </div>
   );
 }

@@ -59,15 +59,11 @@ export default function ProductView({
 
   return (
     <div>
-      {/* breadcrumb */}
-      <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+      <div className="mb-4">
         <button onClick={onBack}
           className="flex h-11 items-center gap-1.5 rounded-[6px] px-2 -ml-2 text-[13px] font-medium text-[hsl(var(--marine))] hover:bg-[hsl(var(--marine-soft))]">
           ← Back to the catalog
         </button>
-        <span className="hidden text-[11px] text-[hsl(var(--ink-3))] sm:inline">
-          Home / Safety &amp; Edge Protection / {cat?.name} / <span className="text-[hsl(var(--ink))]">{p.name}</span>
-        </span>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)_minmax(0,300px)] lg:gap-7">
@@ -104,10 +100,7 @@ export default function ProductView({
           </p>
 
           {/* the compliance story — the centerpiece */}
-          <div className="card mt-5 overflow-hidden rounded-[10px]">
-            <div className="border-b border-[hsl(var(--rule))] bg-[hsl(var(--safety-soft))] px-4 py-3 sm:px-5">
-              <div className="eyebrow text-[hsl(var(--safety-2))]">Compliance</div>
-            </div>
+          <div className="card mt-5 rounded-[10px] border-l-2 border-l-[hsl(var(--safety-2))]">
             <div className="p-4 sm:p-5">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
                 <span>

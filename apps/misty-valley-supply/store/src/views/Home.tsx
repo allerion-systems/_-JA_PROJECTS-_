@@ -2,7 +2,7 @@ import { PRODUCTS, type Product } from "@/data";
 import { Glyph } from "@/glyph";
 import fabPhoto from "@/assets/site/lee-screen-1.jpg";
 import { useAuth } from "@/auth";
-import { Btn, Lab, Rule, cx, money } from "@/ui";
+import { Btn, Lab, Rule, money } from "@/ui";
 
 /* The home page is a showcase: one band per department, each a doorway to
    that department's own landing page in the shop. No pitch copy. */
@@ -68,8 +68,8 @@ export default function Home({
         <button onClick={onScreens}
           className="card lift flex min-h-[128px] flex-col items-center justify-center gap-2 p-4">
           <Glyph sku="MVS-RSF-SC3" className="h-14 w-14" />
-          <span className="disp text-center text-[16px] font-semibold leading-[1.05]">Custom Fabrication</span>
-          <span className="text-[11px] font-medium text-[hsl(var(--safety-2))]">Priced with shop drawings</span>
+          <span className="disp text-center text-[16px] font-semibold leading-[1.05]">Design Center</span>
+          <span className="text-[11px] font-medium text-[hsl(var(--safety-2))]">Design it in 3D, priced live</span>
         </button>
         <button onClick={onYard}
           className="card lift flex min-h-[128px] flex-col items-center justify-center gap-2 p-4">
@@ -109,14 +109,12 @@ export default function Home({
             <div className="tape absolute inset-x-0 top-0 h-1.5" />
           </div>
           <div className="p-5 sm:p-7">
-            <Lab className="mb-2">Custom fabrication</Lab>
             <h2 className="disp text-[28px] font-bold leading-[0.98] sm:text-[40px]">
               The Design Center
             </h2>
             <p className="mt-3 max-w-[52ch] text-[14px] leading-[1.55] text-[hsl(var(--ink-2))]">
-              Build your roof screen in 3D — length, height, gauge — and watch the price
-              follow every choice. The shop drawing comes from the same numbers. The Lee
-              Street frame ran {money(6000)} complete.
+              Design a studio, a deck, or a roof screen in 3D and watch the price follow
+              every choice. The shop drawing comes from the same numbers.
             </p>
             <div className="mt-5 flex flex-wrap gap-2.5">
               <Btn onClick={onScreens}>Open the Design Center</Btn>
@@ -128,17 +126,14 @@ export default function Home({
       {/* ----------------------------------------------- marketplace band */}
       <div className="mb-10 grid gap-4 lg:grid-cols-2">
         <div className="card lift p-5">
-          <Lab className="mb-2">Delivery</Lab>
           <h3 className="disp text-[22px] font-bold leading-none">Any counter in town, today</h3>
           <p className="mt-2 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
             A runner picks up your list from any local store and puts it on your jobsite.
-            List in, quote back, done.
           </p>
           <Btn size="sm" className="mt-4" onClick={onEarth}>Start a run</Btn>
         </div>
         <div className="card lift p-5">
-          <Lab className="mb-2">The Yard</Lab>
-          <h3 className="disp text-[22px] font-bold leading-none">Buy and sell locally</h3>
+          <h3 className="disp text-[22px] font-bold leading-none">The Yard — buy and sell locally</h3>
           <p className="mt-2 text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
             Surplus material, iron, crews and trucks along the corridor. Free to list;
             payment is held until pickup is confirmed.
@@ -188,7 +183,7 @@ export default function Home({
           </div>
         </div>
         <Rule className="my-4" />
-        <div className={cx("text-[11px] text-[hsl(var(--ink-3))]")}>
+        <div className="text-[11px] text-[hsl(var(--ink-3))]">
           Prototype build — prices, stock and suppliers are placeholders. Standards and OSHA citations are accurate.
         </div>
       </section>

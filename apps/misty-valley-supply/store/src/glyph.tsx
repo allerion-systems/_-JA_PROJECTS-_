@@ -778,6 +778,39 @@ const M: Record<string, React.ReactNode> = {
     {[17, 45].map(x => [20, 30].map(y => <circle key={`${x}-${y}`} cx={x + 1} cy={y} r="1.4" fill={C.steelD} />))}
   </>),
 
+  // Lofted cabin shell: gabled roof over lap siding, door and window.
+  cabin: (<>
+    <Shadow />
+    <path d="M12 28 32 13l20 15z" fill={C.tanD} />
+    <rect x="12" y="28" width="40" height="24" fill={C.tan} />
+    <rect x="12" y="28" width="40" height="2" fill="#fff" opacity=".25" />
+    {[37, 42, 47].map(y => <path key={y} d={`M12 ${y}h40`} stroke={C.tanD} strokeWidth="1.2" opacity=".55" />)}
+    <path d="M6 32 32 11l26 21-3.2 2.8L32 16.4 9.2 34.8z" fill={C.dark} />
+    <path d="M6 32 32 11l3.4 2.8L9.2 34.8z" fill="#fff" opacity=".14" />
+    <rect x="17.5" y="35" width="9" height="17" rx="0.5" fill={C.tanD} />
+    <rect x="17.5" y="35" width="2" height="17" fill={C.ink} opacity=".25" />
+    <circle cx="24.5" cy="44" r="1.1" fill={C.ink} />
+    <rect x="33.5" y="35" width="13" height="10" fill={C.lens} />
+    <path d="M34.5 36h6l-2.5 4.5z" fill="#fff" opacity=".6" />
+    <rect x="33.5" y="35" width="13" height="10" fill="none" stroke={C.whiteD} strokeWidth="1.6" />
+    <path d="M40 35v10M33.5 40h13" stroke={C.whiteD} strokeWidth="1.2" />
+  </>),
+
+  // PT deck in elevation: railing on balusters, board courses, posts below.
+  deck: (<>
+    <Shadow />
+    {[17, 24, 31, 38, 45].map(x => <rect key={x} x={x - 1.2} y="17.5" width="2.4" height="16" fill={C.tanD} />)}
+    <rect x="7" y="13" width="5" height="20" rx="0.5" fill={C.tan} />
+    <rect x="52" y="13" width="5" height="20" rx="0.5" fill={C.tan} />
+    <rect x="4" y="12.5" width="56" height="4" rx="1" fill={C.tan} />
+    <rect x="4" y="12.5" width="56" height="1.4" rx="0.7" fill="#fff" opacity=".4" />
+    <rect x="4" y="33" width="56" height="5.5" rx="0.5" fill={C.tan} />
+    <rect x="4" y="33" width="56" height="1.6" fill="#fff" opacity=".35" />
+    <rect x="4" y="38.5" width="56" height="4.5" rx="0.5" fill={C.tanD} />
+    <rect x="11" y="43" width="5" height="10" fill={C.tanD} />
+    <rect x="48" y="43" width="5" height="10" fill={C.tanD} />
+  </>),
+
   drawing: (<>
     <Shadow />
     <path d="M12 8h30l10 10v34H12z" fill={C.white} />
@@ -802,7 +835,7 @@ const BY_SKU: [RegExp, string][] = [
   [/SID-VD/, "sidingVinyl"], [/SID-AL/, "sidingAlum"], [/SID-JCH/, "jchannel"],
   [/OSB-/, "osb"], [/PLY-/, "plywood"], [/STD-/, "stud"],
   [/DW-/, "drywallSheet"], [/HW-/, "wrap"],
-  [/CX-/, "conex"], [/ST-GLO/, "office"], [/ST-BOOTH/, "booth"],
+  [/CX-/, "conex"], [/ST-GLO/, "office"], [/ST-BOOTH/, "booth"], [/STR-CAB/, "cabin"],
   // roof screen parts
   [/RSF-/, "frame"], [/RSB-/, "base"], [/RSH-/, "hat"],
   [/RSP-/, "panel"], [/RSS-/, "screw"], [/RSA-/, "anchor"], [/RSE-/, "drawing"],
@@ -822,13 +855,14 @@ const BY_SKU: [RegExp, string][] = [
   [/PY-/, "polyRoll"], [/TP-/, "tarp"], [/FP-/, "ramBoard"], [/SW-/, "stretchWrap"],
   [/EC-SILT/, "siltFence"], [/EC-SF/, "safetyFence"], [/EC-SB/, "sandbags"],
   // decking & outdoor lumber
-  [/PT-448|PT-668|PT-248|PT-BAL/, "stud"], [/HD-/, "hanger"], [/CN-80/, "sandbags"],
+  [/PT-5412/, "deck"], [/PT-448|PT-668|PT-248|PT-BAL/, "stud"], [/HD-/, "hanger"], [/CN-80/, "sandbags"],
 ];
 
 const BY_CAT: Record<string, string> = {
   roof: "guardrail", guard: "guardrail", head: "hatCap",
   eye: "glassesClear", hand: "gloveA4", hivis: "vestC2", fall: "harness",
   siding: "sidingVinyl", sheathing: "osb", drywall: "drywallSheet", structures: "conex",
+  str: "cabin",
   jobsite: "firstAidA", roofing: "underlayment", site: "safetyFence",
   decking: "deckBoards",
 };

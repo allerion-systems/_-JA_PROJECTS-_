@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useAuth } from "@/auth";
 import { ALL_PERMS, DIRECTORY, PERMS, ROLES, hasPerm, roleById, type Perm } from "@/rbac";
-import { Btn, DataTable, Lab, Panel, Tag, cx } from "@/ui";
+import { Btn, DataTable, Panel, Tag, cx } from "@/ui";
 
 const SIDES = [
   { id: "internal", label: "Misty Valley staff" },
@@ -36,10 +36,7 @@ export default function Users({ onSignIn }: { onSignIn: () => void }) {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
-        <div>
-          <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">Administration</Lab>
-          <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">Users, roles, permissions</h1>
-        </div>
+        <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">Users, roles, permissions</h1>
         {can("user.invite") && <Btn size="sm">＋ Invite someone</Btn>}
       </div>
 

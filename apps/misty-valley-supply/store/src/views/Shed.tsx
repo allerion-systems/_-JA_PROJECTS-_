@@ -2,6 +2,7 @@ import * as React from "react";
 import { useAuth } from "@/auth";
 import { rollup, shedTakeoff, type Element, type ShedParams } from "@/bim";
 import { Btn, Field, Lab, Panel, Tag, cx, inputCls, money } from "@/ui";
+import { useAnimatedNumber } from "@/useAnimatedNumber";
 
 // three.js stays in its own lazy chunk — loaded only when the shed renders
 const ShedScene = React.lazy(() => import("@/views/ShedScene"));
@@ -16,13 +17,14 @@ const ShedScene = React.lazy(() => import("@/views/ShedScene"));
 // ---- shared: sticky price bar -------------------------------------------
 
 export function PriceBar({ label, total }: { label: string; total: number }) {
+  const shown = useAnimatedNumber(total);
   return (
     <div className="sticky top-0 z-20 -mx-1 mb-3 px-1">
       <div className="flex items-center justify-between gap-3 rounded-[8px] bg-[hsl(var(--marine))] px-4 py-2.5 shadow-[0_4px_14px_-4px_hsl(222_70%_12%/.5)]">
         <span className="min-w-0 truncate text-[13px] font-semibold text-white/85">{label}</span>
         <span className="flex shrink-0 items-baseline gap-2">
           <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
-          <span className="num text-[20px] font-bold text-white">{money(total)}</span>
+          <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
         </span>
       </div>
     </div>

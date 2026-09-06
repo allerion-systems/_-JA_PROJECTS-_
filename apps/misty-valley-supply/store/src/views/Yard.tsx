@@ -64,9 +64,9 @@ function MoneyModel() {
           Break-even {dollars(be)}. Below that the 30¢ fixed fee eats the whole 5%.
         </p>
         <p className="mt-3 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
-          Listing and browsing are free. The fee applies only to a protected sale,
-          and it is charged as a Stripe <span className="">application_fee_amount</span> on
-          the seller's own charge — we are never the counterparty to the material.
+          Listing and browsing are free; the fee applies only to a protected sale,
+          charged as a Stripe application_fee_amount on the seller's own charge —
+          we are never the counterparty to the material.
         </p>
       </div>
     </Panel>
@@ -136,9 +136,8 @@ function ProtectedSale({ l }: { l: Listing }) {
             <Lab className="mb-1.5">Captured</Lab>
             <p className="text-[13px] leading-[1.5]">
               Charged {dollars(s.gross)}. In the same call Stripe moved{" "}
-              <span className="">{dollars(s.sellerNet)}</span> to {l.who} and{" "}
-              <span className="">{dollars(s.platformFee)}</span> to Misty Valley.
-              We held your money for zero seconds.
+              {dollars(s.sellerNet)} to {l.who} and {dollars(s.platformFee)} to
+              Misty Valley. We held your money for zero seconds.
             </p>
             <button onClick={() => setPhase("idle")} className="lab mt-3 inline-flex min-h-[44px] items-center !text-[hsl(var(--safety-2))] underline">
               Reset the demo
@@ -237,10 +236,7 @@ export default function Yard() {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
-        <div>
-          <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">The Yard</Lab>
-          <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">Marketplace</h1>
-        </div>
+        <h1 className="disp text-[28px] font-bold leading-none sm:text-[40px]">The Yard</h1>
         <Btn size="sm">＋ Post a listing</Btn>
       </div>
 

@@ -24,7 +24,7 @@ const STD_FAMILIES = [
 const DEPT_DEFS = [
   { name: "Building Materials", sub: "Siding, sheathing, drywall, roofing accessories and site protection, delivered to the job.",
     cats: ["siding", "sheathing", "drywall", "roofing", "site"] },
-  { name: "Safety", sub: "PPE, fall protection and edge systems. Every line lists the standard it is built to.",
+  { name: "Safety", sub: "PPE, fall protection and edge systems — every line lists the standard it is built to.",
     cats: ["fall", "roof", "guard", "head", "eye", "hand", "hivis", "jobsite"] },
   { name: "Building Structures", sub: "Shipping containers, ground-level offices and custom modular buildings.",
     cats: ["structures"] },
@@ -323,8 +323,7 @@ export default function Shop({
                 <div className="min-w-0">
                   <div className="text-[15px] font-semibold">Need something custom — an office, a tiny home, a lash-up of both?</div>
                   <p className="mt-1 text-[13px] leading-[1.45] text-[hsl(var(--ink-2))]">
-                    Send sizes, photos and what it has to do. We spec it with an upfitter,
-                    you get one quoted number, delivered set.
+                    Send sizes, photos and what it has to do; we quote one number, delivered set.
                   </p>
                 </div>
                 <button onClick={() => { setModOpen(true); setModSent(false); }}
@@ -359,7 +358,7 @@ export default function Shop({
               <div className="p-8 text-center">
                 <div className="disp mb-1 text-[18px] font-semibold">No items match</div>
                 <p className="mb-4 text-[13px] text-[hsl(var(--ink-2))]">
-                  Try the OSHA citation instead — for example <span className="">1926.501</span>.
+                  Try the OSHA citation instead — for example 1926.501.
                 </p>
                 <Btn variant="line" size="sm" onClick={() => { clear(); setQuery(""); }}>Reset everything</Btn>
               </div>
@@ -437,7 +436,7 @@ export default function Shop({
                   </Btn>
                   <p className="text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
                     Photos stay on your device in this prototype. Modular structures ship
-                    through state-approved builders; we quote the whole package, delivered set.
+                    through state-approved builders.
                   </p>
                 </div>
               )}

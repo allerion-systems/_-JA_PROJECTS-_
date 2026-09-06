@@ -29,7 +29,7 @@ export default function Rent({ onSignIn }: { onSignIn: () => void }) {
       <Head
         eyebrow="Rentals"
         title="Rent the edge, keep the margin"
-        sub="Guardrail, warning line and covers by the day, week or four-week. Reserved by request, delivered on the route, counted back on the truck. Fall-arrest gear is function-tested and documented both directions."
+        sub="Guardrail, warning line and covers by the day, week or four-week. Reserved by request, delivered on the route, counted back on the truck."
       />
 
       <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-7">
@@ -151,8 +151,7 @@ export default function Rent({ onSignIn }: { onSignIn: () => void }) {
                     <Btn className="mt-3 w-full" onClick={onSignIn}>Sign in to request</Btn>
                   )}
                   <p className="mt-2.5 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
-                    Certificate of insurance required on delivery rentals. Rates benchmarked against the corridor
-                    rental market, Sept 2026.
+                    Certificate of insurance required on delivery rentals.
                   </p>
                 </>
               )}

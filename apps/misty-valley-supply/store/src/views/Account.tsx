@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ORDERS, PRODUCTS } from "@/data";
+import { ORDERS } from "@/data";
 import { useAuth } from "@/auth";
 import { Btn, DataTable, Lab, Panel, Rule, Tag, cx, money } from "@/ui";
 
@@ -191,7 +191,7 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
       )}
 
       <p className="mt-6 text-[13px] leading-[1.5] text-[hsl(var(--ink-3))]">
-        Prototype. {PRODUCTS.length} catalog lines; account data is illustrative.
+        Prototype — account data is illustrative.
       </p>
     </div>
   );

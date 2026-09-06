@@ -38,11 +38,13 @@ type Core = {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   controls: OrbitControls;
+  sun: THREE.DirectionalLight;
   group: THREE.Group | null;
   bg: THREE.Texture;
   raf: number;
   ro: ResizeObserver;
-  fitted: boolean;
+  fitR: number;            // bounding-sphere radius of the current building
+  fitC: THREE.Vector3;     // …and its center
   fly: Fly | null;
 };
 
@@ -128,6 +130,14 @@ function makeShadowTexture(): THREE.CanvasTexture {
 
 function disposeGroup(group: THREE.Group) {
   group.traverse(o => {
+    // belt-and-braces: lights never live in this group any more, but if one
+    // sneaks back in, free its shadow map instead of orphaning it on the GPU
+    const light = o as THREE.DirectionalLight;
+    if (light.isLight) {
+      if (light.shadow?.map) { light.shadow.map.dispose(); light.shadow.map = null; }
+      light.dispose();
+      return;
+    }
     const mesh = o as THREE.Mesh;
     if (mesh.geometry) mesh.geometry.dispose();
     const mat = mesh.material;
@@ -139,6 +149,45 @@ function disposeGroup(group: THREE.Group) {
     if (Array.isArray(mat)) mat.forEach(one);
     else if (mat) one(mat as THREE.Material);
   });
+}
+
+/** Bounds of the building itself — meshes flagged noFit (ground dressing) are skipped. */
+function focusBox(group: THREE.Group): THREE.Box3 {
+  group.updateMatrixWorld(true);
+  const box = new THREE.Box3();
+  group.traverse(o => {
+    if (o.userData.noFit) return;
+    if ((o as THREE.Mesh).isMesh) box.expandByObject(o);
+  });
+  return box;
+}
+
+/**
+ * Re-fit the camera to the current bounding sphere: distance derived from
+ * fov/aspect, orbit azimuth + elevation preserved. dur 0 snaps, else tweens.
+ */
+function frameTo(core: Core, dur: number) {
+  if (!(core.fitR > 0)) return;
+  const cam = core.camera, ctl = core.controls;
+  const vFov = THREE.MathUtils.degToRad(cam.fov);
+  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * Math.max(cam.aspect, 0.3));
+  let dist = (core.fitR * 1.12) / Math.sin(Math.min(vFov, hFov) / 2);
+  dist = Math.min(Math.max(dist, ctl.minDistance), ctl.maxDistance);
+  const dir = cam.position.clone().sub(ctl.target);
+  if (dir.lengthSq() < 1e-4) dir.set(0.8, 0.45, 1);
+  dir.normalize();
+  const pos = core.fitC.clone().addScaledVector(dir, dist);
+  if (dur <= 0) {
+    cam.position.copy(pos);
+    ctl.target.copy(core.fitC);
+    ctl.update();
+  } else {
+    core.fly = {
+      fromPos: cam.position.clone(), toPos: pos,
+      fromTgt: ctl.target.clone(), toTgt: core.fitC.clone(),
+      start: performance.now(), dur,
+    };
+  }
 }
 
 const FLOOR_TOP = 0.95; // skid 0.3 + 2×8 joist 0.62 + deck
@@ -201,6 +250,7 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   grass.rotation.x = -Math.PI / 2;
   grass.position.y = 0.015;
   grass.receiveShadow = true;
+  grass.userData.noFit = true; // ground dressing — excluded from camera fit
   group.add(grass);
 
   const contact = new THREE.Mesh(
@@ -209,6 +259,7 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   );
   contact.rotation.x = -Math.PI / 2;
   contact.position.y = 0.03;
+  contact.userData.noFit = true;
   group.add(contact);
 
   // ---- gravel pad + skids + floor -------------------------------------
@@ -511,19 +562,8 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
     group.add(finial);
   }
 
-  // ---- sun -------------------------------------------------------------
-  const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
-  sun.position.set(L * 0.5 + 14, 26 + rise * 2, 20);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
-  const s = Math.max(L, W) + 12;
-  sun.shadow.camera.left = -s; sun.shadow.camera.right = s;
-  sun.shadow.camera.top = s; sun.shadow.camera.bottom = -s;
-  sun.shadow.camera.near = 1; sun.shadow.camera.far = 200;
-  sun.shadow.bias = -0.0004;
-  group.add(sun);
-  group.add(sun.target);
-
+  // NOTE: the sun lives in the one-time scene setup, not this disposable
+  // group — rebuilding here must never orphan a 2048px shadow map.
   return group;
 }
 
@@ -532,6 +572,7 @@ const smooth = (x: number) => x * x * (3 - 2 * x);
 export default function ShedScene(p: ShedSceneProps) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
+  const [hint, setHint] = React.useState(true); // fades after first interaction
 
   React.useEffect(() => {
     const el = mountRef.current;
@@ -558,8 +599,20 @@ export default function ShedScene(p: ShedSceneProps) {
     ground.receiveShadow = true;
     scene.add(ground);
 
-    scene.add(new THREE.AmbientLight(0xe8eef8, 0.8));
-    scene.add(new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.55));
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
+    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.55);
+    scene.add(ambient, hemi);
+
+    // sun + its one shadow map are created once; the rebuild effect only
+    // repositions it and resizes the shadow camera to the new footprint
+    const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
+    sun.position.set(20, 30, 20);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 200;
+    sun.shadow.bias = -0.0004;
+    scene.add(sun, sun.target);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 2000);
     camera.position.set(20, 11, 24);
@@ -571,7 +624,20 @@ export default function ShedScene(p: ShedSceneProps) {
     controls.minDistance = 8;
     controls.maxDistance = 140;
 
-    const core: Core = { renderer, scene, camera, controls, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitted: false, fly: null };
+    // Never trap the page: wheel zoom only while Ctrl/Cmd is held, one
+    // finger scrolls past the canvas, two fingers orbit + pinch-zoom.
+    controls.enableZoom = false;
+    controls.touches = { ONE: null, TWO: THREE.TOUCH.DOLLY_ROTATE }; // ONE: null == no one-finger gesture
+    renderer.domElement.style.touchAction = "pan-y"; // OrbitControls sets "none"
+    const onWheel = (e: WheelEvent) => { controls.enableZoom = e.ctrlKey || e.metaKey; };
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === "touch") controls.enableZoom = true; // two-finger pinch dolly
+      setHint(false);
+    };
+    el.addEventListener("wheel", onWheel, { capture: true, passive: true });
+    el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
 
     const resize = () => {
       const w = el.clientWidth || 1;
@@ -579,6 +645,7 @@ export default function ShedScene(p: ShedSceneProps) {
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      frameTo(core, 0); // keep the building framed when the container reflows
     };
     resize();
     const ro = new ResizeObserver(resize);
@@ -604,7 +671,13 @@ export default function ShedScene(p: ShedSceneProps) {
     return () => {
       cancelAnimationFrame(core.raf);
       ro.disconnect();
+      el.removeEventListener("wheel", onWheel, { capture: true });
+      el.removeEventListener("pointerdown", onPointerDown, { capture: true });
       controls.dispose();
+      if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; }
+      sun.dispose();
+      ambient.dispose();
+      hemi.dispose();
       if (core.group) { scene.remove(core.group); disposeGroup(core.group); core.group = null; }
       scene.remove(ground);
       groundGeo.dispose();
@@ -620,19 +693,26 @@ export default function ShedScene(p: ShedSceneProps) {
   React.useEffect(() => {
     const core = coreRef.current;
     if (!core) return;
+    const first = !core.group;
     if (core.group) { core.scene.remove(core.group); disposeGroup(core.group); }
     const group = buildWorld(p);
     core.scene.add(group);
     core.group = group;
 
-    const peak = wallHFt + (widthFt / 2) * (pitch / 12);
-    core.controls.target.set(0, FLOOR_TOP + peak * 0.45, 0);
+    // the persistent sun follows the footprint; its one shadow map re-covers it
+    const rise = (widthFt / 2) * (pitch / 12);
+    core.sun.position.set(lengthFt * 0.5 + 14, 26 + rise * 2, 20);
+    const s = Math.max(lengthFt, widthFt) + 12;
+    const sc = core.sun.shadow.camera;
+    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
+    sc.updateProjectionMatrix();
+
     core.controls.maxDistance = Math.max(70, lengthFt * 4);
-    if (!core.fitted) {
-      const d = Math.max(18, lengthFt * 1.15 + widthFt * 0.6);
-      core.camera.position.set(d * 0.85, peak * 0.9 + 6, d);
-      core.fitted = true;
-    }
+    // re-fit on every rebuild: snap on first build, glide after option clicks
+    const sphere = focusBox(group).getBoundingSphere(new THREE.Sphere());
+    core.fitR = sphere.radius;
+    core.fitC.copy(sphere.center);
+    frameTo(core, first ? 0 : 550);
     core.controls.update();
   }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, sidingColor, roofColor]);
 
@@ -662,7 +742,7 @@ export default function ShedScene(p: ShedSceneProps) {
     <div className="relative h-full w-full">
       <div
         ref={mountRef}
-        className="h-full w-full touch-none"
+        className="h-full w-full"
         role="img"
         aria-label={`3D preview — ${widthFt}×${lengthFt} shed, ${wallHFt} ft walls, ${pitch}:12 gable, ${doors} door(s), ${windows} window(s), ${siding === "vinyl" ? "vinyl siding" : "housewrap only"}${ramp ? ", ramp" : ""}${cupola ? ", cupola" : ""}`}
       />
@@ -670,6 +750,12 @@ export default function ShedScene(p: ShedSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("birdseye")}>Birds-eye</button>
+      </div>
+      <div
+        aria-hidden
+        className={"pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[hsl(var(--marine))]/70 px-3 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm transition-opacity duration-700 " + (hint ? "opacity-100" : "opacity-0")}
+      >
+        Drag to spin · two fingers to zoom
       </div>
     </div>
   );

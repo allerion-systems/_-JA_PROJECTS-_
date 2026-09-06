@@ -13,9 +13,8 @@ export default function Ops() {
   return (
     <div>
       <Head
-        eyebrow="Back office"
         title="Operations"
-        sub="The shape of the ERP, with real screens against real data. This is a prototype, not a system of record — §Odoo below maps every screen to the module that should actually run it."
+        sub="Prototype, not a system of record — §Odoo below maps every screen to the module that should run it."
       />
 
       {/* KPI strip */}
@@ -83,8 +82,8 @@ export default function Ops() {
             />
           </Panel>
           <p className="mt-3 max-w-[60ch] text-[13px] leading-[1.55] text-[hsl(var(--ink-2))]">
-            <strong>The cut-off time is the promise date.</strong> An order taken at 3:05 PM ET
-            against a 3:00 PM cut-off ships tomorrow, not today. Encode it, do not remember it.
+            <strong>The cut-off time is the promise date:</strong> an order taken at 3:05 PM ET
+            against a 3:00 PM cut-off ships tomorrow — encode it, do not remember it.
           </p>
         </div>
 
@@ -110,11 +109,9 @@ export default function Ops() {
               </div>
             ))}
             <Rule className="my-4" />
-            <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">The whole point</Lab>
             <p className="text-[13px] leading-[1.55]">
-              Zero stocked lines is not a gap — it is the strategy. Dropship carries no inventory
-              and no working capital, which is the binding constraint on this business. Stock only
-              what you cannot get in two days, and only once the volume proves it.
+              Zero stocked lines is the strategy: dropship carries no inventory and no working
+              capital. Stock only what you cannot get in two days, once the volume proves it.
             </p>
           </Panel>
         </div>
@@ -122,17 +119,13 @@ export default function Ops() {
 
       {/* odoo */}
       <div className="mt-10">
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-3 border-b border-[hsl(var(--ink))] pb-2">
+        <div className="mb-3 border-b border-[hsl(var(--ink))] pb-2">
           <h3 className="disp text-[22px] font-semibold">§ Odoo — what to actually configure</h3>
-          <Tag tone="safety">Not built in a browser tab</Tag>
         </div>
         <p className="mb-4 max-w-[80ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
-          Odoo Community is a Python and PostgreSQL server application under LGPLv3
-          (<span className="">github.com/odoo/odoo</span>). It cannot run inside a single HTML
-          file — it needs a server, a database and real sessions. Everything above is the
-          <strong> specification</strong> for the configuration, not a replacement for it.
-          Almost none of this is custom code; nearly all of it is configuration of modules that
-          already exist.
+          Odoo Community (Python/PostgreSQL, LGPLv3) needs a real server — everything above is
+          the <strong>specification</strong> for configuring modules that already exist, not a
+          replacement for them.
         </p>
         <Panel pad={false}>
           <DataTable

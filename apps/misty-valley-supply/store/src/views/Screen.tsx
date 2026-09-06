@@ -2,6 +2,7 @@ import * as React from "react";
 import { ROOFSCREEN as RS, SCREEN_PARTS } from "@/data";
 import { Btn, DataTable, Field, Head, Lab, Panel, Rule, Tag, cx, inputCls, money } from "@/ui";
 import { useAuth } from "@/auth";
+import { useAnimatedNumber } from "@/useAnimatedNumber";
 
 const ScreenScene = React.lazy(() => import("./ScreenScene"));
 
@@ -33,13 +34,14 @@ const gridLetter = (n: number) => {
    fold. Mirrors the Shed/Deck PriceBar pattern — duplicated locally on
    purpose so this file has no dependency on the other designers. */
 function MobilePriceBar({ label, total }: { label: string; total: number }) {
+  const shown = useAnimatedNumber(total);
   return (
     <div className="sticky top-0 z-20 -mx-1 mb-3 px-1 xl:hidden">
       <div className="flex items-center justify-between gap-3 rounded-[8px] bg-[hsl(var(--marine))] px-4 py-2.5 shadow-[0_4px_14px_-4px_hsl(222_70%_12%/.5)]">
         <span className="min-w-0 truncate text-[13px] font-semibold text-white/85">{label}</span>
         <span className="flex shrink-0 items-baseline gap-2">
           <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
-          <span className="num text-[20px] font-bold text-white">{money(total)}</span>
+          <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
         </span>
       </div>
     </div>
@@ -653,6 +655,7 @@ export default function Screen() {
   };
   const totalCost = Object.values(cost).reduce((a, b) => a + b, 0);
   const sell = Math.round(totalCost * (1 + markup / 100));
+  const sellShown = Math.round(useAnimatedNumber(sell)); // display-only tween of the sell figure
   const gm = sell ? (sell - totalCost) / sell : 0;
 
   const quoteConfig: QuoteConfig = {
@@ -784,7 +787,7 @@ export default function Screen() {
                 <div className="mt-2 flex items-baseline justify-between">
                   <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                   <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                    {money(sell)}
+                    {money(sellShown)}
                   </div>
                 </div>
                 <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
@@ -933,7 +936,7 @@ export default function Screen() {
                   <div className="mt-2 flex items-baseline justify-between">
                     <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                     <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                      {money(sell)}
+                      {money(sellShown)}
                     </div>
                   </div>
                   <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
@@ -1081,7 +1084,7 @@ export default function Screen() {
               <div className="flex items-baseline justify-between">
                 <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                 <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                  {money(sell)}
+                  {money(sellShown)}
                 </div>
               </div>
               <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">

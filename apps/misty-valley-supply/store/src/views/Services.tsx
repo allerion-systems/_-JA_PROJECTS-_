@@ -16,36 +16,32 @@ const SERVICES = [
     id: "design",
     name: "Drafting Services",
     lead: "Shop drawings, submittal packages and material takeoffs from your plans.",
-    body: "Send plans or a napkin sketch; get back dimensioned shop drawings and a "
-      + "labeled bill of material that matches the quote line for line. The roof-screen "
-      + "drawing set runs $850 with sealed calculations included.",
+    body: "Send plans or a napkin sketch; get back dimensioned shop drawings and a bill "
+      + "of material that matches the quote line for line — the roof-screen set runs $850.",
     cta: "Start a drafting intake",
   },
   {
     id: "engineering",
     name: "Sealed Drawings & Calculations",
     lead: "Drafted by us, sealed by licensed partner engineers.",
-    body: "Anchorage, screens, attachments and custom fabrications that need a stamp. "
-      + "Our drafters prepare the package; a Kentucky-licensed professional engineer we "
-      + "contract reviews, calculates and seals it. One submittal, ready for the architect.",
+    body: "Our drafters prepare the package; a Kentucky-licensed professional engineer we "
+      + "contract reviews, calculates and seals it.",
     cta: "Request a sealed set",
   },
   {
     id: "designbuild",
     name: "Design-Build",
     lead: "One contract from drawings to installed, for screens and site structures.",
-    body: "Scope it once. We design it, fabricate it flat in the shop, deliver it labeled "
-      + "and set it — one number, one throat to choke. Built on the same configurator "
-      + "pricing you can check yourself in the Design Center.",
+    body: "We design it, fabricate it flat in the shop, deliver it labeled and set it — "
+      + "one number, priced by the same configurator you can check in the Design Center.",
     cta: "Scope a design-build",
   },
   {
     id: "modular",
     name: "Modular Construction Design",
     lead: "Container offices, guard booths, tiny structures — designed to your use.",
-    body: "From a one-trip conex to a wired, insulated ground-level office or a custom "
-      + "lash-up. Send sizes, photos and what it has to do; we spec it with an upfitter "
-      + "and you get one quoted number, delivered set.",
+    body: "Send sizes, photos and what it has to do; we spec it with an upfitter and "
+      + "you get one quoted number, delivered set.",
     cta: "Start a modular intake",
   },
 ] as const;
@@ -163,7 +159,7 @@ function RoofReportDrawer({ onClose }: { onClose: () => void }) {
           <Btn disabled={!ok} onClick={() => setSent(saveRequest("RR", { service: "roof-report", addr, kind, rush, total, ...c }))}>
             Order the report
           </Btn>
-          <p className="text-[11px] text-[hsl(var(--ink-3))]">Prototype pricing. Fulfilled through an aerial measurement provider; billed on your account at launch.</p>
+          <p className="text-[11px] text-[hsl(var(--ink-3))]">Prototype pricing — fulfilled through an aerial measurement provider.</p>
         </div>
       )}
     </Drawer>
@@ -216,7 +212,7 @@ function TakeoffDrawer({ onClose }: { onClose: () => void }) {
             { service: "takeoff", files, pages, trade, total, ...c }))}>
             Send sheets for takeoff
           </Btn>
-          <p className="text-[11px] text-[hsl(var(--ink-3))]">Prototype pricing. Files are noted for the estimator; large plan sets can follow by email reply.</p>
+          <p className="text-[11px] text-[hsl(var(--ink-3))]">Prototype pricing — large plan sets can follow by email reply.</p>
         </div>
       )}
     </Drawer>
@@ -246,8 +242,7 @@ export default function Services() {
       <section className="card-hi mb-8">
         <div className="tape h-1" />
         <div className="p-5">
-          <Lab className="mb-1">Contractor portal</Lab>
-          <h2 className="disp text-[22px] font-bold leading-none">Tools priced by the piece</h2>
+          <h2 className="disp text-[22px] font-bold leading-none">Contractor portal — tools priced by the piece</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="card p-4">
               <div className="disp text-[18px] font-bold">Roof measurement reports</div>
@@ -273,7 +268,6 @@ export default function Services() {
       <div className="grid gap-4 sm:grid-cols-2">
         {SERVICES.map(s => (
           <section key={s.id} className="card-hi flex flex-col">
-            <div className="tape h-1" />
             <div className="flex flex-1 flex-col p-5">
               <h2 className="disp text-[22px] font-bold leading-[1.05]">{s.name}</h2>
               <p className="mt-1.5 text-[13px] font-semibold text-[hsl(var(--marine))]">{s.lead}</p>

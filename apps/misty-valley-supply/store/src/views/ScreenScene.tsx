@@ -24,17 +24,28 @@ const RIB_MODULE = 7.2 / 12; // 7.2-inch panel module, in feet
 const NAVY = 0x142f63;       // --marine  221 74% 24%
 const GOLD = 0xfac400;       // --safety-hi 47 100% 49%
 
+type Fly = {
+  fromPos: THREE.Vector3; toPos: THREE.Vector3;
+  fromTgt: THREE.Vector3; toTgt: THREE.Vector3;
+  start: number; dur: number;
+};
+
 type Core = {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   controls: OrbitControls;
+  sun: THREE.DirectionalLight;
   group: THREE.Group | null;
   bg: THREE.Texture;
   raf: number;
   ro: ResizeObserver;
-  fitted: boolean;
+  fitR: number;            // bounding-sphere radius of the current screen
+  fitC: THREE.Vector3;     // …and its center
+  fly: Fly | null;
 };
+
+const smooth = (x: number) => x * x * (3 - 2 * x);
 
 /** Soft sky gradient used as the scene background. */
 function makeSky(): THREE.Texture {
@@ -54,12 +65,59 @@ function makeSky(): THREE.Texture {
 
 function disposeGroup(group: THREE.Group) {
   group.traverse(o => {
+    // belt-and-braces: lights never live in this group any more, but if one
+    // sneaks back in, free its shadow map instead of orphaning it on the GPU
+    const light = o as THREE.DirectionalLight;
+    if (light.isLight) {
+      if (light.shadow?.map) { light.shadow.map.dispose(); light.shadow.map = null; }
+      light.dispose();
+      return;
+    }
     const mesh = o as THREE.Mesh;
     if (mesh.geometry) mesh.geometry.dispose();
     const mat = (mesh as THREE.Mesh).material;
     if (Array.isArray(mat)) mat.forEach(m => m.dispose());
     else if (mat) (mat as THREE.Material).dispose();
   });
+}
+
+/** Bounds of the screen + RTUs — meshes flagged noFit (rooftop backdrop) are skipped. */
+function focusBox(group: THREE.Group): THREE.Box3 {
+  group.updateMatrixWorld(true);
+  const box = new THREE.Box3();
+  group.traverse(o => {
+    if (o.userData.noFit) return;
+    if ((o as THREE.Mesh).isMesh) box.expandByObject(o);
+  });
+  return box;
+}
+
+/**
+ * Re-fit the camera to the current bounding sphere: distance derived from
+ * fov/aspect, orbit azimuth + elevation preserved. dur 0 snaps, else tweens.
+ */
+function frameTo(core: Core, dur: number) {
+  if (!(core.fitR > 0)) return;
+  const cam = core.camera, ctl = core.controls;
+  const vFov = THREE.MathUtils.degToRad(cam.fov);
+  const hFov = 2 * Math.atan(Math.tan(vFov / 2) * Math.max(cam.aspect, 0.3));
+  let dist = (core.fitR * 1.12) / Math.sin(Math.min(vFov, hFov) / 2);
+  dist = Math.min(Math.max(dist, ctl.minDistance), ctl.maxDistance);
+  const dir = cam.position.clone().sub(ctl.target);
+  if (dir.lengthSq() < 1e-4) dir.set(0.8, 0.45, 1);
+  dir.normalize();
+  const pos = core.fitC.clone().addScaledVector(dir, dist);
+  if (dur <= 0) {
+    cam.position.copy(pos);
+    ctl.target.copy(core.fitC);
+    ctl.update();
+  } else {
+    core.fly = {
+      fromPos: cam.position.clone(), toPos: pos,
+      fromTgt: ctl.target.clone(), toTgt: core.fitC.clone(),
+      start: performance.now(), dur,
+    };
+  }
 }
 
 /** Build every parametric part of the scene into one disposable group. */
@@ -92,12 +150,14 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
   const deck = new THREE.Mesh(new THREE.BoxGeometry(deckW, 1, deckD), deckMat);
   deck.position.set(0, -0.5, -14); // top of deck at y = 0
   deck.receiveShadow = true;
+  deck.userData.noFit = true; // rooftop backdrop — excluded from camera fit
   group.add(deck);
 
   // the building the roof sits on, so the deck never reads as a floating slab
   const bldgMat = new THREE.MeshStandardMaterial({ color: 0xa8a5a0, roughness: 0.9 });
   const bldg = new THREE.Mesh(new THREE.BoxGeometry(deckW - 1.5, 30, deckD - 1.5), bldgMat);
   bldg.position.set(0, -16, -14);
+  bldg.userData.noFit = true;
   group.add(bldg);
 
   // subtle parapet curb along the screen line (front edge of the deck field)
@@ -105,6 +165,7 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
   parapet.position.set(0, 0.7, 3.2);
   parapet.castShadow = true;
   parapet.receiveShadow = true;
+  parapet.userData.noFit = true;
   group.add(parapet);
 
   // ---- RTU boxes behind the screen ------------------------------------
@@ -193,28 +254,15 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
     group.add(ribs);
   }
 
-  // ---- sun, sized to the configuration so the shadow fits -------------
-  const sun = new THREE.DirectionalLight(0xfff4e0, 2.4);
-  sun.position.set(L * 0.35 + 20, Math.max(40, h * 4 + 30), 34);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
-  const s = half + 26;
-  sun.shadow.camera.left = -s;
-  sun.shadow.camera.right = s;
-  sun.shadow.camera.top = s;
-  sun.shadow.camera.bottom = -s;
-  sun.shadow.camera.near = 1;
-  sun.shadow.camera.far = 400;
-  sun.shadow.bias = -0.0004;
-  group.add(sun);
-  group.add(sun.target); // target defaults to origin
-
+  // NOTE: the sun lives in the one-time scene setup, not this disposable
+  // group — rebuilding here must never orphan a 2048px shadow map.
   return group;
 }
 
 export default function ScreenScene(props: ScreenSceneProps) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
+  const [hint, setHint] = React.useState(true); // fades after first interaction
 
   // ---- one-time renderer / camera / controls setup ---------------------
   React.useEffect(() => {
@@ -243,9 +291,20 @@ export default function ScreenScene(props: ScreenSceneProps) {
     ground.position.y = -31;
     scene.add(ground);
 
-    scene.add(new THREE.AmbientLight(0xe8eef8, 0.85));
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.85);
     const fill = new THREE.HemisphereLight(0xcfdcee, 0x8e8b84, 0.55);
-    scene.add(fill);
+    scene.add(ambient, fill);
+
+    // sun + its one shadow map are created once; the rebuild effect only
+    // repositions it and resizes the shadow camera to the new footprint
+    const sun = new THREE.DirectionalLight(0xfff4e0, 2.4);
+    sun.position.set(30, 50, 34);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 400;
+    sun.shadow.bias = -0.0004;
+    scene.add(sun, sun.target); // target defaults to origin
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 4000);
     camera.position.set(30, 14, 46);
@@ -257,7 +316,20 @@ export default function ScreenScene(props: ScreenSceneProps) {
     controls.minDistance = 10;
     controls.maxDistance = 320;
 
-    const core: Core = { renderer, scene, camera, controls, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitted: false };
+    // Never trap the page: wheel zoom only while Ctrl/Cmd is held, one
+    // finger scrolls past the canvas, two fingers orbit + pinch-zoom.
+    controls.enableZoom = false;
+    controls.touches = { ONE: null, TWO: THREE.TOUCH.DOLLY_ROTATE }; // ONE: null == no one-finger gesture
+    renderer.domElement.style.touchAction = "pan-y"; // OrbitControls sets "none"
+    const onWheel = (e: WheelEvent) => { controls.enableZoom = e.ctrlKey || e.metaKey; };
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === "touch") controls.enableZoom = true; // two-finger pinch dolly
+      setHint(false);
+    };
+    el.addEventListener("wheel", onWheel, { capture: true, passive: true });
+    el.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
+
+    const core: Core = { renderer, scene, camera, controls, sun, group: null, bg, raf: 0, ro: null as unknown as ResizeObserver, fitR: 0, fitC: new THREE.Vector3(), fly: null };
 
     const resize = () => {
       const w = el.clientWidth || 1;
@@ -265,6 +337,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
       renderer.setSize(w, hh, false);
       camera.aspect = w / hh;
       camera.updateProjectionMatrix();
+      frameTo(core, 0); // keep the screen framed when the container reflows
     };
     resize();
     const ro = new ResizeObserver(resize);
@@ -273,6 +346,14 @@ export default function ScreenScene(props: ScreenSceneProps) {
 
     const loop = () => {
       core.raf = requestAnimationFrame(loop);
+      if (core.fly) {
+        const f = core.fly;
+        const t = Math.min(1, (performance.now() - f.start) / f.dur);
+        const e = smooth(t);
+        camera.position.lerpVectors(f.fromPos, f.toPos, e);
+        controls.target.lerpVectors(f.fromTgt, f.toTgt, e);
+        if (t >= 1) core.fly = null;
+      }
       controls.update();
       renderer.render(scene, camera);
     };
@@ -283,7 +364,13 @@ export default function ScreenScene(props: ScreenSceneProps) {
     return () => {
       cancelAnimationFrame(core.raf);
       ro.disconnect();
+      el.removeEventListener("wheel", onWheel, { capture: true });
+      el.removeEventListener("pointerdown", onPointerDown, { capture: true });
       controls.dispose();
+      if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; }
+      sun.dispose();
+      ambient.dispose();
+      fill.dispose();
       if (core.group) {
         scene.remove(core.group);
         disposeGroup(core.group);
@@ -305,6 +392,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
     const core = coreRef.current;
     if (!core) return;
 
+    const first = !core.group;
     if (core.group) {
       core.scene.remove(core.group);
       disposeGroup(core.group);
@@ -315,26 +403,38 @@ export default function ScreenScene(props: ScreenSceneProps) {
 
     const L = Math.max(lf, 4);
     const h = Math.max(heightFt, 2);
-    core.controls.target.set(0, h * 0.55, 0);
+    // the persistent sun follows the configuration; its one shadow map re-covers it
+    core.sun.position.set(L * 0.35 + 20, Math.max(40, h * 4 + 30), 34);
+    const s = L / 2 + 26;
+    const sc = core.sun.shadow.camera;
+    sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;
+    sc.updateProjectionMatrix();
+
     core.controls.minDistance = Math.max(8, h * 1.5);
     core.controls.maxDistance = Math.max(90, L * 1.7);
 
-    if (!core.fitted) {
-      // first build: a close three-quarter view where posts and ribs read —
-      // a long screen runs past the frame instead of shrinking to a sliver
-      const d = Math.min(64, Math.max(24, L * 0.18 + h * 3));
-      core.camera.position.set(Math.min(L * 0.28, 30), h * 2 + d * 0.18 + 3, d);
-      core.fitted = true;
-    }
+    // re-fit on every rebuild: snap on first build, glide after option clicks
+    const sphere = focusBox(group).getBoundingSphere(new THREE.Sphere());
+    core.fitR = sphere.radius;
+    core.fitC.copy(sphere.center);
+    frameTo(core, first ? 0 : 550);
     core.controls.update();
   }, [lf, heightFt, bayFt, frameOnly, gauge]);
 
   return (
-    <div
-      ref={mountRef}
-      className="h-full w-full touch-none"
-      role="img"
-      aria-label={`3D preview — ${lf} LF roof screen, ${heightFt} ft high, posts every ${bayFt} ft, ${frameOnly ? "frame only" : `${gauge} gauge panel`}`}
-    />
+    <div className="relative h-full w-full">
+      <div
+        ref={mountRef}
+        className="h-full w-full"
+        role="img"
+        aria-label={`3D preview — ${lf} LF roof screen, ${heightFt} ft high, posts every ${bayFt} ft, ${frameOnly ? "frame only" : `${gauge} gauge panel`}`}
+      />
+      <div
+        aria-hidden
+        className={"pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[hsl(var(--marine))]/70 px-3 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm transition-opacity duration-700 " + (hint ? "opacity-100" : "opacity-0")}
+      >
+        Drag to spin · two fingers to zoom
+      </div>
+    </div>
   );
 }

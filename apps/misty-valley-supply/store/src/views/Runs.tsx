@@ -51,14 +51,13 @@ export default function Runs({ onSignIn }: { onSignIn: () => void }) {
       <Head
         eyebrow="Material Runs"
         title="Any counter in town, on your jobsite today"
-        sub="Send the list. A runner claims it, verifies the shelf price before buying, and runs it to the jobsite. We buy it, we resell it to you on your account — one invoice, your terms."
+        sub="Send the list. A runner claims it, verifies the shelf price before buying, and runs it to the jobsite."
       />
 
       <div className="lg:grid lg:grid-cols-[1fr_320px] lg:gap-7">
         <div className="min-w-0">
           {placed ? (
             <Panel pad={false} className="card-hi">
-              <div className="tape h-1.5" />
               <div className="p-5">
                 <Lab kicker className="mb-2">Run {placed}</Lab>
                 <div className="mb-4 grid gap-0">
@@ -180,9 +179,7 @@ export default function Runs({ onSignIn }: { onSignIn: () => void }) {
               </table>
             </div>
             <p className="border-t border-[hsl(var(--rule))] p-3 text-[12px] leading-[1.5] text-[hsl(var(--ink-2))]">
-              Every price carries when a runner last stood in front of the tag. Demo data —
-              in production, runners photograph the shelf tag on every claim, so the board
-              stays honest without scraping anybody.
+              Demo data — in production, runners photograph the shelf tag on every claim.
             </p>
           </Panel>
         </div>
@@ -204,9 +201,6 @@ export default function Runs({ onSignIn }: { onSignIn: () => void }) {
                 ))}
               </div>
               <Btn size="sm" className="mt-4 w-full">Ask to drive</Btn>
-              <p className="mt-2 text-[11px] text-[hsl(var(--ink-3))]">
-                Drivers get the driver dashboard — routes, PODs, weekly pay, all in this app.
-              </p>
             </div>
           </Panel>
           <Panel>

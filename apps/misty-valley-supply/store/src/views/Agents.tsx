@@ -65,9 +65,8 @@ export default function Agents() {
   return (
     <div>
       <Head
-        eyebrow="Agent commerce"
         title="Built to Be Bought by Machines"
-        sub="A superintendent's assistant should be able to ask what OSHA requires for a hazard, get the rule and the parts that satisfy it, and put a priced quote in front of a human — without a salesperson in the loop. That is what this interface is."
+        sub="An assistant asks what OSHA requires for a hazard, gets the rule and the parts that satisfy it, and puts a priced quote in front of a human — no salesperson in the loop."
         right={<Tag tone="safety">MCP</Tag>}
       />
 
@@ -88,10 +87,9 @@ export default function Agents() {
 
           <h3 className="disp mb-3 text-[22px] font-semibold">The call that matters</h3>
           <p className="mb-3 max-w-[75ch] text-[13px] leading-[1.6] text-[hsl(var(--ink-2))]">
-            Anyone can expose a product search. <strong>check_compliance</strong> is the one
-            nobody else has, because it requires the catalog to carry the standard and the rule
-            as structured data rather than marketing copy — and it is the only tool here that
-            answers the question a superintendent actually has.
+            <strong>check_compliance</strong> is the one nobody else has: it requires the catalog
+            to carry the standard and the rule as structured data, and it answers the question a
+            superintendent actually has.
           </p>
           <pre className="max-w-full overflow-x-auto border border-[hsl(var(--rule))] bg-[hsl(var(--ink))] p-3 text-[11px] leading-[1.6] text-[#dfe3e6] sm:p-4 sm:text-[13px]">
 {EXAMPLE}
@@ -112,11 +110,9 @@ export default function Agents() {
 {JSON.stringify(manifest, null, 2)}
               </pre>
               <Rule className="my-4" />
-              <Lab kicker className="mb-2 !text-[hsl(var(--safety-2))]">The rule we do not break</Lab>
               <p className="text-[13px] leading-[1.55]">
                 <strong>An agent can quote. Only a human can buy.</strong> Every order requires
-                a PO number and an explicit approval. Nothing auto-executes — not for a customer's
-                agent, and not for ours.
+                a PO number and an explicit approval; nothing auto-executes.
               </p>
               <Btn variant="line" className="mt-4 w-full">Read the integration doc</Btn>
             </div>
