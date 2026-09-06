@@ -64,3 +64,18 @@ inline contents) and republish to the artifact URL above.
 - No fabricated GTINs/certs; never "OSHA certified"; image disclosure caption stays.
 - Delivery-location copy says "jobsite", never "deck" (roof-deck spec language is fine).
 - Commits: conventional style; no model IDs in committed content.
+
+## gstack (added 2026-09-06)
+"G stack" = Garry Tan's (YC CEO) open-source Claude Code setup: 23 specialist
+agents + power tools as slash commands (/office-hours, /plan-ceo-review,
+/review, /qa, /design-review, /ship, /investigate, /retro …), MIT license.
+Install on any machine by pasting into Claude Code:
+
+  git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git \
+    ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup
+
+Requires Bun v1.0+. After install: /office-hours to brief it, /plan-ceo-review
+on features, /review on branches, /qa on the staging URL. A read-only clone
+lives at /home/user/garrytan/gstack in cloud sessions for reference; the
+cloud session's permission policy blocks self-installing skills, so the
+install is a local-machine step.
