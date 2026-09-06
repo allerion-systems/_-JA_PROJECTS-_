@@ -191,3 +191,25 @@ Fast-follow (week 2): Tommy Docks dealer application (docks) and Orgill dealer a
 - **MAP pricing respected**, everywhere, always — including marketplaces, cart prices, and quoted bundles. If a program's MAP conflicts with our pricing model, we raise it with the supplier or don't list the line.
 - **No supplier's product images or copy used without the program granting it.** ASD and FrenchCreek grant this on approval; TASCO requires purchases from them to use their imagery; everyone else: assume NO until the agreement says yes.
 - No form has been submitted and no supplier contacted in producing this document. Every application above waits on Ben/Joey.
+
+## Category 7 — Metal carports & garages (manufacturer dealer programs)
+
+The metal-building industry sells almost entirely through dealer networks — the big
+configurator sites are themselves dealers, not manufacturers. That makes this the most
+natural dealer lane MVS has: the manufacturer fabricates AND INSTALLS on the customer's
+pad; the dealer configures, quotes, and collects the deposit.
+
+- **Eagle Carports** (Mount Airy NC, founded 1997, 31 states, 6 plants): published
+  dealer program — application asks for legal US business entity, business type, and
+  prior manufacturer/dealer history; 20-year paint guarantee. Verified:
+  eaglecarports.com/blog/how-to-become-a-carport-dealer. KY is in its service area —
+  confirm territory on application.
+- **Carolina Carports / American Steel Carports**: dealer programs exist by industry
+  structure; application details not published openly — phone/application-gated. Mark:
+  verify before listing.
+- Fit with the new Garages & Carports designer: our configurator produces the exact
+  option sheet these manufacturers' order forms use (roof style, gauge, leg height,
+  enclosure, doors, certification) — the designer output IS the dealer order.
+- Deposit-model caution: carport dealers typically collect 10-17% deposits with balance
+  due at install — matches our authorize-then-capture rule; never take full payment up
+  front for a manufacturer-installed unit.
