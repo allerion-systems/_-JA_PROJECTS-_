@@ -27,8 +27,10 @@ const Deck = React.lazy(() => import("@/views/Deck"));
 const Container = React.lazy(() => import("@/views/Container"));
 const Dock = React.lazy(() => import("@/views/Dock"));
 const Barndo = React.lazy(() => import("@/views/Barndo"));
+const Warehouse = React.lazy(() => import("@/views/Warehouse"));
+const Program = React.lazy(() => import("@/views/Program"));
 
-type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "container" | "dock" | "barndo" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
+type View = "home" | "dash" | "shop" | "product" | "design" | "screen" | "shed" | "deck" | "container" | "dock" | "barndo" | "warehouse" | "program" | "rent" | "runs" | "yard" | "account" | "users" | "ops" | "agents" | "services";
 type CartLine = { sku: string; qty: number };
 
 const NAV: { id: View; label: string; short: string; sub: string; icon: React.ReactNode;
@@ -111,6 +113,8 @@ const DESIGN_TOOLS: { view: View; label: string; chip: string; sub: string; sku:
   { view: "container", label: "Containers", chip: "Containers", sub: "Offices, storage, interior layouts", sku: "MVS-CX-20OT" },
   { view: "dock", label: "Lake Docks", chip: "Docks", sub: "Floating docks — Nolin, Rough, Barren", sku: "MVS-DK-SEC410" },
   { view: "barndo", label: "Barndominiums", chip: "Barndos", sub: "Shop + living quarters, one shell", sku: "MVS-PB-4060" },
+  { view: "warehouse", label: "Warehouses", chip: "Warehouse", sub: "Clear-span distribution shells", sku: "MVS-PB-50100" },
+  { view: "program", label: "Modular Projects", chip: "Modular", sub: "Hotels, schools, offices, apartments", sku: "MVS-ST-GLO20" },
 ];
 
 const Icon = ({ children }: { children: React.ReactNode }) => (
@@ -174,7 +178,7 @@ function Inner() {
 
   /* The Design Center is an app, not a page — when a design tool is open the
      header sheds the utility strip and search so the model owns the screen. */
-  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo";
+  const inDesign = view === "design" || view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program";
 
   return (
     <div className="min-h-full pb-[calc(60px+env(safe-area-inset-bottom))] lg:pb-0">
@@ -407,7 +411,7 @@ function Inner() {
               </p>
             </div>
           )}
-          {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo") && (
+          {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program") && (
             <>
               {/* in a tool: a quiet way back + sibling tools */}
               <div className="mb-4 flex flex-wrap items-center gap-1.5">
@@ -437,6 +441,8 @@ function Inner() {
                 {view === "container" && <Container />}
                 {view === "dock" && <Dock />}
                 {view === "barndo" && <Barndo />}
+                {view === "warehouse" && <Warehouse />}
+                {view === "program" && <Program />}
               </React.Suspense>
             </>
           )}

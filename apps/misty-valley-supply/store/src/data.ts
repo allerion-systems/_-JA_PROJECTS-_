@@ -413,6 +413,28 @@ export const PRODUCTS: Product[] = [
     note: "Decouples the board from the framing — the cheap way to buy STC points.",
     why: "Sound moves through screws — RC-1's single flexible leg breaks that path. Screw the board to the channel only; hit the stud through it and the rating is gone." },
 
+  // ---- warehouse shell + door packages (Warehouse Designer) --------------
+  { sku: "MVS-PB-50100", name: "PEB Warehouse Shell — 50 ft × 100 ft × 16 ft Eave", cat: "structures",
+    price: 84500, uom: "EA", std: "Engineered per order to IBC loads", osha: "KBC plan review", fulfil: "fabricate",
+    supplier: "Steel building fabricator — KY", lead: "10-14 weeks", hot: true,
+    note: "Clear-span distribution shell. Stamped drawings and anchor-bolt plan included.",
+    why: "A commercial shell goes through Kentucky Building Code plan review, not just a county permit — the per-order engineering in the kit is the package the state reviewer reads." },
+  { sku: "MVS-PB-DOCK", name: "Dock Door Package — 9×10 Sectional + Leveler + Seal", cat: "structures",
+    price: 4850, uom: "EA", std: "Edge-of-dock leveler, bumpers, seal", osha: "1910.26 dock boards", fulfil: "fabricate",
+    supplier: "Door & dock distributor — KY", lead: "with shell",
+    note: "One complete truck position: door, leveler, bumpers, seal.",
+    why: "The leveler and bumpers are where dock safety lives — OSHA's walking-working-surface rules treat the dock edge as a fall exposure, and a rated leveler is the fix that also loads trucks faster." },
+  { sku: "MVS-PB-RUD1214", name: "Drive-In Roll-Up Door — 12 ft × 14 ft", cat: "structures",
+    price: 2950, uom: "EA", std: "Wind-rated with shell engineering", osha: "Included in shell permit", fulfil: "fabricate",
+    supplier: "Door & dock distributor — KY", lead: "with shell",
+    note: "Equipment access — a skid steer, a box truck, a combine.",
+    why: "Door openings are engineered into the shell's frame lines, so drive-in doors are ordered with the building — cut in later, they need a new framed-opening design." },
+  { sku: "MVS-PB-INSWH", name: "Metal Building Insulation — per 1,000 sq ft", cat: "structures",
+    price: 780, uom: "EA", std: "Faced blanket, R-13 walls / R-19 roof class", osha: "—", fulfil: "dropship",
+    supplier: "Insulation distributor — KY", lead: "2-3 weeks",
+    note: "Roof and wall blanket installed with the sheeting. Ordered by the thousand square feet.",
+    why: "Blanket insulation goes on as the sheeting goes on — it is nearly free labor during erection and a scaffold job forever after." },
+
   // ---- barndominium shell + interior (Barndo Builder) --------------------
   { sku: "MVS-PB-4060", name: "Barndominium Shell — 40 ft × 60 ft × 14 ft, Bolt-Up Kit", cat: "structures",
     price: 38500, uom: "EA", std: "Engineered per order to IBC loads", osha: "KRS 198B permit", fulfil: "fabricate",
