@@ -131,6 +131,7 @@ function Inner() {
   const [preCat, setPreCat] = React.useState<string | undefined>();
   const [modal, setModal] = React.useState<Modal>(null);
   const [productSku, setProductSku] = React.useState<string | null>(null);
+  const [kitNote, setKitNote] = React.useState<string | null>(null);
 
   const lines = cart.map(c => ({ ...c, p: PRODUCTS.find(p => p.sku === c.sku)! })).filter(l => l.p);
   const listTotal = lines.reduce((s, l) => s + l.p.price * l.qty, 0);
@@ -152,9 +153,36 @@ function Inner() {
   React.useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenCart(false); };
     const s = () => setModal("signin"); // design tools request the estimate gate
+    /* The Design Center sells: a kit tool dispatches its BoM ("mvs-add-kit",
+       detail {lines:[{sku,qty}]}) and the cart merges every line whose SKU is
+       a real catalog product. Fabricated part codes are skipped and noted. */
+    const kit = (e: Event) => {
+      const sent = ((e as CustomEvent<{ lines?: CartLine[] }>).detail?.lines ?? [])
+        .filter(l => l && typeof l.qty === "number" && l.qty > 0);
+      const real = sent.filter(l => PRODUCTS.some(p => p.sku === l.sku));
+      if (!real.length) return;
+      setCart(prev => {
+        const next = [...prev];
+        for (const l of real) {
+          const at = next.findIndex(c => c.sku === l.sku);
+          if (at >= 0) next[at] = { ...next[at], qty: next[at].qty + l.qty };
+          else next.push({ sku: l.sku, qty: l.qty });
+        }
+        return next;
+      });
+      setKitNote(real.length < sent.length
+        ? `${real.length} of ${sent.length} lines added — fabricated items are quoted separately.`
+        : `Kit added — ${real.length} ${real.length === 1 ? "line" : "lines"} from the Design Center.`);
+      setOpenCart(true);
+    };
     window.addEventListener("mvs-signin", s);
+    window.addEventListener("mvs-add-kit", kit as EventListener);
     window.addEventListener("keydown", k);
-    return () => { window.removeEventListener("keydown", k); window.removeEventListener("mvs-signin", s); };
+    return () => {
+      window.removeEventListener("keydown", k);
+      window.removeEventListener("mvs-signin", s);
+      window.removeEventListener("mvs-add-kit", kit as EventListener);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -490,8 +518,8 @@ function Inner() {
       {openCart && (
         <CartDrawer
           lines={lines} cart={cart} setCart={setCart}
-          listTotal={listTotal} netTotal={netTotal}
-          onClose={() => setOpenCart(false)}
+          listTotal={listTotal} netTotal={netTotal} kitNote={kitNote}
+          onClose={() => { setOpenCart(false); setKitNote(null); }}
           onSignIn={() => { setOpenCart(false); setModal("signin"); }}
         />
       )}
@@ -526,6 +554,23 @@ function nextBusinessDays(n: number) {
 /** "4471" reads as "PO 4471"; "PO-4471" stays as typed. */
 const poLabel = (po: string) => (/^po\b|^po-/i.test(po.trim()) ? po.trim() : `PO ${po.trim()}`);
 
+const emailOk = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+const phoneOk = (s: string) => {
+  const d = s.replace(/\D/g, "");
+  return d.length === 10 || (d.length === 11 && d.startsWith("1"));
+};
+
+/** Append a placed order to the shared local order store. Failure is non-fatal. */
+function saveOrder(rec: Record<string, unknown>) {
+  try {
+    const key = "mvs-orders";
+    const prev = JSON.parse(localStorage.getItem(key) ?? "[]");
+    localStorage.setItem(key, JSON.stringify([...(Array.isArray(prev) ? prev : []), rec]));
+  } catch {
+    /* storage unavailable — the confirmation still shows; nothing is claimed sent */
+  }
+}
+
 type DrawerLine = CartLine & { p: Product };
 type ShipTo = { id: string; label: string; addr: string };
 
@@ -538,10 +583,10 @@ const optCls = (on: boolean) =>
        : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink)/0.3)]");
 
 function CartDrawer({
-  lines, cart, setCart, listTotal, netTotal, onClose, onSignIn,
+  lines, cart, setCart, listTotal, netTotal, kitNote, onClose, onSignIn,
 }: {
   lines: DrawerLine[]; cart: CartLine[]; setCart: (c: CartLine[]) => void;
-  listTotal: number; netTotal: number;
+  listTotal: number; netTotal: number; kitNote?: string | null;
   onClose: () => void; onSignIn: () => void;
 }) {
   const { user, branch } = useAuth();
@@ -560,8 +605,17 @@ function CartDrawer({
   const [win, setWin] = React.useState<"AM" | "PM">("AM");
   const [placed, setPlaced] = React.useState<null | {
     so: string; total: number; saved: number; lineCount: number;
-    shipTo: string; when: string; termsLabel: string;
+    shipTo: string; when: string; termsLabel: string; guest?: boolean;
   }>(null);
+
+  // Guest card checkout lane — contact + jobsite, then review. Net-30 and
+  // contract pricing stay behind sign-in; a guest pays list, by card.
+  const [gName, setGName] = React.useState("");
+  const [gEmail, setGEmail] = React.useState("");
+  const [gPhone, setGPhone] = React.useState("");
+  const [gAddr, setGAddr] = React.useState("");
+  const [gTried, setGTried] = React.useState(false);
+  const guestValid = !!gName.trim() && emailOk(gEmail) && phoneOk(gPhone) && !!gAddr.trim();
 
   const allSites = [...(user?.shipTos ?? []), ...extraSites];
   const shipTo = allSites.find(x => x.id === shipToId);
@@ -577,8 +631,16 @@ function CartDrawer({
 
   const placeOrder = () => {
     if (!shipTo) return;
+    const so = `SO-${NEXT_SO++}`;
+    saveOrder({
+      ts: new Date().toISOString(), so, guest: false,
+      lines: cart, total: netTotal,
+      shipTo: `${shipTo.label} — ${shipTo.addr}`,
+      window: `${days[dayIx].full}, ${winLabel(win)}`,
+      terms: terms === "net30" ? `Net 30 on account · ${poLabel(po)}` : "Card · Stripe",
+    });
     setPlaced({
-      so: `SO-${NEXT_SO++}`,
+      so,
       total: netTotal,
       saved: Math.round((listTotal - netTotal) * 100) / 100,
       lineCount: lines.length,
@@ -589,12 +651,37 @@ function CartDrawer({
     setCart([]);
   };
 
+  const placeGuestOrder = () => {
+    if (!guestValid) return;
+    const so = `SO-${NEXT_SO++}`;
+    saveOrder({
+      ts: new Date().toISOString(), so, guest: true,
+      contact: { name: gName.trim(), email: gEmail.trim(), phone: gPhone.trim() },
+      lines: cart, total: listTotal,
+      shipTo: gAddr.trim(),
+      terms: "Card — authorized at order, captured when the order is confirmed",
+    });
+    setPlaced({
+      so,
+      total: listTotal,
+      saved: 0,
+      lineCount: lines.length,
+      shipTo: gAddr.trim(),
+      when: `The ${branch.name} branch calls ${gPhone.trim()} to set the delivery window`,
+      termsLabel: "Card — authorized at order, captured when the order is confirmed",
+      guest: true,
+    });
+    setCart([]);
+  };
+
+  // Signed-in checkout is 3 steps; the guest lane is 2 (contact+site, review).
+  const stepMax = user ? 3 : 2;
   const stepTitle =
     placed ? "Order placed"
     : step === 0 ? "Order"
-    : step === 1 ? "Where it's going"
-    : step === 2 ? "Terms and delivery"
-    : "Review and place";
+    : user
+      ? (step === 1 ? "Where it's going" : step === 2 ? "Terms and delivery" : "Review and place")
+      : (step === 1 ? "Who and where" : "Review and place");
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={onClose}>
@@ -612,10 +699,10 @@ function CartDrawer({
           {!placed && step > 0 && (
             <div className="mt-2.5">
               <div className="mb-1.5 text-[11px] font-medium text-[hsl(var(--ink-3))]">
-                Checkout · step {step} of 3
+                {user ? "Checkout" : "Guest checkout"} · step {step} of {stepMax}
               </div>
               <div className="flex gap-1">
-                {[1, 2, 3].map(i => (
+                {Array.from({ length: stepMax }, (_, ix) => ix + 1).map(i => (
                   <div key={i} className={cx("h-1.5 flex-1 rounded-[4px]",
                     i <= step ? "bg-[hsl(var(--safety))]" : "bg-[hsl(var(--panel-2))]")} />
                 ))}
@@ -651,12 +738,23 @@ function CartDrawer({
                 delivery window — if a line can't make the truck, you'll hear from a person,
                 not a status page.
               </p>
+              {placed.guest && (
+                <p className="mt-3 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                  Prototype — live card processing connects when Stripe goes live; your order
+                  is saved for the branch. Nothing has been charged.
+                </p>
+              )}
             </div>
           )}
 
           {/* --------------------------------------------------- step 0 */}
           {!placed && step === 0 && (
             <>
+              {kitNote && (
+                <div className="mb-4 rounded-[6px] border border-[hsl(var(--good)/0.25)] bg-[hsl(var(--good-soft))] px-3 py-2.5 text-[13px] font-medium text-[hsl(var(--good))]">
+                  {kitNote}
+                </div>
+              )}
               {lines.length === 0 && <p className="text-[hsl(var(--ink-2))]">Nothing on the order yet.</p>}
               {lines.map(l => (
                 <div key={l.sku} className="mb-4 border-b border-[hsl(var(--rule))] pb-4 last:border-0">
@@ -684,8 +782,86 @@ function CartDrawer({
             </>
           )}
 
+          {/* ------------------------------------------- guest · step 1 */}
+          {!placed && !user && step === 1 && (
+            <div className="grid gap-3">
+              <p className="text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
+                Guest checkout pays by card at list price. Net-30 terms and contract
+                pricing stay on account —{" "}
+                <button onClick={onSignIn} className="font-semibold text-[hsl(var(--safety-2))] underline">
+                  sign in
+                </button>{" "}
+                any time.
+              </p>
+              <label className="grid gap-1.5"><Lab>Name</Lab>
+                <input className={drawerField} value={gName} onChange={e => setGName(e.target.value)}
+                  autoComplete="name" placeholder="First and last name" /></label>
+              <label className="grid gap-1.5"><Lab>Email</Lab>
+                <input className={drawerField} type="email" value={gEmail} onChange={e => setGEmail(e.target.value)}
+                  autoComplete="email" placeholder="you@company.com" /></label>
+              {gTried && !emailOk(gEmail) && <p className="text-[12px] text-[hsl(var(--warn))]">Enter a valid email address.</p>}
+              <label className="grid gap-1.5"><Lab>Phone</Lab>
+                <input className={drawerField} type="tel" value={gPhone} onChange={e => setGPhone(e.target.value)}
+                  autoComplete="tel" placeholder="(502) 555-0134" /></label>
+              {gTried && !phoneOk(gPhone) && <p className="text-[12px] text-[hsl(var(--warn))]">Enter a 10-digit US phone number.</p>}
+              <label className="grid gap-1.5"><Lab>Jobsite / delivery address</Lab>
+                <input className={drawerField} value={gAddr} onChange={e => setGAddr(e.target.value)}
+                  autoComplete="street-address" placeholder="Street, city, state" /></label>
+              {gTried && !gAddr.trim() && <p className="text-[12px] text-[hsl(var(--warn))]">Enter the delivery address.</p>}
+              <p className="text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                Delivery runs out of the {branch.name} branch — a person calls to set your window.
+              </p>
+            </div>
+          )}
+
+          {/* ------------------------------------------- guest · step 2 */}
+          {!placed && !user && step === 2 && (
+            <div>
+              <div className="card overflow-hidden rounded-[6px]">
+                {lines.map(l => (
+                  <div key={l.sku} className="flex items-baseline justify-between gap-3 border-b border-[hsl(var(--rule))] px-3 py-2.5">
+                    <div className="min-w-0">
+                      <div className="truncate text-[13px] font-medium text-[hsl(var(--ink))]">{l.p.name}</div>
+                      <div className="ident mt-0.5 text-[11px] text-[hsl(var(--ink-3))]">{l.sku} · qty {l.qty}</div>
+                    </div>
+                    <div className="num shrink-0 text-[13px] font-medium text-[hsl(var(--ink))]">
+                      {money(l.p.price * l.qty)}
+                    </div>
+                  </div>
+                ))}
+                <div className="flex items-baseline justify-between bg-[hsl(var(--panel-2))] px-3 py-2.5">
+                  <span className="text-[15px] font-semibold text-[hsl(var(--ink))]">Material — list price</span>
+                  <span className="num text-[18px] font-bold text-[hsl(var(--ink))]">{money(listTotal)}</span>
+                </div>
+              </div>
+              <div className="card mt-3 overflow-hidden rounded-[6px]">
+                {[
+                  ["Contact", `${gName.trim()} · ${gEmail.trim()} · ${gPhone.trim()}`],
+                  ["Deliver to", gAddr.trim()],
+                  ["Terms", "Card — authorized at order, captured when the order is confirmed"],
+                ].map(([k, v], i) => (
+                  <div key={k} className={cx("flex items-center justify-between gap-3 px-3 py-2",
+                    i < 2 && "border-b border-[hsl(var(--rule))]")}>
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-medium text-[hsl(var(--ink-3))]">{k}</div>
+                      <div className="mt-0.5 text-[13px] text-[hsl(var(--ink))]">{v}</div>
+                    </div>
+                    <button onClick={() => setStep(1)}
+                      className="flex h-11 shrink-0 items-center px-2 text-[13px] font-medium text-[hsl(var(--marine))] hover:underline">
+                      Edit
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                Your card is authorized now and captured only when the {branch.name} branch
+                confirms your order and promise date. Nothing is charged before that.
+              </p>
+            </div>
+          )}
+
           {/* --------------------------------------------------- step 1 */}
-          {!placed && step === 1 && (
+          {!placed && !!user && step === 1 && (
             <div className="grid gap-2">
               <p className="mb-1 text-[13px] leading-[1.5] text-[hsl(var(--ink-2))]">
                 Pick a jobsite or the shop. Delivery runs out of the {branch.name} branch.
@@ -723,7 +899,7 @@ function CartDrawer({
           )}
 
           {/* --------------------------------------------------- step 2 */}
-          {!placed && step === 2 && (
+          {!placed && !!user && step === 2 && (
             <div>
               <div className="mb-2 text-[13px] font-semibold text-[hsl(var(--ink))]">How you're paying</div>
               <div className="grid gap-2">
@@ -780,7 +956,7 @@ function CartDrawer({
           )}
 
           {/* --------------------------------------------------- step 3 */}
-          {!placed && step === 3 && (
+          {!placed && !!user && step === 3 && (
             <div>
               <div className="card overflow-hidden rounded-[6px]">
                 {lines.map(l => (
@@ -857,15 +1033,14 @@ function CartDrawer({
                   <button onClick={onSignIn} className="font-semibold text-[hsl(var(--safety-2))] underline">
                     Sign in
                   </button>{" "}
-                  to see your contract price.
+                  for contract pricing and Net-30 terms.
                 </p>
               )}
-              <Btn className="w-full" disabled={!lines.length}
-                onClick={() => { if (!user) onSignIn(); else setStep(1); }}>
-                {user ? "Continue to checkout" : "Sign in to check out"}
+              <Btn className="w-full" disabled={!lines.length} onClick={() => setStep(1)}>
+                {user ? "Continue to checkout" : "Check out as guest — card"}
               </Btn>
             </>
-          ) : (
+          ) : user ? (
             <div className="flex gap-2">
               <Btn variant="line" onClick={() => setStep(step - 1)}>Back</Btn>
               {step === 1 && <Btn className="flex-1" disabled={!shipTo} onClick={() => setStep(2)}>Continue to terms</Btn>}
@@ -875,6 +1050,20 @@ function CartDrawer({
                 </Btn>
               )}
               {step === 3 && <Btn className="flex-1" onClick={placeOrder}>Place order</Btn>}
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Btn variant="line" onClick={() => { setGTried(false); setStep(step - 1); }}>Back</Btn>
+              {step === 1 && (
+                <Btn className="flex-1" onClick={() => { setGTried(true); if (guestValid) setStep(2); }}>
+                  Review order
+                </Btn>
+              )}
+              {step === 2 && (
+                <Btn className="flex-1 !h-auto min-h-[44px] whitespace-normal py-2 text-[14px] leading-[1.3]" onClick={placeGuestOrder}>
+                  Place order — card authorized, captured when your order is confirmed
+                </Btn>
+              )}
             </div>
           )}
         </div>

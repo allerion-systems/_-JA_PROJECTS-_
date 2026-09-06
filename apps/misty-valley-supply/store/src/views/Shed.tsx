@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useAuth } from "@/auth";
+import { PRODUCTS } from "@/data";
 import { rollup, shedTakeoff, type Element, type ShedParams } from "@/bim";
 import { Btn, Field, Lab, Panel, Tag, cx, inputCls, money } from "@/ui";
 import { useAnimatedNumber } from "@/useAnimatedNumber";
@@ -97,6 +98,14 @@ export function BomTable({ elements }: { elements: Element[] }) {
   // Customers get the sheet on demand; staff see it open. Keeps the page short.
   const [open, setOpen] = React.useState(priced);
   const { total } = rollup(elements);
+  /* The Design Center sells: every BoM line whose SKU is a real catalog
+     product can go straight into the app cart. Shop-fab part codes (screens)
+     are skipped — those are quoted, not carted. */
+  const kitLines = elements.filter(e => e.qty > 0 && !!e.sku && PRODUCTS.some(p => p.sku === e.sku));
+  const buyKit = () =>
+    window.dispatchEvent(new CustomEvent("mvs-add-kit", {
+      detail: { lines: elements.filter(e => e.qty > 0).map(e => ({ sku: e.sku ?? "", qty: e.qty })) },
+    }));
   return (
     <Panel pad={false}>
       <button onClick={() => setOpen(!open)} aria-expanded={open}
@@ -158,6 +167,18 @@ export function BomTable({ elements }: { elements: Element[] }) {
         <p className="px-4 pb-3 text-[12px] text-[hsl(var(--ink-3))]">
           Every number derives from the model — change a dimension and watch the whole sheet move.
         </p>
+      )}
+      {kitLines.length > 0 && (
+        <div className="border-t border-[hsl(var(--rule))] px-4 py-3">
+          <Btn className="w-full" onClick={buyKit}>
+            Buy this kit — {kitLines.length} {kitLines.length === 1 ? "line" : "lines"} to my order
+          </Btn>
+          {!user && (
+            <p className="mt-1.5 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+              Guests welcome — list prices in the cart; your contract pricing appears when you sign in.
+            </p>
+          )}
+        </div>
       )}
     </Panel>
   );
