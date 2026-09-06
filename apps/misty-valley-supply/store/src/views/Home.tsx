@@ -1,6 +1,5 @@
 import { PRODUCTS, type Product } from "@/data";
 import { Glyph } from "@/glyph";
-import fabPhoto from "@/assets/site/lee-screen-1.jpg";
 import { useAuth } from "@/auth";
 import { Btn, Lab, Rule, money } from "@/ui";
 
@@ -99,29 +98,6 @@ export default function Home({
           </div>
         </section>
       ))}
-
-      {/* --------------------------------------------- fabrication band */}
-      <section className="card-hi mb-10">
-        <div className="grid lg:grid-cols-2">
-          <div className="relative min-h-[240px] bg-[hsl(var(--marine-2))] lg:min-h-0">
-            <img src={fabPhoto} alt="Shop-fabricated roof screen frame standing on the Lee Street roof"
-              className="absolute inset-0 h-full w-full object-cover" />
-            <div className="tape absolute inset-x-0 top-0 h-1.5" />
-          </div>
-          <div className="p-5 sm:p-7">
-            <h2 className="disp text-[28px] font-bold leading-[0.98] sm:text-[40px]">
-              The Design Center
-            </h2>
-            <p className="mt-3 max-w-[52ch] text-[14px] leading-[1.55] text-[hsl(var(--ink-2))]">
-              Design a studio, a deck, or a roof screen in 3D and watch the price follow
-              every choice. The shop drawing comes from the same numbers.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2.5">
-              <Btn onClick={onScreens}>Open the Design Center</Btn>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ----------------------------------------------- marketplace band */}
       <div className="mb-10 grid gap-4 lg:grid-cols-2">
