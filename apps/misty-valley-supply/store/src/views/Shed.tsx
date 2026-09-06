@@ -173,8 +173,18 @@ function saveRequest(req: SavedRequest) {
   }
 }
 
+/* Paid drawing packages — drafted from the same model that priced the job;
+   sealing is licensed-partner-engineer scope (KRS 322). Fee is charged after
+   the order is confirmed, never before. */
+const DRAWING_PACKS = [
+  { id: "none", label: "No drawings", fee: 0 },
+  { id: "permit", label: "Permit package — drafted + IFC · $450", fee: 450 },
+  { id: "seal", label: "Sealed by partner engineers · $1,400", fee: 1400 },
+] as const;
+
 export function QuoteGate({ tool, params, total }: { tool: string; params: Record<string, unknown>; total: number }) {
   const { user } = useAuth();
+  const [pack, setPack] = React.useState<(typeof DRAWING_PACKS)[number]["id"]>("none");
   const [sent, setSent] = React.useState<string | null>(null);
   const [name, setName] = React.useState("");
   const [company, setCompany] = React.useState("");
@@ -183,11 +193,35 @@ export function QuoteGate({ tool, params, total }: { tool: string; params: Recor
   const [consent, setConsent] = React.useState(false);
   const [tried, setTried] = React.useState(false);
 
+  const chosen = DRAWING_PACKS.find(p => p.id === pack)!;
   const submit = (contact: SavedRequest["contact"]) => {
     const id = `D-${1000 + Math.floor(Math.random() * 9000)}`;
-    saveRequest({ ts: new Date().toISOString(), tool, params, bomTotal: total, contact });
+    saveRequest({ ts: new Date().toISOString(), tool,
+      params: { ...params, drawingPackage: pack, drawingSku: pack === "permit" ? "MVS-DP-PERMIT" : pack === "seal" ? "MVS-DP-SEAL" : null, drawingFee: chosen.fee },
+      bomTotal: total, contact });
     setSent(id);
   };
+
+  const packPicker = (
+    <div>
+      <Lab className="mb-1.5">Construction drawings — generated from this model after your order is confirmed</Lab>
+      <div className="flex flex-wrap gap-1.5">
+        {DRAWING_PACKS.map(p => (
+          <button key={p.id} onClick={() => setPack(p.id)}
+            className={cx("min-h-[42px] rounded-[6px] border px-3 text-[13px] font-semibold transition-colors",
+              p.id === pack
+                ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
+                : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <p className="mt-1.5 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+        Plan, elevations and sections drafted from the same model that priced the job, with the IFC (ISO 16739) data file.
+        Sealing is by licensed partner engineers. Billed only after the contract is signed.
+      </p>
+    </div>
+  );
 
   if (sent) {
     return (
@@ -206,11 +240,12 @@ export function QuoteGate({ tool, params, total }: { tool: string; params: Recor
       <div>
         <div className="mb-2 flex items-baseline justify-between gap-3 text-[13px]">
           <span>{user.name} — {user.company}</span>
-          <span className="num font-semibold">{money(total)}</span>
+          {total > 0 && <span className="num font-semibold">{money(total)}</span>}
         </div>
+        <div className="mb-3">{packPicker}</div>
         <Btn className="w-full" onClick={() =>
           submit({ name: user.name, company: user.company, email: "", mobile: "", smsConsent: true })}>
-          Text + email me this design
+          Text + email me this design{chosen.fee > 0 ? ` + drawings (${money(chosen.fee)})` : ""}
         </Btn>
       </div>
     );
@@ -219,6 +254,7 @@ export function QuoteGate({ tool, params, total }: { tool: string; params: Recor
   const valid = name.trim() && emailOk(email) && phoneOk(mobile) && consent;
   return (
     <div className="grid gap-2.5">
+      {packPicker}
       <div className="grid gap-2.5 sm:grid-cols-2">
         <Field label="Name">
           <input value={name} onChange={e => setName(e.target.value)} className={inputCls} autoComplete="name" />

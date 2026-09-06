@@ -413,6 +413,18 @@ export const PRODUCTS: Product[] = [
     note: "Decouples the board from the framing — the cheap way to buy STC points.",
     why: "Sound moves through screws — RC-1's single flexible leg breaks that path. Screw the board to the channel only; hit the stud through it and the rating is gone." },
 
+  // ---- drawing packages (paid add-on on every Design Center quote) -------
+  { sku: "MVS-DP-PERMIT", name: "Permit Drawing Package — Drafted from Your Model", cat: "structures",
+    price: 450, uom: "EA", std: "Plan, elevations, sections + IFC data", osha: "Drafted — not sealed", fulfil: "fabricate",
+    supplier: "MVS drafting", lead: "3-5 days after order confirmation", hot: true,
+    note: "Construction drawings generated from the exact model that priced your job — IFC (ISO 16739) data file included.",
+    why: "The drawings and the price come from one model, so the sheets can never disagree with the quote. Drafted by us; where a county requires an engineer's seal, add the sealed package below." },
+  { sku: "MVS-DP-SEAL", name: "Sealed Drawings & Calculations — Licensed Partner Engineers", cat: "structures",
+    price: 1400, uom: "EA", std: "Sealed to your county's loads", osha: "KRS 322 — sealed by licensed engineers", fulfil: "fabricate",
+    supplier: "Partner engineering firm — KY licensed", lead: "2-3 weeks after order confirmation",
+    note: "Our drafted package, reviewed, calculated and sealed by licensed partner engineers.",
+    why: "Kentucky law reserves engineering to licensed engineers — we draft from the model, our partner engineers run the calculations and apply the seal, and the county gets a package it can approve." },
+
   // ---- warehouse shell + door packages (Warehouse Designer) --------------
   { sku: "MVS-PB-50100", name: "PEB Warehouse Shell — 50 ft × 100 ft × 16 ft Eave", cat: "structures",
     price: 84500, uom: "EA", std: "Engineered per order to IBC loads", osha: "KBC plan review", fulfil: "fabricate",
