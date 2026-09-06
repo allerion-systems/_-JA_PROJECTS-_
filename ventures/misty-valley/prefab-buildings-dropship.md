@@ -162,3 +162,39 @@ Runner-up: Hansen Pole Buildings (dealer discounts + free leads, kits engineered
 - https://exaco.com/partner-portal/
 - https://atlasgreenhouse.com/
 - https://zimmermanshightunnels.com/
+
+---
+
+## The Bonnieville factory (added 2026-09-06)
+
+**Elijah — Ben's brother — already builds tiny homes on his own property in
+Bonnieville**, selling through Facebook Marketplace (no indexed web presence;
+listings live behind Facebook's login wall — get links/screenshots from Joey).
+
+Why this reorders the whole STR shortlist:
+- The STR category's #1 supplier candidate is family, local, and already in
+  production. Zero freight distance, no dealer application, no minimums.
+- The family stack: Ben (operations/yard) + Elijah (tiny home production) +
+  the Hart County Amish shop network (sheds/cabins/loafing sheds) = MVS is
+  the sales, software and distribution layer over an existing production
+  base. That is the model — we don't build factories, we put a storefront,
+  a 3D configurator and a delivery network in front of ones that exist.
+- Hart County already supports a tiny-home/RV park (Southern Comfort, Horse
+  Cave) — local STR demand is proven, not theoretical.
+
+Questions for Elijah before his units go on the site (the answers decide
+which SKUs he backs):
+1. Model list, base prices, options, current lead time, monthly capacity.
+2. **Certification status — the big one.** Habitable tiny homes need a
+   certification path (ANSI A119.5 park model / RV title, or Kentucky's
+   industrialized-building insignia for modulars). Uncertified units can
+   only be sold as SHELLS ("finished on site under local permit") — that is
+   the honest lane the MVS-STR-CAB1236 SKU already occupies.
+3. Delivery: does he haul and set, and how far?
+4. Will he build to MVS spec sheets (the Backyard Studios configurator can
+   emit his cut lists from the same BoM engine that prices them)?
+5. Photos of finished units — real supplier photography replaces the AI
+   renders per the standing image policy.
+
+Customer-facing surfaces keep the generic supplier names; Elijah's name and
+this arrangement stay internal until he agrees on paper.
