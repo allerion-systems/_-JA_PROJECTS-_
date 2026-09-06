@@ -97,6 +97,9 @@ export type ShedParams = {
   ramp: boolean;
   loft: boolean;
   cupola: boolean;
+  /** Premium finish tier — optional so existing callers keep working. */
+  wainscot?: boolean;
+  hvac?: boolean;
 };
 
 export const SHED_DOOR = { w: 3, h: 6.83 };  // 3-0 × 6-10 shed door
@@ -195,6 +198,14 @@ export function shedTakeoff(p: ShedParams): Element[] {
   if (p.ramp) out.push(el("IfcRamp", "Shed ramp — 4 ft, 1,000-lb rated", "MVS-SC-RAMP4", 1));
   if (p.loft) out.push(el("IfcSlab", "Loft kit — gable-end bays", "MVS-SC-LOFT8", Math.max(1, Math.ceil(p.lengthFt / 8) - 1)));
   if (p.cupola) out.push(el("IfcCovering", "Cupola — 24 in vented", "MVS-SC-CUP24", 1));
+  // Premium finish tier: stone wainscot by the 8-ft section around the
+  // perimeter; conditioned option pairs the mini-split with the electrical
+  // package it needs.
+  if (p.wainscot) out.push(el("IfcCovering", "Stone-veneer wainscot — full perimeter", "MVS-SC-WAIN8", Math.ceil(g.perimeter / 8)));
+  if (p.hvac) {
+    out.push(el("IfcDistributionElement", "Mini-split — 12k BTU heat/cool", "MVS-CI-HVAC12", 1));
+    out.push(el("IfcDistributionElement", "Electrical package — panel + circuits", "MVS-CI-ELEC", 1));
+  }
 
   return out;
 }

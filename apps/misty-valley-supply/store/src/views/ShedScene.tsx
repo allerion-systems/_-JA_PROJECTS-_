@@ -572,6 +572,46 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
 
   // NOTE: the sun lives in the one-time scene setup, not this disposable
   // group — rebuilding here must never orphan a 2048px shadow map.
+  // ---- premium finish: stone wainscot band + mini-split ------------------
+  if (p.wainscot) {
+    const stoneC = document.createElement("canvas");
+    stoneC.width = 64; stoneC.height = 32;
+    const sg = stoneC.getContext("2d")!;
+    sg.fillStyle = "#8d8578"; sg.fillRect(0, 0, 64, 32);
+    for (let i = 0; i < 26; i++) {
+      const t = 0.72 + Math.random() * 0.5;
+      sg.fillStyle = shade("#948b7c", t);
+      sg.fillRect(Math.random() * 60, Math.random() * 28, 8 + Math.random() * 10, 4 + Math.random() * 5);
+    }
+    const stoneTex = new THREE.CanvasTexture(stoneC);
+    stoneTex.colorSpace = THREE.SRGBColorSpace;
+    stoneTex.wrapS = THREE.RepeatWrapping;
+    const stoneMat = new THREE.MeshStandardMaterial({ map: stoneTex, roughness: 0.95 });
+    const capMat = new THREE.MeshStandardMaterial({ color: 0xe8e2d4, roughness: 0.6 });
+    const wh = 2.4, t = 0.12; // band height and proudness
+    const bands: [number, number, number, number, number][] = [
+      [0, FLOOR_TOP + wh / 2, halfW + t / 2, L + t * 2, t],        // +Z wall
+      [0, FLOOR_TOP + wh / 2, -(halfW + t / 2), L + t * 2, t],     // -Z wall
+      [halfL + t / 2, FLOOR_TOP + wh / 2, 0, t, W + t * 2],        // +X gable
+      [-(halfL + t / 2), FLOOR_TOP + wh / 2, 0, t, W + t * 2],     // -X gable
+    ];
+    for (const [x, y, z, sx, sz] of bands) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(sx, wh, sz), stoneMat);
+      m.position.set(x, y, z); m.castShadow = true; group.add(m);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(sx + 0.1, 0.12, sz + 0.1), capMat);
+      cap.position.set(x, FLOOR_TOP + wh + 0.06, z); group.add(cap);
+    }
+  }
+  if (p.hvac) {
+    const acMat = new THREE.MeshStandardMaterial({ color: 0xf1f2f0, roughness: 0.4, metalness: 0.2 });
+    const head = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.85, 0.7), acMat);
+    head.position.set(halfL - 2, FLOOR_TOP + H - 1.1, halfW + 0.35);
+    head.castShadow = true; group.add(head);
+    const condenser = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.9, 0.9), acMat);
+    condenser.position.set(halfL + 1.6, 0.95, halfW - 1);
+    condenser.castShadow = true; group.add(condenser);
+  }
+
   return group;
 }
 
@@ -712,7 +752,7 @@ export default function ShedScene(p: ShedSceneProps) {
     };
   }, []);
 
-  const { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, sidingColor, roofColor } = p;
+  const { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac, sidingColor, roofColor } = p;
   React.useEffect(() => {
     const core = coreRef.current;
     if (!core) return;
@@ -737,7 +777,7 @@ export default function ShedScene(p: ShedSceneProps) {
     core.fitC.copy(sphere.center);
     frameTo(core, first ? 0 : 550);
     core.controls.update();
-  }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, sidingColor, roofColor]);
+  }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac, sidingColor, roofColor]);
 
   const flyTo = (preset: "front" | "corner" | "birdseye") => {
     const core = coreRef.current;

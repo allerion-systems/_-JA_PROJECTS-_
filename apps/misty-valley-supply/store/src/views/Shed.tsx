@@ -391,13 +391,15 @@ export default function Shed() {
   const [ramp, setRamp] = React.useState(false);
   const [loft, setLoft] = React.useState(false);
   const [cupola, setCupola] = React.useState(false);
+  const [wainscot, setWainscot] = React.useState(false);
+  const [hvac, setHvac] = React.useState(false);
   // cosmetic only — never enters ShedParams or the takeoff
   const [sidingColor, setSidingColor] = React.useState<string>(SIDING_COLORS[0][1]);
   const [roofColor, setRoofColor] = React.useState<string>(ROOF_COLORS[0][1]);
 
-  const params: ShedParams = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola };
+  const params: ShedParams = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac };
   const elements = React.useMemo(() => shedTakeoff(params),
-    [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola]);
+    [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac]);
   const { total } = rollup(elements);
 
   return (
@@ -454,6 +456,8 @@ export default function Shed() {
                   ["4-ft ramp", ramp, setRamp],
                   ["Storage loft", loft, setLoft],
                   ["Cupola", cupola, setCupola],
+                  ["Stone wainscot", wainscot, setWainscot],
+                  ["Mini-split + power", hvac, setHvac],
                 ] as const).map(([lab, on, set]) => (
                   <button key={lab} onClick={() => set(!on)}
                     className={cx("min-h-[42px] rounded-[6px] border px-3 text-[14px] font-semibold transition-colors",
