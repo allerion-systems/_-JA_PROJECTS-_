@@ -14,7 +14,7 @@ const DEPTS: {
     cats: ["siding", "sheathing", "drywall", "roofing", "site"] },
   { id: "safety", name: "Safety", sub: "PPE, fall protection, edge, jobsite",
     cats: ["fall", "roof", "guard", "head", "eye", "hand", "hivis", "jobsite"] },
-  { id: "structures", name: "Building Structures", sub: "Conex, offices, custom modular",
+  { id: "structures", name: "Building Structures", sub: "Conex, offices, pre-fabbed buildings",
     cats: ["structures"], glyphSku: "MVS-CX-20OT" },
 ];
 
