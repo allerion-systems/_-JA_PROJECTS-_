@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { CONTAINER_DIMS, containerDerived, type ContainerParams } from "@/bimContainer";
+import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
@@ -471,6 +472,15 @@ function buildWorld(p: ContainerSceneProps): THREE.Group {
     group.add(purlin);
   }
 
+  // ---- dimension callouts — length across the front, width up the side --
+  // Part of the disposable group; visibility is re-applied after rebuilds.
+  const dimY = 0.05;
+  const dimF = halfW + (p.leanTo ? 10.6 : 2.4); // clear of the 8-ft lean-to
+  group.add(makeDimensions([
+    { from: [-halfL, dimY, dimF], to: [halfL, dimY, dimF], label: formatFeet(L) },
+    { from: [halfL + 2.4, dimY, -halfW], to: [halfL + 2.4, dimY, halfW], label: formatFeet(W) },
+  ]));
+
   // NOTE: the sun lives in the one-time scene setup, not this disposable
   // group — rebuilding here must never orphan a 2048px shadow map.
   return group;
@@ -482,6 +492,9 @@ export default function ContainerScene(p: ContainerSceneProps) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
   const [hint, setHint] = React.useState(true);
+  const [showDims, setShowDims] = React.useState(true); // dimension callouts, default on
+  const showDimsRef = React.useRef(true);
+  showDimsRef.current = showDims;
 
   React.useEffect(() => {
     const el = mountRef.current;
@@ -623,6 +636,10 @@ export default function ContainerScene(p: ContainerSceneProps) {
     core.scene.add(group);
     core.group = group;
 
+    // dimension callouts are rebuilt with the group — re-apply the toggle
+    const dg = group.getObjectByName(DIMS_NAME);
+    if (dg) dg.visible = showDimsRef.current;
+
     // the persistent sun follows the footprint; its one shadow map re-covers it
     core.sun.position.set(dims.lengthFt * 0.5 + 14, 26, 20);
     const s = Math.max(dims.lengthFt, dims.widthFt * count + (leanTo ? 9 : 0)) + 12;
@@ -638,6 +655,12 @@ export default function ContainerScene(p: ContainerSceneProps) {
     frameTo(core, first ? 0 : 550);
     core.controls.update();
   }, [size, count, layout, windows, manDoors, electrical, hvac, floor, leanTo, containerColor]);
+
+  // the Dims chip toggles the callout group without a rebuild
+  React.useEffect(() => {
+    const dg = coreRef.current?.group?.getObjectByName(DIMS_NAME);
+    if (dg) dg.visible = showDims;
+  }, [showDims]);
 
   const flyTo = (preset: "front" | "inside" | "corner") => {
     const core = coreRef.current;
@@ -676,6 +699,11 @@ export default function ContainerScene(p: ContainerSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("inside")}>Inside</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
+        <button type="button" aria-pressed={showDims}
+          className={btnCls + (showDims ? " ring-1 ring-[hsl(var(--safety-hi))]" : " opacity-70")}
+          onClick={() => setShowDims(v => !v)}>
+          Dims
+        </button>
       </div>
       <div className="absolute bottom-2 right-2">
         <button

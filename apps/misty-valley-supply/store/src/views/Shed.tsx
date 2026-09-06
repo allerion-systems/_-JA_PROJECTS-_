@@ -2,6 +2,7 @@ import * as React from "react";
 import { useAuth } from "@/auth";
 import { PRODUCTS } from "@/data";
 import { rollup, shedTakeoff, type Element, type ShedParams } from "@/bim";
+import { designUrl, pickBool, pickOne, saveDesign } from "@/designStore";
 import { Btn, Field, Lab, Panel, Tag, cx, inputCls, money } from "@/ui";
 import { useAnimatedNumber } from "@/useAnimatedNumber";
 
@@ -42,6 +43,59 @@ export function PriceBar({ label, total }: { label: string; total: number }) {
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+// ---- shared: save + share ------------------------------------------------
+
+/* Guests save and share freely — only the PRICE is gated (lead capture),
+   never the design itself. Saved designs live in localStorage; the link
+   carries the whole design in its hash, so it opens anywhere. */
+export function SaveShare({ tool, params, label }: {
+  tool: string; params: Record<string, unknown>; label: string;
+}) {
+  const [note, setNote] = React.useState<string | null>(null);
+  const timer = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+  const flash = (msg: string) => {
+    setNote(msg);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setNote(null), 2200);
+  };
+  const copy = async () => {
+    const url = designUrl(tool, params);
+    try {
+      await navigator.clipboard.writeText(url);
+      flash("Link copied");
+    } catch {
+      // clipboard API unavailable — the selection fallback still copies
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        flash("Link copied");
+      } catch {
+        flash("Couldn't copy — share the address bar");
+      }
+    }
+  };
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <Btn variant="line" size="sm" onClick={() => { saveDesign(tool, params, label); flash("Saved to My designs"); }}>
+        Save design
+      </Btn>
+      <Btn variant="line" size="sm" onClick={copy}>Copy link</Btn>
+      <span aria-live="polite" role="status"
+        className={cx("text-[12px] font-medium text-[hsl(var(--good))] transition-opacity duration-300",
+          note ? "opacity-100" : "opacity-0")}>
+        {note ?? ""}
+      </span>
     </div>
   );
 }
@@ -377,22 +431,24 @@ function Swatches({ label, options, value, onChange }: {
   );
 }
 
-export default function Shed() {
+export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
   const [step, setStep] = React.useState(0);
-  const [widthFt, setWidthFt] = React.useState<ShedParams["widthFt"]>(10);
-  const [lengthFt, setLengthFt] = React.useState<number>(12);
-  const [wallHFt, setWallHFt] = React.useState<ShedParams["wallHFt"]>(8);
-  const [pitch, setPitch] = React.useState<ShedParams["pitch"]>(4);
-  const [doors, setDoors] = React.useState<ShedParams["doors"]>(1);
-  const [windows, setWindows] = React.useState<ShedParams["windows"]>(1);
-  const [siding, setSiding] = React.useState<ShedParams["siding"]>("vinyl");
-  const [roof, setRoof] = React.useState<ShedParams["roof"]>("metal");
-  const [framing, setFraming] = React.useState<ShedParams["framing"]>("stick");
-  const [ramp, setRamp] = React.useState(false);
-  const [loft, setLoft] = React.useState(false);
-  const [cupola, setCupola] = React.useState(false);
-  const [wainscot, setWainscot] = React.useState(false);
-  const [hvac, setHvac] = React.useState(false);
+  // initial comes off the wire (saved design / share link) — every value is
+  // re-validated against the tool's own options; anything off falls to default
+  const [widthFt, setWidthFt] = React.useState<ShedParams["widthFt"]>(pickOne(initial?.widthFt, WIDTHS, 10));
+  const [lengthFt, setLengthFt] = React.useState<number>(pickOne(initial?.lengthFt, LENGTHS, 12));
+  const [wallHFt, setWallHFt] = React.useState<ShedParams["wallHFt"]>(pickOne(initial?.wallHFt, [7, 8] as const, 8));
+  const [pitch, setPitch] = React.useState<ShedParams["pitch"]>(pickOne(initial?.pitch, [4, 6] as const, 4));
+  const [doors, setDoors] = React.useState<ShedParams["doors"]>(pickOne(initial?.doors, [1, 2] as const, 1));
+  const [windows, setWindows] = React.useState<ShedParams["windows"]>(pickOne(initial?.windows, [0, 1, 2] as const, 1));
+  const [siding, setSiding] = React.useState<ShedParams["siding"]>(pickOne(initial?.siding, ["vinyl", "none"] as const, "vinyl"));
+  const [roof, setRoof] = React.useState<ShedParams["roof"]>(pickOne(initial?.roof, ["metal", "ready"] as const, "metal"));
+  const [framing, setFraming] = React.useState<ShedParams["framing"]>(pickOne(initial?.framing, ["stick", "truss"] as const, "stick"));
+  const [ramp, setRamp] = React.useState(pickBool(initial?.ramp, false));
+  const [loft, setLoft] = React.useState(pickBool(initial?.loft, false));
+  const [cupola, setCupola] = React.useState(pickBool(initial?.cupola, false));
+  const [wainscot, setWainscot] = React.useState(pickBool(initial?.wainscot, false));
+  const [hvac, setHvac] = React.useState(pickBool(initial?.hvac, false));
   // cosmetic only — never enters ShedParams or the takeoff
   const [sidingColor, setSidingColor] = React.useState<string>(SIDING_COLORS[0][1]);
   const [roofColor, setRoofColor] = React.useState<string>(ROOF_COLORS[0][1]);
@@ -471,11 +527,12 @@ export default function Shed() {
           </div>
         )}
         {step === 3 && <QuoteGate tool="shed" params={{ ...params }} total={total} />}
-        {step < 3 && (
-          <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <SaveShare tool="shed" params={{ ...params }} label={`Shed ${widthFt}×${lengthFt}`} />
+          {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          </div>
-        )}
+          )}
+        </div>
       </Panel>
 
       <BomTable elements={elements} />

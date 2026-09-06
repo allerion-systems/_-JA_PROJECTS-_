@@ -1,6 +1,8 @@
 import * as React from "react";
 import { ROOFSCREEN as RS, SCREEN_PARTS } from "@/data";
+import { pickBool, pickNum, pickOne } from "@/designStore";
 import { Btn, DataTable, Field, Head, Lab, Panel, Rule, Tag, cx, inputCls, money } from "@/ui";
+import { SaveShare } from "@/views/Shed";
 import { useAuth } from "@/auth";
 import { useAnimatedNumber } from "@/useAnimatedNumber";
 
@@ -337,7 +339,7 @@ function ShopSheet({ lf, h, bay, posts, hatLf, faceSf, panel, project }: {
 
 /* ------------------------------------------------------- design center */
 
-type QuoteConfig = {
+export type QuoteConfig = {
   lf: number; height: number; bay: number; mount: string; panel: string;
   gauge: number; drawings: boolean; markupPct: number;
 };
@@ -634,14 +636,15 @@ function SpecCard({ lf, h, config, sell }: { lf: number; h: number; config: Quot
   );
 }
 
-export default function Screen() {
-  const [lf, setLf] = React.useState(RS.lee.lf);
-  const [h, setH] = React.useState(RS.lee.height);
-  const [bay, setBay] = React.useState(RS.lee.bay);
-  const [mount, setMount] = React.useState(RS.mounts[0].id);
-  const [panel, setPanel] = React.useState(RS.panels[0].id);
-  const [drawings, setDrawings] = React.useState(true);
-  const [markup, setMarkup] = React.useState(Math.round(RS.defaultMarkup * 100));
+export default function Screen({ initial }: { initial?: Partial<QuoteConfig> }) {
+  // initial comes off the wire (saved design / share link) — re-validated
+  const [lf, setLf] = React.useState(pickNum(initial?.lf, 10, 4000, RS.lee.lf));
+  const [h, setH] = React.useState(pickOne(initial?.height, RS.heights, RS.lee.height));
+  const [bay, setBay] = React.useState(pickNum(initial?.bay, 2, 12, RS.lee.bay));
+  const [mount, setMount] = React.useState(pickOne(initial?.mount, RS.mounts.map(m => m.id), RS.mounts[0].id));
+  const [panel, setPanel] = React.useState(pickOne(initial?.panel, RS.panels.map(x => x.id), RS.panels[0].id));
+  const [drawings, setDrawings] = React.useState(pickBool(initial?.drawings, true));
+  const [markup, setMarkup] = React.useState(pickNum(initial?.markupPct, 0, 400, Math.round(RS.defaultMarkup * 100)));
   const [mode, setMode] = React.useState<"design" | "kit" | "drawing" | "parts">("design");
   const [project, setProject] = React.useState("");
   const [shots, setShots] = React.useState<{ name: string; url: string }[]>([]);
@@ -733,6 +736,10 @@ export default function Screen() {
                 </span>
                 <span className="text-[11px] text-[hsl(var(--ink-3))]">drag to orbit · scroll to zoom</span>
               </div>
+            </div>
+
+            <div className="mt-3">
+              <SaveShare tool="screen" params={{ ...quoteConfig }} label={`Roof screen ${lf} LF × ${fmtFtIn(h)}`} />
             </div>
 
             {/* controls — the same shared state every tab prices from */}

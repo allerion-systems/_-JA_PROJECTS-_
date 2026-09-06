@@ -1,7 +1,8 @@
 import * as React from "react";
 import { rollup } from "@/bim";
 import { warehouseTakeoff, type WarehouseParams } from "@/bimWarehouse";
-import { BomTable, PriceBar, QuoteGate, Seg, Steps } from "@/views/Shed";
+import { pickBool, pickOne } from "@/designStore";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
 import { Btn, Lab, Panel, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the warehouse renders
@@ -60,13 +61,14 @@ function Swatches({ label, options, value, onChange }: {
   );
 }
 
-export default function Warehouse() {
+export default function Warehouse({ initial }: { initial?: Partial<WarehouseParams> }) {
   const [step, setStep] = React.useState(0);
   const [size] = React.useState<WarehouseParams["size"]>("50x100"); // one shell SKU today
-  const [dockDoors, setDockDoors] = React.useState<number>(2);
-  const [driveInDoors, setDriveInDoors] = React.useState<number>(1);
-  const [insulated, setInsulated] = React.useState(true);
-  const [officeCorner, setOfficeCorner] = React.useState(false);
+  // initial comes off the wire (saved design / share link) — re-validated
+  const [dockDoors, setDockDoors] = React.useState<number>(pickOne(initial?.dockDoors, DOCKS, 2));
+  const [driveInDoors, setDriveInDoors] = React.useState<number>(pickOne(initial?.driveInDoors, DRIVE_INS, 1));
+  const [insulated, setInsulated] = React.useState(pickBool(initial?.insulated, true));
+  const [officeCorner, setOfficeCorner] = React.useState(pickBool(initial?.officeCorner, false));
   // cosmetic only — never enters WarehouseParams or the takeoff
   const [wallColor, setWallColor] = React.useState<string>(WALL_COLORS[0][1]);
   const [roofColor, setRoofColor] = React.useState<string>(ROOF_COLORS[0][1]);
@@ -139,11 +141,12 @@ export default function Warehouse() {
             <QuoteGate tool="warehouse" params={{ ...params }} total={total} />
           </div>
         )}
-        {step < 3 && (
-          <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <SaveShare tool="warehouse" params={{ ...params }} label={`Warehouse 50×100`} />
+          {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          </div>
-        )}
+          )}
+        </div>
       </Panel>
 
       <BomTable elements={elements} />

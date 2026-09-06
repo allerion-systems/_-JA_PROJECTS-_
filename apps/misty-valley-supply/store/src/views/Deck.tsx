@@ -1,6 +1,7 @@
 import * as React from "react";
 import { deckTakeoff, guardRequired, rollup, type DeckParams } from "@/bim";
-import { BomTable, PriceBar, QuoteGate, Seg, Steps } from "@/views/Shed";
+import { pickBool, pickOne } from "@/designStore";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
 
 // three.js stays in its own lazy chunk — loaded only when the deck renders
 const DeckScene = React.lazy(() => import("@/views/DeckScene"));
@@ -16,13 +17,14 @@ const WIDTHS = [10, 12, 14, 16, 18, 20] as const;
 const DEPTHS = [8, 10, 12, 14, 16] as const;
 const STEPS = ["Size", "Height", "Options", "Quote"];
 
-export default function Deck() {
+export default function Deck({ initial }: { initial?: Partial<DeckParams> }) {
   const [step, setStep] = React.useState(0);
-  const [widthFt, setWidthFt] = React.useState<number>(12);
-  const [depthFt, setDepthFt] = React.useState<number>(12);
-  const [heightFt, setHeightFt] = React.useState<DeckParams["heightFt"]>(4);
-  const [railing, setRailing] = React.useState(true);
-  const [stairs, setStairs] = React.useState(true);
+  // initial comes off the wire (saved design / share link) — re-validated
+  const [widthFt, setWidthFt] = React.useState<number>(pickOne(initial?.widthFt, WIDTHS, 12));
+  const [depthFt, setDepthFt] = React.useState<number>(pickOne(initial?.depthFt, DEPTHS, 12));
+  const [heightFt, setHeightFt] = React.useState<DeckParams["heightFt"]>(pickOne(initial?.heightFt, [2, 4, 8] as const, 4));
+  const [railing, setRailing] = React.useState(pickBool(initial?.railing, true));
+  const [stairs, setStairs] = React.useState(pickBool(initial?.stairs, true));
 
   // IRC R312.1.1: a guard is required on any surface more than 30 in above
   // grade — at 4 ft and 8 ft the choice is not the customer's to make.
@@ -81,11 +83,12 @@ export default function Deck() {
           </div>
         )}
         {step === 3 && <QuoteGate tool="deck" params={{ ...params }} total={total} />}
-        {step < 3 && (
-          <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <SaveShare tool="deck" params={{ ...params }} label={`Deck ${widthFt}×${depthFt}`} />
+          {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          </div>
-        )}
+          )}
+        </div>
       </Panel>
 
       <BomTable elements={elements} />

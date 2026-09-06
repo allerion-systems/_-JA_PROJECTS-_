@@ -1,7 +1,8 @@
 import * as React from "react";
 import { rollup } from "@/bim";
 import { DOCK_WALKWAYS, dockTakeoff, type DockParams } from "@/bimDock";
-import { BomTable, PriceBar, QuoteGate, Seg, Steps } from "@/views/Shed";
+import { pickBool, pickOne } from "@/designStore";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
 import { Btn, Lab, Panel, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the dock renders
@@ -46,14 +47,15 @@ function ShapeSeg({ value, onChange }: { value: DockParams["shape"]; onChange: (
   );
 }
 
-export default function Dock() {
+export default function Dock({ initial }: { initial?: Partial<DockParams> }) {
   const [step, setStep] = React.useState(0);
-  const [shape, setShape] = React.useState<DockParams["shape"]>("straight");
-  const [walkwayFt, setWalkwayFt] = React.useState<number>(30);
-  const [platform, setPlatform] = React.useState<DockParams["platform"]>("8x10");
-  const [gangway, setGangway] = React.useState(true);
-  const [decking, setDecking] = React.useState<DockParams["decking"]>("wood");
-  const [ladder, setLadder] = React.useState(true);
+  // initial comes off the wire (saved design / share link) — re-validated
+  const [shape, setShape] = React.useState<DockParams["shape"]>(pickOne(initial?.shape, ["straight", "L", "T"] as const, "straight"));
+  const [walkwayFt, setWalkwayFt] = React.useState<number>(pickOne(initial?.walkwayFt, DOCK_WALKWAYS, 30));
+  const [platform, setPlatform] = React.useState<DockParams["platform"]>(pickOne(initial?.platform, ["none", "8x10", "double"] as const, "8x10"));
+  const [gangway, setGangway] = React.useState(pickBool(initial?.gangway, true));
+  const [decking, setDecking] = React.useState<DockParams["decking"]>(pickOne(initial?.decking, ["wood", "composite"] as const, "wood"));
+  const [ladder, setLadder] = React.useState(pickBool(initial?.ladder, true));
 
   const params: DockParams = { shape, walkwayFt, platform, gangway, decking, ladder };
   const elements = React.useMemo(() => dockTakeoff(params),
@@ -121,11 +123,12 @@ export default function Dock() {
             <QuoteGate tool="dock" params={{ ...params }} total={total} />
           </div>
         )}
-        {step < 3 && (
-          <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <SaveShare tool="dock" params={{ ...params }} label={`Dock — ${shapeLabel} ${walkwayFt} ft`} />
+          {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          </div>
-        )}
+          )}
+        </div>
       </Panel>
 
       <BomTable elements={elements} />

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { rollup } from "@/bim";
 import { barndoTakeoff, type BarndoParams } from "@/bimBarndo";
-import { BomTable, PriceBar, QuoteGate, Seg, Steps } from "@/views/Shed";
+import { pickOne } from "@/designStore";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
 import { Btn, Lab, Panel, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the barndo renders
@@ -62,13 +63,14 @@ function Swatches({ label, options, value, onChange }: {
   );
 }
 
-export default function Barndo() {
+export default function Barndo({ initial }: { initial?: Partial<BarndoParams> }) {
   const [step, setStep] = React.useState(0);
-  const [size, setSize] = React.useState<BarndoParams["size"]>("40x60");
-  const [quartersFraction, setQuartersFraction] = React.useState<BarndoParams["quartersFraction"]>(0.25);
-  const [porchBays, setPorchBays] = React.useState<BarndoParams["porchBays"]>(1);
-  const [quartersWindows, setQuartersWindows] = React.useState<BarndoParams["quartersWindows"]>(4);
-  const [bathrooms, setBathrooms] = React.useState<BarndoParams["bathrooms"]>(1);
+  // initial comes off the wire (saved design / share link) — re-validated
+  const [size, setSize] = React.useState<BarndoParams["size"]>(pickOne(initial?.size, ["30x40", "40x60"] as const, "40x60"));
+  const [quartersFraction, setQuartersFraction] = React.useState<BarndoParams["quartersFraction"]>(pickOne(initial?.quartersFraction, [0.25, 0.5] as const, 0.25));
+  const [porchBays, setPorchBays] = React.useState<BarndoParams["porchBays"]>(pickOne(initial?.porchBays, [0, 1, 2, 3] as const, 1));
+  const [quartersWindows, setQuartersWindows] = React.useState<BarndoParams["quartersWindows"]>(pickOne(initial?.quartersWindows, [2, 3, 4, 5, 6] as const, 4));
+  const [bathrooms, setBathrooms] = React.useState<BarndoParams["bathrooms"]>(pickOne(initial?.bathrooms, [1, 2] as const, 1));
   // cosmetic only — never enters BarndoParams or the takeoff
   const [wallColor, setWallColor] = React.useState<string>(WALL_COLORS[1][1]);
   const [roofColor, setRoofColor] = React.useState<string>(ROOF_COLORS[0][1]);
@@ -129,11 +131,12 @@ export default function Barndo() {
             <QuoteGate tool="barndo" params={{ ...params }} total={total} />
           </div>
         )}
-        {step < 3 && (
-          <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <SaveShare tool="barndo" params={{ ...params }} label={`Barndo ${size}`} />
+          {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          </div>
-        )}
+          )}
+        </div>
       </Panel>
 
       <BomTable elements={elements} />

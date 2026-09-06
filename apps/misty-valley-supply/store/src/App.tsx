@@ -18,6 +18,16 @@ import Users from "@/views/Users";
 import type { Perm } from "@/rbac";
 import { InstallBar } from "@/pwa";
 import { Glyph } from "@/glyph";
+import { deleteDesign, listDesigns, readHashDesign, type SavedDesign } from "@/designStore";
+
+// type-only — erased at build, so the lazy 3D chunks stay lazy
+import type { DeckParams, ShedParams } from "@/bim";
+import type { ContainerParams } from "@/bimContainer";
+import type { DockParams } from "@/bimDock";
+import type { BarndoParams } from "@/bimBarndo";
+import type { WarehouseParams } from "@/bimWarehouse";
+import type { ProgramParams } from "@/programMath";
+import type { QuoteConfig } from "@/views/Screen";
 
 // The three Design Center tools carry three.js — they stay out of the main
 // bundle and load on demand.
@@ -122,9 +132,21 @@ const Icon = ({ children }: { children: React.ReactNode }) => (
     strokeLinecap="square" className="h-[22px] w-[22px] shrink-0">{children}</svg>
 );
 
+/** The design carried by a #d= share link, if its tool is one of ours.
+    Unknown tools open the Design picker; bad params become tool defaults. */
+function bootDesign(): { tool: View; params: Record<string, unknown>; seq: number } | null {
+  const d = readHashDesign();
+  if (!d) return null;
+  const tool = DESIGN_TOOLS.find(t => t.view === d.tool)?.view;
+  return tool ? { tool, params: d.params, seq: 0 } : null;
+}
+
 function Inner() {
   const { user, person, role, can, branch } = useAuth();
-  const [view, setView] = React.useState<View>("home");
+  // a share link opens straight into its tool; a bad link opens the picker
+  const [pending, setPending] = React.useState(bootDesign);
+  const [view, setView] = React.useState<View>(() =>
+    pending?.tool ?? (location.hash.startsWith("#d=") ? "design" : "home"));
   const [cart, setCart] = React.useState<CartLine[]>([]);
   const [openCart, setOpenCart] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -139,6 +161,17 @@ function Inner() {
   const count = cart.reduce((s, c) => s + c.qty, 0);
 
   const go = (v: View) => { setView(v); window.scrollTo({ top: 0 }); };
+
+  /** Open a saved design in its tool. seq keys the tool so re-opening a
+      design of the tool already on screen still re-initializes it. */
+  const openDesign = (d: SavedDesign) => {
+    const tool = DESIGN_TOOLS.find(t => t.view === d.tool)?.view;
+    if (!tool) return; // a design from a tool this build doesn't know
+    setPending(p => ({ tool, params: d.params, seq: (p?.seq ?? 0) + 1 }));
+    go(tool);
+  };
+  const toolInit = (v: View) => (pending?.tool === v ? pending.params : undefined);
+  const toolKey = (v: View) => (pending?.tool === v ? `d-${pending.seq}` : v);
   const goShop = (cat?: string) => { setPreCat(cat); go("shop"); };
   const search = (q: string) => { setQuery(q); setPreCat(undefined); go("shop"); };
   const openProduct = (sku: string) => { setProductSku(sku); go("product"); };
@@ -437,6 +470,7 @@ function Inner() {
               <p className="mt-5 text-center text-[13px] text-[hsl(var(--ink-2))]">
                 Pick one — it's priced live as you design, and the quote is free.
               </p>
+              <MyDesigns onOpen={openDesign} />
             </div>
           )}
           {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program") && (
@@ -463,14 +497,14 @@ function Inner() {
                   <span className="lab text-[hsl(var(--ink-2))]">Loading the Design Center…</span>
                 </div>
               }>
-                {view === "screen" && <Screen />}
-                {view === "shed" && <Shed />}
-                {view === "deck" && <Deck />}
-                {view === "container" && <Container />}
-                {view === "dock" && <Dock />}
-                {view === "barndo" && <Barndo />}
-                {view === "warehouse" && <Warehouse />}
-                {view === "program" && <Program />}
+                {view === "screen" && <Screen key={toolKey("screen")} initial={toolInit("screen") as Partial<QuoteConfig> | undefined} />}
+                {view === "shed" && <Shed key={toolKey("shed")} initial={toolInit("shed") as Partial<ShedParams> | undefined} />}
+                {view === "deck" && <Deck key={toolKey("deck")} initial={toolInit("deck") as Partial<DeckParams> | undefined} />}
+                {view === "container" && <Container key={toolKey("container")} initial={toolInit("container") as Partial<ContainerParams> | undefined} />}
+                {view === "dock" && <Dock key={toolKey("dock")} initial={toolInit("dock") as Partial<DockParams> | undefined} />}
+                {view === "barndo" && <Barndo key={toolKey("barndo")} initial={toolInit("barndo") as Partial<BarndoParams> | undefined} />}
+                {view === "warehouse" && <Warehouse key={toolKey("warehouse")} initial={toolInit("warehouse") as Partial<WarehouseParams> | undefined} />}
+                {view === "program" && <Program key={toolKey("program")} initial={toolInit("program") as Partial<ProgramParams> | undefined} />}
               </React.Suspense>
             </>
           )}
@@ -526,6 +560,42 @@ function Inner() {
 
       <InstallBar />
       <AuthModals modal={modal} setModal={setModal} />
+    </div>
+  );
+}
+
+
+/* ----------------------------------------------------------- my designs */
+
+/** Saved designs on the Design picker — name, tool, date, Open / Delete.
+    Guests save freely (localStorage); only pricing is gated. */
+function MyDesigns({ onOpen }: { onOpen: (d: SavedDesign) => void }) {
+  const [designs, setDesigns] = React.useState<SavedDesign[]>(listDesigns);
+  if (!designs.length) return null;
+  const toolLabel = (tool: string) => DESIGN_TOOLS.find(t => t.view === tool)?.label ?? tool;
+  return (
+    <div className="mt-8">
+      <Lab kicker className="mb-2.5">My designs</Lab>
+      <div className="grid gap-2">
+        {[...designs].reverse().map(d => (
+          <div key={d.id} className="card flex items-center justify-between gap-3 p-3">
+            <div className="min-w-0">
+              <div className="truncate text-[14px] font-semibold text-[hsl(var(--ink))]">{d.name}</div>
+              <div className="mt-0.5 text-[11px] text-[hsl(var(--ink-3))]">
+                {toolLabel(d.tool)} · saved{" "}
+                {new Date(d.savedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              <Btn variant="line" size="sm" onClick={() => onOpen(d)}>Open</Btn>
+              <button onClick={() => { deleteDesign(d.id); setDesigns(listDesigns()); }}
+                className="lab flex h-11 items-center px-2 text-[hsl(var(--ink-3))] hover:text-[hsl(var(--ink))] sm:h-10">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

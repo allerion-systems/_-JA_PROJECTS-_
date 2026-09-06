@@ -2,6 +2,7 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { deckGeometry, type DeckParams } from "@/bim";
+import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 
 /* ------------------------------------------------------------------------
    Parametric 3D deck. Feet are world units. Width runs along X against a
@@ -65,8 +66,13 @@ function disposeGroup(group: THREE.Group) {
     const mesh = o as THREE.Mesh;
     if (mesh.geometry) mesh.geometry.dispose();
     const mat = mesh.material;
-    if (Array.isArray(mat)) mat.forEach(m => m.dispose());
-    else if (mat) (mat as THREE.Material).dispose();
+    const one = (m: THREE.Material) => {
+      const map = (m as THREE.MeshStandardMaterial).map;
+      if (map) map.dispose(); // dimension-label canvas textures live here
+      m.dispose();
+    };
+    if (Array.isArray(mat)) mat.forEach(one);
+    else if (mat) one(mat as THREE.Material);
   });
 }
 
@@ -300,6 +306,15 @@ function buildWorld(p: DeckParams): THREE.Group {
     });
   }
 
+  // ---- dimension callouts — width across the front, depth up the side --
+  // Part of the disposable group; visibility is re-applied after rebuilds.
+  const dimY = 0.05;
+  const dimF = halfD + (p.stairs && g.treads > 0 ? g.risers * (10 / 12) + 1.6 : 2.4); // clear of the stairs
+  group.add(makeDimensions([
+    { from: [-halfW, dimY, dimF], to: [halfW, dimY, dimF], label: formatFeet(W) },
+    { from: [-halfW - 2.4, dimY, -halfD], to: [-halfW - 2.4, dimY, halfD], label: formatFeet(D) },
+  ]));
+
   // NOTE: the sun lives in the one-time scene setup, not this disposable
   // group — rebuilding here must never orphan a 2048px shadow map.
   return group;
@@ -309,6 +324,9 @@ export default function DeckScene(p: DeckParams) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
   const [hint, setHint] = React.useState(true); // fades after first interaction
+  const [showDims, setShowDims] = React.useState(true); // dimension callouts, default on
+  const showDimsRef = React.useRef(true);
+  showDimsRef.current = showDims;
 
   React.useEffect(() => {
     const el = mountRef.current;
@@ -435,6 +453,10 @@ export default function DeckScene(p: DeckParams) {
     core.scene.add(group);
     core.group = group;
 
+    // dimension callouts are rebuilt with the group — re-apply the toggle
+    const dg = group.getObjectByName(DIMS_NAME);
+    if (dg) dg.visible = showDimsRef.current;
+
     // the persistent sun follows the footprint; its one shadow map re-covers it
     core.sun.position.set(widthFt * 0.6 + 12, 24 + heightFt, 26);
     const s = Math.max(widthFt, depthFt) + 14;
@@ -451,6 +473,13 @@ export default function DeckScene(p: DeckParams) {
     core.controls.update();
   }, [widthFt, depthFt, heightFt, railing, stairs]);
 
+  // the Dims chip toggles the callout group without a rebuild
+  React.useEffect(() => {
+    const dg = coreRef.current?.group?.getObjectByName(DIMS_NAME);
+    if (dg) dg.visible = showDims;
+  }, [showDims]);
+
+  const btnCls = "rounded-[5px] border border-white/25 bg-[hsl(var(--marine))]/80 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm transition-colors hover:bg-[hsl(var(--marine))]";
   return (
     <div className="relative h-full w-full">
       <div
@@ -459,6 +488,13 @@ export default function DeckScene(p: DeckParams) {
         role="img"
         aria-label={`3D preview — ${widthFt}×${depthFt} deck, ${heightFt} ft high${railing || heightFt * 12 >= 30 ? ", with guard" : ""}${stairs ? ", with stairs" : ""}`}
       />
+      <div className="absolute left-2 top-2 flex gap-1.5">
+        <button type="button" aria-pressed={showDims}
+          className={btnCls + (showDims ? " ring-1 ring-[hsl(var(--safety-hi))]" : " opacity-70")}
+          onClick={() => setShowDims(v => !v)}>
+          Dims
+        </button>
+      </div>
       <div
         aria-hidden
         className={"pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[hsl(var(--marine))]/70 px-3 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm transition-opacity duration-700 " + (hint ? "opacity-100" : "opacity-0")}

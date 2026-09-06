@@ -4,8 +4,9 @@ import {
   containerDerived, containerTakeoff,
   type ContainerLayout, type ContainerParams, type ContainerSize,
 } from "@/bimContainer";
+import { pickBool, pickOne } from "@/designStore";
 import { Btn, Lab, Panel, cx } from "@/ui";
-import { BomTable, PriceBar, QuoteGate, Seg, Steps } from "@/views/Shed";
+import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
 
 // three.js stays in its own lazy chunk — loaded only when the container renders
 const ContainerScene = React.lazy(() => import("@/views/ContainerScene"));
@@ -88,17 +89,18 @@ function LayoutChips({ value, onChange }: { value: ContainerLayout; onChange: (l
   );
 }
 
-export default function Container() {
+export default function Container({ initial }: { initial?: Partial<ContainerParams> }) {
   const [step, setStep] = React.useState(0);
-  const [size, setSize] = React.useState<ContainerSize>("20");
-  const [count, setCount] = React.useState<ContainerParams["count"]>(1);
-  const [layout, setLayout] = React.useState<ContainerLayout>("office");
-  const [windows, setWindows] = React.useState<ContainerParams["windows"]>(1);
-  const [manDoors, setManDoors] = React.useState<ContainerParams["manDoors"]>(1);
-  const [electrical, setElectrical] = React.useState(false);
-  const [hvac, setHvac] = React.useState(false);
-  const [floor, setFloor] = React.useState(true);
-  const [leanTo, setLeanTo] = React.useState(false);
+  // initial comes off the wire (saved design / share link) — re-validated
+  const [size, setSize] = React.useState<ContainerSize>(pickOne(initial?.size, ["20", "40"] as const, "20"));
+  const [count, setCount] = React.useState<ContainerParams["count"]>(pickOne(initial?.count, [1, 2, 3] as const, 1));
+  const [layout, setLayout] = React.useState<ContainerLayout>(pickOne(initial?.layout, ["open", "split", "office", "str"] as const, "office"));
+  const [windows, setWindows] = React.useState<ContainerParams["windows"]>(pickOne(initial?.windows, [0, 1, 2, 3] as const, 1));
+  const [manDoors, setManDoors] = React.useState<ContainerParams["manDoors"]>(pickOne(initial?.manDoors, [0, 1, 2] as const, 1));
+  const [electrical, setElectrical] = React.useState(pickBool(initial?.electrical, false));
+  const [hvac, setHvac] = React.useState(pickBool(initial?.hvac, false));
+  const [floor, setFloor] = React.useState(pickBool(initial?.floor, true));
+  const [leanTo, setLeanTo] = React.useState(pickBool(initial?.leanTo, false));
   // cosmetic only — never enters ContainerParams' takeoff
   const [containerColor, setContainerColor] = React.useState<string>(BOX_COLORS[0][1]);
 
@@ -186,11 +188,13 @@ export default function Container() {
           </div>
         )}
         {step === 3 && <QuoteGate tool="container" params={{ ...params }} total={total} />}
-        {step < 3 && (
-          <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <SaveShare tool="container" params={{ ...params }}
+            label={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`} />
+          {step < 3 && (
             <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          </div>
-        )}
+          )}
+        </div>
       </Panel>
 
       <BomTable elements={elements} />

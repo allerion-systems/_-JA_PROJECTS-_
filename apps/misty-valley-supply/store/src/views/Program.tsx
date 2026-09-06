@@ -1,6 +1,7 @@
 import * as React from "react";
+import { pickOne } from "@/designStore";
 import { Btn, Lab, Panel, Tag } from "@/ui";
-import { QuoteGate, Seg, Steps } from "@/views/Shed";
+import { QuoteGate, SaveShare, Seg, Steps } from "@/views/Shed";
 import {
   APT_STORIES, APT_UNITS, EMS_BAYS, EMS_QUARTERS_GSF, HOTEL_ROOMS, HOTEL_STORIES,
   OFFICE_GSF, OFFICE_STORIES, SCHOOL_CLASSROOMS, fmtMillions, program, programStories,
@@ -30,18 +31,22 @@ const TYPES: { type: ProgramType; label: string; sub: string }[] = [
   { type: "government", label: "Government", sub: "Public offices, programmed like commercial" },
 ];
 
-export default function Program() {
-  const [step, setStep] = React.useState(0);
-  const [type, setType] = React.useState<ProgramType | null>(null);
-  const [rooms, setRooms] = React.useState<number>(40);
-  const [hotelStories, setHotelStories] = React.useState<number>(3);
-  const [officeGsf, setOfficeGsf] = React.useState<number>(20000);
-  const [officeStories, setOfficeStories] = React.useState<number>(2);
-  const [classrooms, setClassrooms] = React.useState<number>(8);
-  const [units, setUnits] = React.useState<number>(24);
-  const [aptStories, setAptStories] = React.useState<number>(3);
-  const [bays, setBays] = React.useState<number>(3);
-  const [quartersGsf, setQuartersGsf] = React.useState<number>(2000);
+export default function Program({ initial }: { initial?: Partial<ProgramParams> }) {
+  // initial comes off the wire (saved design / share link); ProgramParams is
+  // a discriminated union, so read it wide and re-validate every value
+  const ini = (initial ?? {}) as Record<string, unknown>;
+  const iniType = pickOne<ProgramType | null>(ini.type, TYPES.map(t => t.type), null);
+  const [step, setStep] = React.useState(iniType ? 2 : 0);
+  const [type, setType] = React.useState<ProgramType | null>(iniType);
+  const [rooms, setRooms] = React.useState<number>(pickOne(ini.rooms, HOTEL_ROOMS, 40));
+  const [hotelStories, setHotelStories] = React.useState<number>(pickOne(ini.stories, HOTEL_STORIES, 3));
+  const [officeGsf, setOfficeGsf] = React.useState<number>(pickOne(ini.gsf, OFFICE_GSF, 20000));
+  const [officeStories, setOfficeStories] = React.useState<number>(pickOne(ini.stories, OFFICE_STORIES, 2));
+  const [classrooms, setClassrooms] = React.useState<number>(pickOne(ini.classrooms, SCHOOL_CLASSROOMS, 8));
+  const [units, setUnits] = React.useState<number>(pickOne(ini.units, APT_UNITS, 24));
+  const [aptStories, setAptStories] = React.useState<number>(pickOne(ini.stories, APT_STORIES, 3));
+  const [bays, setBays] = React.useState<number>(pickOne(ini.bays, EMS_BAYS, 3));
+  const [quartersGsf, setQuartersGsf] = React.useState<number>(pickOne(ini.quartersGsf, EMS_QUARTERS_GSF, 2000));
 
   const params: ProgramParams | null = React.useMemo(() => {
     switch (type) {
@@ -170,11 +175,14 @@ export default function Program() {
           </div>
         )}
 
-        {step < 2 && type && (
-          <div className="mt-4 flex justify-end">
-            <Btn size="sm" onClick={() => setStep(step + 1)}>
-              {step === 1 ? "Review the program" : "Next"}
-            </Btn>
+        {type && params && (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <SaveShare tool="program" params={{ ...params }} label={`Modular — ${label ?? type}`} />
+            {step < 2 && (
+              <Btn size="sm" onClick={() => setStep(step + 1)}>
+                {step === 1 ? "Review the program" : "Next"}
+              </Btn>
+            )}
           </div>
         )}
       </Panel>

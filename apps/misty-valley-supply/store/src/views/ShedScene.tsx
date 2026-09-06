@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { spaced, rafterLen, SHED_DOOR, SHED_WIN, type ShedParams } from "@/bim";
+import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
 
 /* ------------------------------------------------------------------------
@@ -612,6 +613,17 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
     condenser.castShadow = true; group.add(condenser);
   }
 
+  // ---- dimension callouts — length across the front, width up the side --
+  // Part of the disposable group, so a rebuild replaces them with the
+  // rest of the geometry; visibility is applied after each rebuild.
+  const dimY = 0.05;
+  const dimF = halfW + (p.ramp ? 5.4 : 2.6);   // clear of the 4-ft ramp
+  const dimS = halfL + (p.hvac ? 3.6 : 2.6);   // clear of the condenser
+  group.add(makeDimensions([
+    { from: [-halfL, dimY, dimF], to: [halfL, dimY, dimF], label: formatFeet(L) },
+    { from: [dimS, dimY, -halfW], to: [dimS, dimY, halfW], label: formatFeet(W) },
+  ]));
+
   return group;
 }
 
@@ -621,6 +633,9 @@ export default function ShedScene(p: ShedSceneProps) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
   const [hint, setHint] = React.useState(true); // fades after first interaction
+  const [showDims, setShowDims] = React.useState(true); // dimension callouts, default on
+  const showDimsRef = React.useRef(true);
+  showDimsRef.current = showDims;
 
   React.useEffect(() => {
     const el = mountRef.current;
@@ -762,6 +777,10 @@ export default function ShedScene(p: ShedSceneProps) {
     core.scene.add(group);
     core.group = group;
 
+    // dimension callouts are rebuilt with the group — re-apply the toggle
+    const dg = group.getObjectByName(DIMS_NAME);
+    if (dg) dg.visible = showDimsRef.current;
+
     // the persistent sun follows the footprint; its one shadow map re-covers it
     const rise = (widthFt / 2) * (pitch / 12);
     core.sun.position.set(lengthFt * 0.5 + 14, 26 + rise * 2, 20);
@@ -778,6 +797,12 @@ export default function ShedScene(p: ShedSceneProps) {
     frameTo(core, first ? 0 : 550);
     core.controls.update();
   }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac, sidingColor, roofColor]);
+
+  // the Dims chip toggles the callout group without a rebuild
+  React.useEffect(() => {
+    const dg = coreRef.current?.group?.getObjectByName(DIMS_NAME);
+    if (dg) dg.visible = showDims;
+  }, [showDims]);
 
   const flyTo = (preset: "front" | "corner" | "birdseye") => {
     const core = coreRef.current;
@@ -813,6 +838,11 @@ export default function ShedScene(p: ShedSceneProps) {
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("birdseye")}>Birds-eye</button>
+        <button type="button" aria-pressed={showDims}
+          className={btnCls + (showDims ? " ring-1 ring-[hsl(var(--safety-hi))]" : " opacity-70")}
+          onClick={() => setShowDims(v => !v)}>
+          Dims
+        </button>
       </div>
       <div className="absolute bottom-2 right-2">
         <button
