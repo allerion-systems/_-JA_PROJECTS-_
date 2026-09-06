@@ -76,7 +76,12 @@ const DEPARTMENTS: { label: string; sub: string; go: { view: View; cat?: string 
       { label: "Hand Protection", cat: "hand" },
       { label: "Hi-Vis Apparel", cat: "hivis" },
     ] },
-  { label: "Building Structures", sub: "Conex, offices, custom modular", go: { view: "shop", cat: "structures" }, cats: ["structures"] },
+  { label: "Building Structures", sub: "Conex, offices, rentals, modular", go: { view: "shop", cat: "structures" },
+    cats: ["structures", "str"],
+    kids: [
+      { label: "Site Structures", cat: "structures" },
+      { label: "Short-Term Rental Units", cat: "str" },
+    ] },
   { label: "Design Center", sub: "Screens, sheds, decks — in 3D", go: { view: "screen" },
     tools: [
       { label: "Roof Screens", view: "screen" },
