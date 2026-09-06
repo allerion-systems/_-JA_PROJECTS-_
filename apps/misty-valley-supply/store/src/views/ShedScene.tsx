@@ -2,7 +2,7 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { spaced, rafterLen, SHED_DOOR, SHED_WIN, type ShedParams } from "@/bim";
+import { spaced, rafterLen, resolveShedOpenings, shedWallLen, SHED_DOOR, SHED_WIN, type ShedParams, type ShedWall } from "@/bim";
 import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
 
@@ -314,6 +314,29 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   wall(W, halfL - t / 2, 0, Math.PI / 2);   // right end
   wall(L, 0, halfW - t / 2, 0);             // front
 
+  // where each opening actually sits — same resolver the spec sheet reads
+  const openings = resolveShedOpenings(p);
+  // an opening placed on the left end closes the framing cutaway: the wall
+  // gets its skin so the door/window has something to sit in
+  const leftUsed = [...openings.doors, ...openings.windows].some(o => o.wall === "left");
+  if (leftUsed) wall(W, -halfL + t / 2, 0, Math.PI / 2);
+
+  /* Each opening renders into a group aligned to its wall: local +x runs
+     left→right along the wall (viewed from outside), local +z points out of
+     the wall, local z=0 is the wall's outer face. The front wall at the
+     legacy centers reproduces the old fixed positions exactly. */
+  const wallYaw: Record<ShedWall, number> = { front: 0, back: Math.PI, right: Math.PI / 2, left: -Math.PI / 2 };
+  const wallFrame = (wall: ShedWall, centerFt: number) => {
+    const g = new THREE.Group();
+    g.rotation.y = wallYaw[wall];
+    if (wall === "front") g.position.set(0, 0, halfW);
+    else if (wall === "back") g.position.set(0, 0, -halfW);
+    else if (wall === "right") g.position.set(halfL, 0, 0);
+    else g.position.set(-halfL, 0, 0);
+    group.add(g);
+    return { g, x: centerFt - shedWallLen(p, wall) / 2 }; // local x of the opening center
+  };
+
   // corner trim boards — verticals at each corner of the box
   const cornerGeo = new THREE.BoxGeometry(0.4, H, 0.4);
   const corners = new THREE.InstancedMesh(cornerGeo, trimMat, 4);
@@ -326,78 +349,78 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   corners.castShadow = true;
   group.add(corners);
 
-  // ---- doors: trim casing, slab, hinges, latch -------------------------
-  const doorXs: number[] = [];
-  for (let d = 0; d < p.doors; d++) {
-    const x = p.doors === 1 ? -L * 0.18 : (d === 0 ? -L * 0.28 : L * 0.05);
-    doorXs.push(x);
+  // ---- doors: trim casing, slab, hinges, latch — at their placed wall ---
+  for (const o of openings.doors) {
+    const { g, x } = wallFrame(o.wall, o.centerFt);
     // casing / trim frame proud of the wall
     const caseFrame = new THREE.Mesh(
       new THREE.BoxGeometry(SHED_DOOR.w + 0.5, SHED_DOOR.h + 0.35, 0.1), trimMat);
-    caseFrame.position.set(x, y0 + (SHED_DOOR.h + 0.15) / 2, halfW + 0.03);
+    caseFrame.position.set(x, y0 + (SHED_DOOR.h + 0.15) / 2, 0.03);
     caseFrame.castShadow = true;
-    group.add(caseFrame);
+    g.add(caseFrame);
     // slab
     const door = new THREE.Mesh(new THREE.BoxGeometry(SHED_DOOR.w, SHED_DOOR.h, 0.12), navyMat);
-    door.position.set(x, y0 + SHED_DOOR.h / 2, halfW + 0.1);
+    door.position.set(x, y0 + SHED_DOOR.h / 2, 0.1);
     door.castShadow = true;
-    group.add(door);
+    g.add(door);
     // Z-brace panel lines
     const brace = new THREE.Mesh(new THREE.BoxGeometry(SHED_DOOR.w - 0.4, 0.18, 0.05), trimMat);
-    brace.position.set(x, y0 + SHED_DOOR.h * 0.62, halfW + 0.17);
-    group.add(brace);
+    brace.position.set(x, y0 + SHED_DOOR.h * 0.62, 0.17);
+    g.add(brace);
     const brace2 = brace.clone();
     brace2.position.y = y0 + SHED_DOOR.h * 0.3;
-    group.add(brace2);
+    g.add(brace2);
     // hinges (left stile) + gold latch
     [0.22, 0.5, 0.78].forEach(f => {
       const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.3, 0.06), darkMat);
-      hinge.position.set(x - SHED_DOOR.w / 2 + 0.12, y0 + SHED_DOOR.h * f, halfW + 0.17);
-      group.add(hinge);
+      hinge.position.set(x - SHED_DOOR.w / 2 + 0.12, y0 + SHED_DOOR.h * f, 0.17);
+      g.add(hinge);
     });
     const dot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), goldMat);
-    dot.position.set(x + SHED_DOOR.w / 2 - 0.3, y0 + SHED_DOOR.h * 0.48, halfW + 0.18);
-    group.add(dot);
+    dot.position.set(x + SHED_DOOR.w / 2 - 0.3, y0 + SHED_DOOR.h * 0.48, 0.18);
+    g.add(dot);
   }
 
-  // ---- windows: frame, glass, muntins, sill ----------------------------
-  for (let w = 0; w < p.windows; w++) {
-    const xRaw = w === 0 ? L * 0.3 : L * 0.08 + (p.doors === 2 ? L * 0.22 : 0);
-    const x = Math.min(xRaw, halfL - SHED_WIN.w / 2 - 0.4);
+  // ---- windows: frame, glass, muntins, sill — at their placed wall ------
+  // Sill stays at 2 ft, so even on the gable ends the head (y0 + 6) sits
+  // below the 7-ft wall top plate — never up in the gable triangle.
+  for (const o of openings.windows) {
+    const { g, x } = wallFrame(o.wall, o.centerFt);
     const cy = y0 + 2 + SHED_WIN.h / 2;
     const frame = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w + 0.4, SHED_WIN.h + 0.4, 0.14), trimMat);
-    frame.position.set(x, cy, halfW + 0.02);
+    frame.position.set(x, cy, 0.02);
     frame.castShadow = true;
-    group.add(frame);
+    g.add(frame);
     const glass = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w - 0.15, SHED_WIN.h - 0.15, 0.1), glassMat);
-    glass.position.set(x, cy, halfW + 0.06);
-    group.add(glass);
+    glass.position.set(x, cy, 0.06);
+    g.add(glass);
     // muntin cross
     const mv = new THREE.Mesh(new THREE.BoxGeometry(0.08, SHED_WIN.h - 0.1, 0.04), trimMat);
-    mv.position.set(x, cy, halfW + 0.13);
-    group.add(mv);
+    mv.position.set(x, cy, 0.13);
+    g.add(mv);
     const mh = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w - 0.1, 0.08, 0.04), trimMat);
-    mh.position.set(x, cy, halfW + 0.13);
-    group.add(mh);
+    mh.position.set(x, cy, 0.13);
+    g.add(mh);
     // sill
     const sill = new THREE.Mesh(new THREE.BoxGeometry(SHED_WIN.w + 0.55, 0.12, 0.24), trimMat);
-    sill.position.set(x, cy - SHED_WIN.h / 2 - 0.24, halfW + 0.06);
-    group.add(sill);
+    sill.position.set(x, cy - SHED_WIN.h / 2 - 0.24, 0.06);
+    g.add(sill);
   }
 
-  // ---- 4-ft ramp at the first door -------------------------------------
+  // ---- 4-ft ramp at the first door — follows the door's wall -----------
   if (p.ramp) {
-    const dx = doorXs[0] ?? 0;
+    const first = openings.doors[0];
+    const { g, x: dx } = wallFrame(first?.wall ?? "front", first?.centerFt ?? shedWallLen(p, "front") / 2);
     const run = 4, wRamp = SHED_DOOR.w + 0.4;
     const wedge = new THREE.Shape();
     wedge.moveTo(0, 0); wedge.lineTo(0, FLOOR_TOP - 0.06); wedge.lineTo(run, 0); wedge.closePath();
     const wedgeGeo = new THREE.ExtrudeGeometry(wedge, { depth: wRamp, bevelEnabled: false });
     const rampM = new THREE.Mesh(wedgeGeo, woodPT);
-    rampM.rotation.y = -Math.PI / 2; // shape x → world +z, depth → world x
-    rampM.position.set(dx + wRamp / 2, 0.04, halfW);
+    rampM.rotation.y = -Math.PI / 2; // shape x → local +z, depth → local x
+    rampM.position.set(dx + wRamp / 2, 0.04, 0);
     rampM.castShadow = true;
     rampM.receiveShadow = true;
-    group.add(rampM);
+    g.add(rampM);
     // cleats across the walking surface
     const rampSlope = Math.atan2(FLOOR_TOP - 0.06, run);
     const cleatGeo = new THREE.BoxGeometry(wRamp, 0.09, 0.18);
@@ -405,34 +428,37 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
     const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-rampSlope, 0, 0));
     for (let i = 0; i < 3; i++) {
       const f = (i + 1) / 4;
-      const pos = new THREE.Vector3(dx, (FLOOR_TOP - 0.06) * (1 - f) + 0.06, halfW + run * f);
+      const pos = new THREE.Vector3(dx, (FLOOR_TOP - 0.06) * (1 - f) + 0.06, run * f);
       M.compose(pos, q, new THREE.Vector3(1, 1, 1));
       cleats.setMatrixAt(i, M);
     }
     cleats.instanceMatrix.needsUpdate = true;
-    group.add(cleats);
+    g.add(cleats);
   }
 
   // Left end (−X): the cutaway — open stud framing, same 16" o.c. count
-  // the estimate prices.
-  const nStuds = spaced(W, 16);
-  const studGeo = new THREE.BoxGeometry(0.12, H - 0.36, 0.29);
-  const studs = new THREE.InstancedMesh(studGeo, wood, nStuds);
-  for (let i = 0; i < nStuds; i++) {
-    const z = -halfW + Math.min((i * 16) / 12, W);
-    M.makeTranslation(-halfL + 0.15, y0 + H / 2, Math.min(z, halfW) - 0);
-    studs.setMatrixAt(i, M);
+  // the estimate prices. When an opening is placed on this wall the skin
+  // closes it (above), so the open framing is skipped.
+  if (!leftUsed) {
+    const nStuds = spaced(W, 16);
+    const studGeo = new THREE.BoxGeometry(0.12, H - 0.36, 0.29);
+    const studs = new THREE.InstancedMesh(studGeo, wood, nStuds);
+    for (let i = 0; i < nStuds; i++) {
+      const z = -halfW + Math.min((i * 16) / 12, W);
+      M.makeTranslation(-halfL + 0.15, y0 + H / 2, Math.min(z, halfW) - 0);
+      studs.setMatrixAt(i, M);
+    }
+    studs.instanceMatrix.needsUpdate = true;
+    studs.castShadow = true;
+    group.add(studs);
+    // plates: one bottom, two top
+    const plateGeo = new THREE.BoxGeometry(0.29, 0.12, W);
+    [y0 + 0.06, y0 + H - 0.18, y0 + H - 0.06].forEach(y => {
+      const pl = new THREE.Mesh(plateGeo, wood);
+      pl.position.set(-halfL + 0.15, y, 0);
+      group.add(pl);
+    });
   }
-  studs.instanceMatrix.needsUpdate = true;
-  studs.castShadow = true;
-  group.add(studs);
-  // plates: one bottom, two top
-  const plateGeo = new THREE.BoxGeometry(0.29, 0.12, W);
-  [y0 + 0.06, y0 + H - 0.18, y0 + H - 0.06].forEach(y => {
-    const pl = new THREE.Mesh(plateGeo, wood);
-    pl.position.set(-halfL + 0.15, y, 0);
-    group.add(pl);
-  });
 
   // roof framing readout at the cutaway end — trusses carry a bottom chord
   // and webs; stick framing shows a collar-free rafter pair.
@@ -768,6 +794,8 @@ export default function ShedScene(p: ShedSceneProps) {
   }, []);
 
   const { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac, sidingColor, roofColor } = p;
+  // placements is a fresh object each render — key the rebuild on its content
+  const placementsKey = JSON.stringify(p.placements ?? null);
   React.useEffect(() => {
     const core = coreRef.current;
     if (!core) return;
@@ -796,7 +824,7 @@ export default function ShedScene(p: ShedSceneProps) {
     core.fitC.copy(sphere.center);
     frameTo(core, first ? 0 : 550);
     core.controls.update();
-  }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac, sidingColor, roofColor]);
+  }, [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac, sidingColor, roofColor, placementsKey]);
 
   // the Dims chip toggles the callout group without a rebuild
   React.useEffect(() => {

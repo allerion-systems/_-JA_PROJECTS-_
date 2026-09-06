@@ -100,10 +100,109 @@ export type ShedParams = {
   /** Premium finish tier — optional so existing callers keep working. */
   wainscot?: boolean;
   hvac?: boolean;
+  /** Opening placement — optional so existing callers keep working. When
+      absent, the legacy fixed positions apply exactly. Placement is
+      geometric only: it NEVER changes the takeoff. */
+  placements?: ShedPlacements;
 };
 
 export const SHED_DOOR = { w: 3, h: 6.83 };  // 3-0 × 6-10 shed door
 export const SHED_WIN = { w: 3, h: 4 };      // 3-0 × 4-0 window
+
+// ---- opening placement ----------------------------------------------------
+// Walls are named as a buyer facing the shed's front sees them; pos runs
+// 0..1 left→right along each wall, again viewed from outside. Placement is
+// design, not pricing — the same SKUs and quantities build the shed
+// wherever a door lands, so shedTakeoff never reads it.
+
+export type ShedWall = "front" | "back" | "left" | "right";
+export type WallPos = { wall: ShedWall; pos: number }; // pos = 0..1 along the wall
+export type ShedPlacements = { doors?: WallPos[]; windows?: WallPos[] };
+
+export const SHED_WALLS: readonly ShedWall[] = ["front", "back", "left", "right"];
+export const OPENING_CLEAR = 1; // ft kept clear of each corner
+const OPENING_SEP = 0.2;        // ft minimum gap between openings on one wall
+
+export const shedWallLen = (p: { widthFt: number; lengthFt: number }, wall: ShedWall): number =>
+  wall === "front" || wall === "back" ? p.lengthFt : p.widthFt;
+
+/** Center of an opening in ft from the wall's left corner for a 0..1 pos —
+    the whole 0..1 range maps inside the corner clearances, so any pos fits. */
+export function openingCenterFt(pos: number, wallLen: number, openW: number): number {
+  const f = Math.min(1, Math.max(0, pos));
+  const span = Math.max(0, wallLen - 2 * OPENING_CLEAR - openW);
+  return OPENING_CLEAR + openW / 2 + f * span;
+}
+
+/** Untrusted placements (saved design / #d= share link) → a valid
+    ShedPlacements or undefined. Wrong shapes and junk values fall away —
+    they never crash and never reach the scene. */
+export function sanitizeShedPlacements(v: unknown): ShedPlacements | undefined {
+  if (typeof v !== "object" || v === null || Array.isArray(v)) return undefined;
+  const one = (x: unknown): WallPos | null => {
+    if (typeof x !== "object" || x === null || Array.isArray(x)) return null;
+    const { wall, pos } = x as Record<string, unknown>;
+    if (!SHED_WALLS.includes(wall as ShedWall)) return null;
+    if (typeof pos !== "number" || !Number.isFinite(pos)) return null;
+    return { wall: wall as ShedWall, pos: Math.min(1, Math.max(0, pos)) };
+  };
+  const list = (x: unknown): WallPos[] | undefined => {
+    if (!Array.isArray(x)) return undefined;
+    const out = x.slice(0, 4).map(one).filter((p): p is WallPos => p !== null);
+    return out.length > 0 ? out : undefined;
+  };
+  const rec = v as Record<string, unknown>;
+  const doors = list(rec.doors);
+  const windows = list(rec.windows);
+  return doors || windows ? { doors, windows } : undefined;
+}
+
+export type ResolvedOpening = { wall: ShedWall; centerFt: number; w: number };
+
+/** Where each door and window actually sits. With no placements the legacy
+    fixed spots apply EXACTLY (all on the front wall). With placements, each
+    opening is clamped inside its wall's corner clearances and nudged off any
+    earlier opening it would overlap — simple resolution, never an error. */
+export function resolveShedOpenings(p: ShedParams): { doors: ResolvedOpening[]; windows: ResolvedOpening[] } {
+  const L = p.lengthFt, halfL = L / 2;
+  const doorDefault = (d: number) =>
+    (p.doors === 1 ? -L * 0.18 : d === 0 ? -L * 0.28 : L * 0.05) + halfL;
+  const winDefault = (w: number) => {
+    const xRaw = w === 0 ? L * 0.3 : L * 0.08 + (p.doors === 2 ? L * 0.22 : 0);
+    return Math.min(xRaw, halfL - SHED_WIN.w / 2 - 0.4) + halfL;
+  };
+  const doors: ResolvedOpening[] = [];
+  const windows: ResolvedOpening[] = [];
+  if (!p.placements) {
+    // legacy path, bit-for-bit: no clamp, no nudge
+    for (let d = 0; d < p.doors; d++) doors.push({ wall: "front", centerFt: doorDefault(d), w: SHED_DOOR.w });
+    for (let w = 0; w < p.windows; w++) windows.push({ wall: "front", centerFt: winDefault(w), w: SHED_WIN.w });
+    return { doors, windows };
+  }
+  const placed: ResolvedOpening[] = [];
+  const put = (out: ResolvedOpening[], wp: WallPos | undefined, defaultCenter: number, w: number) => {
+    const wall: ShedWall = wp?.wall ?? "front";
+    const len = shedWallLen(p, wall);
+    const lo = OPENING_CLEAR + w / 2;
+    const hi = Math.max(lo, len - OPENING_CLEAR - w / 2);
+    const clamp = (c: number) => Math.min(Math.max(c, lo), hi);
+    let c = wp ? openingCenterFt(wp.pos, len, w) : clamp(defaultCenter);
+    for (const o of placed) {
+      if (o.wall !== wall) continue;
+      const need = (o.w + w) / 2 + OPENING_SEP;
+      if (Math.abs(c - o.centerFt) < need) {
+        const right = o.centerFt + need, left = o.centerFt - need;
+        c = right <= hi ? right : left >= lo ? left : clamp(c);
+      }
+    }
+    const r: ResolvedOpening = { wall, centerFt: c, w };
+    placed.push(r);
+    out.push(r);
+  };
+  for (let d = 0; d < p.doors; d++) put(doors, p.placements.doors?.[d], doorDefault(d), SHED_DOOR.w);
+  for (let w = 0; w < p.windows; w++) put(windows, p.placements.windows?.[w], winDefault(w), SHED_WIN.w);
+  return { doors, windows };
+}
 
 /** Geometry the scene and the takeoff both derive from. */
 export function shedGeometry(p: ShedParams) {

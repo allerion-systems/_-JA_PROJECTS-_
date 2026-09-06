@@ -1,7 +1,11 @@
 import * as React from "react";
 import { useAuth } from "@/auth";
 import { PRODUCTS } from "@/data";
-import { rollup, shedTakeoff, type Element, type ShedParams } from "@/bim";
+import {
+  OPENING_CLEAR, SHED_DOOR, SHED_WIN, SHED_WALLS, openingCenterFt, resolveShedOpenings,
+  rollup, sanitizeShedPlacements, shedTakeoff, shedWallLen,
+  type Element, type ShedParams, type ShedWall, type WallPos,
+} from "@/bim";
 import { designUrl, pickBool, pickOne, saveDesign } from "@/designStore";
 import { Btn, Field, Lab, Panel, Tag, cx, inputCls, money } from "@/ui";
 import { useAnimatedNumber } from "@/useAnimatedNumber";
@@ -479,6 +483,49 @@ function Swatches({ label, options, value, onChange }: {
   );
 }
 
+// ---- opening placement — design, not pricing ------------------------------
+
+const WALL_NAMES: Record<ShedWall, string> = { front: "Front", back: "Back", left: "Left", right: "Right" };
+
+/** One opening's placement row: a compact wall picker + a position slider.
+    Guests get full access — placement never touches the takeoff. */
+function PlaceRow({ label, value, w, dims, onChange }: {
+  label: string;
+  value: WallPos;
+  w: number; // opening width, ft
+  dims: { widthFt: number; lengthFt: number };
+  onChange: (patch: Partial<WallPos>) => void;
+}) {
+  const wallLen = shedWallLen(dims, value.wall);
+  const edgeFt = openingCenterFt(value.pos, wallLen, w) - w / 2;
+  return (
+    <div data-place-row={label} className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+      <span className="w-[74px] shrink-0 text-[13px] font-semibold">{label}</span>
+      <div className="flex gap-1.5">
+        {SHED_WALLS.map(wall => (
+          <button key={wall} type="button" aria-pressed={wall === value.wall}
+            onClick={() => onChange({ wall })}
+            className={cx("min-h-[34px] rounded-[6px] border px-2.5 text-[12px] font-semibold transition-colors",
+              wall === value.wall
+                ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
+                : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>
+            {WALL_NAMES[wall]}
+          </button>
+        ))}
+      </div>
+      <div className="flex min-w-[220px] flex-1 items-center gap-2.5">
+        <input type="range" min={0} max={1} step={0.01} value={value.pos}
+          aria-label={`${label} — position along the ${WALL_NAMES[value.wall].toLowerCase()} wall`}
+          onChange={e => onChange({ pos: Number(e.target.value) })}
+          className="h-[34px] w-full min-w-[120px] flex-1 accent-[hsl(var(--safety-2))]" />
+        <span className="num w-[150px] shrink-0 text-[12px] text-[hsl(var(--ink-2))]">
+          {(Math.round(edgeFt * 10) / 10).toFixed(1)} ft from left corner
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
   const [step, setStep] = React.useState(0);
   // initial comes off the wire (saved design / share link) — every value is
@@ -501,8 +548,43 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
   const [sidingColor, setSidingColor] = React.useState<string>(SIDING_COLORS[0][1]);
   const [roofColor, setRoofColor] = React.useState<string>(ROOF_COLORS[0][1]);
 
-  const params: ShedParams = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac };
-  const elements = React.useMemo(() => shedTakeoff(params),
+  // opening placement — geometric only, never priced. Off-the-wire placements
+  // are shape-checked: anything invalid becomes undefined, never a crash.
+  const [doorPlace, setDoorPlace] = React.useState<(WallPos | undefined)[]>(
+    () => sanitizeShedPlacements(initial?.placements)?.doors ?? []);
+  const [winPlace, setWinPlace] = React.useState<(WallPos | undefined)[]>(
+    () => sanitizeShedPlacements(initial?.placements)?.windows ?? []);
+
+  const base: ShedParams = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac };
+
+  // factory-default spots as 0..1 fractions — what an untouched row shows
+  const factory = resolveShedOpenings(base); // base has no placements → legacy spots
+  const defPos = (centerFt: number, w: number) => {
+    const span = Math.max(1e-6, lengthFt - 2 * OPENING_CLEAR - w);
+    return Math.min(1, Math.max(0, (centerFt - OPENING_CLEAR - w / 2) / span));
+  };
+  const effDoor = (i: number): WallPos => doorPlace[i]
+    ?? { wall: "front", pos: defPos(factory.doors[i]?.centerFt ?? lengthFt / 2, SHED_DOOR.w) };
+  const effWin = (i: number): WallPos => winPlace[i]
+    ?? { wall: "front", pos: defPos(factory.windows[i]?.centerFt ?? lengthFt / 2, SHED_WIN.w) };
+  const setDoor = (i: number, patch: Partial<WallPos>) =>
+    setDoorPlace(prev => { const next = [...prev]; next[i] = { ...effDoor(i), ...patch }; return next; });
+  const setWin = (i: number, patch: Partial<WallPos>) =>
+    setWinPlace(prev => { const next = [...prev]; next[i] = { ...effWin(i), ...patch }; return next; });
+
+  // only carried once a buyer moves something — untouched designs keep the
+  // exact wave-1 params (and the exact legacy 3D positions)
+  const doorsTouched = doorPlace.slice(0, doors).some(Boolean);
+  const winsTouched = winPlace.slice(0, windows).some(Boolean);
+  const placements = doorsTouched || winsTouched ? {
+    doors: doorsTouched ? Array.from({ length: doors }, (_, i) => effDoor(i)) : undefined,
+    windows: winsTouched ? Array.from({ length: windows }, (_, i) => effWin(i)) : undefined,
+  } : undefined;
+
+  const params: ShedParams = { ...base, placements };
+  // placement is geometric, not priced — the takeoff never reads it, so the
+  // memo deps stay placement-free on purpose (BoM invariance)
+  const elements = React.useMemo(() => shedTakeoff(base),
     [widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac]);
   const { total } = rollup(elements);
 
@@ -521,6 +603,15 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
     ["Roof framing", framing === "stick" ? "Stick rafters" : "Engineered trusses"],
     ["Add-ons", addOns],
   ];
+  // one human-readable placement line per opening (resolved, so the sheet
+  // matches the 3D scene exactly — clamps and overlap nudges included)
+  {
+    const resolved = resolveShedOpenings(params);
+    const line = (o: { wall: ShedWall; centerFt: number; w: number }) =>
+      `${WALL_NAMES[o.wall]} wall — ${(Math.round((o.centerFt - o.w / 2) * 10) / 10).toFixed(1)} ft from left`;
+    resolved.doors.forEach((o, i) => specRows.push([`Door ${i + 1}`, line(o)]));
+    resolved.windows.forEach((o, i) => specRows.push([`Window ${i + 1}`, line(o)]));
+  }
 
   return (
     <div>
@@ -588,6 +679,24 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
                 ))}
               </div>
             </div>
+            {(doors > 0 || windows > 0) && (
+              <div className="sm:col-span-2">
+                <Lab className="mb-1.5">Placement — pick a wall and slide each opening along it</Lab>
+                <div className="grid gap-2.5">
+                  {Array.from({ length: doors }, (_, i) => (
+                    <PlaceRow key={`d${i}`} label={`Door ${i + 1}`} value={effDoor(i)} w={SHED_DOOR.w}
+                      dims={{ widthFt, lengthFt }} onChange={patch => setDoor(i, patch)} />
+                  ))}
+                  {Array.from({ length: windows }, (_, i) => (
+                    <PlaceRow key={`w${i}`} label={`Window ${i + 1}`} value={effWin(i)} w={SHED_WIN.w}
+                      dims={{ widthFt, lengthFt }} onChange={patch => setWin(i, patch)} />
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] text-[hsl(var(--ink-3))]">
+                  Walls are named facing the shed. Openings keep {OPENING_CLEAR} ft clear of every corner — same kit, same price, wherever they land.
+                </p>
+              </div>
+            )}
           </div>
         )}
         {step === 3 && <QuoteGate tool="shed" params={{ ...params }} total={total} />}
