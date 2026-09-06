@@ -40,7 +40,7 @@ Kentucky sales tax collected unless R&B's resale/exemption certificate is on fil
 > We're Misty Valley Supply, a construction supply company in Bonnieville, Kentucky,
 > quoting a commercial re-roof for a customer. Requesting materials-only pricing on:
 > approx. 45,500 sq ft (455 squares) of high-rib insulated metal roof panel,
-> [1.5-inch / R-13+] PIR core, [26] ga exterior, colors TBD, trim and fastener package
+> 1.5-inch core (firm requirement), [26] ga exterior, colors TBD, trim and fastener package
 > itemized separately. Please include: price per sq ft, freight to [CITY] KY, current
 > lead time, and your standard payment terms. We need pricing by Monday close of
 > business. Contact: Ben Easterday, Misty Valley Supply, [phone].
