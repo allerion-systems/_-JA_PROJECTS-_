@@ -7,6 +7,7 @@ Planning toolkit for Joey's wedding, built the way a PM would run a job: one sou
 - **`playbook.md`** — the main document. Mental preparation, the math of a 154-person wedding (tables, invites, bar, catering), budget framework, and a risk register with mitigations.
 - **`checklist.md`** — the full phased checklist, 12 months out through the day after.
 - **`day-of-runsheet.md`** — hour-by-hour run sheet template for the wedding day. Fill in real times once the ceremony time is locked.
+- **`house-prep.md`** — getting the house ready for the wedding party to stay over: room chart, bathroom/kitchen logistics, punch list, morning-of staging, and the budget front-room door conversion.
 - **`budget-worksheet.csv`** — line-item budget tracker with typical percentage allocations. Open in Excel/Sheets/Numbers.
 - **`guest-list.csv`** — guest list tracker template (household-level, with RSVP/meal/table columns).
 - **`index.html`** — interactive planner dashboard: countdown, checklist with saved progress, and a headcount calculator. No build step — open it served locally like the rest of the site:
