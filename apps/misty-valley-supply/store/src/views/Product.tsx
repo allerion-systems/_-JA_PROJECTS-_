@@ -4,6 +4,10 @@ import { Glyph } from "@/glyph";
 import { Price, useAuth } from "@/auth";
 import { Btn, Tag, cx, money } from "@/ui";
 
+// The full-kit BoM pulls the takeoff engines + BomTable — kept out of the
+// main chunk behind its own lazy boundary.
+const KitBom = React.lazy(() => import("@/views/KitBom"));
+
 const fulfilTone = (f: Product["fulfil"]) =>
   f === "stock" ? "good" : f === "fabricate" ? "warn" : "grey";
 const fulfilName = (f: Product["fulfil"]) =>
@@ -136,6 +140,11 @@ export default function ProductView({
               </p>
             </div>
           </div>
+
+          {/* full default-configuration bill of material, engine-computed */}
+          <React.Suspense fallback={null}>
+            <KitBom sku={p.sku} />
+          </React.Suspense>
         </div>
 
         {/* ----------------------------------------------------- buy box */}
