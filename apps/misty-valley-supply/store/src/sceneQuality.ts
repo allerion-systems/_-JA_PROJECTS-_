@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { SAOPass } from "three/examples/jsm/postprocessing/SAOPass.js";
+import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 
 /* ------------------------------------------------------------------------
@@ -210,10 +210,34 @@ export function makeGroundPlane(opts: GroundOptions = {}): THREE.Mesh {
   tex.colorSpace = THREE.SRGBColorSpace;
   const mesh = new THREE.Mesh(
     new THREE.CircleGeometry(radius, 64),
-    new THREE.MeshStandardMaterial({ map: tex, roughness: 1 }),
+    // polygonOffset pushes this plane a few depth quanta behind whatever
+    // dressing sits on it (grass discs, contact shadows) — z-fight-proof at
+    // ANY depth precision, including 16-bit software/mobile GL
+    new THREE.MeshStandardMaterial({ map: tex, roughness: 1, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 }),
   );
   mesh.rotation.x = -Math.PI / 2;
   mesh.receiveShadow = true;
+  return mesh;
+}
+
+/**
+ * Per-model grass dressing disc for a rebuilt group: tiled grass noise that
+ * matches makeGroundPlane's palette, slightly proud of grade, depth-biased
+ * (a couple of quanta behind pads but ahead of the big ground plane) so it
+ * can never z-fight either neighbor. Flagged noFit.
+ */
+export function makeGrassDisc(radius: number, base = "#7fa065"): THREE.Mesh {
+  const mesh = new THREE.Mesh(
+    new THREE.CircleGeometry(radius, 48),
+    new THREE.MeshStandardMaterial({
+      map: makeGrassTexture(base, Math.max(2, radius / 14)),
+      roughness: 1, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 4,
+    }),
+  );
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.y = 0.05;
+  mesh.receiveShadow = true;
+  mesh.userData.noFit = true;
   return mesh;
 }
 
@@ -262,7 +286,7 @@ export function contactShadow(wFt: number, dFt: number, opts: { opacity?: number
     new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: opts.opacity ?? 0.85 }),
   );
   mesh.rotation.x = -Math.PI / 2;
-  mesh.position.y = opts.y ?? 0.03;
+  mesh.position.y = opts.y ?? 0.1; // clear of the grass disc at any depth precision
   mesh.userData.noFit = true;
   mesh.userData.noAO = true; // keep it out of the SAO depth/normal pass
   return mesh;
@@ -384,13 +408,13 @@ export function sharedRoughnessMap(): THREE.CanvasTexture {
 // ---- optional postprocessing (desktop only) -------------------------------
 
 export type ComposerRig = {
-  composer: EffectComposer;
+  composer: { render: () => void };
   setSize: (w: number, h: number) => void;
   dispose: () => void;
 };
 
 /**
- * EffectComposer + SAO + OutputPass — screen-space ambient occlusion that
+ * EffectComposer + GTAO + OutputPass — screen-space ambient occlusion that
  * grounds every corner and eave. Returns null on coarse-pointer devices or
  * dpr > 2 (mobile keeps the plain renderer.render path and its 60 fps).
  * ACES/sRGB are applied once, by the OutputPass (render targets skip the
@@ -407,42 +431,46 @@ export function makeComposer(
   composer.setPixelRatio(renderer.getPixelRatio());
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
-  const sao = new SAOPass(scene, camera);
-  sao.params.saoBias = 0.5;
-  sao.params.saoIntensity = 0.012;
-  sao.params.saoScale = camera.far * 0.03;
-  sao.params.saoKernelRadius = 32;
-  sao.params.saoMinResolution = 0;
-  sao.params.saoBlur = true;
-  sao.params.saoBlurRadius = 8;
-  sao.params.saoBlurStdDev = 4;
-  sao.params.saoBlurDepthCutoff = 0.002;
-  // Sprites (dimension pills) and noAO overlays (contact shadows, ghosted
-  // cutaway skins) must stay out of SAO's depth/normal pre-pass, or they
-  // smear dark rectangles into the AO term. Hide them around the pass;
-  // the beauty RenderPass has already drawn them.
-  const saoRender = sao.render.bind(sao) as (...a: unknown[]) => void;
+  const gtao = new GTAOPass(scene, camera);
+  gtao.output = GTAOPass.OUTPUT.Default;
+  gtao.blendIntensity = 0.8;
+  gtao.updateGtaoMaterial({
+    radius: 1.2,             // world-space feet — crevice-scale, not room-scale
+    distanceExponent: 1,
+    thickness: 1,
+    distanceFallOff: 1,
+    scale: 1.2,
+    samples: 12,
+    screenSpaceRadius: false,
+  });
+  gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, radiusExponent: 1, rings: 2, samples: 12 });
+  // Sprites (dimension pills), lines and noAO overlays (contact shadows,
+  // ghosted cutaway skins) must stay out of the AO depth/normal pre-pass,
+  // or they smear dark rectangles into the AO term. Hide them around the
+  // pass; the beauty RenderPass has already drawn them.
+  const gtaoRender = gtao.render.bind(gtao) as (...a: unknown[]) => void;
   const hiddenForAO: THREE.Object3D[] = [];
-  sao.render = ((...args: unknown[]) => {
+  gtao.render = ((...args: unknown[]) => {
     hiddenForAO.length = 0;
     scene.traverse(o => {
-      if (o.visible && ((o as THREE.Sprite).isSprite || o.userData.noAO)) {
+      const t = o as THREE.Sprite & THREE.Line & THREE.Points;
+      if (o.visible && (t.isSprite || t.isLine || t.isPoints || o.userData.noAO)) {
         o.visible = false;
         hiddenForAO.push(o);
       }
     });
-    saoRender(...args);
+    gtaoRender(...args);
     for (const o of hiddenForAO) o.visible = true;
     hiddenForAO.length = 0;
-  }) as typeof sao.render;
-  composer.addPass(sao);
+  }) as typeof gtao.render;
+  composer.addPass(gtao);
   const output = new OutputPass();
   composer.addPass(output);
   return {
     composer,
     setSize: (w: number, h: number) => composer.setSize(w, h),
     dispose: () => {
-      sao.dispose();
+      gtao.dispose();
       output.dispose();
       renderPass.dispose();
       composer.dispose();

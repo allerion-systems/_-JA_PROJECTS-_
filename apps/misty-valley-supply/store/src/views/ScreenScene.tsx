@@ -182,7 +182,7 @@ function buildWorld({ lf, heightFt, bayFt, frameOnly, gauge }: ScreenSceneProps)
   if (L >= 24) rtu(Math.min(12, L * 0.4), rtuH * 0.8, 7, L * 0.2, -11);
 
   // soft contact shadow across the screen line + RTU field — fake AO on deck
-  const cs = contactShadow(L + 10, 26, { opacity: 0.5, y: 0.06 });
+  const cs = contactShadow(L + 10, 26, { opacity: 0.5, y: 0.12 });
   cs.position.z = -7;
   group.add(cs);
 
@@ -292,7 +292,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     pmrem.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 0.55;
+    scene.environmentIntensity = 0.28; // specular sheen only — the sun models the form
 
     // distant ground so the horizon reads as street level, not empty sky
     const groundGeo = new THREE.PlaneGeometry(4000, 4000);
@@ -302,14 +302,14 @@ export default function ScreenScene(props: ScreenSceneProps) {
     ground.position.y = -31;
     scene.add(ground);
 
-    const ambient = new THREE.AmbientLight(0xe8eef8, 0.85);
-    const fill = new THREE.HemisphereLight(0xcfdcee, 0x8e8b84, 0.55);
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.45);
+    const fill = new THREE.HemisphereLight(0xcfdcee, 0x8e8b84, 0.5);
     scene.add(ambient, fill);
 
     // sun + its one shadow map are created once; the rebuild effect only
     // repositions it and resizes the shadow camera to the new footprint
-    const sun = new THREE.DirectionalLight(0xfff4e0, 2.4);
-    sun.position.set(30, 50, 34);
+    const sun = new THREE.DirectionalLight(0xfff4e0, 2.9);
+    sun.position.set(-30, 50, 34);
     sun.castShadow = true;
     tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target); // target defaults to origin
@@ -421,7 +421,8 @@ export default function ScreenScene(props: ScreenSceneProps) {
     const h = Math.max(heightFt, 2);
     // the persistent sun follows the configuration; its one shadow map is
     // re-fitted to the model (wide pad: the noFit parapet also casts)
-    core.sun.position.set(L * 0.35 + 20, Math.max(40, h * 4 + 30), 34);
+    // sun high front-left: the panel field stays lit, shadows rake right
+    core.sun.position.set(-(L * 0.35 + 20), Math.max(40, h * 4 + 30), 34);
     fitShadowCamera(core.sun, group, 2.3);
     applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 

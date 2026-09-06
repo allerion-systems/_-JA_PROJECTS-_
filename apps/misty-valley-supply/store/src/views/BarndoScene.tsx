@@ -6,7 +6,7 @@ import { barndoGeometry, type BarndoParams } from "@/bimBarndo";
 import { exportGroupAsGlb } from "@/exportModel";
 import {
   applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
-  makeComposer, makeGrassTexture, makeGroundPlane, makeLapTexture, makeRibTexture,
+  makeComposer, makeGrassDisc, makeGroundPlane, makeLapTexture, makeRibTexture,
   makeSky, sharedRoughnessMap, tuneSunShadow, type ComposerRig,
 } from "@/sceneQuality";
 
@@ -192,17 +192,7 @@ function buildWorld(p: BarndoSceneProps): THREE.Group {
   const concrete = new THREE.MeshStandardMaterial({ color: 0xb9b7ae, roughness: 0.95 });
 
   // ---- ground dressing (excluded from camera fit) ----------------------
-  const grassR = Math.max(L, W) * 1.6 + 14;
-  const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(grassR, 48),
-    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#7fa065", Math.max(2, grassR / 14)), roughness: 1 }),
-  );
-  grass.rotation.x = -Math.PI / 2;
-  grass.position.y = 0.015;
-  grass.receiveShadow = true;
-  grass.userData.noFit = true;
-  group.add(grass);
-
+  group.add(makeGrassDisc(Math.max(L, W) * 1.6 + 14));
   group.add(contactShadow(L + 14, W + 20));
 
   // ---- slab ------------------------------------------------------------
@@ -484,20 +474,20 @@ export default function BarndoScene(p: BarndoSceneProps) {
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     pmrem.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 0.55;
+    scene.environmentIntensity = 0.25; // specular sheen only — the sun models the form
 
     // soft-edged textured ground that melts into the horizon haze
     const ground = makeGroundPlane({ radius: 1100, base: "#8a9a6e", horizon: "#e2e6d8" });
     scene.add(ground);
 
-    const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
-    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.55);
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.4);
+    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.45);
     scene.add(ambient, hemi);
 
     // sun + its one shadow map are created once; the rebuild effect only
     // repositions it and resizes the shadow camera to the new footprint
-    const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
-    sun.position.set(30, 44, 28);
+    const sun = new THREE.DirectionalLight(0xfff2dc, 2.9);
+    sun.position.set(-30, 44, 14);
     sun.castShadow = true;
     tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
@@ -601,7 +591,8 @@ export default function BarndoScene(p: BarndoSceneProps) {
     // the persistent sun follows the footprint; its one shadow map is
     // re-fitted tight to the new model bounds
     const g = barndoGeometry(p);
-    core.sun.position.set(g.lengthFt * 0.55 + 16, 34 + g.eaveFt, 26);
+    // sun rides high left so the cast shadow spills visibly to the right
+    core.sun.position.set(-(g.lengthFt * 0.8 + 20), 34 + g.eaveFt, g.lengthFt * 0.2 + 10);
     fitShadowCamera(core.sun, group);
     applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 

@@ -348,20 +348,20 @@ export default function DeckScene(p: DeckParams) {
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     pmrem.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 0.55;
+    scene.environmentIntensity = 0.25; // specular sheen only — the sun models the form
 
     // soft-edged textured ground that melts into the horizon haze
     const ground = makeGroundPlane({ radius: 900, base: "#87966c", horizon: "#e2e6d8" });
     scene.add(ground);
 
-    const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
-    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x86927a, 0.55);
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.4);
+    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x86927a, 0.45);
     scene.add(ambient, hemi);
 
     // sun + its one shadow map are created once; the rebuild effect only
     // repositions it and resizes the shadow camera to the new footprint
-    const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
-    sun.position.set(20, 30, 26);
+    const sun = new THREE.DirectionalLight(0xfff2dc, 2.9);
+    sun.position.set(-18, 30, 16);
     sun.castShadow = true;
     tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
@@ -464,7 +464,8 @@ export default function DeckScene(p: DeckParams) {
 
     // the persistent sun follows the footprint; its one shadow map is
     // re-fitted tight to the new model bounds
-    core.sun.position.set(widthFt * 0.6 + 12, 24 + heightFt, 26);
+    // sun rides high left so the cast shadow spills visibly to the right
+    core.sun.position.set(-(widthFt * 0.8 + 14), 24 + heightFt, widthFt * 0.3 + 10);
     fitShadowCamera(core.sun, group);
     applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
 

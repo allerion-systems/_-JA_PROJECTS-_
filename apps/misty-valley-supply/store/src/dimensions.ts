@@ -84,6 +84,7 @@ export function makeDimensions(dims: Dim[]): THREE.Group {
   const group = new THREE.Group();
   group.name = DIMS_NAME;
   group.userData.noFit = true; // annotation — never widens the camera fit
+  group.userData.noAO = true;  // …and never feeds the SAO depth/normal pass
   const up = new THREE.Vector3(0, 1, 0);
   const lineMat = new THREE.LineBasicMaterial({ color: LINE_COLOR });
 

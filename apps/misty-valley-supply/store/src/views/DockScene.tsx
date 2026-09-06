@@ -315,7 +315,7 @@ function buildDock(p: DockSceneProps): { group: THREE.Group; bob: THREE.Group } 
       minZ = Math.min(minZ, r.cz - r.lz / 2); maxZ = Math.max(maxZ, r.cz + r.lz / 2);
     }
     if (Number.isFinite(minX)) {
-      const cs = contactShadow(maxX - minX + 7, maxZ - minZ + 7, { opacity: 0.45, y: 0.14 });
+      const cs = contactShadow(maxX - minX + 7, maxZ - minZ + 7, { opacity: 0.45, y: 0.16 });
       cs.position.x = (minX + maxX) / 2;
       cs.position.z = (minZ + maxZ) / 2;
       group.add(cs);
@@ -430,15 +430,15 @@ export default function DockScene(p: DockSceneProps) {
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     pmrem.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 0.55;
+    scene.environmentIntensity = 0.28; // specular sheen only — the sun models the form
 
-    const ambient = new THREE.AmbientLight(0xe6eef6, 0.75);
-    const hemi = new THREE.HemisphereLight(0xcfdeea, 0x4e6a60, 0.6);
+    const ambient = new THREE.AmbientLight(0xe6eef6, 0.4);
+    const hemi = new THREE.HemisphereLight(0xcfdeea, 0x4e6a60, 0.5);
     scene.add(ambient, hemi);
 
     // sun + its one shadow map are created once; rebuilds only reposition it
-    const sun = new THREE.DirectionalLight(0xfff0d8, 2.2);
-    sun.position.set(30, 34, 26);
+    const sun = new THREE.DirectionalLight(0xfff0d8, 2.8);
+    sun.position.set(30, 40, 26);
     sun.castShadow = true;
     tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
@@ -558,7 +558,7 @@ export default function DockScene(p: DockSceneProps) {
 
     // the persistent sun follows the dock; its one shadow map re-covers it
     const { xEnd } = layout(p);
-    core.sun.position.set(xEnd * 0.5 + 20, 34, 26);
+    core.sun.position.set(xEnd * 0.5 + 20, 40, 26);
     const s = xEnd + 30;
     const sc = core.sun.shadow.camera;
     sc.left = -s; sc.right = s; sc.top = s; sc.bottom = -s;

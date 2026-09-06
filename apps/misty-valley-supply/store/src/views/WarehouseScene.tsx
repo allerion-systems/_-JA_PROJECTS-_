@@ -6,7 +6,7 @@ import { WAREHOUSE_SHELLS, OFFICE, type WarehouseParams } from "@/bimWarehouse";
 import { exportGroupAsGlb } from "@/exportModel";
 import {
   applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
-  makeComposer, makeGrassTexture, makeGroundPlane, makeRibTexture, makeSky,
+  makeComposer, makeGrassDisc, makeGroundPlane, makeRibTexture, makeSky,
   sharedRoughnessMap, tuneSunShadow, type ComposerRig,
 } from "@/sceneQuality";
 
@@ -179,17 +179,7 @@ function buildWorld(p: WarehouseSceneProps): THREE.Group {
   const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf2f0ea, roughness: 0.85 });
 
   // ---- ground dressing: grass disc + contact shadow ---------------------
-  const grassR = Math.max(L, W) * 1.6 + 40;
-  const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(grassR, 48),
-    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#7fa065", Math.max(2, grassR / 14)), roughness: 1 }),
-  );
-  grass.rotation.x = -Math.PI / 2;
-  grass.position.y = 0.015;
-  grass.receiveShadow = true;
-  grass.userData.noFit = true;
-  group.add(grass);
-
+  group.add(makeGrassDisc(Math.max(L, W) * 1.6 + 40));
   group.add(contactShadow(L + 24, W + 24, { opacity: 0.8 }));
 
   // asphalt truck apron along the dock wall
@@ -439,20 +429,20 @@ export default function WarehouseScene(p: WarehouseSceneProps) {
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     pmrem.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 0.55;
+    scene.environmentIntensity = 0.25; // specular sheen only — the sun models the form
 
     // soft-edged textured ground that melts into the horizon haze
     const ground = makeGroundPlane({ radius: 1400, base: "#8a9a6e", horizon: "#e2e6d8" });
     scene.add(ground);
 
-    const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
-    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.55);
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.4);
+    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.45);
     scene.add(ambient, hemi);
 
     // sun + its one shadow map are created once; the rebuild effect only
     // repositions it and resizes the shadow camera to the footprint
-    const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
-    sun.position.set(60, 80, 60);
+    const sun = new THREE.DirectionalLight(0xfff2dc, 2.9);
+    sun.position.set(-60, 80, 30);
     sun.castShadow = true;
     tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
@@ -556,7 +546,8 @@ export default function WarehouseScene(p: WarehouseSceneProps) {
     const shell = WAREHOUSE_SHELLS[size];
     // the persistent sun follows the footprint; its one shadow map is
     // re-fitted tight to the new model bounds
-    core.sun.position.set(shell.lengthFt * 0.5 + 30, 85, 60);
+    // sun rides high left so the cast shadow spills visibly to the right
+    core.sun.position.set(-(shell.lengthFt * 0.7 + 40), 85, shell.lengthFt * 0.25 + 20);
     // generous pad: the parked trailer + ramps are noFit but still cast
     fitShadowCamera(core.sun, group, 1.9);
     applyAnisotropy(core.renderer, group); // crisp textures at grazing angles

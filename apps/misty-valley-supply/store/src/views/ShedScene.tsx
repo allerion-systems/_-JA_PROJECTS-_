@@ -7,7 +7,7 @@ import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
 import {
   applyAnisotropy, contactShadow, disposeObject, enhanceRenderer, fitShadowCamera,
-  makeComposer, makeGrassTexture, makeGroundPlane, makeLapTexture, makeRibTexture,
+  makeComposer, makeGrassDisc, makeGroundPlane, makeLapTexture, makeRibTexture,
   makeSky, sharedRoughnessMap, tuneSunShadow, type ComposerRig,
 } from "@/sceneQuality";
 
@@ -188,17 +188,7 @@ function buildWorld(p: ShedSceneProps): THREE.Group {
   const M = new THREE.Matrix4();
 
   // ---- grass disc + contact shadow ------------------------------------
-  const grassR = Math.max(L, W) * 1.6 + 10;
-  const grass = new THREE.Mesh(
-    new THREE.CircleGeometry(grassR, 48),
-    new THREE.MeshStandardMaterial({ map: makeGrassTexture("#7fa065", Math.max(2, grassR / 14)), roughness: 1 }),
-  );
-  grass.rotation.x = -Math.PI / 2;
-  grass.position.y = 0.015;
-  grass.receiveShadow = true;
-  grass.userData.noFit = true; // ground dressing — excluded from camera fit
-  group.add(grass);
-
+  group.add(makeGrassDisc(Math.max(L, W) * 1.6 + 10));
   group.add(contactShadow(L + 9, W + 9));
 
   // ---- gravel pad + skids + floor -------------------------------------
@@ -618,20 +608,22 @@ export default function ShedScene(p: ShedSceneProps) {
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     pmrem.dispose();
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 0.55;
+    scene.environmentIntensity = 0.22; // specular sheen only — the sun models the form
 
     // soft-edged textured ground that melts into the horizon haze
     const ground = makeGroundPlane({ radius: 900, base: "#8a9a6e", horizon: "#e2e6d8" });
     scene.add(ground);
 
-    const ambient = new THREE.AmbientLight(0xe8eef8, 0.8);
-    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.55);
+    // lower ambient + stronger sun than the old rig: shadows and form read
+    // instead of washing out flat
+    const ambient = new THREE.AmbientLight(0xe8eef8, 0.35);
+    const hemi = new THREE.HemisphereLight(0xd2ddec, 0x8b8a78, 0.45);
     scene.add(ambient, hemi);
 
     // sun + its one shadow map are created once; the rebuild effect only
     // repositions it and resizes the shadow camera to the new footprint
-    const sun = new THREE.DirectionalLight(0xfff2dc, 2.3);
-    sun.position.set(20, 30, 20);
+    const sun = new THREE.DirectionalLight(0xfff2dc, 2.9);
+    sun.position.set(-20, 30, 10);
     sun.castShadow = true;
     tuneSunShadow(sun); // 2048 desktop / 1024 coarse + tuned bias
     scene.add(sun, sun.target);
@@ -739,10 +731,9 @@ export default function ShedScene(p: ShedSceneProps) {
     // sun rides high front-left so the cast shadow spills visibly to the
     // right of the building from the default corner view
     const rise = (widthFt / 2) * (pitch / 12);
-    core.sun.position.set(-(lengthFt * 0.35 + 12), 26 + rise * 2, lengthFt * 0.5 + 18);
+    core.sun.position.set(-(lengthFt * 0.9 + 20), 19 + rise * 2, lengthFt * 0.35 + 8);
     fitShadowCamera(core.sun, group);
     applyAnisotropy(core.renderer, group); // crisp textures at grazing angles
-    (window as unknown as Record<string, unknown>).__mvsDebug = core; // TEMP DEBUG
 
     core.controls.maxDistance = Math.max(70, lengthFt * 4);
     // re-fit on every rebuild: snap on first build, glide after option clicks
@@ -768,8 +759,10 @@ export default function ShedScene(p: ShedSceneProps) {
     if (preset === "front") {
       pos = new THREE.Vector3(0, FLOOR_TOP + wallHFt * 0.6 + 1.5, Math.max(17, lengthFt * 0.95 + widthFt * 0.55 + 6));
     } else if (preset === "corner") {
-      const d = Math.max(18, lengthFt * 1.15 + widthFt * 0.6);
-      pos = new THREE.Vector3(d * 0.85, peak * 0.9 + 6, d);
+      // a step farther back than the old preset, so the cast shadow and
+      // grounds-keeping read around the building instead of being cropped
+      const d = Math.max(22, lengthFt * 1.45 + widthFt * 0.75);
+      pos = new THREE.Vector3(d * 0.85, peak * 0.8 + 6, d);
     } else {
       pos = new THREE.Vector3(lengthFt * 0.15 + 0.5, Math.max(26, lengthFt * 1.9), widthFt * 0.3 + 0.5);
     }
