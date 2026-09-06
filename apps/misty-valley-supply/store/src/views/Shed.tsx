@@ -16,16 +16,30 @@ const ShedScene = React.lazy(() => import("@/views/ShedScene"));
 
 // ---- shared: sticky price bar -------------------------------------------
 
+/** Ask the app shell to open the sign-in modal from anywhere in a tool. */
+export const requestSignIn = () => window.dispatchEvent(new CustomEvent("mvs-signin"));
+
+/* Estimates are gated: guests design freely and sign in to see the number
+   (lead capture, Lester-style). Signed-in accounts get the live price.
+   Agents get ungated pricing through the MCP endpoint — never through this UI. */
 export function PriceBar({ label, total }: { label: string; total: number }) {
+  const { user } = useAuth();
   const shown = useAnimatedNumber(total);
   return (
     <div className="sticky top-0 z-20 -mx-1 mb-3 px-1">
       <div className="flex items-center justify-between gap-3 rounded-[8px] bg-[hsl(var(--marine))] px-4 py-2.5 shadow-[0_4px_14px_-4px_hsl(222_70%_12%/.5)]">
         <span className="min-w-0 truncate text-[13px] font-semibold text-white/85">{label}</span>
-        <span className="flex shrink-0 items-baseline gap-2">
-          <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
-          <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
-        </span>
+        {user ? (
+          <span className="flex shrink-0 items-baseline gap-2">
+            <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
+            <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
+          </span>
+        ) : (
+          <button onClick={requestSignIn}
+            className="flex h-9 shrink-0 items-center rounded-[6px] bg-[hsl(var(--safety-hi))] px-3.5 text-[13px] font-bold text-[hsl(var(--marine-2))] hover:brightness-105">
+            Sign in to view estimate
+          </button>
+        )}
       </div>
     </div>
   );
@@ -78,7 +92,7 @@ export function Seg<T extends string | number>({
 // ---- shared: the 5D bill of material ------------------------------------
 
 export function BomTable({ elements }: { elements: Element[] }) {
-  const { can } = useAuth();
+  const { can, user } = useAuth();
   const priced = can("cost.view"); // full priced BoM is internal-only
   const { total } = rollup(elements);
   return (
@@ -116,9 +130,15 @@ export function BomTable({ elements }: { elements: Element[] }) {
           <tfoot>
             <tr>
               <td colSpan={priced ? 6 : 4} className="px-3 py-2.5 text-right text-[13px] font-semibold">
-                Your price — materials
+                {user ? "Your price — materials" : "Materials estimate"}
               </td>
-              <td className="num px-3 py-2.5 text-right text-[15px] font-bold">{money(total)}</td>
+              <td className="num px-3 py-2.5 text-right text-[15px] font-bold">
+                {user ? money(total) : (
+                  <button onClick={requestSignIn} className="font-semibold text-[hsl(var(--marine))] underline">
+                    Sign in to view
+                  </button>
+                )}
+              </td>
             </tr>
           </tfoot>
         </table>

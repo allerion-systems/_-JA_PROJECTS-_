@@ -33,18 +33,41 @@ const gridLetter = (n: number) => {
 /* Sticky price bar for <xl screens, where the price panel sits far below the
    fold. Mirrors the Shed/Deck PriceBar pattern — duplicated locally on
    purpose so this file has no dependency on the other designers. */
+/** Estimates are gated for guests — sign in reveals the live number. */
+const requestSignIn = () => window.dispatchEvent(new CustomEvent("mvs-signin"));
+
 function MobilePriceBar({ label, total }: { label: string; total: number }) {
+  const { user } = useAuth();
   const shown = useAnimatedNumber(total);
   return (
     <div className="sticky top-0 z-20 -mx-1 mb-3 px-1 xl:hidden">
       <div className="flex items-center justify-between gap-3 rounded-[8px] bg-[hsl(var(--marine))] px-4 py-2.5 shadow-[0_4px_14px_-4px_hsl(222_70%_12%/.5)]">
         <span className="min-w-0 truncate text-[13px] font-semibold text-white/85">{label}</span>
-        <span className="flex shrink-0 items-baseline gap-2">
-          <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
-          <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
-        </span>
+        {user ? (
+          <span className="flex shrink-0 items-baseline gap-2">
+            <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
+            <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
+          </span>
+        ) : (
+          <button onClick={requestSignIn}
+            className="flex h-9 shrink-0 items-center rounded-[6px] bg-[hsl(var(--safety-hi))] px-3.5 text-[13px] font-bold text-[hsl(var(--marine-2))] hover:brightness-105">
+            Sign in to view estimate
+          </button>
+        )}
       </div>
     </div>
+  );
+}
+
+/** The big estimate figure — money for signed-in accounts, a gate for guests. */
+function EstimateFigure({ shown }: { shown: number }) {
+  const { user } = useAuth();
+  if (user) return <>{money(shown)}</>;
+  return (
+    <button onClick={requestSignIn}
+      className="rounded-[6px] bg-[hsl(var(--safety-hi))] px-3 py-1.5 text-[15px] font-bold text-[hsl(var(--marine-2))] hover:brightness-105">
+      Sign in to view estimate
+    </button>
   );
 }
 
@@ -625,7 +648,7 @@ export default function Screen() {
   const [notes, setNotes] = React.useState("");
   const [reqSent, setReqSent] = React.useState(false);
   // Cost, markup and margin are internal economics — customers never see them.
-  const { can } = useAuth();
+  const { can, user } = useAuth();
   const internal = can("cost.view");
 
   const addShots = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -787,11 +810,11 @@ export default function Screen() {
                 <div className="mt-2 flex items-baseline justify-between">
                   <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                   <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                    {money(sellShown)}
+                    <EstimateFigure shown={sellShown} />
                   </div>
                 </div>
                 <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
-                  <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
+                  <span>{user ? `${money(Math.round(sell / Math.max(lf, 1)))}/LF` : "Itemized after sign-in"}</span>
                   {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
                 </div>
                 <Rule className="my-4" />
@@ -936,11 +959,11 @@ export default function Screen() {
                   <div className="mt-2 flex items-baseline justify-between">
                     <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                     <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                      {money(sellShown)}
+                      <EstimateFigure shown={sellShown} />
                     </div>
                   </div>
                   <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
-                    <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
+                    <span>{user ? `${money(Math.round(sell / Math.max(lf, 1)))}/LF` : "Itemized after sign-in"}</span>
                     {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
                   </div>
                   <Rule className="my-4" />
@@ -1084,11 +1107,11 @@ export default function Screen() {
               <div className="flex items-baseline justify-between">
                 <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
                 <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                  {money(sellShown)}
+                  <EstimateFigure shown={sellShown} />
                 </div>
               </div>
               <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
-                <span>{money(Math.round(sell / Math.max(lf, 1)))}/LF</span>
+                <span>{user ? `${money(Math.round(sell / Math.max(lf, 1)))}/LF` : "Itemized after sign-in"}</span>
                 {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
               </div>
               <Rule className="my-4" />

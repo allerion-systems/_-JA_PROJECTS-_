@@ -101,10 +101,10 @@ const deptCount = (cats?: string[]) =>
 
 /* The Design Center tools. The Design tab opens a picker — no tool is the
    default; the customer chooses what they're building. */
-const DESIGN_TOOLS: { view: View; label: string; sub: string; sku: string }[] = [
-  { view: "shed", label: "Backyard Studios", sub: "Sheds, studios, small buildings", sku: "MVS-STR-CAB1236" },
-  { view: "deck", label: "Decks", sub: "PT decks, framed to code", sku: "MVS-PT-5412" },
-  { view: "screen", label: "Roof Screens", sub: "Rooftop equipment screens", sku: "MVS-RSF-SC3" },
+const DESIGN_TOOLS: { view: View; label: string; chip: string; sub: string; sku: string }[] = [
+  { view: "shed", label: "Backyard Studios", chip: "Studios", sub: "Sheds, studios, small buildings", sku: "MVS-STR-CAB1236" },
+  { view: "deck", label: "Decks", chip: "Decks", sub: "PT decks, framed to code", sku: "MVS-PT-5412" },
+  { view: "screen", label: "Roof Screens", chip: "Screens", sub: "Rooftop equipment screens", sku: "MVS-RSF-SC3" },
 ];
 
 const Icon = ({ children }: { children: React.ReactNode }) => (
@@ -141,8 +141,10 @@ function Inner() {
 
   React.useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenCart(false); };
+    const s = () => setModal("signin"); // design tools request the estimate gate
+    window.addEventListener("mvs-signin", s);
     window.addEventListener("keydown", k);
-    return () => window.removeEventListener("keydown", k);
+    return () => { window.removeEventListener("keydown", k); window.removeEventListener("mvs-signin", s); };
   }, []);
 
   React.useEffect(() => {
@@ -414,7 +416,7 @@ function Inner() {
                       view === t.view
                         ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
                         : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>
-                    {t.label}
+                    {t.chip}
                   </button>
                 ))}
               </div>
