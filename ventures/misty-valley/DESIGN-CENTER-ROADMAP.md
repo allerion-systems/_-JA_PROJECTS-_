@@ -33,7 +33,21 @@ Owner's list, sequenced by fastest honest path to revenue:
 5. **Restaurants** — full food-service: hood + fire suppression (NFPA 96),
    grease, ADA. Kit-priceable only at the shell level; kitchen fit-out goes
    planning-range → design-build, same split as Modular Projects.
-6. **Fuel / gas stations** — FLAG: this is a fuel-systems product, not a
+6. **Greenhouses / high tunnels** — supplier already found: the dropship
+   playbook's top-5 includes the one program that explicitly names drop
+   ship for greenhouse kits. Configurator: hoop vs gable, length in bays,
+   film vs polycarbonate, roll-up sides, end walls. The demand cheat code:
+   USDA NRCS's EQIP High Tunnel Initiative pays farmers toward exactly this
+   structure — rural KY qualifies; the page should say "ask your county NRCS
+   office about high-tunnel cost share" (their program, their rules, we just
+   point). Ag-exempt permitting in most counties, same one-call honesty as
+   the loafing shed.
+7. **Garages** — 1/2/3-car steel or stick-framed kits: width by car count,
+   gable vs reverse gable, overhead door sizes, man-door, windows. The kit
+   SKUs already exist (MVS-PB-2430/3040 with stamped drawings) and the
+   Shed/Barndo machinery carries the whole tool — cheapest wave-3 build,
+   and the highest-volume residential search term on the list.
+8. **Fuel / gas stations** — FLAG: this is a fuel-systems product, not a
    building. Dispensers, AST/UST rules, fire marshal, EPA. MVS sells the
    canopy, the kiosk (container/booth machinery) and the C-store shell;
    the fuel skid is a licensed partner's scope, stated plainly. Never imply
