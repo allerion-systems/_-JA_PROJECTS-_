@@ -11,9 +11,11 @@ confidential information (their costs, bids, supplier terms) touches our pricing
 Kentucky sales tax collected unless R&B's resale/exemption certificate is on file.
 
 ## 1 · Answers Ben needs BEFORE calling (suppliers will ask in the first 5 minutes)
-1. **Is 1.5" a hard requirement, or is the target an R-value / the look?** Only
-   Metl-Span LS-36 and Kingspan KingRib make 1.5"; AWIP starts at 2", Green Span 2.5".
-   A "no less than R-13" answer opens more bidders than "exactly 1.5 inches."
+1. ~~Is 1.5" hard?~~ **CONFIRMED 9/6: 1.5" IS THE REQUIREMENT.** That makes this a
+   two-horse race — Metl-Span LS-36 and Kingspan KingRib are the only verified U.S.
+   1.5" high-rib lines. AWIP (2"), Green Span (2.5"), CENTRIA (1.75") are out unless
+   the spec changes. PermaTherm can cut EPS cores to 1.5" — verify the profile reads
+   "commercial high rib" before counting it as a third bid.
 2. **Sandwich panel (metal both faces, like the photo) or foam-laminated single-skin?**
    This roughly halves or doubles the order value.
 3. Panel cut list: lengths needed (roof runs), total pieces — or at least building
@@ -43,9 +45,11 @@ Kentucky sales tax collected unless R&B's resale/exemption certificate is on fil
 > lead time, and your standard payment terms. We need pricing by Monday close of
 > business. Contact: Ben Easterday, Misty Valley Supply, [phone].
 
-## 4 · Middle-pricing selection (Ben's rule, mechanized)
-Enter every bid in the workbook; sort by delivered total; take the middle bid (even
-count: lower of the two middles if lead time is shorter, else upper). Lead time can
+## 4 · Middle-pricing selection (Ben's rule, adapted for a two-bidder field)
+With 1.5" hard, expect two real bids (Metl-Span, Kingspan) and possibly a PermaTherm
+EPS alternate. Two bids have no middle — the rule becomes: take the bid closest to the
+published $7–10/sf band unless its lead time breaks the job's schedule; if both sit in
+band, shorter lead time wins. Document the choice in the workbook either way. Lead time can
 overrule price — 2026 IMP lead times run 10–16 weeks at the majors; if R&B's job needs
 panels sooner, a faster higher bid IS the middle choice, documented as such.
 
