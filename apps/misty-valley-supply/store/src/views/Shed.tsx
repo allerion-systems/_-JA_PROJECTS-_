@@ -94,14 +94,24 @@ export function Seg<T extends string | number>({
 export function BomTable({ elements }: { elements: Element[] }) {
   const { can, user } = useAuth();
   const priced = can("cost.view"); // full priced BoM is internal-only
+  // Customers get the sheet on demand; staff see it open. Keeps the page short.
+  const [open, setOpen] = React.useState(priced);
   const { total } = rollup(elements);
   return (
     <Panel pad={false}>
-      <div className="flex items-center justify-between gap-3 px-4 pt-3">
-        <Lab kicker>5D bill of material</Lab>
-        <Tag tone="marine">IFC ISO 16739</Tag>
-      </div>
-      <div className="overflow-x-auto px-1 pb-1 pt-2">
+      <button onClick={() => setOpen(!open)} aria-expanded={open}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left">
+        <span className="flex items-center gap-2.5">
+          <Lab kicker>Bill of material</Lab>
+          <span className="num text-[12px] text-[hsl(var(--ink-3))]">{elements.length} lines</span>
+        </span>
+        <span className="flex items-center gap-2.5">
+          <Tag tone="marine">IFC ISO 16739</Tag>
+          <span className="text-[13px] font-semibold text-[hsl(var(--marine))]">{open ? "Hide" : "Show"}</span>
+        </span>
+      </button>
+      {open && (
+      <div className="overflow-x-auto px-1 pb-1">
         <table className="w-full min-w-[520px] border-collapse">
           <thead>
             <tr>
@@ -143,9 +153,12 @@ export function BomTable({ elements }: { elements: Element[] }) {
           </tfoot>
         </table>
       </div>
-      <p className="px-4 pb-3 text-[12px] text-[hsl(var(--ink-3))]">
-        Every number derives from the model — change a dimension and watch the whole sheet move.
-      </p>
+      )}
+      {open && (
+        <p className="px-4 pb-3 text-[12px] text-[hsl(var(--ink-3))]">
+          Every number derives from the model — change a dimension and watch the whole sheet move.
+        </p>
+      )}
     </Panel>
   );
 }
@@ -371,7 +384,7 @@ export default function Shed() {
       <PriceBar label={`Shed — ${widthFt} × ${lengthFt} · ${wallHFt} ft walls · ${pitch}:12 gable`} total={total} />
 
       <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[380px] sm:h-[480px]">
+        <div className="h-[260px] sm:h-[480px]">
           <React.Suspense fallback={
             <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
               Loading 3D preview…

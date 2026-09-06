@@ -121,7 +121,7 @@ export default function Container() {
       <PriceBar label={`Container — ${count > 1 ? `${count} × ` : ""}${size} ft · ${layoutName}`} total={total} />
 
       <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[380px] sm:h-[480px]">
+        <div className="h-[260px] sm:h-[480px]">
           <React.Suspense fallback={
             <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
               Loading 3D preview…

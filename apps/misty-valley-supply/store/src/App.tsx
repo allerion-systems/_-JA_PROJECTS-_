@@ -396,13 +396,13 @@ function Inner() {
               <h1 className="disp mb-5 mt-2 text-center text-[26px] font-bold leading-[1.05] sm:text-[34px]">
                 What are you building?
               </h1>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
                 {DESIGN_TOOLS.map(t => (
                   <button key={t.view} onClick={() => go(t.view)}
-                    className="card lift flex min-h-[150px] flex-col items-center justify-center gap-2.5 p-5 text-center">
-                    <Glyph sku={t.sku} className="h-16 w-16" />
-                    <span className="disp text-[17px] font-bold leading-[1.05]">{t.label}</span>
-                    <span className="text-[12px] text-[hsl(var(--ink-3))]">{t.sub}</span>
+                    className="card lift flex min-h-[112px] flex-col items-center justify-center gap-1.5 p-3 text-center sm:min-h-[150px] sm:gap-2.5 sm:p-5">
+                    <Glyph sku={t.sku} className="h-11 w-11 sm:h-16 sm:w-16" />
+                    <span className="disp text-[14px] font-bold leading-[1.05] sm:text-[17px]">{t.label}</span>
+                    <span className="hidden text-[12px] text-[hsl(var(--ink-3))] sm:block">{t.sub}</span>
                   </button>
                 ))}
               </div>
@@ -414,7 +414,7 @@ function Inner() {
           {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program") && (
             <>
               {/* in a tool: a quiet way back + sibling tools */}
-              <div className="mb-4 flex flex-wrap items-center gap-1.5">
+              <div className="-mx-3 mb-4 flex items-center gap-1.5 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
                 <button onClick={() => go("design")}
                   className="min-h-[44px] rounded-[6px] px-3 text-[14px] font-semibold text-[hsl(var(--marine))] hover:bg-[hsl(var(--marine-soft))]">
                   ‹ Design Center
@@ -422,7 +422,7 @@ function Inner() {
                 {DESIGN_TOOLS.map(t => (
                   <button key={t.view} onClick={() => go(t.view)}
                     aria-current={view === t.view}
-                    className={cx("min-h-[44px] rounded-[6px] border px-4 text-[14px] font-semibold transition-colors",
+                    className={cx("min-h-[44px] shrink-0 whitespace-nowrap rounded-[6px] border px-4 text-[14px] font-semibold transition-colors",
                       view === t.view
                         ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
                         : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>

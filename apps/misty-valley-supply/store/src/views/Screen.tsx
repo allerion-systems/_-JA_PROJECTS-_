@@ -717,7 +717,7 @@ export default function Screen() {
           {/* --------------------------------------------- canvas + controls */}
           <div className="min-w-0">
             <div className="card-hi overflow-hidden rounded-[8px]">
-              <div className="h-[320px] md:h-[460px]">
+              <div className="h-[260px] md:h-[460px]">
                 <React.Suspense fallback={
                   <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
                     <span className="lab">Loading the 3D shop…</span>

@@ -43,7 +43,7 @@ export default function Deck() {
 
       <Panel pad={false} className="card-hi mb-4">
         <div className="tape h-1.5" />
-        <div className="h-[380px] sm:h-[480px]">
+        <div className="h-[260px] sm:h-[480px]">
           <React.Suspense fallback={
             <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
               <span className="lab">Loading the 3D shop…</span>
