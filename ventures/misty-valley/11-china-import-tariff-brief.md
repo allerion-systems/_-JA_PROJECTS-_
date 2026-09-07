@@ -54,8 +54,8 @@ Yuanfeng New Materials". TÜV-audited MIC Diamond member since 2018, exporting s
 mill + trading-arm pattern). Before any deposit: USCC verified on gsxt.gov.cn, live
 video tour of the actual panel line, first order through Trade Assurance escrow.
 
-Open corrections for next contact: company name (went out as "Ministry Valley Supply"),
-and no 38mm/1.5" tier was quoted.
+Corrections sent 9/7 on the same thread: company name fixed to Misty Valley Supply,
+and a 38–40mm tier plus a 4,250 m² project-volume tier were added to the ask.
 
 ## Gate checklist before first container (extends 05-first-container-gate)
 

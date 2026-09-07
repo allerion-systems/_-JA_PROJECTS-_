@@ -60,6 +60,17 @@ missing): sandwich vs foam-laminated single-skin · cut list / building dims · 
 24 ga + colors both faces · trim/fastener package · jobsite address + offload equipment
 · need-by date · new construction or retrofit.
 
+## Quote routing (locked by Joey, 9/7 — extends the package gate)
+
+All supplier quotes for this job compile into ONE package emailed **only to Ben
+Easterday at mistyvalleycontracting@gmail.com**, sent from Joey's Gmail
+(jallee9544@gmail.com). **Ben sends everything outward himself.** Never send quotes,
+supplier pricing, or any MVS numbers to Scott Waldman or to any @gottaberandb.com /
+@rb-roofing.com address — including Joey's own R&B work address. Joey estimates the
+job on the R&B side and profits on MVS materials; the lanes stay separated: MVS
+pricing never touches R&B systems, R&B confidential info never touches MVS pricing,
+and the written disclosure to Scott precedes any customer quote.
+
 ## Selection rule reminder (package §4)
 
 Two-bidder field: take the bid closest to the published $7–10/sf band unless lead time
