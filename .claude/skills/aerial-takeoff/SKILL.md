@@ -31,6 +31,27 @@ Never ship a line you have not personally looked at, at zoom, on every elevation
 8. **Know what plane you're measuring.** Ask/confirm ROOF vs WALL (siding) before
    the math — roof = plan area × slope factor; walls = perimeter × eave height.
 
+## Source hierarchy (use the best available, in this order)
+
+1. **State/county true-orthophotos** — Kentucky: KyFromAbove ImageServer
+   `kyraster.ky.gov/arcgis/rest/services/ImageServices/<Ky_KYAPED_Phase3_3IN | Ky_Jefferson_2019_3IN | Ky_LOJIC_2018_3IN_KYSPN>/ImageServer/exportImage`
+   (bbox in 4326, imageSR 3857, size ≤4000, f=image). Straight-down = roof edge is the
+   wall line. Most states have an equivalent; look before touching Google.
+2. **LiDAR** — KyFromAbove `ElevationServices/Ky_DSM_First_Return_2FT_Phase2` minus
+   `Ky_DEM_KYAPED_2FT_Phase2` (same epoch) = height above ground in FEET. Threshold
+   ≥12 ft for building mask; edge-band median (2–4 ft inside the wall) = eave height;
+   interior p90 = ridge. This is the only honest source for wall height from the air.
+3. Google `mt1.google.com` tiles: sharp, but often **oblique** in metro areas — wall
+   faces show as dark bands and roof edges shift ~height×tan(tilt) (≈20 ft at a 25-ft
+   wall). Fine for reading texture; never for edge geometry unless verified ortho.
+4. Esri World Imagery z19 max; z20 is upscaled filler.
+
+## Multi-structure rule
+
+Separate buildings get separate polygons. Roof brightness/height discontinuities and
+gaps between roofs mark them. Attached faces have no wall to side. Report per-building
+perimeters and a scope scenario table — never a single merged perimeter as "the number".
+
 ## Pipeline
 
 1. **Locate**: ArcGIS World Geocoder `findAddressCandidates` → rooftop point.
