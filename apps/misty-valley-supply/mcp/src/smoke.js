@@ -39,11 +39,11 @@ const main = async () => {
   const names = tools.map((t) => t.name).sort();
   console.log("tools:", names.join(", "), "\n");
 
-  const expected = ["check_compliance", "create_quote", "design_deck", "design_screen_from_bod",
-                    "design_shed", "get_offer_manifest", "get_product", "get_screen_parts",
-                    "get_seller_status", "list_classifieds", "place_order", "quote_roofscreen",
-                    "search_products", "submit_design_request"];
-  check("all 14 tools registered", expected.every((n) => names.includes(n)), names.join(","));
+  const expected = ["check_compliance", "create_quote", "design_deck", "design_garage",
+                    "design_screen_from_bod", "design_shed", "get_offer_manifest", "get_product",
+                    "get_screen_parts", "get_seller_status", "list_classifieds", "place_order",
+                    "quote_roofscreen", "search_products", "submit_design_request"];
+  check("all 15 tools registered", expected.every((n) => names.includes(n)), names.join(","));
   check("every tool has a description", tools.every((t) => (t.description || "").length > 20));
 
   // --- search ------------------------------------------------------------
@@ -288,6 +288,75 @@ const main = async () => {
     bySku(sh2, "MVS-SC-RAMP4")[0]?.qty === 1 && bySku(sh2, "MVS-SC-LOFT8")[0]?.qty === 1 &&
     bySku(sh2, "MVS-SC-CUP24")[0]?.qty === 1);
 
+  // Legacy path: no placements → openings echoed at the fixed front-wall spots.
+  check("shed without placements echoes legacy front-wall openings",
+    sh1.openings?.doors?.length === 1 && sh1.openings.doors[0].wall === "front" &&
+    sh1.openings?.windows?.length === 1 && sh1.openings.windows[0].wall === "front",
+    JSON.stringify(sh1.openings));
+  check("shed summary without placements carries no placement line",
+    !/Openings placed/.test(sh1.summary), sh1.summary);
+
+  // Placements: geometric only. Same shed, doors/windows moved to other walls —
+  // the BoM must be IDENTICAL line for line and the total penny-identical.
+  const sh4 = parse(await client.callTool({
+    name: "design_shed",
+    arguments: { widthFt: 10, lengthFt: 12, wallHFt: 8, pitch: 4, doors: 1, windows: 1,
+                 siding: "vinyl", roof: "ready", framing: "stick",
+                 placements: { doors: [{ wall: "right", pos: 0.8 }], windows: [{ wall: "back", pos: 0.25 }] } },
+  }));
+  check("shed BoM is placement-invariant (identical elements)",
+    JSON.stringify(sh4.elements) === JSON.stringify(sh1.elements));
+  check("shed total is placement-invariant (penny-identical)",
+    sh4.materials_total === sh1.materials_total, `$${sh4.materials_total} vs $${sh1.materials_total}`);
+  // openingCenterFt(0.8, 10, 3) = 1 + 1.5 + 0.8 × (10 − 2 − 3) = 6.5 ft — the
+  // right wall runs the 10-ft width. Window: 1 + 1.5 + 0.25 × 7 = 4.25 ft.
+  check("placed door resolved on the right wall at 6.5 ft",
+    sh4.openings.doors[0].wall === "right" && Math.abs(sh4.openings.doors[0].centerFt - 6.5) < 0.005,
+    JSON.stringify(sh4.openings.doors[0]));
+  check("placed window resolved on the back wall at 4.25 ft",
+    sh4.openings.windows[0].wall === "back" && Math.abs(sh4.openings.windows[0].centerFt - 4.25) < 0.005,
+    JSON.stringify(sh4.openings.windows[0]));
+  check("shed summary names the placement (door 1 on the right wall at 6.5 ft)",
+    sh4.summary.includes("door 1 on the right wall at 6.5 ft") &&
+    sh4.summary.includes("window 1 on the back wall at 4.3 ft"), sh4.summary);
+  check("placements echoed back on the design",
+    sh4.design.placements?.doors?.[0]?.wall === "right" && sh4.design.placements?.doors?.[0]?.pos === 0.8,
+    JSON.stringify(sh4.design.placements));
+
+  // Placement input validates hard: pos outside 0..1 and off-menu walls are
+  // structured errors, not silent clamps.
+  let shpbad;
+  try {
+    shpbad = await client.callTool({
+      name: "design_shed",
+      arguments: { widthFt: 10, lengthFt: 12, placements: { doors: [{ wall: "right", pos: 1.5 }] } },
+    });
+  } catch (e) { shpbad = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] }; }
+  check("shed rejects a placement pos outside 0..1", shpbad.isError === true, shpbad.content?.[0]?.text);
+
+  let shpbad2;
+  try {
+    shpbad2 = await client.callTool({
+      name: "design_shed",
+      arguments: { widthFt: 10, lengthFt: 12, placements: { doors: [{ wall: "roof", pos: 0.5 }] } },
+    });
+  } catch (e) { shpbad2 = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] }; }
+  check("shed rejects an off-menu placement wall", shpbad2.isError === true, shpbad2.content?.[0]?.text);
+
+  // Premium tier hand-check: 12×16 wainscot + hvac over the same base shed.
+  // Wainscot: ceil(56-ft perimeter / 8) = 7 × $240 = $1,680; mini-split $1,450
+  // + electrical $1,850 = $3,300 → delta $4,980.00 penny-exact.
+  const shBase = parse(await client.callTool({
+    name: "design_shed", arguments: { widthFt: 12, lengthFt: 16 } }));
+  const shPrem = parse(await client.callTool({
+    name: "design_shed", arguments: { widthFt: 12, lengthFt: 16, wainscot: true, hvac: true } }));
+  check("shed 12×16 wainscot+hvac premium delta is $4,980.00 penny-exact",
+    Math.abs((shPrem.materials_total - shBase.materials_total) - 4980) < 0.005,
+    `$${(shPrem.materials_total - shBase.materials_total).toFixed(2)}`);
+  check("premium tier adds exactly wainscot, mini-split and electrical SKUs",
+    bySku(shPrem, "MVS-SC-WAIN8")[0]?.qty === 7 && bySku(shPrem, "MVS-CI-HVAC12")[0]?.qty === 1 &&
+    bySku(shPrem, "MVS-CI-ELEC")[0]?.qty === 1 && shPrem.elements.length === shBase.elements.length + 3);
+
   // Validation is hard: bad enums come back as structured errors, not defaults.
   let shbad;
   try {
@@ -346,6 +415,109 @@ const main = async () => {
   } catch (e) { dkbad = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] }; }
   check("deck rejects heightFt 5 naming 2, 4, 8",
     dkbad.isError === true && /2, 4, 8/.test(dkbad.content?.[0]?.text ?? ""), dkbad.content?.[0]?.text);
+
+  // --- design center: design_garage (bimGarage.ts port) --------------------
+  // Hand-check (a): 12×21 regular carport, all defaults, ground anchors —
+  // base $1,595.00 + 12 legs × $8 = $96.00 → $1,691.00 penny-exact.
+  const ga1 = parse(await client.callTool({
+    name: "design_garage", arguments: { widthFt: 12, lengthFt: 21 },
+  }));
+  check("garage 12×21 base carport totals $1,691.00 penny-exact",
+    Math.abs(ga1.materials_total - 1691) < 0.005, `$${ga1.materials_total}`);
+  check("base carport is exactly base unit + ground anchors",
+    ga1.elements.length === 2 && bySku(ga1, "MVS-GC-CP1221")[0]?.qty === 1 &&
+    bySku(ga1, "MVS-GC-ANCG")[0]?.qty === 12, ga1.elements.map((e) => e.sku).join(","));
+  check("garage geometry: 21 ft = 5 bays, 6 leg pairs, 12 legs",
+    ga1.geometry?.bays === 5 && ga1.geometry?.legPairs === 6 && ga1.geometry?.legs === 12,
+    JSON.stringify(ga1.geometry));
+  check("garage elements are typed and SKU-bound",
+    ga1.elements.every((e) => e.ifcClass && e.sku && e.qty > 0 && e.unitPrice > 0 && e.unit));
+  check("garage summary names the config and the total",
+    typeof ga1.summary === "string" && ga1.summary.includes("12×21") &&
+    ga1.summary.includes("$1,691.00") && /carport/i.test(ga1.summary), ga1.summary);
+  check("garage carries the ungated-pricing note", /place_order/.test(ga1.note || ""));
+
+  // Hand-check (b): 24×31 vertical garage, 10-ft legs, 12-ga, fully enclosed,
+  // one 10×10 roll-up + walk-in + 2 windows, certified, concrete anchors —
+  // bays = 7, legs = 16 → $12,098.00 penny-exact.
+  const ga2 = parse(await client.callTool({
+    name: "design_garage",
+    arguments: { widthFt: 24, lengthFt: 31, legHeightFt: 10, roofStyle: "vertical",
+                 frameGauge: 12, leftSide: "full", rightSide: "full", frontEnd: "full", backEnd: "full",
+                 doors: [{ type: "rollup10", wall: "front" }, { type: "walkin", wall: "right" }],
+                 windows: 2, anchors: "concrete", certified: true },
+  }));
+  check("garage 24×31 hand-check totals $12,098.00 penny-exact",
+    Math.abs(ga2.materials_total - 12098) < 0.005, `$${ga2.materials_total}`);
+  check("vertical roof priced per 5-ft section (7 bays)",
+    bySku(ga2, "MVS-GC-VERT")[0]?.qty === 7, String(bySku(ga2, "MVS-GC-VERT")[0]?.qty));
+  check("12-ga frame upgrade priced per bay (7)",
+    bySku(ga2, "MVS-GC-12GA")[0]?.qty === 7, String(bySku(ga2, "MVS-GC-12GA")[0]?.qty));
+  check("full side enclosures priced per section, both sides",
+    bySku(ga2, "MVS-GC-SIDEF").length === 2 && bySku(ga2, "MVS-GC-SIDEF").every((e) => e.qty === 7));
+  check("end walls priced per foot of width (24 each, both ends)",
+    bySku(ga2, "MVS-GC-ENDP").length === 2 && bySku(ga2, "MVS-GC-ENDP").every((e) => e.qty === 24));
+  check("doors land as one line each with the wall named",
+    bySku(ga2, "MVS-GC-RU1010")[0]?.qty === 1 && bySku(ga2, "MVS-GC-WALK36")[0]?.qty === 1 &&
+    line(ga2, "10 × 10 roll-up")?.name.includes("front wall"));
+  check("concrete anchors on all 16 legs",
+    bySku(ga2, "MVS-GC-ANCC")[0]?.qty === 16, String(bySku(ga2, "MVS-GC-ANCC")[0]?.qty));
+  check("certified package is a single engineering line",
+    bySku(ga2, "MVS-GC-CERT")[0]?.qty === 1 && /engineered/i.test(line(ga2, "Certified")?.name || ""));
+  check("garage prices every line from the catalog (ext = qty × unitPrice)",
+    ga2.elements.every((e) => Math.abs(e.ext - Math.round(e.qty * e.unitPrice * 100) / 100) < 0.005));
+  check("garage materials_total is the sum of extensions",
+    Math.abs(ga2.materials_total - Math.round(ga2.elements.reduce((s, e) => s + e.ext, 0) * 100) / 100) < 0.01,
+    `$${ga2.materials_total}`);
+  check("fully enclosed build is summarised as a garage naming $12,098.00",
+    /metal garage/.test(ga2.summary) && ga2.summary.includes("$12,098.00"), ga2.summary);
+
+  // Option toggles swap exactly the right SKUs in and out; colors are cosmetic.
+  const ga3 = parse(await client.callTool({
+    name: "design_garage",
+    arguments: { widthFt: 18, lengthFt: 26, roofStyle: "boxedEave", panelGauge: 26,
+                 leftSide: "half", frontEnd: "gable", leanTo: "both", anchors: "asphalt",
+                 roofColor: "#7d2a26", sideColor: "#2e4a3a" },
+  }));
+  check("boxed-eave roof is a single upgrade line",
+    bySku(ga3, "MVS-GC-BOX")[0]?.qty === 1 && bySku(ga3, "MVS-GC-VERT").length === 0);
+  check("26-ga panel upgrade priced per bay (6)",
+    bySku(ga3, "MVS-GC-26GA")[0]?.qty === 6, String(bySku(ga3, "MVS-GC-26GA")[0]?.qty));
+  check("half side + gable end use their own SKUs",
+    bySku(ga3, "MVS-GC-SIDEH")[0]?.qty === 6 && bySku(ga3, "MVS-GC-GABLE")[0]?.qty === 1);
+  check("lean-to 'both' adds two per-bay wings",
+    bySku(ga3, "MVS-GC-LEAN").length === 2 && bySku(ga3, "MVS-GC-LEAN").every((e) => e.qty === 6));
+  check("asphalt anchors matched to the surface",
+    bySku(ga3, "MVS-GC-ANCA")[0]?.qty === 14 && bySku(ga3, "MVS-GC-ANCG").length === 0);
+  check("colors are echoed by commodity name and never priced",
+    ga3.summary.includes("Barn Red") && ga3.summary.includes("Forest Green") &&
+    ga3.elements.every((e) => !/color/i.test(e.name)), ga3.summary);
+
+  // Validation is hard, same as the other designers.
+  let gabad;
+  try {
+    gabad = await client.callTool({ name: "design_garage", arguments: { widthFt: 15, lengthFt: 21 } });
+  } catch (e) { gabad = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] }; }
+  check("garage rejects widthFt 15 naming the allowed widths",
+    gabad.isError === true && /12, 18, 20, 22, 24, 26, 28, 30/.test(gabad.content?.[0]?.text ?? ""),
+    gabad.content?.[0]?.text);
+
+  let gabad2;
+  try {
+    gabad2 = await client.callTool({ name: "design_garage", arguments: { widthFt: 12, lengthFt: 22 } });
+  } catch (e) { gabad2 = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] }; }
+  check("garage rejects an off-ladder length naming the 5-ft bays",
+    gabad2.isError === true && /21, 26, 31, 36, 41, 46, 51/.test(gabad2.content?.[0]?.text ?? ""),
+    gabad2.content?.[0]?.text);
+
+  let gabad3;
+  try {
+    gabad3 = await client.callTool({
+      name: "design_garage",
+      arguments: { widthFt: 12, lengthFt: 21, doors: [{ type: "rollup8", wall: "front" }] },
+    });
+  } catch (e) { gabad3 = { isError: true, content: [{ type: "text", text: String(e?.message ?? e) }] }; }
+  check("garage rejects an off-menu door type", gabad3.isError === true, gabad3.content?.[0]?.text);
 
   // --- design center: submit_design_request ------------------------------
   const goodContact = { name: "R. Tate", company: "Cumberland Sheet Metal", email: "rtate@cumberlandsm.com", phone: "(615) 555-0142" };

@@ -247,6 +247,95 @@ function shedTakeoff(p) {
   return out;
 }
 
+// ---- shed opening placement ---------------------------------------------
+// Port of the storefront's placement layer (src/bim.ts). Walls are named as
+// a buyer facing the shed's front sees them; pos runs 0..1 left→right along
+// each wall, again viewed from outside. Placement is design, not pricing —
+// the same SKUs and quantities build the shed wherever a door lands, so
+// shedTakeoff never reads it.
+
+const SHED_WALLS = ["front", "back", "left", "right"];
+const OPENING_CLEAR = 1; // ft kept clear of each corner
+const OPENING_SEP = 0.2; // ft minimum gap between openings on one wall
+
+const shedWallLen = (p, wall) =>
+  wall === "front" || wall === "back" ? p.lengthFt : p.widthFt;
+
+/** Center of an opening in ft from the wall's left corner for a 0..1 pos —
+    the whole 0..1 range maps inside the corner clearances, so any pos fits. */
+function openingCenterFt(pos, wallLen, openW) {
+  const f = Math.min(1, Math.max(0, pos));
+  const span = Math.max(0, wallLen - 2 * OPENING_CLEAR - openW);
+  return OPENING_CLEAR + openW / 2 + f * span;
+}
+
+/** Untrusted placements → a valid { doors?, windows? } or undefined. Wrong
+    shapes and junk values fall away — never a crash. Line-for-line with the
+    storefront's sanitizeShedPlacements. */
+function sanitizeShedPlacements(v) {
+  if (typeof v !== "object" || v === null || Array.isArray(v)) return undefined;
+  const one = (x) => {
+    if (typeof x !== "object" || x === null || Array.isArray(x)) return null;
+    const { wall, pos } = x;
+    if (!SHED_WALLS.includes(wall)) return null;
+    if (typeof pos !== "number" || !Number.isFinite(pos)) return null;
+    return { wall, pos: Math.min(1, Math.max(0, pos)) };
+  };
+  const list = (x) => {
+    if (!Array.isArray(x)) return undefined;
+    const out = x.slice(0, 4).map(one).filter((p) => p !== null);
+    return out.length > 0 ? out : undefined;
+  };
+  const doors = list(v.doors);
+  const windows = list(v.windows);
+  return doors || windows ? { doors, windows } : undefined;
+}
+
+/** Where each door and window actually sits. With no placements the legacy
+    fixed spots apply EXACTLY (all on the front wall). With placements, each
+    opening is clamped inside its wall's corner clearances and nudged off any
+    earlier opening it would overlap — simple resolution, never an error. */
+function resolveShedOpenings(p) {
+  const L = p.lengthFt, halfL = L / 2;
+  const doorDefault = (d) =>
+    (p.doors === 1 ? -L * 0.18 : d === 0 ? -L * 0.28 : L * 0.05) + halfL;
+  const winDefault = (w) => {
+    const xRaw = w === 0 ? L * 0.3 : L * 0.08 + (p.doors === 2 ? L * 0.22 : 0);
+    return Math.min(xRaw, halfL - SHED_WIN.w / 2 - 0.4) + halfL;
+  };
+  const doors = [];
+  const windows = [];
+  if (!p.placements) {
+    // legacy path, bit-for-bit: no clamp, no nudge
+    for (let d = 0; d < p.doors; d++) doors.push({ wall: "front", centerFt: doorDefault(d), w: SHED_DOOR.w });
+    for (let w = 0; w < p.windows; w++) windows.push({ wall: "front", centerFt: winDefault(w), w: SHED_WIN.w });
+    return { doors, windows };
+  }
+  const placed = [];
+  const put = (out, wp, defaultCenter, w) => {
+    const wall = wp?.wall ?? "front";
+    const len = shedWallLen(p, wall);
+    const lo = OPENING_CLEAR + w / 2;
+    const hi = Math.max(lo, len - OPENING_CLEAR - w / 2);
+    const clamp = (c) => Math.min(Math.max(c, lo), hi);
+    let c = wp ? openingCenterFt(wp.pos, len, w) : clamp(defaultCenter);
+    for (const o of placed) {
+      if (o.wall !== wall) continue;
+      const need = (o.w + w) / 2 + OPENING_SEP;
+      if (Math.abs(c - o.centerFt) < need) {
+        const right = o.centerFt + need, left = o.centerFt - need;
+        c = right <= hi ? right : left >= lo ? left : clamp(c);
+      }
+    }
+    const r = { wall, centerFt: c, w };
+    placed.push(r);
+    out.push(r);
+  };
+  for (let d = 0; d < p.doors; d++) put(doors, p.placements.doors?.[d], doorDefault(d), SHED_DOOR.w);
+  for (let w = 0; w < p.windows; w++) put(windows, p.placements.windows?.[w], winDefault(w), SHED_WIN.w);
+  return { doors, windows };
+}
+
 // ---- deck ---------------------------------------------------------------
 
 /** IRC R312.1.1: a guard is REQUIRED on any walking surface more than
@@ -309,6 +398,152 @@ function deckTakeoff(p) {
   return out;
 }
 
+// ---- garage / carport ---------------------------------------------------
+/*
+ * Port of the storefront's src/bimGarage.ts — Metal Garages & Carports on the
+ * shared 5D core. Line for line; the math must match the app exactly. One
+ * 12×21 regular-roof base unit plus the industry's adder lines — width per
+ * 2 ft, length per 5-ft bay, leg height per foot, roof-style upgrade, gauge
+ * upgrades, enclosure per section, doors, windows, anchors per leg, lean-to
+ * per bay, certification. Every line binds to a catalog SKU via el().
+ */
+
+const GARAGE_WIDTHS = [12, 18, 20, 22, 24, 26, 28, 30];
+const GARAGE_LENGTHS = [21, 26, 31, 36, 41, 46, 51];
+const GARAGE_ROOFS = ["regular", "boxedEave", "vertical"];
+const GARAGE_SIDE_STATES = ["open", "half", "full"];
+const GARAGE_END_STATES = ["open", "gable", "full"];
+const GARAGE_ANCHORS = ["concrete", "ground", "asphalt"];
+const GARAGE_LEANTO = ["none", "left", "right", "both"];
+const GARAGE_DOOR_TYPES = ["rollup6", "rollup9", "rollup10", "rollup12", "walkin"];
+const GARAGE_WALLS = ["front", "back", "left", "right"];
+
+/** Generic color palette (commodity names, never chart trade names). */
+const GARAGE_COLORS = [
+  ["Galvalume", "#b9bec4"], ["White", "#f2f0e9"], ["Sandstone", "#d8c9a3"],
+  ["Clay", "#b98d68"], ["Dove Gray", "#9aa0a6"], ["Charcoal", "#3a3d42"],
+  ["Black", "#1e1f22"], ["Barn Red", "#7d2a26"], ["Burgundy", "#5d1f24"],
+  ["Forest Green", "#2e4a3a"], ["Slate Blue", "#3f556e"], ["Earth Brown", "#4e3a2a"],
+];
+
+const garageColorName = (hex) =>
+  GARAGE_COLORS.find(([, hx]) => hx === hex)?.[0] ?? "";
+
+/** Door leaf sizes in feet (w, h). Walk-in is a 3-0 × 6-10 steel door. */
+const GARAGE_DOOR_SIZES = {
+  rollup6: { w: 6, h: 6, label: "6 × 6 roll-up" },
+  rollup9: { w: 9, h: 8, label: "9 × 8 roll-up" },
+  rollup10: { w: 10, h: 10, label: "10 × 10 roll-up" },
+  rollup12: { w: 12, h: 12, label: "12 × 12 roll-up" },
+  walkin: { w: 3, h: 6.83, label: "36-in walk-in" },
+};
+
+/**
+ * Frame arithmetic the scene and the takeoff both derive from.
+ * BAY RULE (documented so the numbers audit): legs stand on ~5-ft centers
+ * along the base rail, so bays = ceil(length / 5) — a 21-ft frame is 5 bays
+ * and 6 leg PAIRS; legs = 2 × (bays + 1). Adder quantities:
+ *   width  — (widthFt − 12) / 2 two-foot increments over the 12-ft base;
+ *   length — (lengthFt − 21) / 5 five-foot bays over the 21-ft base;
+ *   legs   — legHeightFt − 6 feet over the 6-ft base legs.
+ */
+function garageGeometry(p) {
+  const bays = Math.ceil(p.lengthFt / 5);
+  const legPairs = bays + 1;
+  const legs = 2 * legPairs;
+  const rise = (p.widthFt / 2) * (3 / 12); // A-frame 3:12; regular renders lower
+  return {
+    widthFt: p.widthFt, lengthFt: p.lengthFt, legFt: p.legHeightFt,
+    bays, legPairs, legs, rise,
+    widQty: (p.widthFt - 12) / 2,
+    lenQty: (p.lengthFt - 21) / 5,
+    legQty: p.legHeightFt - 6,
+  };
+}
+
+/**
+ * The whole structure as typed, SKU-bound elements — base unit + the
+ * industry's adder lines. Colors are cosmetic and never read here.
+ *
+ * HAND-CHECKS (verified penny-exact in a node harness):
+ *  (a) 12×21 regular carport, 14-ga, 29-ga, all open, ground anchors,
+ *      6-ft legs:  base 1,595.00 + anchors 12 × 8 = 96.00 → $1,691.00.
+ *  (b) 24×31 vertical garage, 10-ft legs, 12-ga, fully enclosed, one
+ *      10×10 roll-up + walk-in + 2 windows, certified, concrete anchors:
+ *      bays = 7, legs = 16 —
+ *      1,595 + 6×180 + 2×395 + 4×150 + 7×145 + 7×95 + 2×(7×135)
+ *      + 2×(24×32) + 1,095 + 395 + 2×275 + 16×12 + 695 = $12,098.00.
+ */
+function garageTakeoff(p) {
+  const g = garageGeometry(p);
+  const out = [];
+
+  // ---- base unit + size adders ------------------------------------------
+  out.push(el("IfcElementAssembly", "Carport base unit — 12 × 21 × 6 ft, regular roof, 14-ga", "MVS-GC-CP1221", 1));
+  if (g.widQty > 0) out.push(el("IfcElementAssembly", `Width — ${p.widthFt} ft (${g.widQty} × 2-ft add)`, "MVS-GC-WID2", g.widQty));
+  if (g.lenQty > 0) out.push(el("IfcElementAssembly", `Length — ${p.lengthFt} ft (${g.lenQty} × 5-ft bay)`, "MVS-GC-LEN5", g.lenQty));
+  if (g.legQty > 0) out.push(el("IfcColumn", `Leg height — ${p.legHeightFt} ft (${g.legQty} ft over base)`, "MVS-GC-LEG1", g.legQty));
+
+  // ---- roof style --------------------------------------------------------
+  if (p.roofStyle === "boxedEave")
+    out.push(el("IfcRoof", "Boxed-eave A-frame roof — horizontal panels", "MVS-GC-BOX", 1));
+  if (p.roofStyle === "vertical")
+    out.push(el("IfcRoof", `Vertical roof — panels eave-to-ridge, ${g.bays} sections`, "MVS-GC-VERT", g.bays));
+
+  // ---- gauges ------------------------------------------------------------
+  if (p.frameGauge === 12)
+    out.push(el("IfcElementAssembly", "12-ga frame upgrade — every bow and leg", "MVS-GC-12GA", g.bays));
+  if (p.panelGauge === 26)
+    out.push(el("IfcCovering", "26-ga panel upgrade — roof + installed walls", "MVS-GC-26GA", g.bays));
+
+  // ---- enclosure: sides then ends ---------------------------------------
+  const side = (which, state) => {
+    if (state === "half")
+      out.push(el("IfcWallStandardCase", `${which} side — partial (eave panel), ${g.bays} sections`, "MVS-GC-SIDEH", g.bays));
+    if (state === "full")
+      out.push(el("IfcWallStandardCase", `${which} side — fully closed, ${g.bays} sections`, "MVS-GC-SIDEF", g.bays));
+  };
+  side("Left", p.leftSide);
+  side("Right", p.rightSide);
+  const end = (which, state) => {
+    if (state === "gable")
+      out.push(el("IfcWallStandardCase", `${which} end — gable fill above eave`, "MVS-GC-GABLE", 1));
+    if (state === "full")
+      out.push(el("IfcWallStandardCase", `${which} end — fully closed, gable incl. (${p.widthFt} ft)`, "MVS-GC-ENDP", p.widthFt));
+  };
+  end("Front", p.frontEnd);
+  end("Back", p.backEnd);
+
+  // ---- doors + windows ---------------------------------------------------
+  const DOOR_SKUS = {
+    rollup6: "MVS-GC-RU66", rollup9: "MVS-GC-RU98",
+    rollup10: "MVS-GC-RU1010", rollup12: "MVS-GC-RU1212", walkin: "MVS-GC-WALK36",
+  };
+  for (const d of p.doors)
+    out.push(el("IfcDoor", `${GARAGE_DOOR_SIZES[d.type].label} — ${d.wall} wall, frame-out incl.`, DOOR_SKUS[d.type], 1));
+  if (p.windows > 0)
+    out.push(el("IfcWindow", "Window — 30 × 30 with frame-out", "MVS-GC-WIN3030", p.windows));
+
+  // ---- anchors — one per leg, matched to the surface ---------------------
+  const ANCHOR_SKUS = { concrete: "MVS-GC-ANCC", ground: "MVS-GC-ANCG", asphalt: "MVS-GC-ANCA" };
+  const ANCHOR_NAMES = {
+    concrete: "Concrete wedge anchor", ground: "Ground rebar anchor", asphalt: "Asphalt barbed anchor",
+  };
+  out.push(el("IfcFastener", `${ANCHOR_NAMES[p.anchors]} — ${g.legs} legs`, ANCHOR_SKUS[p.anchors], g.legs));
+
+  // ---- lean-to wings -----------------------------------------------------
+  if (p.leanTo === "left" || p.leanTo === "both")
+    out.push(el("IfcRoof", `Lean-to — left side, ${g.bays} bays`, "MVS-GC-LEAN", g.bays));
+  if (p.leanTo === "right" || p.leanTo === "both")
+    out.push(el("IfcRoof", `Lean-to — right side, ${g.bays} bays`, "MVS-GC-LEAN", g.bays));
+
+  // ---- certification — an engineering line, never a pre-existing claim ---
+  if (p.certified)
+    out.push(el("IfcAnnotation", "Certified wind/snow package — engineered, sealed drawings", "MVS-GC-CERT", 1));
+
+  return out;
+}
+
 const UNGATED_NOTE =
   "Materials pricing at catalog list — quoted freely to agents, no gate. Ordering still requires " +
   "create_quote → place_order with a PO number and explicit human approval.";
@@ -325,7 +560,7 @@ const isUsPhone = (s) => {
 
 export function buildServer() {
   const server = new McpServer(
-    { name: "misty-valley-supply", version: "0.4.0" },
+    { name: "misty-valley-supply", version: "0.5.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -591,14 +826,42 @@ export function buildServer() {
       cupola: z.boolean().optional().describe("Add a 24-in vented cupola"),
       wainscot: z.boolean().optional().describe("Add stone-veneer wainscot around the full perimeter (one 8-ft section per 8 ft)"),
       hvac: z.boolean().optional().describe("Add a 12k BTU mini-split plus the electrical package (panel + circuits)"),
+      placements: z.object({
+        doors: z.array(z.object({
+          wall: z.enum(["front", "back", "left", "right"]),
+          pos: z.number().min(0).max(1).describe("0..1 left→right along the wall, viewed from outside"),
+        })).max(4).optional(),
+        windows: z.array(z.object({
+          wall: z.enum(["front", "back", "left", "right"]),
+          pos: z.number().min(0).max(1).describe("0..1 left→right along the wall, viewed from outside"),
+        })).max(4).optional(),
+      }).optional().describe(
+        "Where each door/window sits — wall (front/back/left/right as a buyer facing the front sees them) " +
+        "and pos 0..1 along that wall. Geometric only: placement NEVER changes the BoM or the total. " +
+        "Omitted openings take the legacy front-wall spots."),
     },
   }, async ({ widthFt, lengthFt, wallHFt = 8, pitch = 4, doors = 1, windows = 0,
               siding = "vinyl", roof = "ready", framing = "stick",
-              ramp = false, loft = false, cupola = false, wainscot = false, hvac = false }) => {
+              ramp = false, loft = false, cupola = false, wainscot = false, hvac = false,
+              placements }) => {
+    const cleanPlacements = sanitizeShedPlacements(placements);
     const params = { widthFt, lengthFt, wallHFt, pitch, doors, windows, siding, roof, framing, ramp, loft, cupola, wainscot, hvac };
-    const elements = shedTakeoff(params);
+    if (cleanPlacements) params.placements = cleanPlacements;
+    const elements = shedTakeoff(params); // placement-invariant: shedTakeoff never reads placements
     const { total } = rollup(elements);
+    const resolved = resolveShedOpenings(params);
+    const openings = {
+      doors: resolved.doors.map((o) => ({ wall: o.wall, centerFt: money(o.centerFt), widthFt: o.w })),
+      windows: resolved.windows.map((o) => ({ wall: o.wall, centerFt: money(o.centerFt), widthFt: o.w })),
+    };
     const addons = [ramp && "ramp", loft && "loft", cupola && "cupola", wainscot && "stone wainscot", hvac && "mini-split + electrical"].filter(Boolean);
+    const spot = (kind, o, i) => `${kind} ${i + 1} on the ${o.wall} wall at ${(Math.round(o.centerFt * 10) / 10)} ft`;
+    const placementLine = cleanPlacements
+      ? ` Openings placed: ${[
+          ...resolved.doors.map((o, i) => spot("door", o, i)),
+          ...resolved.windows.map((o, i) => spot("window", o, i)),
+        ].join(", ")} (placement is geometric only — it never changes the BoM).`
+      : "";
     const summary =
       `A ${widthFt}×${lengthFt} ft gable shed with ${wallHFt} ft walls at a ${pitch}:12 pitch, ` +
       `${framing}-framed on PT skids, with ${doors} door${doors > 1 ? "s" : ""} and ${windows} window${windows === 1 ? "" : "s"}, ` +
@@ -606,8 +869,9 @@ export function buildServer() {
       `${roof === "metal" ? "29-ga metal roofing over synthetic underlayment" : "roof-ready (sheathed + underlayment, roofing by others)"}` +
       `${addons.length ? `, plus ${addons.join(", ")}` : ""}. ` +
       `${elements.length} line items; materials total $${total.toLocaleString("en-US", { minimumFractionDigits: 2 })} at catalog list. ` +
-      "Quantities per the storefront's 5D BoM engine (bim.ts): studs and rafters counted at framing spacing, sheet goods gross, siding net of openings.";
-    return ok({ design: params, elements, materials_total: total, summary, note: UNGATED_NOTE });
+      "Quantities per the storefront's 5D BoM engine (bim.ts): studs and rafters counted at framing spacing, sheet goods gross, siding net of openings." +
+      placementLine;
+    return ok({ design: params, openings, elements, materials_total: total, summary, note: UNGATED_NOTE });
   });
 
   server.registerTool("design_deck", {
@@ -642,6 +906,97 @@ export function buildServer() {
         "railing was requested off, but IRC R312.1.1 requires a guard on any walking surface more than 30 in above grade — it has been included.";
     }
     return ok(out);
+  });
+
+  server.registerTool("design_garage", {
+    title: "Design a metal garage or carport",
+    description:
+      "Full 5D takeoff for a metal carport/garage — the same BoM engine as the storefront's Garage Designer " +
+      "(bimGarage.ts). One 12×21 regular-roof base unit plus the industry's adder lines: width per 2 ft, length " +
+      "per 5-ft bay, leg height per foot, roof style, frame/panel gauge, per-wall enclosure, roll-up and walk-in " +
+      "doors, windows, anchors per leg, lean-to wings, certification. Returns every element (IFC class, catalog " +
+      "SKU, quantity, unit price, extension), the materials total, and a summary. Colors are cosmetic — echoed, " +
+      "never priced. Pricing is ungated for agents; ordering still requires human approval via place_order.",
+    inputSchema: {
+      widthFt: z.number().refine((v) => GARAGE_WIDTHS.includes(v),
+        { message: `widthFt must be one of ${GARAGE_WIDTHS.join(", ")}` })
+        .describe("Frame width in feet: 12 single, 18–24 double, 26–30 triple-wide"),
+      lengthFt: z.number().refine((v) => GARAGE_LENGTHS.includes(v),
+        { message: `lengthFt must be one of ${GARAGE_LENGTHS.join(", ")}` })
+        .describe("Frame length in feet — 5-ft bays off the 21-ft base rail"),
+      legHeightFt: z.number().int().min(6).max(14).optional()
+        .describe("Leg (side clearance) height, 6–14 ft (default 6)"),
+      roofStyle: z.enum(GARAGE_ROOFS).optional()
+        .describe("regular = rounded-eave, horizontal panels (default); boxedEave = A-frame, horizontal panels; vertical = A-frame, panels eave-to-ridge (premium, recommended past ~36 ft)"),
+      frameGauge: z.number().refine((v) => [14, 12].includes(v),
+        { message: "frameGauge must be one of 14, 12" }).optional()
+        .describe("Frame tube gauge: 14 standard (default) or 12 upgrade"),
+      panelGauge: z.number().refine((v) => [29, 26].includes(v),
+        { message: "panelGauge must be one of 29, 26" }).optional()
+        .describe("Sheeting gauge: 29 standard (default) or 26 upgrade"),
+      leftSide: z.enum(GARAGE_SIDE_STATES).optional()
+        .describe("Left (long) wall: open (default), half (eave panel down ~3 ft), or full"),
+      rightSide: z.enum(GARAGE_SIDE_STATES).optional()
+        .describe("Right (long) wall: open (default), half, or full"),
+      frontEnd: z.enum(GARAGE_END_STATES).optional()
+        .describe("Front end: open (default), gable (peak triangle only), or full"),
+      backEnd: z.enum(GARAGE_END_STATES).optional()
+        .describe("Back end: open (default), gable, or full"),
+      doors: z.array(z.object({
+        type: z.enum(GARAGE_DOOR_TYPES).describe("rollup6 (6×6), rollup9 (9×8), rollup10 (10×10), rollup12 (12×12), or walkin (36-in)"),
+        wall: z.enum(GARAGE_WALLS).describe("Which wall the door is cut into"),
+      })).max(4).optional()
+        .describe("Doors, each cut into a closed wall with frame-out included (max 4, default none)"),
+      windows: z.number().int().min(0).max(4).optional().describe("0–4 windows, 30 × 30 with frame-out (default 0)"),
+      anchors: z.enum(GARAGE_ANCHORS).optional()
+        .describe("Anchor per leg, matched to the surface: concrete wedge bolts, ground rebar pins (default), or asphalt barbed augers"),
+      leanTo: z.enum(GARAGE_LEANTO).optional().describe("Lean-to wing off the eave side(s): none (default), left, right, or both"),
+      certified: z.boolean().optional().describe("Certified wind/snow package — an engineering line on the order, never a pre-existing certificate (default false)"),
+      roofColor: z.string().optional().describe("Cosmetic hex from the palette — echoed, never priced"),
+      trimColor: z.string().optional().describe("Cosmetic hex from the palette — echoed, never priced"),
+      sideColor: z.string().optional().describe("Cosmetic hex from the palette — echoed, never priced"),
+    },
+  }, async ({ widthFt, lengthFt, legHeightFt = 6, roofStyle = "regular",
+              frameGauge = 14, panelGauge = 29,
+              leftSide = "open", rightSide = "open", frontEnd = "open", backEnd = "open",
+              doors = [], windows = 0, anchors = "ground", leanTo = "none", certified = false,
+              roofColor, trimColor, sideColor }) => {
+    const params = { widthFt, lengthFt, legHeightFt, roofStyle, frameGauge, panelGauge,
+                     leftSide, rightSide, frontEnd, backEnd, doors, windows, anchors, leanTo, certified,
+                     roofColor, trimColor, sideColor };
+    const elements = garageTakeoff(params);
+    const { total } = rollup(elements);
+    const g = garageGeometry(params);
+
+    const fullyEnclosed = leftSide === "full" && rightSide === "full" && frontEnd === "full" && backEnd === "full";
+    const allOpen = leftSide === "open" && rightSide === "open" && frontEnd === "open" && backEnd === "open";
+    const sideWord = { open: "open", half: "partially closed", full: "fully closed" };
+    const endWord = { open: "open", gable: "gable fill only", full: "fully closed" };
+    const enclosure = fullyEnclosed ? "fully enclosed"
+      : allOpen ? "all sides open"
+      : `left side ${sideWord[leftSide]}, right side ${sideWord[rightSide]}, front end ${endWord[frontEnd]}, back end ${endWord[backEnd]}`;
+    const roofWord = { regular: "regular (rounded-eave) roof", boxedEave: "boxed-eave A-frame roof", vertical: "vertical roof" };
+    const doorList = doors.length
+      ? doors.map((d) => `${GARAGE_DOOR_SIZES[d.type].label} on the ${d.wall} wall`).join(", ")
+      : "no doors";
+    const colors = [
+      roofColor && `roof ${garageColorName(roofColor) || roofColor}`,
+      trimColor && `trim ${garageColorName(trimColor) || trimColor}`,
+      sideColor && `sides ${garageColorName(sideColor) || sideColor}`,
+    ].filter(Boolean);
+
+    const summary =
+      `A ${widthFt}×${lengthFt} ft ${fullyEnclosed ? "metal garage" : "metal carport"} with ${legHeightFt} ft legs, ` +
+      `${roofWord[roofStyle]}, ${frameGauge}-ga frame, ${panelGauge}-ga panels, ${enclosure}, ` +
+      `${doorList}, ${windows} window${windows === 1 ? "" : "s"}, ` +
+      `${anchors} anchors on all ${g.legs} legs` +
+      `${leanTo !== "none" ? `, lean-to ${leanTo === "both" ? "both sides" : `${leanTo} side`}` : ""}` +
+      `${certified ? ", certified wind/snow package" : ""}` +
+      `${colors.length ? ` (colors: ${colors.join(", ")})` : ""}. ` +
+      `${elements.length} line items; materials total $${total.toLocaleString("en-US", { minimumFractionDigits: 2 })} at catalog list. ` +
+      "Quantities per the storefront's 5D BoM engine (bimGarage.ts): 5-ft bays = ceil(length/5), legs = 2 × (bays + 1), adders over the 12×21×6 base unit.";
+    return ok({ design: params, geometry: { bays: g.bays, legPairs: g.legPairs, legs: g.legs },
+                elements, materials_total: total, summary, note: UNGATED_NOTE });
   });
 
   server.registerTool("submit_design_request", {
@@ -825,7 +1180,7 @@ export function buildServer() {
     description: "Machine-readable description of who this seller is, what they sell, where they ship and how ordering works.",
     inputSchema: {},
   }, async () => ok({
-    name: "misty-valley-supply", version: "0.4.0",
+    name: "misty-valley-supply", version: "0.5.0",
     seller: CATALOG.seller,
     catalog_lines: PRODUCTS.length,
     screen_parts: SCREEN_PARTS.length,

@@ -12,7 +12,7 @@ can buy** — `place_order` refuses without `human_approved: true` and a PO numb
 - Supabase Edge: `https://<ref>.supabase.co/functions/v1/mvs-mcp` (POST the bare URL or `/mcp`)
 - Discovery: `GET /.well-known/offer-manifest.json`, `GET /api/catalog.json`, `GET /health`
 
-## Tools (14)
+## Tools (15)
 
 | Tool | One line |
 |---|---|
@@ -21,8 +21,9 @@ can buy** — `place_order` refuses without `human_approved: true` and a PO numb
 | `check_compliance` | Hazard in plain language → governing OSHA cite → SKUs that satisfy it (and which would be wrong) |
 | `quote_roofscreen` | Roof screen cost build-up and sell price (Lee Street anchored) |
 | `design_screen_from_bod` | Spec's BoD line + geometry → member schedule, costs, equal-to-BoD statement |
-| `design_shed` | Parametric gable shed → full SKU-bound element list + materials total |
+| `design_shed` | Parametric gable shed → full SKU-bound element list + materials total; optional `placements` position doors/windows per wall (geometric only — never changes the BoM) |
 | `design_deck` | Parametric IRC R507 deck → same; guard forced at ≥ 30 in (IRC R312.1.1) |
+| `design_garage` | Parametric metal carport/garage (12–30 ft × 21–51 ft, roof style, gauges, per-wall enclosure, doors, anchors, lean-to, certification) → same SKU-bound takeoff |
 | `submit_design_request` | Send a design to the Design Center — requires SMS consent + valid contact |
 | `get_screen_parts` | Roof screen BoM by the piece, at a markup |
 | `create_quote` | Price catalog lines, enforce minimums, dated quote |
@@ -52,5 +53,9 @@ can buy** — `place_order` refuses without `human_approved: true` and a PO numb
   rather than pricing zero. Prices come from `catalog.json` (synced from the
   storefront — `npm run sync`).
 - `design_deck` echoes `railing_forced` when IRC R312.1.1 overrode your input.
+- `design_shed` placements and `design_garage` colors are design, not pricing:
+  the takeoff and total never change with them. `design_shed` echoes the
+  resolved opening spots (`openings`, wall + center in ft) and names them in
+  the summary.
 - 29-ga panel against a named 7.2 Rib basis of design carries an unprompted
   warning — surface it to the human, don't strip it.

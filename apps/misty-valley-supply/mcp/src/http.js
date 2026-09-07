@@ -25,7 +25,7 @@ const TOKEN = process.env.MCP_TOKEN || "";
 
 const MANIFEST = {
   name: "misty-valley-supply",
-  version: "0.4.0",
+  version: "0.5.0",
   seller: CATALOG.seller,
   catalog_lines: CATALOG.products.length,
   categories: CATALOG.categories.map((c) => ({ id: c.id, name: c.name })),

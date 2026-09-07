@@ -8,7 +8,7 @@ citation that requires it** as structured data. That is what makes
 copy by scraping a product page.
 
 ```
-117 passed, 0 failed         node src/smoke.js
+155 passed, 0 failed         node src/smoke.js
 ```
 
 ---
@@ -53,8 +53,9 @@ claude mcp add misty-valley-supply -- node /absolute/path/to/mvs-mcp/src/server.
 | **`check_compliance`** | **Hazard in plain language → the OSHA rule → what satisfies it, and what does not** |
 | `quote_roofscreen` | Cost build-up and sell for a shop-fabricated roof screen, anchored on the real Lee Street job (frame `$14 + $7/ft` per LF, panel by SF, mount adder, drawings line, 71.4% default markup). Warns when 29 ga panel is quoted against a 7.2 Rib basis of design |
 | `design_screen_from_bod` | Given the spec's basis-of-design line and geometry: member schedule, itemized cost build-up, sell, and the equal-to-BoD statement for the substitution request |
-| `design_shed` | Full 5D takeoff for a gable storage shed (8/10/12 ft wide, stick or truss, vinyl or none, roof-ready or metal, ramp/loft/cupola/stone-wainscot/mini-split) — every element SKU-bound and priced from the catalog, same BoM engine as the storefront's Shed Designer |
+| `design_shed` | Full 5D takeoff for a gable storage shed (8/10/12 ft wide, stick or truss, vinyl or none, roof-ready or metal, ramp/loft/cupola/stone-wainscot/mini-split) — every element SKU-bound and priced from the catalog, same BoM engine as the storefront's Shed Designer. Optional `placements` put each door/window on a named wall at a 0..1 position — geometric only, echoed and summarised, **never changes the BoM** |
 | `design_deck` | Full 5D takeoff for a ledger-hung PT deck per IRC R507. The guard is **forced on at ≥ 30 in above grade** (IRC R312.1.1) regardless of input |
+| `design_garage` | Full 5D takeoff for a metal carport/garage (bimGarage.ts): widths 12–30 ft, lengths 21–51 ft in 5-ft bays, 6–14 ft legs, regular/boxed-eave/vertical roof, 14/12-ga frame, 29/26-ga panels, per-wall enclosure, roll-up + walk-in doors, windows, surface-matched anchors per leg, lean-to wings, certified wind/snow package. Colors cosmetic — echoed, never priced |
 | `submit_design_request` | Sends a design request to the Design Center — refuses without SMS consent and reachable contact details |
 | `get_screen_parts` | The 8-part roof screen bill of materials, priced by the piece at a given markup |
 | `create_quote` | Prices lines, enforces minimums, dates the quote |
