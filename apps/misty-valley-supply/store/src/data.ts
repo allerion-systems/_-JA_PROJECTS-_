@@ -35,7 +35,7 @@ export const CATEGORIES = [
   { id: "sheathing", name: "Sheathing & Framing", blurb: "OSB, plywood, studs" },
   { id: "drywall", name: "Drywall", blurb: "Board, and the standard it hangs to" },
   { id: "structures", name: "Site Structures", blurb: "Conex, offices, pre-fabbed buildings — delivered set" },
-  { id: "str", name: "Short-Term Rental Units", blurb: "Airbnb-ready cabins, park models, container units — delivered to your lot" },
+  { id: "str", name: "Short-Term Rental Units", blurb: "Cabins, park models, container units — delivered to your lot" },
   { id: "dock", name: "Docks & Waterfront", blurb: "Floating dock sections, gangways and hardware — Nolin, Rough River, Barren" },
   { id: "jobsite", name: "Jobsite Compliance", blurb: "First aid, fire, respiratory, hearing, GFCI — the reorder wall" },
   { id: "roofing", name: "Roofing Accessories", blurb: "Underlayment, ice & water, drip edge, boots, coil nails" },
