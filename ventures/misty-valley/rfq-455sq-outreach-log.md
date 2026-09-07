@@ -1,4 +1,10 @@
-# RFQ 455SQ — Outreach Log & Monday Call Sheet
+# RFQ 455SQ — Outreach Log & Monday Call Sheet (Project Fiberworks)
+
+**Jobsite identified 9/7:** Fibreworks Corporation, 2301 Brennen Business Court,
+Jeffersontown (Louisville), KY 40299 — occupied rug/carpet manufacturing plant.
+Freight corrections sent on the AWIP and SRS email threads (quote to Jeffersontown,
+not central KY); give the same delivery point on every phone call. Occupied
+manufacturing building confirms the listed/labeled-panels-only posture.
 
 *Companion to [RFQ-455SQ-PACKAGE.md](./RFQ-455SQ-PACKAGE.md). Spec: 45,500 sf high-rib
 insulated metal roof panel, **1.5" core FIRM**, American suppliers only, middle pricing,
