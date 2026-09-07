@@ -3,6 +3,25 @@
 State as of 2026-09-05. Everything below is executable by any local agent (Claude Code,
 Codex) with this repo cloned. Branch: `claude/misty-valley-supply-structure-7f0rif` (PR #18).
 
+## ACTIVE JOB — Project Fiberworks (455SQ re-roof RFQ, quote due Tuesday 9/8)
+
+Jobsite: **Fibreworks Corporation, 2301 Brennen Business Court, Jeffersontown
+(Louisville), KY 40299** — occupied rug/carpet manufacturing plant; ~45,500 sf roof.
+Customer: Scott Waldman, R&B Roofing. Ben's spec: 455 SQ high-rib insulated metal roof
+panel, **1.5" core FIRM**, American suppliers only, middle pricing.
+
+- Package + selection rule: `ventures/misty-valley/RFQ-455SQ-PACKAGE.md`
+- Supplier research: `ventures/misty-valley/RFQ-455SQ-IMP.md`
+- **Live outreach status + Monday call sheet: `ventures/misty-valley/rfq-455sq-outreach-log.md`**
+  (as of 9/7: AWIP + SRS Bowling Green RFQ'd by email with Jeffersontown freight,
+  PermaTherm quote form in; Metl-Span / Kingspan / McElroy / QXO Louisville / ABC
+  E-town are phone calls at Monday open; quotes land in the MVS procurement inbox)
+- Workbook for bids: `ventures/misty-valley/rfq-455sq-comparison.xlsx`
+- Occupied manufacturing building ⇒ listed/labeled panels only; the do-not list in the
+  package (no Chinese-origin substitution, disclosure gate before Ben quotes Scott)
+  governs. China-import pricing exists ONLY for the separate container venture:
+  `ventures/misty-valley/11-china-import-tariff-brief.md`.
+
 ## What is DONE and pushed
 - Store app: `apps/misty-valley-supply/store/` — React/TS/Vite, navy/gold MVC brand,
   departments, 78 products, 3D Design Center (screens + sheds + decks, 5D/IFC BoM),
