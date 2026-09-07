@@ -50,7 +50,14 @@ the 1.5" requirement softens — do not let a 2" price anchor the middle.
 A China-import RFQ (EPS sandwich panels, 40HQ tiers) went to Shandong Hark Steel
 (cherylluan@headstream.net) on 9/6 for the **container venture** — see
 [11-china-import-tariff-brief.md](./11-china-import-tariff-brief.md). Firewall per the
-do-not list stands: **no Chinese-origin substitution on the 455SQ job.** Two corrections
-owed on next contact with the supplier: company name went out as "Ministry Valley
-Supply" (fix to Misty Valley Supply), and the quoted thicknesses (50/75/100mm) don't
-include a 1.5"/38mm tier — irrelevant for 455SQ, note for the venture spec.
+do-not list stands: **no Chinese-origin substitution on the 455SQ job** — and even
+absent that spec, unlisted EPS panels are noncompliant on an occupied commercial
+re-roof (see 03-product-compliance-risk).
+
+~~Two corrections owed~~ **Closed 9/7 (follow-up sent on the same thread):** company
+name corrected to Misty Valley Supply, and the supplier was asked to add a 38–40mm
+(1.5") thickness tier plus a project-volume tier of 4,250 m² effective (= 455 SQ,
+45,500 sf) with container count in the loading plan. Venture-comparison math at that
+volume, ~4× 40HQ of thin-core EPS: roughly $95–105k landed at the verified 75.5%
+duty vs. the $320–455k domestic bracket — a spread that tempts exactly the
+substitution the do-not list forbids. The number is for the venture model only.
