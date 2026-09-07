@@ -90,6 +90,11 @@ export function ToolShell({ price, steps, step = 0, onStep, scene, toolbar, deta
 }) {
   const [open, setOpen] = React.useState(true); // desktop drawer collapse
   const [tab, setTab] = React.useState<"design" | "details">("design");
+  const { user } = useAuth();
+  // Guests design in peace: the estimate ask appears only once they reach
+  // the final (Quote) step — the moment of intent, not a nag during design.
+  // Signed-in accounts keep the live price on every step.
+  const showPrice = !!price && (!!user || !steps || step === steps.length - 1);
   return (
     <div className="relative">
       {/* --------------------------- the design window owns the screen */}
@@ -101,8 +106,8 @@ export function ToolShell({ price, steps, step = 0, onStep, scene, toolbar, deta
               {toolbar}
             </div>
           )}
-          {/* the slim estimate bar rides the canvas — always in view */}
-          {price && (
+          {/* the slim estimate bar rides the canvas once it's earned */}
+          {showPrice && price && (
             <div className="absolute inset-x-2 bottom-2 z-10 lg:bottom-3 lg:left-3 lg:right-auto lg:w-[400px] lg:max-w-[calc(100%_-_360px)]">
               <PriceBar label={price.label} total={price.total} />
             </div>
