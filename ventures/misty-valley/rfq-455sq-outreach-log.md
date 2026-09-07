@@ -27,6 +27,18 @@ still blocks the customer quote.*
 | **ABC Supply — Elizabethtown KY** (closest branch to Bonnieville, ~45 min) | (270) 737-0875 · 204 Production Dr · mgr Kyle Anderson | ☎️ Call at open — same ask |
 | **ABC Supply — Bowling Green KY** | 270-215-3040 | Backup if E-town can't source |
 
+**Named contacts (per Joey, 9/7) — RFQs emailed same night under Misty Valley Supply:**
+- **QXO:** Kyle Raymer, Senior Branch Manager, Louisville commercial (Kyle.Raymer@qxo.com) ✅ sent
+- **Home Depot Pro:** Chris Alexander (chris_alexander@homedepot.com) — HD has sourcing
+  avenues beyond SRS ✅ sent
+- Both reps also hold R&B relationships; the MVS RFQs went out clean with no R&B
+  mention. If a rep asks about the two entities, the lanes stay separate — Ben owns
+  the MVS side of that conversation.
+
+**Ben package sent 9/7:** full status cover email + forwards of all five RFQ originals
+(QXO, Home Depot, SRS, AWIP, and the China/venture RFQ marked not-this-job) to
+mistyvalleycontracting@gmail.com per the routing rule.
+
 Reality check for the calls: these houses are shingle/single-ply/metal-panel first —
 expect them to quote a brokered IMP line (Beacon/QXO and SRS both carry metal-panel
 vendor programs) or a foam-backed laminated high-rib panel. Either satisfies the RFQ if
