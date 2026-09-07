@@ -1,0 +1,219 @@
+{
+  "_README": [
+    "Rate assumptions for container_model.py. Verified against the HTSUS",
+    "Revision 18 (2026) legal text, CBP rulings, and Federal Register notices",
+    "as of 2026-09-04. Anything marked _verify must still be confirmed by a",
+    "licensed customs broker against the entry-date HTSUS before you wire money.",
+    "",
+    "Trade law here changed materially FOUR times in twelve months:",
+    "  2026-02-20  Supreme Court struck down IEEPA tariffs",
+    "  2026-02-24  Section 122 invoked (later held unlawful, expired 2026-07-23)",
+    "  2026-04-06  Section 232 restructured -- full customs value, five tiers",
+    "  2026-07-24  New Section 301 forced-labor tariffs (steel exempt)",
+    "Re-verify before every entry. A rate you looked up last quarter is not a",
+    "rate you know.",
+    "",
+    "Customs value = transaction value (broadly the FOB price paid to the",
+    "supplier). Ocean freight is NOT in the customs value for US entries, which",
+    "is why it sits in `logistics` and is not duty-bearing."
+  ],
+  "_rate_sources": {
+    "hts_classification": {
+      "value": "7308.90.9590",
+      "basis": "VERIFIED against CBP rulings on this exact product from this exact country. NY N278206 classified steel drywall studs FROM CHINA -- light-gauge cold-formed galvanized, machine formed/cut/punched, C-shaped with cutouts -- under 7308.90.9590. NY N306468 classified cold-formed galvanized drywall studs and track under 7308.90.3000. Heading 7308 covers steel 'prepared for use in structures', which is what a punched, cut-to-length C-stud is.",
+      "_note": "7216.91 (cold-formed sections) is the SEMI-FINISHED provision and is wrong once the section is punched and cut for a structural application. 7228.70 would be worse -- it carries an additional 25% under the Section 301 four-year review that 7308.90 does NOT. Do not 'shop' for a better code; misclassification is a 19 USC 1592 penalty exposure.",
+      "_verify": "Get a BINDING RULING in Misty Valley's own name under 19 CFR Part 177 before the first entry. It is free, takes roughly 30-90 days, and the two rulings above make it straightforward."
+    },
+    "mfn": {
+      "value": 0.0,
+      "basis": "VERIFIED. Column 1 General rate for 7308.90.30/.60/.70/.95 is Free (HTSUS Rev. 18, 2026). The ENTIRE duty burden here is trade-remedy tariffs, not ordinary customs duty -- so the whole cost structure moves with politics, not with trade agreements."
+    },
+    "section_232": {
+      "value": 0.5,
+      "basis": "VERIFIED IN THE LEGAL TEXT. HTSUS Ch.99 U.S. Note 16(c)(iv) 'Derivative steel articles' enumerates 7308.90.30, 7308.90.60, 7308.90.70 and 7308.90.95 explicitly. Heading 9903.82.02 = 'the duty provided in the applicable subheading + 50%'. Proclamation 10947 (90 FR 24199) doubled the rate to 50% effective 2025-06-04; the 2026-04-02 proclamation (91 FR 18201, eff. 2026-04-06) restructured into five tiers.",
+      "_critical": [
+        "The 'steel content' valuation rule is REPEALED for these goods.",
+        "Note 16(c) first sentence: the headings 'apply to the FULL CUSTOMS VALUE'",
+        "of listed articles, and the 15%-by-weight metal threshold applies only to",
+        "articles NOT in chapters 72, 73, 74 or 76. Steel studs are Chapter 73.",
+        "There is no apportionment, no metal-content test, no split rate.",
+        "50% of the entire invoice value. Anyone still modelling this on a",
+        "steel-content basis is understating the duty."
+      ],
+      "_verify": "The BIS three-windows-per-year inclusions process was TERMINATED 2026-04-06. Commerce and USTR now add derivative articles on a rolling basis via Federal Register notice, with no predictable calendar. 7308.90 is already fully covered, so this is downside-only risk."
+    },
+    "section_301": {
+      "value": 0.25,
+      "basis": "VERIFIED IN THE LEGAL TEXT. 7308.90.95 appears in the U.S. Note 20(d) list, which is the enumeration for heading 9903.88.02. Note 20(c): products of China under this note take an additional 25 percent ad valorem. This is LIST 2 (effective 2018-08-23), not List 3 -- the distinction matters only for exclusion research, since exclusion notes differ by list.",
+      "_note": "The September 2024 Section 301 four-year review (U.S. Note 31, headings 9903.91.01-.03) does NOT reach heading 7308. It covers Chapter 72 material codes and 7301/7302/7304/7305. No second 301 layer stacks."
+    },
+    "section_301_forced_labor": {
+      "value": 0.0,
+      "basis": "EXEMPT, and this is load-bearing good news. USTR imposed new Section 301 duties on ~60 economies effective 2026-07-24 (China heading 9903.05.31, +12.5% per the HTSUS). But U.S. Note 52(f)(1) excludes 'articles of aluminum, of steel or of copper, nor derivative aluminum or steel articles provided for in headings 9903.82.02 and 9903.82.04-9903.82.26'. Our studs ARE provided for in 9903.82.02, so the forced-labor tariff does not apply.",
+      "_verify": "25 states sued 2026-08-17 to block this tariff; CBP continues collecting pending outcome. Moot for steel, but relevant if Misty Valley later imports non-steel products (insulation, vinyl siding)."
+    },
+    "ieepa_and_section_122": {
+      "value": 0.0,
+      "basis": "BOTH DEAD. The Supreme Court struck down IEEPA tariffs in Learning Resources, Inc. v. Trump (6-3, decided 2026-02-20); CBP stopped collecting effective 2026-02-24 per CSMS #67834313. Section 122 was invoked 2026-02-24, held unlawful by the CIT 2026-05-07, and expired by operation of law at the close of 2026-07-23.",
+      "_action": "IF Misty Valley Contracting or any affiliate imported ANYTHING from China between Feb 2025 and Feb 2026, they may be owed IEEPA refunds through CBP's CAPE portal. Ask the broker. There may be a second claim for Section 122 duties paid between 2026-02-24 and 2026-07-23 -- refund posture there is UNVERIFIED, get counsel."
+    },
+    "ad_cvd": {
+      "value": 0.0,
+      "basis": "NO ORDER CURRENTLY REACHES THESE GOODS. A Federal Register search of ITA notices from 2025-01-01 forward found no AD/CVD order or petition on cold-formed steel framing, metal studs, or drywall profiles from any country. The CORE (corrosion-resistant steel) China order does NOT reach roll-formed studs: its scope is confined to FLAT-ROLLED products and its HTS list contains no heading 7308.",
+      "_but_read_this": [
+        "Absence of an order today is NOT safety, for five reasons:",
+        "",
+        "1. The WRITTEN SCOPE DESCRIPTION is dispositive, not the HTS list. Commerce",
+        "   is not bound by CBP's classification.",
+        "2. CORE's scope covers products 'worked after rolling' with non-rectangular",
+        "   cross-sections, and expressly says CUTTING AND PUNCHING do not remove",
+        "   merchandise from scope. Roll-forming is not listed either way. The line",
+        "   between 'cut and punched coil' (in scope) and 'roll-formed section'",
+        "   (out of scope) is the entire ballgame.",
+        "3. CORE China rates are AD 209.97% + CVD 241.07% = ~451%.",
+        "4. Commerce has FOUR active CORE circumvention inquiries opened in 2026",
+        "   (China/Indonesia and Vietnam in March, Korea in April, China/Thailand",
+        "   in July -- the last brought by Nucor and Steel Dynamics). Sourcing",
+        "   'Vietnamese' or 'Thai' studs roll-formed from Chinese substrate lands",
+        "   directly inside an active enforcement program, retroactively.",
+        "5. AUSTRALIA ALREADY HAS AN ORDER ON THIS EXACT PRODUCT -- Anti-Dumping",
+        "   Commission Case 679, 'Light Gauge Steel Stud and Track from China'.",
+        "   Foreign orders are a well-established leading indicator for US",
+        "   petitions. The US domestic industry (ClarkDietrich, MarinoWARE, CEMCO,",
+        "   Telling) is concentrated, well-capitalized and litigious.",
+        "",
+        "Adjacent orders show the trend: Certain Steel Grating from China sits at",
+        "7308.90.70 -- immediately next to our code -- and its order was CONTINUED",
+        "2026-09-01 on third sunset review. Temporary Steel Fencing from China went",
+        "from petition (2025-01-14) to ORDER (2026-05-13) in about 16 months."
+      ],
+      "_mitigation": "FILE A SCOPE RULING REQUEST under 19 CFR 351.225 asking Commerce to confirm that roll-formed studs and track fall OUTSIDE the CORE China orders. This converts an open-ended contingent liability into a documented determination. Do it before volume builds, not after.",
+      "_verify": "THE RETROACTIVE MECHANISM IS WHAT ENDS COMPANIES. Under 19 CFR 351.212 the US uses a RETROSPECTIVE system: 'final liability for antidumping and countervailing duties is determined AFTER merchandise is imported.' The deposit at entry is not the payment. Liquidation is suspended indefinitely. Any interested party -- including the domestic petitioner -- can request an annual administrative review. If the Chinese supplier fails to cooperate or isn't individually examined, the importer inherits the China-wide rate via adverse facts available. CBP then bills the difference, with interest from the date of entry, three to four years later. The importer of record is liable -- not the supplier, not the forwarder, not the broker. The surety pays CBP and then subrogates against the importer."
+    },
+    "user_fees": {
+      "basis": "FY2026 figures per CBP Dec. 25-10 (90 FR, 2025-07-23), effective 2025-10-01. MPF 0.3464% of entered value, min $33.58, max $651.50. HMF 0.125% of cargo value, no min or max, ocean arrivals only (26 USC 4461).",
+      "_verify": "FY2027 user fees take effect 2026-10-01 -- under a month away. FY2026 saw a 34.3% increase in COBRA fees. If the container lands in Q4, re-verify the MPF min/max. The 0.3464% rate is statutory and will not move."
+    },
+    "ocean_freight": {
+      "basis": "Drewry World Container Index assessed 2026-09-03: Shanghai to New York $9,587 per 40ft (up 3% week on week); Shanghai to Los Angeles $7,185. WCI composite $4,465.",
+      "_critical": "This is the single largest correction to the original plan. Freight was assumed at $2,000-4,000. It is $9,587 -- roughly 87% of the entire stated $11,000 all-in budget, before a single dollar of duty. West Coast routing is cheaper on the ocean leg but rail from LA/LB to Kentucky runs $3,000-4,500 and erases the saving.",
+      "_verify": "Spot rates move weekly. Re-pull Drewry WCI before every booking. Gulf Coast (Houston/New Orleans) typically prices at or slightly above the New York assessment."
+    },
+    "customs_bond": {
+      "basis": "Per CBP, 'A Guide for the Public: How CBP Sets Bond Amounts' (Feb 2024). Continuous bond Activity Code 1 minimum is the GREATER of $50,000 or 10% of total duties/taxes/fees in the previous 12 months, set in $10,000 increments up to $100,000. With ~$12,000/container in duties, a $50,000 bond covers roughly 4 containers/year at the 10% formula.",
+      "_verify": "If AD/CVD ever attaches, CBP may require an additional single transaction bond 'reasonably tailored to the evidence of additional risk' -- there is no fixed formula. Sureties typically demand cash collateral or an irrevocable letter of credit for 100% of the penal sum from AD/CVD-exposed importers with no track record. Some decline the risk outright. Budget $400-700/year for the continuous bond plus $150-250 per entry in brokerage."
+    }
+  },
+  "scenarios": {
+    "ben_actual": {
+      "name": "Ben's actual basis -- $11,000 FOB goods",
+      "notes": "CORRECTED 2026-09-04 after Joey clarified the basis. The $11,000 is the GOODS (FOB China), not the landed cost. Ben budgets roughly $10,000 on top to get it to Bonnieville. That $10,000 covers the ocean freight ($9,587) almost exactly -- but NOT the $8,250 of Section 232 + 301 duty, and not the ~$3,600 of drayage, broker, port and chassis. True landed is about $32,500. The shortfall is essentially the tariff.",
+      "fob_invoice_value": 11000.0,
+      "duty": {
+        "mfn": 0.0,
+        "section_232": 0.5,
+        "section_301": 0.25
+      },
+      "logistics": {
+        "ocean_freight": 9587.0,
+        "drayage": 2200.0,
+        "customs_broker": 250.0,
+        "isf_filing": 50.0,
+        "customs_bond": 150.0,
+        "chassis_and_port_fees": 400.0,
+        "demurrage_reserve": 300.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 60948.0,
+      "linear_feet": 76186.0
+    },
+    "base_case": {
+      "name": "Realistic container, verified duty stack",
+      "notes": "40HC, ~20 tonnes of light-gauge galvanized studs and track at an estimated $800/tonne FOB. Duty stack verified against HTSUS Rev.18 (2026). Landed cost multiplier is 2.55x the FOB invoice before inland freight. Replace fob_invoice_value with the actual supplier quote and re-pull the freight rate.",
+      "fob_invoice_value": 16000.0,
+      "duty": {
+        "mfn": 0.0,
+        "section_232": 0.5,
+        "section_301": 0.25
+      },
+      "logistics": {
+        "ocean_freight": 9587.0,
+        "drayage": 900.0,
+        "customs_broker": 250.0,
+        "isf_filing": 50.0,
+        "customs_bond": 150.0,
+        "chassis_and_port_fees": 400.0,
+        "demurrage_reserve": 400.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 55000.0,
+      "linear_feet": 49500.0
+    },
+    "adcvd_shock": {
+      "name": "CORE China rates attach retroactively",
+      "notes": "Same container, but Commerce finds roll-formed studs within the CORE China scope, or a new petition succeeds. Modelled at the actual CORE China-wide rates: AD 209.97% + CVD 241.07%. This is not a worst case invented for drama -- these are the published rates from Commerce's final determination. Note this bill arrives THREE TO FOUR YEARS after entry, with interest, after the material is installed and the cash is spent.",
+      "fob_invoice_value": 16000.0,
+      "duty": {
+        "mfn": 0.0,
+        "section_232": 0.5,
+        "section_301": 0.25,
+        "ad_deposit": 2.0997,
+        "cvd_deposit": 2.4107
+      },
+      "logistics": {
+        "ocean_freight": 9587.0,
+        "drayage": 900.0,
+        "customs_broker": 250.0,
+        "isf_filing": 50.0,
+        "customs_bond": 2000.0,
+        "chassis_and_port_fees": 400.0,
+        "demurrage_reserve": 400.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 55000.0,
+      "linear_feet": 49500.0
+    },
+    "domestic_alternative": {
+      "name": "Buy domestic, distribute and cut only",
+      "notes": "No import, no duty, no AD/CVD tail, no ocean freight, no customs bond, no importer product liability, no code-compliance argument, and Buy America eligible. Cash cycle collapses from ~96 days to ordinary trade terms. Thinner gross margin per container -- but this is the control case every import scenario must beat on a RISK-ADJUSTED basis, not on headline margin. Replace fob_invoice_value with a real domestic mill or distributor quote at Misty Valley's volume: that phone call costs nothing and settles the strategic question in 06.",
+      "fob_invoice_value": 42000.0,
+      "duty": {},
+      "fees": {
+        "mpf_rate": 0.0,
+        "mpf_min": 0.0,
+        "mpf_max": 0.0,
+        "hmf_rate": 0.0
+      },
+      "logistics": {
+        "drayage": 900.0,
+        "unloading": 250.0
+      },
+      "conversion": {
+        "cut_shop_labor": 900.0,
+        "banding_and_packaging": 250.0,
+        "scrap_loss_pct": 0.04,
+        "delivery_to_site": 600.0
+      },
+      "sell_price": 55000.0,
+      "linear_feet": 49500.0
+    }
+  }
+}

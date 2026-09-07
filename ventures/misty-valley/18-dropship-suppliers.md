@@ -1,0 +1,57 @@
+# 18 — Dropship Supplier Shortlist
+
+**Misty Valley Supply — sourcing memo**
+Date: 2026-09-05 | Analyst: sourcing research session | Scope: suppliers that will drop-ship or blind-ship construction/safety products direct to our customer, so the store fulfills with zero inventory.
+
+Screen applied: legitimate US distributor or manufacturer only. Compliance-critical gear (PPE, fall protection) must come from a named US company with a real program page — no AliExpress-tier consumer dropship. UK/EU platforms (Avasam, dropXL) and generic dropship blogs were reviewed and killed.
+
+---
+
+## Ranked candidate table
+
+| # | Company | Carries | Program (name) | Evidence | Minimums / fees | Ships direct to customer? | Verdict |
+|---|---------|---------|----------------|----------|-----------------|---------------------------|---------|
+| 1 | **Texas America Safety Co. (TASCO)** — Brownwood, TX | Hard hats, safety glasses, hi-viz vests, earplugs, gloves, general PPE | Wholesaling / reseller drop-ship program | [tasco-safety.com wholesaling page](https://www.tasco-safety.com/pages/company-information/wholesaling-information.html) | **No minimums, no fees**; free shipping $300+ ($1,000+ gloves/rainwear) | **Yes** — approved resellers "queue drop ship orders from our site" | **GO** — exact category fit, published no-minimum dropship, established US safety wholesaler |
+| 2 | **Safety Flag Co. of America** — Pawtucket, RI (manufacturer, 65+ yrs) | Hi-viz vests, flags, flagging/traffic control, signs, tapes, cones, windsocks | Distributor program | [safetyflag.com sign-up](https://www.safetyflag.com/sign_up) | Not published | **Yes** — "We can drop ship to your customers"; custom/private products offered | **GO** — US manufacturer, explicit dropship, custom-product path fits our-brand angle |
+| 3 | **Advanced Safety Devices (ASD)** — Los Angeles, CA (est. 1991) | Ear/head protection, gloves, headlamps, jump starters, breathalyzers, outdoor gear | ASD Drop Ship Program (dealer agreement) | [safety-devices.com dropship page](https://www.safety-devices.com/dropship-reseller-wholesale.php) | No minimums, **no dropship fee**; 1–3 day fulfillment | **Yes — explicitly blind**: ships "blindly" or inserts *our* invoice | **GO** — the only candidate with published true blind-ship under our paperwork; catalog is partial fit (cherry-pick the PPE lines) |
+| 4 | **FrenchCreek Fall Safety** — Franklin, PA (manufacturer) | Harnesses, lanyards, SRLs, anchors, confined space, ladder safety, rescue | Distributor program | [fcsafety.com distributor page](https://fcsafety.com/how-to-become-safety-equipment-distributor/) | No minimums/fees stated; **free freight on $1,500+ single shipment to a single US destination**; no MAP | Implied yes (single-US-destination freight language) — blind-ship unconfirmed | **GO (confirm blind-ship)** — US fall-protection maker that courts small distributors; the $1,500 free-freight-to-one-address term is built for jobsite drops |
+| 5 | **Malta Dynamics** — Marietta, OH | Fall protection: harnesses, SRLs, mobile XSERIES carts, HLL systems | Distributor program (Tier 1 / Tier 2) | [maltadynamics.com distributor post](https://maltadynamics.com/blogs/news/interested-in-becoming-a-fall-protection-distributor-heres-your-opportunity) | Tier 1: open account, discounted pricing; Tier 2: $75K/yr for extra 5–10% off | Unclear — dropship not addressed publicly | **INVESTIGATE** — real dealer program, no certification required, named contact (khebert@maltadynamics.com); must ask the dropship question |
+| 6 | **Emery Jensen Distribution** (Ace Hardware wholesale arm) | Commodity building materials via ~1,700 in-network lumber-dealer vendors (housewrap, underlayment, fasteners class) | Building Services / Drop Ship Building Materials | [emeryjensen.com drop-ship page](https://emeryjensen.com/building-services-drop-ship-building-materials/) | "No-adder" vendors; terms/cash discounts passed through | Drop-ship program by definition; jobsite-direct unconfirmed | **INVESTIGATE** — the credible commodity-materials dropship route, but likely requires qualifying as an independent retailer account (866-681-1836) |
+| 7 | **Inland Empire Safety & Supply** (via Inventory Source) — SoCal | Gloves, hard hats, eye/ear, hi-viz (Optic Max, Dex Savior, Elite Safety) | Pre-integrated dropship feed on Inventory Source | [inventorysource.com listing](https://www.inventorysource.com/dropshippers/inland-empire-safety/) | Inventory Source platform subscription; supplier terms on application | **Yes** — dropship is the product; auto inventory sync + order routing | **INVESTIGATE** — best automation story (feeds straight into the store), but house brands need a compliance/quality check before we sell them |
+| 8 | **Radians** — Memphis, TN (manufacturer) | Gloves, eyewear, hard hats, hearing, hi-viz, FR workwear, DEWALT-licensed gear | Become a Distributor application | [radians.com/become-a-distributor](https://www.radians.com/become-a-distributor) | Not published | Unclear | **INVESTIGATE** — top-tier brand for our shelf; program exists, dropship terms unknown (877-723-4267) |
+| 9 | **PrimeSource Building Products** — Irving, TX (national, 35 DCs) | Fasteners (Grip-Rite), framing, building materials | Dealer account (800-676-7777) | [primesourcebp.com](https://www.primesourcebp.com/) | Not published | Unclear — truckload dealer model; per-order jobsite drops unverified | **INVESTIGATE** — right products at national scale, but built for lumberyard dealers; may not do onesie-twosie drops |
+| 10 | **Western Container Sales / Railbox Consulting** — Minneapolis/Bozeman/Spokane | Used/one-trip shipping containers, rentals | Broker-sourcing model (no public reseller program) | [westerncontainersales.com/company](https://westerncontainersales.com/company/), [wholesale page](https://railboxconsulting.com/our-companies/wholesale-shipping-containers/) | Not published | **Yes by structure** — they broker depot-direct delivery nationwide; a reseller layer must be negotiated | **INVESTIGATE** — their model *is* container dropshipping; question is whether they'll wholesale to a KY reseller |
+| 11 | **Conexwest** — Lathrop, CA | Containers, ground-level offices, cold storage; in-house mods | None published; nationwide depot delivery 3–7 days | [conexwest.com delivery](https://www.conexwest.com/shipping-container-delivery) | Not published | Yes (retail direct); reseller channel unknown | **INVESTIGATE** — strong GLO/mod capability; ask about wholesale/referral pricing |
+| 12 | **First Aid Product (first-aid-product.com)** — Oceanside, CA | 3,000+ stocked first aid/CPR/disaster SKUs, 100+ brands (First Aid Only, etc.) | Sub-distributor + dropship ($3,000 account funding) or 10% affiliate | [program page](https://first-aid-product.com/cpr-first-aid-and-safety-distributor-affiliate-drop-ship.html) | Dropship: $3,000 account funding; sub-dist: $1,500–$3,000 initial orders | **Yes** | **INVESTIGATE** — good jobsite-first-aid-kit attach category; $3K float is real money for an adjacency |
+| — | Guardian Fall Protection | Fall protection (major brand) | Authorized distribution only; "MyGuardian" portal, Where-to-Buy network | [guardianfall.com/where-to-buy](https://guardianfall.com/where-to-buy) | n/a | Via authorized distributors only | **SKIP for now** — no open dealer program found; revisit via a distributor (e.g. GME Supply) if customers demand the brand |
+| — | Container Alliance | Containers | Partner Program — geographically **exclusive network of container yard operators** | [containeralliance.com/partner-program](https://www.containeralliance.com/partner-program) | n/a | n/a | **SKIP** — membership is for companies with physical container operations, not online resellers |
+| — | Avasam, dropXL, Dropified, generic dropship lists | PPE/building materials | Consumer dropship platforms | (search results) | varies | varies | **SKIP** — UK/EU or AliExpress-tier; fails the compliance-critical screen |
+
+---
+
+## The 3 next phone calls
+
+**1. TASCO — 1-800-646-5346 (top priority, fastest path to first order)**
+Ask: (a) Do drop-ship orders go out with neutral or Misty-Valley-branded packing slips — is it truly blind? (b) Exact wholesale discount off site pricing. (c) Net 30 vs card to start; what they need from a new KY LLC (resale certificate). (d) Ship times to central KY (42713) and carrier mix. (e) Any SKUs they won't drop-ship (bulk-only lines).
+
+**2. Malta Dynamics — K. Herbert, khebert@maltadynamics.com (fall protection anchor brand)**
+Ask: (a) Will Tier 1 accounts drop-ship single orders direct to our customer's jobsite, and can the paperwork be blind/our-brand? (b) Tier 1 discount depth vs published pricing. (c) Freight terms on ship-direct orders. (d) Any e-commerce/MAP restrictions on listing their catalog online. (Backstop: ask FrenchCreek the same questions at their distributor line — whoever answers "yes, blind" first becomes the fall-protection anchor.)
+
+**3. Emery Jensen — 866-681-1836 (commodity building materials)**
+Ask: (a) Can a KY-based e-commerce reseller without a retail storefront open an account? (b) Does the Building Services drop-ship program deliver to *our customer's* jobsite address on a per-order basis, or only to a dealer location? (c) Account minimums, freight minimums, and which vendors (housewrap, underlayment, fasteners) are in the no-adder pool. (d) Onboarding timeline.
+
+*Container play (call 4 when bandwidth allows): Western Container Sales (via westerncontainersales.com/get-started) — ask whether they'll extend broker/wholesale pricing to a KY reseller feeding them I-65-corridor orders; Conexwest same question for GLOs/modified units.*
+
+---
+
+## What we could not verify
+
+- **Blind-ship specifics** anywhere except ASD. TASCO and Safety Flag confirm drop-ship to our customers but not whose branding appears on the box/packing slip — ask on every call.
+- **Malta Dynamics, Radians, Pyramex, PrimeSource dropship terms** — dealer/distributor programs are real, but none publish whether they ship single orders direct to an end customer; all are application/phone-gated.
+- **Emery Jensen eligibility** — whether a pure e-commerce reseller (no storefront) qualifies, and whether drops go to jobsites vs dealer docks.
+- **Western Container Sales reseller terms** — they are themselves a broker with depot-direct delivery; no published program for downstream resellers (their PODS deal is the only public referral program). Direct fetch of their broker page returned 403; verified via company/about pages and press instead.
+- **Inland Empire Safety house-brand quality** (Optic Max, Dex Savior, Elite Safety) — need spec sheets / ANSI Z87.1, ANSI/ISEA 107 cert docs before listing; also confirm current Inventory Source platform pricing (reviews are mixed, ~2.3 Trustpilot on the software itself, which is separate from the supplier).
+- **ORR Safety, Saf-T-Gard, Arbill, Mallory, MCR, PIP** — no public reseller/dropship program surfaced in this pass; these sell *as* distributors or through distribution. Treat as sources to buy from, not programs to join, unless a rep says otherwise.
+- All minimums/fees marked "not published" above are exactly that — unpublished, not absent.
+
+*Research notes: ~10 searches (Firecrawl + web) with program pages fetched and read for TASCO, ASD, Safety Flag, FrenchCreek, Malta Dynamics, Emery Jensen, Radians, Container Alliance, First Aid Product, Conexwest, Western Container Sales. Not committed to git — main session handles that.*

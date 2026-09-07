@@ -1,0 +1,587 @@
+[
+  {
+    "sku": "MVS-ANC-DL",
+    "_meta": {
+      "generated": "2026-09-05",
+      "source": "/home/user/mvs-store/src/data.ts",
+      "productTypeConfidence": "GUESS — verify via SP-API Product Type Definitions before submitting",
+      "complianceNote": "Fall-protection/PPE ASINs may require ANSI test reports and manufacturer authorization before this listing is accepted. See RUNBOOK.md §2.",
+      "storeChannel": {
+        "uom": "each",
+        "supplier": "Ridgeline Fall Protection",
+        "lead": "4–6 days",
+        "moq": null
+      }
+    },
+    "productType": "FALL_ARREST_KIT",
+    "requirements": "LISTING",
+    "attributes": {
+      "item_name": [
+        {
+          "value": "Reusable Roof Anchor — Standing Seam Clamp — ANSI/ASSP Z359.18 Type A",
+          "language_tag": "en_US"
+        }
+      ],
+      "brand": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "manufacturer": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "part_number": [
+        {
+          "value": "[PLACEHOLDER — manufacturer part number]"
+        }
+      ],
+      "externally_assigned_product_identifier": [
+        {
+          "type": "UPC",
+          "value": "[PLACEHOLDER — GS1 UPC/GTIN from manufacturer; DO NOT INVENT OR PURCHASE THIRD-PARTY CODES]"
+        }
+      ],
+      "product_description": [
+        {
+          "value": "Reusable Roof Anchor — Standing Seam Clamp. 5,000 lb anchorage per attached worker, or engineered to 2:1 with a qualified person. Built to ANSI/ASSP Z359.18 Type A; required on jobsites under OSHA 29 CFR 1926.502(d)(15). Sold per each. [PLACEHOLDER — append manufacturer's official description; no unverified performance or certification claims.]",
+          "language_tag": "en_US"
+        }
+      ],
+      "bullet_point": [
+        {
+          "value": "Built to ANSI/ASSP Z359.18 Type A — verify the standard mark on the product itself before use",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Satisfies the jobsite requirement of OSHA 29 CFR 1926.502(d)(15)",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "5,000 lb anchorage per attached worker, or engineered to 2:1 with a qualified person.",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Sold and supported by a construction safety distributor — questions on spec or clearance answered before you buy",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "[PLACEHOLDER — add manufacturer feature bullet; do not invent performance claims]",
+          "language_tag": "en_US"
+        }
+      ],
+      "list_price": [
+        {
+          "value": 386,
+          "currency": "USD"
+        }
+      ],
+      "purchasable_offer": [
+        {
+          "currency": "USD",
+          "our_price": [
+            {
+              "schedule": [
+                {
+                  "value_with_tax": 386
+                }
+              ]
+            }
+          ],
+          "_pricingRule": "Never below MVS store list price — Amazon is the discovery channel"
+        }
+      ],
+      "condition_type": [
+        {
+          "value": "new_new"
+        }
+      ],
+      "main_product_image_locator": [
+        {
+          "media_location": "[PLACEHOLDER — manufacturer-supplied image URL, >=1000px, white background, usage rights confirmed]"
+        }
+      ],
+      "country_of_origin": [
+        {
+          "value": "[PLACEHOLDER — from manufacturer]"
+        }
+      ],
+      "supplier_declared_dg_hz_regulation": [
+        {
+          "value": "not_applicable"
+        }
+      ]
+    }
+  },
+  {
+    "sku": "MVS-HH-T2V",
+    "_meta": {
+      "generated": "2026-09-05",
+      "source": "/home/user/mvs-store/src/data.ts",
+      "productTypeConfidence": "GUESS — verify via SP-API Product Type Definitions before submitting",
+      "complianceNote": "Fall-protection/PPE ASINs may require ANSI test reports and manufacturer authorization before this listing is accepted. See RUNBOOK.md §2.",
+      "storeChannel": {
+        "uom": "each",
+        "supplier": "Bluegrass PPE Distributors",
+        "lead": "2–4 days",
+        "moq": null
+      }
+    },
+    "productType": "HARDHAT",
+    "requirements": "LISTING",
+    "attributes": {
+      "item_name": [
+        {
+          "value": "Safety Helmet — Type II Class E, Vented — ANSI/ISEA Z89.1 Type II Class E",
+          "language_tag": "en_US"
+        }
+      ],
+      "brand": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Bluegrass PPE Distributors]",
+          "language_tag": "en_US"
+        }
+      ],
+      "manufacturer": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Bluegrass PPE Distributors]",
+          "language_tag": "en_US"
+        }
+      ],
+      "part_number": [
+        {
+          "value": "[PLACEHOLDER — manufacturer part number]"
+        }
+      ],
+      "externally_assigned_product_identifier": [
+        {
+          "type": "UPC",
+          "value": "[PLACEHOLDER — GS1 UPC/GTIN from manufacturer; DO NOT INVENT OR PURCHASE THIRD-PARTY CODES]"
+        }
+      ],
+      "product_description": [
+        {
+          "value": "Safety Helmet — Type II Class E, Vented. Type II adds lateral impact protection. Chin strap, accessory rails. Vented models are Class C unless stated — read the shell mark. Built to ANSI/ISEA Z89.1 Type II Class E; required on jobsites under OSHA 29 CFR 1926.100(a). Sold per each. [PLACEHOLDER — append manufacturer's official description; no unverified performance or certification claims.]",
+          "language_tag": "en_US"
+        }
+      ],
+      "bullet_point": [
+        {
+          "value": "Built to ANSI/ISEA Z89.1 Type II Class E — verify the standard mark on the product itself before use",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Satisfies the jobsite requirement of OSHA 29 CFR 1926.100(a)",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Type II adds lateral impact protection. Chin strap, accessory rails. Vented models are Class C unless stated — read the shell mark.",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Sold and supported by a construction safety distributor — questions on spec or clearance answered before you buy",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "[PLACEHOLDER — add manufacturer feature bullet; do not invent performance claims]",
+          "language_tag": "en_US"
+        }
+      ],
+      "list_price": [
+        {
+          "value": 89,
+          "currency": "USD"
+        }
+      ],
+      "purchasable_offer": [
+        {
+          "currency": "USD",
+          "our_price": [
+            {
+              "schedule": [
+                {
+                  "value_with_tax": 89
+                }
+              ]
+            }
+          ],
+          "_pricingRule": "Never below MVS store list price — Amazon is the discovery channel"
+        }
+      ],
+      "condition_type": [
+        {
+          "value": "new_new"
+        }
+      ],
+      "main_product_image_locator": [
+        {
+          "media_location": "[PLACEHOLDER — manufacturer-supplied image URL, >=1000px, white background, usage rights confirmed]"
+        }
+      ],
+      "country_of_origin": [
+        {
+          "value": "[PLACEHOLDER — from manufacturer]"
+        }
+      ],
+      "supplier_declared_dg_hz_regulation": [
+        {
+          "value": "not_applicable"
+        }
+      ]
+    }
+  },
+  {
+    "sku": "MVS-FH-5PT",
+    "_meta": {
+      "generated": "2026-09-05",
+      "source": "/home/user/mvs-store/src/data.ts",
+      "productTypeConfidence": "GUESS — verify via SP-API Product Type Definitions before submitting",
+      "complianceNote": "Fall-protection/PPE ASINs may require ANSI test reports and manufacturer authorization before this listing is accepted. See RUNBOOK.md §2.",
+      "storeChannel": {
+        "uom": "each",
+        "supplier": "Ridgeline Fall Protection",
+        "lead": "4–6 days",
+        "moq": null
+      }
+    },
+    "productType": "SAFETY_HARNESS",
+    "requirements": "LISTING",
+    "attributes": {
+      "item_name": [
+        {
+          "value": "Full Body Harness — 5-Point, Universal — ANSI/ASSP Z359.11",
+          "language_tag": "en_US"
+        }
+      ],
+      "brand": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "manufacturer": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "part_number": [
+        {
+          "value": "[PLACEHOLDER — manufacturer part number]"
+        }
+      ],
+      "externally_assigned_product_identifier": [
+        {
+          "type": "UPC",
+          "value": "[PLACEHOLDER — GS1 UPC/GTIN from manufacturer; DO NOT INVENT OR PURCHASE THIRD-PARTY CODES]"
+        }
+      ],
+      "product_description": [
+        {
+          "value": "Full Body Harness — 5-Point, Universal. Arrest force limited to 1,800 lb, free fall limited to 6 ft, deceleration distance 3.5 ft. Built to ANSI/ASSP Z359.11; required on jobsites under OSHA 29 CFR 1926.502(d). Sold per each. [PLACEHOLDER — append manufacturer's official description; no unverified performance or certification claims.]",
+          "language_tag": "en_US"
+        }
+      ],
+      "bullet_point": [
+        {
+          "value": "Built to ANSI/ASSP Z359.11 — verify the standard mark on the product itself before use",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Satisfies the jobsite requirement of OSHA 29 CFR 1926.502(d)",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Arrest force limited to 1,800 lb, free fall limited to 6 ft, deceleration distance 3.5 ft.",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Sold and supported by a construction safety distributor — questions on spec or clearance answered before you buy",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "[PLACEHOLDER — add manufacturer feature bullet; do not invent performance claims]",
+          "language_tag": "en_US"
+        }
+      ],
+      "list_price": [
+        {
+          "value": 118,
+          "currency": "USD"
+        }
+      ],
+      "purchasable_offer": [
+        {
+          "currency": "USD",
+          "our_price": [
+            {
+              "schedule": [
+                {
+                  "value_with_tax": 118
+                }
+              ]
+            }
+          ],
+          "_pricingRule": "Never below MVS store list price — Amazon is the discovery channel"
+        }
+      ],
+      "condition_type": [
+        {
+          "value": "new_new"
+        }
+      ],
+      "main_product_image_locator": [
+        {
+          "media_location": "[PLACEHOLDER — manufacturer-supplied image URL, >=1000px, white background, usage rights confirmed]"
+        }
+      ],
+      "country_of_origin": [
+        {
+          "value": "[PLACEHOLDER — from manufacturer]"
+        }
+      ],
+      "supplier_declared_dg_hz_regulation": [
+        {
+          "value": "not_applicable"
+        }
+      ]
+    }
+  },
+  {
+    "sku": "MVS-SRL-11",
+    "_meta": {
+      "generated": "2026-09-05",
+      "source": "/home/user/mvs-store/src/data.ts",
+      "productTypeConfidence": "GUESS — verify via SP-API Product Type Definitions before submitting",
+      "complianceNote": "Fall-protection/PPE ASINs may require ANSI test reports and manufacturer authorization before this listing is accepted. See RUNBOOK.md §2.",
+      "storeChannel": {
+        "uom": "each",
+        "supplier": "Ridgeline Fall Protection",
+        "lead": "4–6 days",
+        "moq": null
+      }
+    },
+    "productType": "FALL_ARREST_KIT",
+    "requirements": "LISTING",
+    "attributes": {
+      "item_name": [
+        {
+          "value": "Self-Retracting Lifeline — 11 ft, Class 2 — ANSI/ASSP Z359.14 Class 2",
+          "language_tag": "en_US"
+        }
+      ],
+      "brand": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "manufacturer": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "part_number": [
+        {
+          "value": "[PLACEHOLDER — manufacturer part number]"
+        }
+      ],
+      "externally_assigned_product_identifier": [
+        {
+          "type": "UPC",
+          "value": "[PLACEHOLDER — GS1 UPC/GTIN from manufacturer; DO NOT INVENT OR PURCHASE THIRD-PARTY CODES]"
+        }
+      ],
+      "product_description": [
+        {
+          "value": "Self-Retracting Lifeline — 11 ft, Class 2. Class 2 permits up to 24 in arrest distance. Check clearance below before you spec any SRL. Built to ANSI/ASSP Z359.14 Class 2; required on jobsites under OSHA 29 CFR 1926.502(d)(16). Sold per each. [PLACEHOLDER — append manufacturer's official description; no unverified performance or certification claims.]",
+          "language_tag": "en_US"
+        }
+      ],
+      "bullet_point": [
+        {
+          "value": "Built to ANSI/ASSP Z359.14 Class 2 — verify the standard mark on the product itself before use",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Satisfies the jobsite requirement of OSHA 29 CFR 1926.502(d)(16)",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Class 2 permits up to 24 in arrest distance. Check clearance below before you spec any SRL.",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Sold and supported by a construction safety distributor — questions on spec or clearance answered before you buy",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "[PLACEHOLDER — add manufacturer feature bullet; do not invent performance claims]",
+          "language_tag": "en_US"
+        }
+      ],
+      "list_price": [
+        {
+          "value": 268,
+          "currency": "USD"
+        }
+      ],
+      "purchasable_offer": [
+        {
+          "currency": "USD",
+          "our_price": [
+            {
+              "schedule": [
+                {
+                  "value_with_tax": 268
+                }
+              ]
+            }
+          ],
+          "_pricingRule": "Never below MVS store list price — Amazon is the discovery channel"
+        }
+      ],
+      "condition_type": [
+        {
+          "value": "new_new"
+        }
+      ],
+      "main_product_image_locator": [
+        {
+          "media_location": "[PLACEHOLDER — manufacturer-supplied image URL, >=1000px, white background, usage rights confirmed]"
+        }
+      ],
+      "country_of_origin": [
+        {
+          "value": "[PLACEHOLDER — from manufacturer]"
+        }
+      ],
+      "supplier_declared_dg_hz_regulation": [
+        {
+          "value": "not_applicable"
+        }
+      ]
+    }
+  },
+  {
+    "sku": "MVS-LY-SA6",
+    "_meta": {
+      "generated": "2026-09-05",
+      "source": "/home/user/mvs-store/src/data.ts",
+      "productTypeConfidence": "GUESS — verify via SP-API Product Type Definitions before submitting",
+      "complianceNote": "Fall-protection/PPE ASINs may require ANSI test reports and manufacturer authorization before this listing is accepted. See RUNBOOK.md §2.",
+      "storeChannel": {
+        "uom": "each",
+        "supplier": "Ridgeline Fall Protection",
+        "lead": "4–6 days",
+        "moq": null
+      }
+    },
+    "productType": "FALL_ARREST_KIT",
+    "requirements": "LISTING",
+    "attributes": {
+      "item_name": [
+        {
+          "value": "Shock-Absorbing Lanyard — 6 ft, Double Leg — ANSI/ASSP Z359.13",
+          "language_tag": "en_US"
+        }
+      ],
+      "brand": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "manufacturer": [
+        {
+          "value": "[PLACEHOLDER — real MANUFACTURER brand required; source via supplier: Ridgeline Fall Protection]",
+          "language_tag": "en_US"
+        }
+      ],
+      "part_number": [
+        {
+          "value": "[PLACEHOLDER — manufacturer part number]"
+        }
+      ],
+      "externally_assigned_product_identifier": [
+        {
+          "type": "UPC",
+          "value": "[PLACEHOLDER — GS1 UPC/GTIN from manufacturer; DO NOT INVENT OR PURCHASE THIRD-PARTY CODES]"
+        }
+      ],
+      "product_description": [
+        {
+          "value": "Shock-Absorbing Lanyard — 6 ft, Double Leg. Needs 18.5 ft of clearance below the anchor. On a low roof this is the wrong product — use an SRL. Built to ANSI/ASSP Z359.13; required on jobsites under OSHA 29 CFR 1926.502(d)(16). Sold per each. [PLACEHOLDER — append manufacturer's official description; no unverified performance or certification claims.]",
+          "language_tag": "en_US"
+        }
+      ],
+      "bullet_point": [
+        {
+          "value": "Built to ANSI/ASSP Z359.13 — verify the standard mark on the product itself before use",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Satisfies the jobsite requirement of OSHA 29 CFR 1926.502(d)(16)",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Needs 18.5 ft of clearance below the anchor. On a low roof this is the wrong product — use an SRL.",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "Sold and supported by a construction safety distributor — questions on spec or clearance answered before you buy",
+          "language_tag": "en_US"
+        },
+        {
+          "value": "[PLACEHOLDER — add manufacturer feature bullet; do not invent performance claims]",
+          "language_tag": "en_US"
+        }
+      ],
+      "list_price": [
+        {
+          "value": 142,
+          "currency": "USD"
+        }
+      ],
+      "purchasable_offer": [
+        {
+          "currency": "USD",
+          "our_price": [
+            {
+              "schedule": [
+                {
+                  "value_with_tax": 142
+                }
+              ]
+            }
+          ],
+          "_pricingRule": "Never below MVS store list price — Amazon is the discovery channel"
+        }
+      ],
+      "condition_type": [
+        {
+          "value": "new_new"
+        }
+      ],
+      "main_product_image_locator": [
+        {
+          "media_location": "[PLACEHOLDER — manufacturer-supplied image URL, >=1000px, white background, usage rights confirmed]"
+        }
+      ],
+      "country_of_origin": [
+        {
+          "value": "[PLACEHOLDER — from manufacturer]"
+        }
+      ],
+      "supplier_declared_dg_hz_regulation": [
+        {
+          "value": "not_applicable"
+        }
+      ]
+    }
+  }
+]

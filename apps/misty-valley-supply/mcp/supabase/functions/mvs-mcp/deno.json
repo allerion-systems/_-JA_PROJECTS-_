@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "zod": "npm:zod@4.5.4",
+    "@modelcontextprotocol/sdk/": "npm:@modelcontextprotocol/sdk@1.30.0/",
+    "fetch-to-node": "npm:fetch-to-node@2.1.0"
+  }
+}
