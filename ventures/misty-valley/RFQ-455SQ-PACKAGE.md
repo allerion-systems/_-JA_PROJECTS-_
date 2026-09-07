@@ -34,6 +34,11 @@ Kentucky sales tax collected unless R&B's resale/exemption certificate is on fil
 5. **PermaTherm** (Monticello GA) — advertises 24-hour complete quotes; the deadline
    insurance policy.
 
+## 2.5 · Fold into every call (image sourcing)
+Ask each supplier on the same call: product image pack + written permission to use
+their photos in our listings for the SKUs we carry. Details and tracker:
+[IMAGE-SOURCING.md](./IMAGE-SOURCING.md).
+
 ## 3 · DRAFT supplier RFQ email — **DRAFT — Ben sends after review. NOT SENT.**
 > Subject: RFQ — 45,500 sq ft high-rib insulated roof panel, delivery to [CITY], KY
 >
