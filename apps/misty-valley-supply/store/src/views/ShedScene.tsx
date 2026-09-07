@@ -2,7 +2,7 @@ import * as React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { spaced, rafterLen, resolveShedOpenings, shedWallLen, SHED_DOOR, SHED_WIN, type ShedParams, type ShedWall } from "@/bim";
+import { spaced, rafterLen, resolveShedOpenings, shedTakeoff, shedWallLen, SHED_DOOR, SHED_WIN, type ShedParams, type ShedWall } from "@/bim";
 import { DIMS_NAME, formatFeet, makeDimensions } from "@/dimensions";
 import { exportGroupAsGlb } from "@/exportModel";
 import {
@@ -579,6 +579,9 @@ export default function ShedScene(p: ShedSceneProps) {
   const mountRef = React.useRef<HTMLDivElement | null>(null);
   const coreRef = React.useRef<Core | null>(null);
   const [hint, setHint] = React.useState(true); // fades after first interaction
+  const [ifcMsg, setIfcMsg] = React.useState<string | null>(null); // toast for IFC export failures
+  const ifcMsgTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  React.useEffect(() => () => { if (ifcMsgTimer.current) clearTimeout(ifcMsgTimer.current); }, []);
   const [showDims, setShowDims] = React.useState(true); // dimension callouts, default on
   const showDimsRef = React.useRef(true);
   showDimsRef.current = showDims;
@@ -773,6 +776,26 @@ export default function ShedScene(p: ShedSceneProps) {
     };
   };
 
+  // BIM export: the same takeoff the estimate prices, as a real IFC4 file.
+  // web-ifc (and its wasm) loads only when the button is clicked.
+  const exportIfc = async () => {
+    try {
+      const { exportElementsAsIfc } = await import("@/exportIfc");
+      await exportElementsAsIfc(shedTakeoff(p), {
+        tool: "MVS Shed Designer",
+        params: `${widthFt}×${lengthFt} ft shed, ${wallHFt} ft walls, ${pitch}:12 gable, ${framing} framing, ${doors} door(s), ${windows} window(s), ${siding === "vinyl" ? "vinyl siding" : "housewrap"}, ${roof === "metal" ? "metal roof" : "roof-ready"}`,
+        filename: "mvs-shed.ifc",
+      });
+    } catch (err) {
+      // wasm unavailable (e.g. the single-file preview build) — friendly
+      // toast, never an unhandled error
+      console.warn("IFC export unavailable:", err);
+      setIfcMsg("IFC export needs the full site (not the preview)");
+      if (ifcMsgTimer.current) clearTimeout(ifcMsgTimer.current);
+      ifcMsgTimer.current = setTimeout(() => setIfcMsg(null), 5000);
+    }
+  };
+
   const btnCls = "rounded-[5px] border border-white/25 bg-[hsl(var(--marine))]/80 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm transition-colors hover:bg-[hsl(var(--marine))]";
   return (
     <div className="relative h-full w-full">
@@ -799,7 +822,23 @@ export default function ShedScene(p: ShedSceneProps) {
         >
           3D file
         </button>
+        <button
+          type="button"
+          className={btnCls}
+          title="Download .ifc — IFC4 building model with the priced takeoff, opens in Revit / BIMcollab"
+          onClick={() => { void exportIfc(); }}
+        >
+          IFC file
+        </button>
       </div>
+      {ifcMsg && (
+        <div
+          role="status"
+          className="pointer-events-none absolute left-1/2 top-12 -translate-x-1/2 whitespace-nowrap rounded-full bg-[hsl(var(--marine))]/90 px-3 py-1.5 text-[11px] font-medium text-white/95 shadow-lg backdrop-blur-sm"
+        >
+          {ifcMsg}
+        </div>
+      )}
       <div
         aria-hidden
         className={"pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[hsl(var(--marine))]/70 px-3 py-1 text-[11px] font-medium text-white/90 backdrop-blur-sm transition-opacity duration-700 " + (hint ? "opacity-100" : "opacity-0")}

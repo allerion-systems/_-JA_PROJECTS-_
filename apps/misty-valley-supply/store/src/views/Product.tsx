@@ -13,6 +13,23 @@ const fulfilTone = (f: Product["fulfil"]) =>
 const fulfilName = (f: Product["fulfil"]) =>
   f === "stock" ? "In stock" : f === "fabricate" ? "Made to order" : "Ships from supplier";
 
+/** Fulfillment lane, supply-house wording, for the spec table. */
+const laneLabel = (f: Product["fulfil"]) =>
+  f === "stock" ? "Distributor stock"
+  : f === "fabricate" ? "Made to order"
+  : "Ships direct from supplier";
+
+/** OSHA cites are bare numbers in the data; install cites name their code. */
+const oshaLabel = (osha: string) => (/^\d/.test(osha) ? `OSHA ${osha}` : osha);
+
+/** Honest availability, per lane. Import SKUs aggregate to container bookings. */
+const availability = (p: Product) =>
+  p.sku.startsWith("MVS-IM-") ? "Preorder — import aggregation"
+  : p.fulfil === "fabricate" ? "Made to order — quoted first"
+  : /^same day$/i.test(p.lead) ? "Ships same day"
+  : /^\d/.test(p.lead) ? `Ships in ${p.lead}`
+  : `Ships ${p.lead}`;
+
 /** 44px quantity stepper that respects the minimum order quantity. */
 function Stepper({
   qty, setQty, min,
@@ -41,17 +58,92 @@ const designerFor = (sku: string): { view: string; label: string } | null => {
   if (/^MVS-(CX|CI)-/.test(sku)) return { view: "container", label: "Customize it in the Container Designer" };
   if (/^MVS-DK-/.test(sku)) return { view: "dock", label: "Design your dock around it" };
   if (/^MVS-PB-(3040|4060|PORCH)/.test(sku)) return { view: "barndo", label: "Customize it in the Barndo Builder" };
-  if (/^MVS-(PB-(RUN|SHED)|STR-CAB|SC)-?/.test(sku)) return { view: "shed", label: "Customize it in Backyard Studios" };
+  if (/^MVS-(PB-(RUN|SHED)|STR-(CAB|PRM)|SC)-?/.test(sku)) return { view: "shed", label: "Customize it in Backyard Studios" };
   if (/^MVS-RS/.test(sku)) return { view: "screen", label: "Design your screen around it" };
   return null;
 };
 
+/** True for a value worth a spec row. Placeholders ("—") never render. */
+const real = (v: unknown) => typeof v === "string" ? v.trim() !== "" && v.trim() !== "—" : !!v;
+
+/** The core of the page: a two-column striped table of the product's real
+    fields. Nothing here is invented — every row is a field off the record. */
+function SpecTable({ p }: { p: Product }) {
+  const rows: [string, React.ReactNode][] = [];
+  rows.push(["SKU", <span className="ident">{p.sku}</span>]);
+  rows.push(["Unit of measure", `Per ${p.uom}`]);
+  if (real(p.std)) rows.push(["Standard", <span className="ident">{p.std}</span>]);
+  if (real(p.osha)) rows.push(["Required by / install", <span className="ident">{oshaLabel(p.osha)}</span>]);
+  if (p.moq && p.moq > 1) rows.push(["Minimum order", `${p.moq} — sold in ${p.moq}s`]);
+  if (real(p.lead)) rows.push(["Lead time", p.lead]);
+  rows.push(["Fulfillment", laneLabel(p.fulfil)]);
+  if (real(p.supplier)) rows.push(["Supplier", p.supplier]);
+  return (
+    <div className="mt-4">
+      <h2 className="mb-1.5 text-[13px] font-bold uppercase tracking-[0.04em] text-[hsl(var(--ink-2))]">
+        Specifications
+      </h2>
+      <table className="w-full border-collapse border border-[hsl(var(--rule))] text-[13px]">
+        <tbody>
+          {rows.map(([k, v], i) => (
+            <tr key={k} className={cx(i % 2 === 0 && "bg-[hsl(var(--panel-2))]")}>
+              <th scope="row"
+                className="w-[38%] border-b border-[hsl(var(--rule))] px-3 py-2 text-left align-top font-medium text-[hsl(var(--ink-3))]">
+                {k}
+              </th>
+              <td className="border-b border-[hsl(var(--rule))] px-3 py-2 align-top text-[hsl(var(--ink))]">
+                {v}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** Related items — same category, photo-first, in the Home tile vocabulary. */
+function Related({
+  p, catName, onProduct,
+}: { p: Product; catName: string; onProduct: (sku: string) => void }) {
+  const { user, net } = useAuth();
+  const related = PRODUCTS
+    .filter(x => x.cat === p.cat && x.sku !== p.sku)
+    .sort((a, b) => Number(!!b.img) - Number(!!a.img))
+    .slice(0, 6);
+  if (!related.length) return null;
+  return (
+    <div className="mt-10">
+      <h2 className="disp mb-2.5 text-[16px] font-bold">More in {catName}</h2>
+      <div className="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-6">
+        {related.map(r => (
+          <button key={r.sku} onClick={() => onProduct(r.sku)} data-related={r.sku}
+            className="flex flex-col border border-[hsl(var(--rule))] bg-[hsl(var(--panel))] p-2.5 text-left transition-colors hover:border-[hsl(var(--safety-2))]">
+            <div className="mb-2 flex aspect-square items-center justify-center overflow-hidden bg-white">
+              {r.img
+                ? <img src={r.img} alt="" loading="lazy" className="h-full w-full object-contain" />
+                : <Glyph sku={r.sku} cat={r.cat} className="h-[62%] w-[62%]" />}
+            </div>
+            <div className="line-clamp-2 text-[12px] font-semibold leading-[1.25]">{r.name}</div>
+            <div className="ident mt-0.5 text-[11px] text-[hsl(var(--ink-3))]">{r.sku}</div>
+            <div className="num mt-1 text-[14px] font-bold">
+              {money(user ? net(r.price) : r.price)}
+              <span className="lab ml-1 text-[10px]">per {r.uom}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ProductView({
-  sku, onAdd, onBack, onProduct, onSignIn, onDesign,
+  sku, onAdd, onBack, onCategory, onProduct, onSignIn, onDesign,
 }: {
   sku: string;
   onAdd: (sku: string, qty: number) => void;
   onBack: () => void;
+  onCategory: (cat: string) => void;
   onProduct: (sku: string) => void;
   onSignIn: () => void;
   onDesign?: (view: string) => void;
@@ -70,21 +162,27 @@ export default function ProductView({
   );
 
   const cat = CATEGORIES.find(c => c.id === p.cat);
-  const related = PRODUCTS.filter(x => x.cat === p.cat && x.sku !== p.sku).slice(0, 3);
+  const catName = cat?.name ?? "this category";
 
   return (
     <div>
-      <div className="mb-4">
-        <button onClick={onBack}
-          className="flex h-11 items-center gap-1.5 rounded-[6px] px-2 -ml-2 text-[13px] font-medium text-[hsl(var(--marine))] hover:bg-[hsl(var(--marine-soft))]">
-          ← Back to the catalog
+      {/* ---------------------------------------------------- breadcrumb */}
+      <nav aria-label="Breadcrumb"
+        className="mb-4 flex min-h-[44px] flex-wrap items-center gap-x-1.5 gap-y-1 border-b border-[hsl(var(--rule))] pb-2 text-[13px]">
+        <span className="text-[hsl(var(--ink-3))]">Home</span>
+        <span aria-hidden className="text-[hsl(var(--ink-3))]">›</span>
+        <button onClick={() => onCategory(p.cat)}
+          className="font-semibold text-[hsl(var(--marine))] hover:underline">
+          {catName}
         </button>
-      </div>
+        <span aria-hidden className="text-[hsl(var(--ink-3))]">›</span>
+        <span className="ident text-[hsl(var(--ink-2))]">{p.sku}</span>
+      </nav>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)_minmax(0,300px)] lg:gap-7">
         {/* ------------------------------------------------------- plate */}
         <div>
-          <div className="relative aspect-square w-full overflow-hidden plate rounded-[10px] border border-[hsl(var(--rule))]">
+          <div className="relative aspect-square w-full overflow-hidden plate border border-[hsl(var(--rule))]">
             <div className="absolute left-3 top-3">
               <Tag tone={fulfilTone(p.fulfil) as never}>{fulfilName(p.fulfil)}</Tag>
             </div>
@@ -114,7 +212,10 @@ export default function ProductView({
             {p.note}
           </p>
 
-          {/* the compliance story — the centerpiece */}
+          {/* the dense spec table — every row a real field off the record */}
+          <SpecTable p={p} />
+
+          {/* the compliance story */}
           <div className="card mt-5 rounded-[10px] border-l-2 border-l-[hsl(var(--safety-2))]">
             <div className="p-4 sm:p-5">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
@@ -125,7 +226,7 @@ export default function ProductView({
                 <span className="hidden h-3 w-px bg-[hsl(var(--rule))] sm:inline-block" aria-hidden />
                 <span>
                   <span className="text-[hsl(var(--ink-2))]">Required by </span>
-                  <span className="ident text-[13px] font-medium text-[hsl(var(--safety-2))]">{/^\d/.test(p.osha) ? `OSHA ${p.osha}` : p.osha}</span>
+                  <span className="ident text-[13px] font-medium text-[hsl(var(--safety-2))]">{oshaLabel(p.osha)}</span>
                 </span>
               </div>
               <h2 className="mt-4 text-[15px] font-semibold text-[hsl(var(--ink))]">
@@ -151,6 +252,9 @@ export default function ProductView({
         <div>
           <div className="card rounded-[10px] p-4 sm:p-5">
             <Price list={p.price} uom={p.uom} onSignIn={onSignIn} />
+            <div className="mt-1.5 text-[13px] font-medium text-[hsl(var(--ink))]" data-availability>
+              {availability(p)}
+            </div>
             {min > 1 && (
               <div className="mt-2 text-[11px] font-medium text-[hsl(var(--warn))]">
                 Minimum order {min} · sold in {min}s
@@ -159,21 +263,7 @@ export default function ProductView({
 
             <div className="my-4 h-px bg-[hsl(var(--rule))]" />
 
-            <dl className="grid gap-2 text-[13px]">
-              {[
-                ["Availability", fulfilName(p.fulfil)],
-                ["Ships", p.lead],
-                ["Source", p.supplier],
-                ["Unit", `Per ${p.uom}`],
-              ].map(([k, v]) => (
-                <div key={k} className="flex items-baseline justify-between gap-3">
-                  <dt className="text-[hsl(var(--ink-3))]">{k}</dt>
-                  <dd className="text-right font-medium text-[hsl(var(--ink))]">{v}</dd>
-                </div>
-              ))}
-            </dl>
-
-            <div className="mt-4 flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Stepper qty={qty} setQty={setQty} min={min} />
               <div className="num min-w-0 flex-1 text-right text-[15px] font-semibold text-[hsl(var(--ink))]">
                 {money((user ? net(p.price) : p.price) * qty)}
@@ -198,35 +288,7 @@ export default function ProductView({
       </div>
 
       {/* ------------------------------------------------------- related */}
-      {related.length > 0 && (
-        <div className="mt-10">
-          <h2 className="text-[18px] font-semibold tracking-[-0.011em] text-[hsl(var(--ink))]">
-            More in {cat?.name ?? "this category"}
-          </h2>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            {related.map(r => (
-              <button key={r.sku} onClick={() => onProduct(r.sku)}
-                className="card lift group flex min-h-[44px] items-center gap-3 rounded-[10px] p-3 text-left sm:flex-col sm:items-stretch sm:gap-0 sm:p-0">
-                <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden plate rounded-[6px] border border-[hsl(var(--rule))] sm:h-auto sm:w-full sm:aspect-[2/1] sm:rounded-none sm:rounded-t-[10px] sm:border-0 sm:border-b">
-                  {r.img
-                    ? <img src={r.img} alt={r.name} className="h-full w-full object-contain" />
-                    : <Glyph sku={r.sku} cat={r.cat} className="h-[64%] w-auto max-h-full" />}
-                </div>
-                <div className="min-w-0 sm:p-4">
-                  <div className="text-[15px] font-semibold leading-[1.3] text-[hsl(var(--ink))] group-hover:text-[hsl(var(--marine))]">
-                    {r.name}
-                  </div>
-                  <div className="ident mt-1 text-[11px] text-[hsl(var(--ink-3))]">{r.sku}</div>
-                  <div className={cx("num mt-1.5 text-[15px] font-bold text-[hsl(var(--ink))]")}>
-                    {money(user ? net(r.price) : r.price)}
-                    <span className="ml-1.5 text-[11px] font-normal text-[hsl(var(--ink-3))]">per {r.uom}</span>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <Related p={p} catName={catName} onProduct={onProduct} />
     </div>
   );
 }

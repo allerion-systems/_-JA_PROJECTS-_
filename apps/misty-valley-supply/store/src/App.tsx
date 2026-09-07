@@ -481,7 +481,7 @@ function Inner() {
             preCat={preCat} onSignIn={() => setModal("signin")} onProduct={openProduct} />}
           {view === "product" && productSku && (
             <ProductView key={productSku} sku={productSku} onAdd={addLine}
-              onBack={() => go("shop")} onProduct={openProduct} onSignIn={() => setModal("signin")} onDesign={v => go(v as View)} />
+              onBack={() => go("shop")} onCategory={goShop} onProduct={openProduct} onSignIn={() => setModal("signin")} onDesign={v => go(v as View)} />
           )}
           {view === "dash" && <Dashboard onSignIn={() => setModal("signin")} />}
           {view === "design" && (
