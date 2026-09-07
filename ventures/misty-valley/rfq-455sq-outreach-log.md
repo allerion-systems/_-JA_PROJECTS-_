@@ -12,6 +12,22 @@ still blocks the customer quote.*
 | **AWIP** (Little Rock AR) | awipsales@awipanels.com | Full RFQ per Ben's draft: 455 SQ, 1.5" firm stated plainly, with instruction to declare their 2" minimum and quote 2" only as a clearly-marked alternate. Pricing asked by Monday COB. | ✅ Emailed from MVS procurement inbox |
 | **PermaTherm** (Monticello GA) | Quote form (Pardot) | PermaStock 24-hr quote request: same spec, asked specifically whether a high-rib ROOF profile exists at 1.5" core. Contact: Ben Easterday / MVS, email-preferred. | ✅ Submitted, "we'll be in touch" confirmed — their 24-hr quote clock is running |
 
+## Distributor lane (added per Ben, 9/7)
+
+| Distributor | Channel | Status |
+|---|---|---|
+| **SRS Building Products — Bowling Green KY** (Home Depot's pro roofing arm since the 2024 SRS acquisition) | Brett Peterie, branch manager · Brett.Peterie@srsbuildingproducts.com · 270-782-9585 · 123 B&C Graham Ave | ✅ RFQ emailed 9/7 — full spec, American-only stated, supply-or-broker framing, pricing asked by Monday COB |
+| **QXO (Beacon Building Products) — Louisville commercial** | (502) 635-6059 · 4400 Poplar Level Rd · M–F 7:00–4:30 · no public email | ☎️ Call at open — ask commercial desk what they can supply/broker in 1.5" high-rib IMP or foam-backed laminated equivalent |
+| **ABC Supply — Elizabethtown KY** (closest branch to Bonnieville, ~45 min) | (270) 737-0875 · 204 Production Dr · mgr Kyle Anderson | ☎️ Call at open — same ask |
+| **ABC Supply — Bowling Green KY** | 270-215-3040 | Backup if E-town can't source |
+
+Reality check for the calls: these houses are shingle/single-ply/metal-panel first —
+expect them to quote a brokered IMP line (Beacon/QXO and SRS both carry metal-panel
+vendor programs) or a foam-backed laminated high-rib panel. Either satisfies the RFQ if
+it hits 1.5" and is American-made; hold them to the same spec answers as the mills.
+Retail Home Depot is not a channel for 455 SQ of 1.5" IMP — SRS IS the Home Depot
+channel; log any retail-desk detour as wasted time.
+
 ## NOT yet contacted — phone-first houses, call at open Monday
 
 These are the **two real 1.5" bidders**; no public sales email exists at either. Per the
