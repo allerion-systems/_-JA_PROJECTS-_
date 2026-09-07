@@ -8,7 +8,7 @@ import {
 } from "@/bim";
 import { designUrl, pickBool, pickOne, saveDesign } from "@/designStore";
 import { Btn, Field, Lab, Panel, Tag, cx, inputCls, money } from "@/ui";
-import { useAnimatedNumber } from "@/useAnimatedNumber";
+import { ToolShell, chipCls, requestSignIn } from "@/views/ToolShell";
 
 // three.js stays in its own lazy chunk — loaded only when the shed renders
 const ShedScene = React.lazy(() => import("@/views/ShedScene"));
@@ -23,44 +23,19 @@ import type { SpecLine, SpecProgram } from "@/views/SpecSheet"; // type-only, er
    any cost basis stays behind can("cost.view").
    ---------------------------------------------------------------------- */
 
-// ---- shared: sticky price bar -------------------------------------------
+// ---- shared: layout + price bar + steps live in ToolShell ----------------
 
-/** Ask the app shell to open the sign-in modal from anywhere in a tool. */
-export const requestSignIn = () => window.dispatchEvent(new CustomEvent("mvs-signin"));
-
-/* Estimates are gated: guests design freely and sign in to see the number
-   (lead capture, Lester-style). Signed-in accounts get the live price.
-   Agents get ungated pricing through the MCP endpoint — never through this UI. */
-export function PriceBar({ label, total }: { label: string; total: number }) {
-  const { user } = useAuth();
-  const shown = useAnimatedNumber(total);
-  return (
-    <div className="sticky top-0 z-20 -mx-1 mb-3 px-1">
-      <div className="flex items-center justify-between gap-3 rounded-[8px] bg-[hsl(var(--marine))] px-4 py-2.5 shadow-[0_4px_14px_-4px_hsl(222_70%_12%/.5)]">
-        <span className="min-w-0 truncate text-[13px] font-semibold text-white/85">{label}</span>
-        {user ? (
-          <span className="flex shrink-0 items-baseline gap-2">
-            <span className="eyebrow text-[hsl(var(--safety-hi))]">Your price</span>
-            <span className="num text-[20px] font-bold text-white">{money(Math.round(shown))}</span>
-          </span>
-        ) : (
-          <button onClick={requestSignIn}
-            className="flex h-9 shrink-0 items-center rounded-[6px] bg-[hsl(var(--safety-hi))] px-3.5 text-[13px] font-bold text-[hsl(var(--marine-2))] hover:brightness-105">
-            Sign in to view estimate
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
+export { PriceBar, Steps, ToolShell, requestSignIn } from "@/views/ToolShell";
 
 // ---- shared: save + share ------------------------------------------------
 
 /* Guests save and share freely — only the PRICE is gated (lead capture),
    never the design itself. Saved designs live in localStorage; the link
    carries the whole design in its hash, so it opens anywhere. */
-export function SaveShare({ tool, params, label }: {
+export function SaveShare({ tool, params, label, chip }: {
   tool: string; params: Record<string, unknown>; label: string;
+  /** Compact chip styling for the over-canvas toolbar. */
+  chip?: boolean;
 }) {
   const [note, setNote] = React.useState<string | null>(null);
   const timer = React.useRef<number | undefined>(undefined);
@@ -92,9 +67,23 @@ export function SaveShare({ tool, params, label }: {
       }
     }
   };
+  const save = () => { saveDesign(tool, params, label); flash("Saved to My designs"); };
+  if (chip) {
+    return (
+      <>
+        <button type="button" className={chipCls} onClick={save}>Save</button>
+        <button type="button" className={chipCls} onClick={copy}>Copy link</button>
+        <span aria-live="polite" role="status"
+          className={cx("rounded-[5px] bg-[hsl(var(--good))] px-2 py-1 text-[11px] font-semibold text-white transition-opacity duration-300",
+            note ? "opacity-100" : "opacity-0")}>
+          {note ?? ""}
+        </span>
+      </>
+    );
+  }
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <Btn variant="line" size="sm" onClick={() => { saveDesign(tool, params, label); flash("Saved to My designs"); }}>
+      <Btn variant="line" size="sm" onClick={save}>
         Save design
       </Btn>
       <Btn variant="line" size="sm" onClick={copy}>Copy link</Btn>
@@ -114,7 +103,7 @@ export function SaveShare({ tool, params, label }: {
    last frame is still in the buffer) and opens SpecSheet.tsx — a printable
    one-page document. Pricing on the sheet follows the PriceBar/BomTable
    gate exactly: guests get qty/description only. */
-export function SpecButton({ toolLabel, designName, paramRows, lines, total, totalLabel, program, building }: {
+export function SpecButton({ toolLabel, designName, paramRows, lines, total, totalLabel, program, building, chip }: {
   toolLabel: string;
   designName: string;
   paramRows: readonly (readonly [string, string])[];
@@ -123,6 +112,8 @@ export function SpecButton({ toolLabel, designName, paramRows, lines, total, tot
   totalLabel?: string;
   program?: SpecProgram;
   building?: boolean;
+  /** Compact chip styling for the over-canvas toolbar. */
+  chip?: boolean;
 }) {
   const [open, setOpen] = React.useState(false);
   const [snapshot, setSnapshot] = React.useState<string | null>(null);
@@ -140,7 +131,9 @@ export function SpecButton({ toolLabel, designName, paramRows, lines, total, tot
   };
   return (
     <>
-      <Btn variant="line" size="sm" onClick={openSheet}>Spec sheet</Btn>
+      {chip
+        ? <button type="button" className={chipCls} onClick={openSheet}>Spec sheet</button>
+        : <Btn variant="line" size="sm" onClick={openSheet}>Spec sheet</Btn>}
       {open && (
         <React.Suspense fallback={null}>
           <SpecSheet toolLabel={toolLabel} designName={designName} paramRows={paramRows}
@@ -149,27 +142,6 @@ export function SpecButton({ toolLabel, designName, paramRows, lines, total, tot
         </React.Suspense>
       )}
     </>
-  );
-}
-
-// ---- shared: step strip --------------------------------------------------
-
-export function Steps({ steps, step, onStep }: { steps: string[]; step: number; onStep: (i: number) => void }) {
-  return (
-    <div className="mb-3 flex flex-wrap items-center gap-1.5">
-      {steps.map((s, i) => (
-        <React.Fragment key={s}>
-          {i > 0 && <span className="text-[hsl(var(--ink-3))]">›</span>}
-          <button onClick={() => onStep(i)}
-            className={cx("min-h-[38px] rounded-full border px-4 text-[13px] font-semibold transition-colors",
-              i === step
-                ? "border-[hsl(var(--safety-2))] bg-[hsl(var(--safety-2))] text-white"
-                : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>
-            {s}
-          </button>
-        </React.Fragment>
-      ))}
-    </div>
   );
 }
 
@@ -268,11 +240,6 @@ export function BomTable({ elements }: { elements: Element[] }) {
           </tfoot>
         </table>
       </div>
-      )}
-      {open && (
-        <p className="px-4 pb-3 text-[12px] text-[hsl(var(--ink-3))]">
-          Every number derives from the model — change a dimension and watch the whole sheet move.
-        </p>
       )}
       {kitLines.length > 0 && (
         <div className="border-t border-[hsl(var(--rule))] px-4 py-3">
@@ -395,7 +362,7 @@ export function QuoteGate({ tool, params, total }: { tool: string; params: Recor
   return (
     <div className="grid gap-2.5">
       {packPicker}
-      <div className="grid gap-2.5 sm:grid-cols-2">
+      <div className="grid gap-2.5">
         <Field label="Name">
           <input value={name} onChange={e => setName(e.target.value)} className={inputCls} autoComplete="name" />
         </Field>
@@ -478,7 +445,7 @@ function Swatches({ label, options, value, onChange }: {
         ))}
         <span className="ml-1 text-[12px] text-[hsl(var(--ink-2))]">{current}</span>
       </div>
-      <p className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">Color is confirmed at order — no price change.</p>
+      <p className="mt-1 text-[11px] text-[hsl(var(--ink-3))]">Confirmed at order — no price change.</p>
     </div>
   );
 }
@@ -614,32 +581,39 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
   }
 
   return (
-    <div>
-      <PriceBar label={`Shed — ${widthFt} × ${lengthFt} · ${wallHFt} ft walls · ${pitch}:12 gable`} total={total} />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-              Loading 3D preview…
-            </div>
-          }>
-            <ShedScene {...params} sidingColor={sidingColor} roofColor={roofColor} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{ label: `Shed — ${widthFt} × ${lengthFt} · ${wallHFt} ft walls · ${pitch}:12 gable`, total }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading 3D preview…
+          </div>
+        }>
+          <ShedScene {...params} sidingColor={sidingColor} roofColor={roofColor} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="shed" params={{ ...params }} label={`Shed ${widthFt}×${lengthFt}`} />
+          <SpecButton chip toolLabel="Backyard Studios" designName={`Shed ${widthFt} × ${lengthFt}`}
+            paramRows={specRows} lines={elements} total={total} building />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 3
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Width" options={WIDTHS} value={widthFt} onChange={setWidthFt} fmt={v => `${v} ft`} />
             <Seg label="Length" options={LENGTHS} value={lengthFt} onChange={setLengthFt} fmt={v => `${v}`} />
           </div>
         )}
         {step === 1 && (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4">
             <Seg label="Wall height" options={[7, 8] as const} value={wallHFt} onChange={setWallHFt} fmt={v => `${v} ft`} />
             <Seg label="Roof pitch" options={[4, 6] as const} value={pitch} onChange={setPitch} fmt={v => `${v}:12`} />
             <Seg label="Siding" options={["vinyl", "none"] as const} value={siding} onChange={setSiding}
@@ -653,14 +627,14 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
           </div>
         )}
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Doors" options={[1, 2] as const} value={doors} onChange={setDoors} />
             <Seg label="Windows" options={[0, 1, 2] as const} value={windows} onChange={setWindows} />
             <Seg label="Roof" options={["metal", "ready"] as const} value={roof} onChange={setRoof}
               fmt={v => (v === "metal" ? "Metal, cut to length" : "Sheathed only")} />
             <Seg label="Roof framing" options={["stick", "truss"] as const} value={framing} onChange={setFraming}
               fmt={v => (v === "stick" ? "Stick rafters" : "Engineered trusses")} />
-            <div className="sm:col-span-2">
+            <div>
               <Lab className="mb-1.5">Add-ons — shipped with the kit</Lab>
               <div className="flex flex-wrap gap-1.5">
                 {([
@@ -680,8 +654,8 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
               </div>
             </div>
             {(doors > 0 || windows > 0) && (
-              <div className="sm:col-span-2">
-                <Lab className="mb-1.5">Placement — pick a wall and slide each opening along it</Lab>
+              <div>
+                <Lab className="mb-1.5">Placement — pick a wall, slide the opening</Lab>
                 <div className="grid gap-2.5">
                   {Array.from({ length: doors }, (_, i) => (
                     <PlaceRow key={`d${i}`} label={`Door ${i + 1}`} value={effDoor(i)} w={SHED_DOOR.w}
@@ -693,26 +667,14 @@ export default function Shed({ initial }: { initial?: Partial<ShedParams> }) {
                   ))}
                 </div>
                 <p className="mt-1.5 text-[11px] text-[hsl(var(--ink-3))]">
-                  Walls are named facing the shed. Openings keep {OPENING_CLEAR} ft clear of every corner — same kit, same price, wherever they land.
+                  Openings keep {OPENING_CLEAR} ft clear of corners — same kit, same price, wherever they land.
                 </p>
               </div>
             )}
           </div>
         )}
         {step === 3 && <QuoteGate tool="shed" params={{ ...params }} total={total} />}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="shed" params={{ ...params }} label={`Shed ${widthFt}×${lengthFt}`} />
-            <SpecButton toolLabel="Backyard Studios" designName={`Shed ${widthFt} × ${lengthFt}`}
-              paramRows={specRows} lines={elements} total={total} building />
-          </div>
-          {step < 3 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }

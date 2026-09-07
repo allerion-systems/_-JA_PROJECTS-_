@@ -5,8 +5,8 @@ import {
   type ContainerLayout, type ContainerParams, type ContainerSize,
 } from "@/bimContainer";
 import { pickBool, pickOne } from "@/designStore";
-import { Btn, Lab, Panel, cx } from "@/ui";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
+import { Btn, Lab, cx } from "@/ui";
+import { BomTable, QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
 
 // three.js stays in its own lazy chunk — loaded only when the container renders
 const ContainerScene = React.lazy(() => import("@/views/ContainerScene"));
@@ -70,7 +70,7 @@ function LayoutChips({ value, onChange }: { value: ContainerLayout; onChange: (l
   return (
     <div>
       <Lab className="mb-1.5">Interior footprint</Lab>
-      <div className="grid gap-1.5 sm:grid-cols-2">
+      <div className="grid gap-1.5">
         {LAYOUTS.map(([id, name, desc]) => (
           <button key={id} onClick={() => onChange(id)} aria-pressed={id === value}
             className={cx("flex min-h-[54px] items-center gap-3 rounded-[6px] border px-3 py-2 text-left transition-colors",
@@ -135,26 +135,35 @@ export default function Container({ initial }: { initial?: Partial<ContainerPara
   ] as const;
 
   return (
-    <div>
-      <PriceBar label={`Container — ${count > 1 ? `${count} × ` : ""}${size} ft · ${layoutName}`} total={total} />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-              Loading 3D preview…
-            </div>
-          }>
-            <ContainerScene {...params} containerColor={containerColor} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{ label: `Container — ${count > 1 ? `${count} × ` : ""}${size} ft · ${layoutName}`, total }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading 3D preview…
+          </div>
+        }>
+          <ContainerScene {...params} containerColor={containerColor} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="container" params={{ ...params }}
+            label={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`} />
+          <SpecButton chip toolLabel="Containers"
+            designName={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`}
+            paramRows={specRows} lines={elements} total={total} building />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 3
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Box" options={["20", "40"] as const} value={size} onChange={setSize}
               fmt={v => (v === "20" ? "20 ft One-Trip" : "40 ft High-Cube")} />
             <Seg label="How many — side-by-side" options={[1, 2, 3] as const} value={count} onChange={setCount} />
@@ -180,10 +189,10 @@ export default function Container({ initial }: { initial?: Partial<ContainerPara
         )}
         {step === 1 && <LayoutChips value={layout} onChange={setLayout} />}
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Windows" options={[0, 1, 2, 3] as const} value={windows} onChange={setWindows} />
             <Seg label="Man-doors" options={[0, 1, 2] as const} value={manDoors} onChange={setManDoors} />
-            <div className="sm:col-span-2">
+            <div>
               <Lab className="mb-1.5">Systems + finish</Lab>
               <div className="flex flex-wrap gap-1.5">
                 {toggles.map(([lab, on, set, included]) => (
@@ -204,21 +213,7 @@ export default function Container({ initial }: { initial?: Partial<ContainerPara
           </div>
         )}
         {step === 3 && <QuoteGate tool="container" params={{ ...params }} total={total} />}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="container" params={{ ...params }}
-              label={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`} />
-            <SpecButton toolLabel="Containers"
-              designName={`Container ${count > 1 ? `${count}× ` : ""}${size} ft ${layoutName}`}
-              paramRows={specRows} lines={elements} total={total} building />
-          </div>
-          {step < 3 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }

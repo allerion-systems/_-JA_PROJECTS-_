@@ -2,8 +2,8 @@ import * as React from "react";
 import { rollup } from "@/bim";
 import { warehouseTakeoff, type WarehouseParams } from "@/bimWarehouse";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
-import { Btn, Lab, Panel, cx } from "@/ui";
+import { BomTable, QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
+import { Btn, Lab, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the warehouse renders
 const WarehouseScene = React.lazy(() => import("@/views/WarehouseScene"));
@@ -90,38 +90,44 @@ export default function Warehouse({ initial }: { initial?: Partial<WarehousePara
   ];
 
   return (
-    <div>
-      <PriceBar
-        label={`Warehouse — 50 × 100 × 16 shell · ${dockDoors} dock${dockDoors === 1 ? "" : "s"} · ${driveInDoors} drive-in${driveInDoors === 1 ? "" : "s"}${officeCorner ? " · office" : ""}`}
-        total={total}
-      />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-              Loading 3D preview…
-            </div>
-          }>
-            <WarehouseScene {...params} wallColor={wallColor} roofColor={roofColor} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{
+        label: `Warehouse — 50 × 100 × 16 shell · ${dockDoors} dock${dockDoors === 1 ? "" : "s"} · ${driveInDoors} drive-in${driveInDoors === 1 ? "" : "s"}${officeCorner ? " · office" : ""}`,
+        total,
+      }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading 3D preview…
+          </div>
+        }>
+          <WarehouseScene {...params} wallColor={wallColor} roofColor={roofColor} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="warehouse" params={{ ...params }} label={`Warehouse 50×100`} />
+          <SpecButton chip toolLabel="Warehouses" designName="Warehouse 50 × 100"
+            paramRows={specRows} lines={elements} total={total} building />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 3
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Shell" options={["50x100"] as const} value={size} onChange={() => {}}
               fmt={() => "50 × 100 × 16 ft eave"} />
-            <div />
             <Swatches label="Wall color" options={WALL_COLORS} value={wallColor} onChange={setWallColor} />
             <Swatches label="Roof color" options={ROOF_COLORS} value={roofColor} onChange={setRoofColor} />
           </div>
         )}
         {step === 1 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Dock door packages — eave wall" options={DOCKS} value={dockDoors} onChange={setDockDoors} />
             <Seg label="Drive-in roll-ups 12×14 — end wall" options={DRIVE_INS} value={driveInDoors} onChange={setDriveInDoors} />
           </div>
@@ -152,19 +158,7 @@ export default function Warehouse({ initial }: { initial?: Partial<WarehousePara
             <QuoteGate tool="warehouse" params={{ ...params }} total={total} />
           </div>
         )}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="warehouse" params={{ ...params }} label={`Warehouse 50×100`} />
-            <SpecButton toolLabel="Warehouses" designName="Warehouse 50 × 100"
-              paramRows={specRows} lines={elements} total={total} building />
-          </div>
-          {step < 3 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }

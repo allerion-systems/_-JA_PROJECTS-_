@@ -547,11 +547,9 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
         role="img"
         aria-label={`Massing study — ${params.type}, ${stories} ${stories === 1 ? "story" : "stories"}, ${modules} modules, about ${craneWeeks} crane-set ${craneWeeks === 1 ? "week" : "weeks"}`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("street")}>Street</button>
         <button type="button" className={btnCls} onClick={() => flyTo("aerial")}>Aerial</button>
-      </div>
-      <div className="absolute bottom-2 right-2">
         <button
           type="button"
           className={btnCls}
@@ -561,7 +559,7 @@ export default function ProgramScene({ params }: ProgramSceneProps) {
           3D file
         </button>
       </div>
-      <div className="pointer-events-none absolute right-2 top-2 rounded-[4px] bg-[hsl(var(--marine))]/70 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/85 backdrop-blur-sm">
+      <div className="pointer-events-none absolute bottom-2 left-2 rounded-[4px] bg-[hsl(var(--marine))]/70 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/85 backdrop-blur-sm">
         Massing study — not architecture
       </div>
       <div

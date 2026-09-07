@@ -753,7 +753,7 @@ export default function GarageScene(p: GarageParams) {
         role="img"
         aria-label={`3D preview — ${p.widthFt} × ${p.lengthFt} × ${p.legHeightFt} ft, ${ROOF_LABEL[p.roofStyle]} roof, left side ${p.leftSide}, right side ${p.rightSide}, front end ${p.frontEnd}, back end ${p.backEnd}, ${p.doors.length} door(s), ${p.windows} window(s), ${p.anchors} anchors, lean-to ${p.leanTo}`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("side")}>Side</button>
@@ -762,8 +762,6 @@ export default function GarageScene(p: GarageParams) {
           onClick={() => setShowDims(v => !v)}>
           Dims
         </button>
-      </div>
-      <div className="absolute bottom-2 right-2">
         <button
           type="button"
           className={btnCls}

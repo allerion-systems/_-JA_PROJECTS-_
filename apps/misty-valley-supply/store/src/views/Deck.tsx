@@ -1,11 +1,11 @@
 import * as React from "react";
 import { deckTakeoff, guardRequired, rollup, type DeckParams } from "@/bim";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
+import { BomTable, QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
 
 // three.js stays in its own lazy chunk — loaded only when the deck renders
 const DeckScene = React.lazy(() => import("@/views/DeckScene"));
-import { Btn, Panel, Tag } from "@/ui";
+import { Btn, Tag } from "@/ui";
 
 /* ------------------------------------------------------------------------
    Deck Designer — same visual-first wizard, same shared 5D core (bim.ts).
@@ -46,30 +46,36 @@ export default function Deck({ initial }: { initial?: Partial<DeckParams> }) {
   ];
 
   return (
-    <div>
-      <PriceBar
-        label={`Deck — ${widthFt} × ${depthFt} · ${heightFt} ft high${effRailing ? " · guard" : ""}${stairs ? " · stairs" : ""}`}
-        total={total}
-      />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="tape h-1.5" />
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
-              <span className="lab">Loading the 3D shop…</span>
-            </div>
-          }>
-            <DeckScene {...params} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{
+        label: `Deck — ${widthFt} × ${depthFt} · ${heightFt} ft high${effRailing ? " · guard" : ""}${stairs ? " · stairs" : ""}`,
+        total,
+      }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
+            <span className="lab">Loading the 3D shop…</span>
+          </div>
+        }>
+          <DeckScene {...params} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="deck" params={{ ...params }} label={`Deck ${widthFt}×${depthFt}`} />
+          <SpecButton chip toolLabel="Decks" designName={`Deck ${widthFt} × ${depthFt}`}
+            paramRows={specRows} lines={elements} total={total} />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 3
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Width (along the house)" options={WIDTHS} value={widthFt} onChange={setWidthFt} fmt={v => `${v}`} />
             <Seg label="Depth (out from the house)" options={DEPTHS} value={depthFt} onChange={setDepthFt} fmt={v => `${v}`} />
           </div>
@@ -78,7 +84,7 @@ export default function Deck({ initial }: { initial?: Partial<DeckParams> }) {
           <Seg label="Deck height" options={[2, 4, 8] as const} value={heightFt} onChange={setHeightFt} fmt={v => `${v} ft`} />
         )}
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <div>
               <Seg label="Guard rail" options={["on", "off"] as const}
                 value={effRailing ? "on" : "off"}
@@ -92,19 +98,7 @@ export default function Deck({ initial }: { initial?: Partial<DeckParams> }) {
           </div>
         )}
         {step === 3 && <QuoteGate tool="deck" params={{ ...params }} total={total} />}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="deck" params={{ ...params }} label={`Deck ${widthFt}×${depthFt}`} />
-            <SpecButton toolLabel="Decks" designName={`Deck ${widthFt} × ${depthFt}`}
-              paramRows={specRows} lines={elements} total={total} />
-          </div>
-          {step < 3 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }

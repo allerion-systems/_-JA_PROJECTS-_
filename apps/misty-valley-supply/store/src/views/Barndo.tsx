@@ -2,8 +2,8 @@ import * as React from "react";
 import { rollup } from "@/bim";
 import { barndoTakeoff, type BarndoParams } from "@/bimBarndo";
 import { pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
-import { Btn, Lab, Panel, cx } from "@/ui";
+import { BomTable, QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
+import { Btn, Lab, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the barndo renders
 const BarndoScene = React.lazy(() => import("@/views/BarndoScene"));
@@ -94,27 +94,34 @@ export default function Barndo({ initial }: { initial?: Partial<BarndoParams> })
   ];
 
   return (
-    <div>
-      <PriceBar
-        label={`Barndo — ${size.replace("x", " × ")} steel shell · ${fracLabel} living quarters · ${porchBays} porch bay${porchBays === 1 ? "" : "s"}`}
-        total={total}
-      />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-              Loading 3D preview…
-            </div>
-          }>
-            <BarndoScene {...params} wallColor={wallColor} roofColor={roofColor} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{
+        label: `Barndo — ${size.replace("x", " × ")} steel shell · ${fracLabel} living quarters · ${porchBays} porch bay${porchBays === 1 ? "" : "s"}`,
+        total,
+      }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading 3D preview…
+          </div>
+        }>
+          <BarndoScene {...params} wallColor={wallColor} roofColor={roofColor} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="barndo" params={{ ...params }} label={`Barndo ${size}`} />
+          <SpecButton chip toolLabel="Barndominiums" designName={`Barndo ${size.replace("x", " × ")}`}
+            paramRows={specRows} lines={elements} total={total} building />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 3
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
           <Seg label="Shell size" options={["30x40", "40x60"] as const} value={size} onChange={setSize}
             fmt={v => (v === "30x40" ? "30 × 40 × 12" : "40 × 60 × 14")} />
@@ -127,7 +134,7 @@ export default function Barndo({ initial }: { initial?: Partial<BarndoParams> })
           </div>
         )}
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Porch bays — 12 ft each" options={[0, 1, 2, 3] as const} value={porchBays} onChange={setPorchBays} />
             <Seg label="Quarters windows" options={[2, 3, 4, 5, 6] as const} value={quartersWindows} onChange={setQuartersWindows} />
             <Seg label="Bathrooms" options={[1, 2] as const} value={bathrooms} onChange={setBathrooms} />
@@ -143,19 +150,7 @@ export default function Barndo({ initial }: { initial?: Partial<BarndoParams> })
             <QuoteGate tool="barndo" params={{ ...params }} total={total} />
           </div>
         )}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="barndo" params={{ ...params }} label={`Barndo ${size}`} />
-            <SpecButton toolLabel="Barndominiums" designName={`Barndo ${size.replace("x", " × ")}`}
-              paramRows={specRows} lines={elements} total={total} building />
-          </div>
-          {step < 3 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }

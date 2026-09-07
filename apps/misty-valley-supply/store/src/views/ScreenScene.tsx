@@ -446,7 +446,7 @@ export default function ScreenScene(props: ScreenSceneProps) {
         role="img"
         aria-label={`3D preview — ${lf} LF roof screen, ${heightFt} ft high, posts every ${bayFt} ft, ${frameOnly ? "frame only" : `${gauge} gauge panel`}`}
       />
-      <div className="absolute bottom-2 right-2">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button
           type="button"
           className={btnCls}

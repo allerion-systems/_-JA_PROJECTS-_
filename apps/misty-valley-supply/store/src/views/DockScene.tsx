@@ -605,12 +605,10 @@ export default function DockScene(p: DockSceneProps) {
         role="img"
         aria-label={`3D preview — ${shape} floating dock, ${walkwayFt} ft walkway, ${platform === "none" ? "no platform" : platform === "8x10" ? "8×10 platform" : "double platform"}, ${decking} decking${gangway ? ", gangway" : ""}${ladder ? ", swim ladder" : ""}`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("shore")}>Shore</button>
         <button type="button" className={btnCls} onClick={() => flyTo("above")}>Above</button>
         <button type="button" className={btnCls} onClick={() => flyTo("waterline")}>Water-level</button>
-      </div>
-      <div className="absolute bottom-2 right-2">
         <button
           type="button"
           className={btnCls}

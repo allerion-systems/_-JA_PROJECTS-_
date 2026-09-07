@@ -666,7 +666,7 @@ export default function ContainerScene(p: ContainerSceneProps) {
         role="img"
         aria-label={`3D cutaway — ${count > 1 ? `${count} × ` : ""}${dims.label} container, ${layout} layout, ${windows} window(s), ${manDoors} man-door(s)${hvac ? ", mini-split" : ""}${floor ? ", finished floor" : ""}${leanTo ? ", lean-to" : ""}`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("inside")}>Inside</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
@@ -675,8 +675,6 @@ export default function ContainerScene(p: ContainerSceneProps) {
           onClick={() => setShowDims(v => !v)}>
           Dims
         </button>
-      </div>
-      <div className="absolute bottom-2 right-2">
         <button
           type="button"
           className={btnCls}

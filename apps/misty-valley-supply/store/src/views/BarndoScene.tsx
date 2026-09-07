@@ -647,12 +647,10 @@ export default function BarndoScene(p: BarndoSceneProps) {
         role="img"
         aria-label={`3D preview — ${size.replace("x", "×")} barndominium, ${quartersFraction === 0.25 ? "quarter" : "half"} living quarters, ${porchBays} porch bay(s), ${quartersWindows} windows, ${bathrooms} bath(s)`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("quarters")}>Quarters</button>
-      </div>
-      <div className="absolute bottom-2 right-2">
         <button
           type="button"
           className={btnCls}

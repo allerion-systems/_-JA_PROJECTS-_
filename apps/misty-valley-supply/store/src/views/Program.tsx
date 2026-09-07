@@ -1,7 +1,7 @@
 import * as React from "react";
 import { pickOne } from "@/designStore";
-import { Btn, Lab, Panel, Tag } from "@/ui";
-import { QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
+import { Btn, Lab, Tag } from "@/ui";
+import { QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
 import {
   APT_STORIES, APT_UNITS, EMS_BAYS, EMS_QUARTERS_GSF, HOTEL_ROOMS, HOTEL_STORIES,
   OFFICE_GSF, OFFICE_STORIES, SCHOOL_CLASSROOMS, fmtMillions, program, programStories,
@@ -81,28 +81,43 @@ export default function Program({ initial }: { initial?: Partial<ProgramParams> 
   })();
 
   return (
-    <div>
-      {params && (
-        <Panel pad={false} className="card-hi mb-4">
-          <div className="h-[260px] sm:h-[480px]">
-            <React.Suspense fallback={
-              <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-                Loading massing study…
-              </div>
-            }>
-              <ProgramScene params={params} />
-            </React.Suspense>
+    <ToolShell
+      steps={STEPS} step={step} onStep={i => { if (i === 0 || type) setStep(i); }}
+      scene={params ? (
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading massing study…
           </div>
-        </Panel>
+        }>
+          <ProgramScene params={params} />
+        </React.Suspense>
+      ) : (
+        <div className="flex h-full items-center justify-center bg-[hsl(var(--panel-2))] text-[13px] text-[hsl(var(--ink-3))]">
+          Pick a program type — the massing study appears here.
+        </div>
       )}
-
-      <Steps steps={STEPS} step={step} onStep={i => { if (i === 0 || type) setStep(i); }} />
-
-      <Panel className="mb-4">
+      toolbar={type && params ? (
+        <>
+          <SaveShare chip tool="program" params={{ ...params }} label={`Modular — ${label ?? type}`} />
+          {result && (
+            <SpecButton chip toolLabel="Modular Projects" designName={`Modular — ${label ?? type}`}
+              paramRows={specRows} building
+              program={{ gsf: result.gsf, modules: result.modules, craneWeeks: result.craneWeeks,
+                rangeLow: result.rangeLow, rangeHigh: result.rangeHigh, perGsf: result.perGsf }} />
+          )}
+        </>
+      ) : undefined}
+      footer={type && params && step < 2
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>
+            {step === 1 ? "Review the program" : "Next"}
+          </Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
           <div>
             <Lab kicker className="mb-2.5">What are you programming?</Lab>
-            <div className="grid gap-2.5 sm:grid-cols-3">
+            <div className="grid gap-2.5">
               {TYPES.map(t => (
                 <button key={t.type} onClick={() => pick(t.type)} aria-pressed={type === t.type}
                   className={"rounded-[6px] border p-4 text-left transition-colors " + (type === t.type
@@ -117,7 +132,7 @@ export default function Program({ initial }: { initial?: Partial<ProgramParams> 
         )}
 
         {step === 1 && type && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             {type === "hotel" && (<>
               <Seg label="Guest rooms" options={HOTEL_ROOMS} value={rooms} onChange={setRooms} />
               <Seg label="Stories" options={HOTEL_STORIES} value={hotelStories} onChange={setHotelStories} fmt={v => `${v} stories`} />
@@ -141,7 +156,7 @@ export default function Program({ initial }: { initial?: Partial<ProgramParams> 
         )}
 
         {step === 2 && params && result && (
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4">
             {/* the program card */}
             <div>
               <div className="mb-2 flex items-center justify-between gap-3">
@@ -190,25 +205,7 @@ export default function Program({ initial }: { initial?: Partial<ProgramParams> 
           </div>
         )}
 
-        {type && params && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <SaveShare tool="program" params={{ ...params }} label={`Modular — ${label ?? type}`} />
-              {result && (
-                <SpecButton toolLabel="Modular Projects" designName={`Modular — ${label ?? type}`}
-                  paramRows={specRows} building
-                  program={{ gsf: result.gsf, modules: result.modules, craneWeeks: result.craneWeeks,
-                    rangeLow: result.rangeLow, rangeHigh: result.rangeHigh, perGsf: result.perGsf }} />
-              )}
-            </div>
-            {step < 2 && (
-              <Btn size="sm" onClick={() => setStep(step + 1)}>
-                {step === 1 ? "Review the program" : "Next"}
-              </Btn>
-            )}
-          </div>
-        )}
-      </Panel>
-    </div>
+      </div>
+    </ToolShell>
   );
 }

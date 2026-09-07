@@ -493,7 +493,7 @@ export default function DeckScene(p: DeckParams) {
         role="img"
         aria-label={`3D preview — ${widthFt}×${depthFt} deck, ${heightFt} ft high${railing || heightFt * 12 >= 30 ? ", with guard" : ""}${stairs ? ", with stairs" : ""}`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" aria-pressed={showDims}
           className={btnCls + (showDims ? " ring-1 ring-[hsl(var(--safety-hi))]" : " opacity-70")}
           onClick={() => setShowDims(v => !v)}>

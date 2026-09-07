@@ -2,7 +2,7 @@ import * as React from "react";
 import { ROOFSCREEN as RS, SCREEN_PARTS } from "@/data";
 import { pickBool, pickNum, pickOne } from "@/designStore";
 import { Btn, DataTable, Field, Head, Lab, Panel, Rule, Tag, cx, inputCls, money } from "@/ui";
-import { SaveShare, SpecButton } from "@/views/Shed";
+import { SaveShare, SpecButton, ToolShell } from "@/views/Shed";
 import type { SpecLine } from "@/views/SpecSheet"; // type-only, erased at build
 import { useAuth } from "@/auth";
 import { useAnimatedNumber } from "@/useAnimatedNumber";
@@ -716,10 +716,12 @@ export default function Screen({ initial }: { initial?: Partial<QuoteConfig> }) 
 
   return (
     <div>
-      <MobilePriceBar
-        label={`Roof screen — ${lf} LF × ${fmtFtIn(h)}${p.id === "none" ? " · frame only" : ` · ${p.ga} ga panel`}`}
-        total={sell}
-      />
+      {mode !== "design" && (
+        <MobilePriceBar
+          label={`Roof screen — ${lf} LF × ${fmtFtIn(h)}${p.id === "none" ? " · frame only" : ` · ${p.ga} ga panel`}`}
+          total={sell}
+        />
+      )}
 
       {/* ------------------------------------------------------- kit / parts */}
       <div className="mb-5 flex gap-0 overflow-x-auto border-b border-[hsl(var(--ink))]">
@@ -735,127 +737,114 @@ export default function Screen({ initial }: { initial?: Partial<QuoteConfig> }) 
       </div>
 
       {mode === "design" && (
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-          {/* --------------------------------------------- canvas + controls */}
-          <div className="min-w-0">
-            <div className="card-hi overflow-hidden rounded-[8px]">
-              <div className="h-[260px] md:h-[460px]">
-                <React.Suspense fallback={
-                  <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
-                    <span className="lab">Loading the 3D shop…</span>
-                  </div>
-                }>
-                  <ScreenScene lf={lf} heightFt={h} bayFt={bay} frameOnly={p.id === "none"} gauge={p.ga} />
-                </React.Suspense>
+        <ToolShell
+          price={{
+            label: `Roof screen — ${lf} LF × ${fmtFtIn(h)}${p.id === "none" ? " · frame only" : ` · ${p.ga} ga panel`}`,
+            total: sell,
+          }}
+          scene={
+            <React.Suspense fallback={
+              <div className="grid h-full w-full place-items-center bg-[hsl(var(--panel-2))]">
+                <span className="lab">Loading the 3D shop…</span>
               </div>
-              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-[hsl(var(--rule))] bg-[hsl(var(--panel))] px-3 py-2">
-                <span className="mono text-[11px] text-[hsl(var(--ink-3))]">
-                  {lf} LF × {fmtFtIn(h)} · {fmtFtIn(bay)} bays · {posts} posts ·{" "}
-                  {p.id === "none" ? "frame only" : `${p.ga} ga panel`}
-                </span>
-                <span className="text-[11px] text-[hsl(var(--ink-3))]">drag to orbit · scroll to zoom</span>
-              </div>
-            </div>
-
-            <div className="mt-3 flex flex-wrap items-center gap-1.5">
-              <SaveShare tool="screen" params={{ ...quoteConfig }} label={`Roof screen ${lf} LF × ${fmtFtIn(h)}`} />
-              <SpecButton toolLabel="Roof Screens" designName={`Roof screen ${lf} LF × ${fmtFtIn(h)}`}
+            }>
+              <ScreenScene lf={lf} heightFt={h} bayFt={bay} frameOnly={p.id === "none"} gauge={p.ga} />
+            </React.Suspense>
+          }
+          toolbar={
+            <>
+              <SaveShare chip tool="screen" params={{ ...quoteConfig }} label={`Roof screen ${lf} LF × ${fmtFtIn(h)}`} />
+              <SpecButton chip toolLabel="Roof Screens" designName={`Roof screen ${lf} LF × ${fmtFtIn(h)}`}
                 paramRows={specParamRows} lines={specLines} total={sell}
                 totalLabel="Your price — screen system" />
-            </div>
-
-            {/* controls — the same shared state every tab prices from */}
-            <div className="mt-5 grid gap-5 sm:grid-cols-2">
-              <Field label="Screen length (LF)">
-                <input type="number" min={10} max={4000} value={lf}
-                  onChange={e => setLf(Math.max(0, Number(e.target.value) || 0))} className={inputCls} />
-              </Field>
-              <Field label="Bay spacing (FT)">
-                <input type="number" min={2} max={12} step={0.5} value={bay}
-                  onChange={e => setBay(Math.min(12, Math.max(2, Number(e.target.value) || RS.lee.bay)))}
-                  className={inputCls} />
-              </Field>
-              <Field label="Screen height above deck">
-                <div className="flex flex-wrap gap-1.5">
-                  {RS.heights.map(x => (
-                    <button key={x} onClick={() => setH(x)}
-                      className={cx("h-11 min-w-[52px] flex-1 border px-1 text-[13px]",
-                        h === x ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
-                                : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
-                      {x === 3.5 ? "3′-6″" : `${x}′`}
-                    </button>
-                  ))}
-                </div>
-              </Field>
-              <Field label="Panel gauge">
-                <div className="flex flex-wrap gap-1.5">
-                  {RS.panels.filter(x => x.id !== "none").map(x => (
-                    <button key={x.id} onClick={() => { setPanel(x.id); lastPanel.current = x.id; }}
-                      className={cx("h-11 flex-1 border px-2 text-[13px] whitespace-nowrap",
-                        panel === x.id ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
-                                       : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
-                      {`${x.ga} ga${x.id === "perf" ? " perf" : ""}`}
-                    </button>
-                  ))}
-                </div>
-                <label className="mt-1.5 flex min-h-[44px] items-center gap-2.5 text-[13px]">
-                  <input type="checkbox" checked={panel === "none"}
-                    onChange={e => setPanel(e.target.checked ? "none" : lastPanel.current)}
-                    className="h-4 w-4 accent-[hsl(var(--safety))]" />
-                  <span>Frame only — panel by others</span>
-                </label>
-              </Field>
-            </div>
-
-            <SpecCard lf={lf} h={h} config={quoteConfig} sell={sell} />
-          </div>
-
-          {/* --------------------------------- live price, one calculation */}
-          <div>
-            <Panel className="card-hi xl:sticky xl:top-4" pad={false}>
-              <div className="tape h-1.5" />
-              <div className="p-5">
-                <Lab className="mb-3">Live price — one calculation</Lab>
-                {rows.map(([a, b, c]) => (
-                  <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="disp text-[15px] font-semibold">{a}</div>
-                      {internal && <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>}
-                    </div>
-                    {internal && <div className="shrink-0 text-[15px]">{money(c)}</div>}
-                  </div>
+            </>
+          }
+          details={<SpecCard lf={lf} h={h} config={quoteConfig} sell={sell} />}
+        >
+          {/* controls — the same shared state every tab prices from */}
+          <div className="grid gap-4">
+            <Field label="Screen length (LF)">
+              <input type="number" min={10} max={4000} value={lf}
+                onChange={e => setLf(Math.max(0, Number(e.target.value) || 0))} className={inputCls} />
+            </Field>
+            <Field label="Bay spacing (FT)">
+              <input type="number" min={2} max={12} step={0.5} value={bay}
+                onChange={e => setBay(Math.min(12, Math.max(2, Number(e.target.value) || RS.lee.bay)))}
+                className={inputCls} />
+            </Field>
+            <Field label="Screen height above deck">
+              <div className="flex flex-wrap gap-1.5">
+                {RS.heights.map(x => (
+                  <button key={x} onClick={() => setH(x)}
+                    className={cx("h-11 min-w-[52px] flex-1 border px-1 text-[13px]",
+                      h === x ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
+                              : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
+                    {x === 3.5 ? "3′-6″" : `${x}′`}
+                  </button>
                 ))}
-                <Rule className="my-3" />
-                <div className="mb-1.5 flex items-baseline justify-between">
-                  {internal && <span className="lab">Our cost</span>}
-                  {internal && <span className="text-[15px]">{money(totalCost)}</span>}
-                </div>
-                {internal && (
-                  <Field label={`Markup — ${markup}%`}>
-                    <input type="range" min={60} max={150} value={markup} aria-label="Markup percent"
-                      onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
-                  </Field>
-                )}
-                <div className="mt-2 flex items-baseline justify-between">
-                  <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
-                  <div className="disp text-[40px] font-bold leading-none text-[hsl(var(--safety))]">
-                    <EstimateFigure shown={sellShown} />
-                  </div>
-                </div>
-                <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
-                  <span>{user ? `${money(Math.round(sell / Math.max(lf, 1)))}/LF` : "Itemized after sign-in"}</span>
-                  {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
-                </div>
-                <Rule className="my-4" />
-                <QuoteGate config={quoteConfig} sell={sell} />
-                <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
-                  Same math as the kit tab and the S-1 sheet — the model, the schedule and this
-                  price cannot disagree.
-                </p>
               </div>
-            </Panel>
+            </Field>
+            <Field label="Panel gauge">
+              <div className="flex flex-wrap gap-1.5">
+                {RS.panels.filter(x => x.id !== "none").map(x => (
+                  <button key={x.id} onClick={() => { setPanel(x.id); lastPanel.current = x.id; }}
+                    className={cx("h-11 flex-1 border px-2 text-[13px] whitespace-nowrap",
+                      panel === x.id ? "border-[hsl(var(--ink))] bg-[hsl(var(--ink))] text-white"
+                                     : "border-[hsl(var(--rule))] hover:border-[hsl(var(--ink))]")}>
+                    {`${x.ga} ga${x.id === "perf" ? " perf" : ""}`}
+                  </button>
+                ))}
+              </div>
+              <label className="mt-1.5 flex min-h-[44px] items-center gap-2.5 text-[13px]">
+                <input type="checkbox" checked={panel === "none"}
+                  onChange={e => setPanel(e.target.checked ? "none" : lastPanel.current)}
+                  className="h-4 w-4 accent-[hsl(var(--safety))]" />
+                <span>Frame only — panel by others</span>
+              </label>
+            </Field>
+
+            {/* live price, one calculation */}
+            <div>
+              <Rule className="mb-3" />
+              <Lab className="mb-3">Live price — one calculation</Lab>
+              {rows.map(([a, b, c]) => (
+                <div key={a} className="mb-2.5 flex items-baseline justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="disp text-[15px] font-semibold">{a}</div>
+                    {internal && <div className="text-[11px] leading-[1.4] text-[hsl(var(--ink-3))]">{b}</div>}
+                  </div>
+                  {internal && <div className="shrink-0 text-[15px]">{money(c)}</div>}
+                </div>
+              ))}
+              <Rule className="my-3" />
+              <div className="mb-1.5 flex items-baseline justify-between">
+                {internal && <span className="lab">Our cost</span>}
+                {internal && <span className="text-[15px]">{money(totalCost)}</span>}
+              </div>
+              {internal && (
+                <Field label={`Markup — ${markup}%`}>
+                  <input type="range" min={60} max={150} value={markup} aria-label="Markup percent"
+                    onChange={e => setMarkup(Number(e.target.value))} className="h-11 w-full" />
+                </Field>
+              )}
+              <div className="mt-2 flex items-baseline justify-between">
+                <div className="disp text-[18px] font-bold">{internal ? "Sell" : "Your price"}</div>
+                <div className="disp text-[32px] font-bold leading-none text-[hsl(var(--safety))]">
+                  <EstimateFigure shown={sellShown} />
+                </div>
+              </div>
+              <div className="mt-1 flex justify-between text-[11px] text-[hsl(var(--ink-3))]">
+                <span>{user ? `${money(Math.round(sell / Math.max(lf, 1)))}/LF` : "Itemized after sign-in"}</span>
+                {internal && <span>{Math.round(gm * 100)}% GM · {money(sell - totalCost)}</span>}
+              </div>
+              <Rule className="my-4" />
+              <QuoteGate config={quoteConfig} sell={sell} />
+              <p className="mt-2 text-[11px] leading-[1.5] text-[hsl(var(--ink-3))]">
+                Same math as the kit tab and the S-1 sheet — they cannot disagree.
+              </p>
+            </div>
           </div>
-        </div>
+        </ToolShell>
       )}
 
       {mode === "parts" && (

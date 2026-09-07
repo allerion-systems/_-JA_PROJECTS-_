@@ -782,7 +782,7 @@ export default function ShedScene(p: ShedSceneProps) {
         role="img"
         aria-label={`3D preview — ${widthFt}×${lengthFt} shed, ${wallHFt} ft walls, ${pitch}:12 gable, ${doors} door(s), ${windows} window(s), ${siding === "vinyl" ? "vinyl siding" : "housewrap only"}${ramp ? ", ramp" : ""}${cupola ? ", cupola" : ""}`}
       />
-      <div className="absolute left-2 top-2 flex gap-1.5">
+      <div className="absolute left-2 top-2 flex max-w-[54%] flex-wrap gap-1.5">
         <button type="button" className={btnCls} onClick={() => flyTo("front")}>Front</button>
         <button type="button" className={btnCls} onClick={() => flyTo("corner")}>Corner</button>
         <button type="button" className={btnCls} onClick={() => flyTo("birdseye")}>Birds-eye</button>
@@ -791,8 +791,6 @@ export default function ShedScene(p: ShedSceneProps) {
           onClick={() => setShowDims(v => !v)}>
           Dims
         </button>
-      </div>
-      <div className="absolute bottom-2 right-2">
         <button
           type="button"
           className={btnCls}

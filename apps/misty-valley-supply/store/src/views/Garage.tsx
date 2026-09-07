@@ -7,8 +7,8 @@ import {
   type GarageDoor, type GarageParams,
 } from "@/bimGarage";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
-import { Btn, Lab, Panel, cx } from "@/ui";
+import { BomTable, QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
+import { Btn, Lab, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the garage renders
 const GarageScene = React.lazy(() => import("@/views/GarageScene"));
@@ -118,62 +118,67 @@ export default function Garage({ initial }: { initial?: Partial<GarageParams> })
   ];
 
   return (
-    <div>
-      <PriceBar
-        label={`${kind} — ${widthFt} × ${lengthFt} × ${legHeightFt} ft · ${ROOF_NAMES[roofStyle].toLowerCase()} roof · ${frameGauge}-ga`}
-        total={total}
-      />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-              Loading 3D preview…
-            </div>
-          }>
-            <GarageScene {...params} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{
+        label: `${kind} — ${widthFt} × ${lengthFt} × ${legHeightFt} ft · ${ROOF_NAMES[roofStyle].toLowerCase()} roof · ${frameGauge}-ga`,
+        total,
+      }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading 3D preview…
+          </div>
+        }>
+          <GarageScene {...params} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="garage" params={{ ...params }} label={`${kind} ${widthFt}×${lengthFt}`} />
+          <SpecButton chip toolLabel="Garages & Carports" designName={`${kind} ${widthFt} × ${lengthFt} × ${legHeightFt}`}
+            paramRows={specRows} lines={elements} total={total} building />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 6
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 5 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4">
             <Seg label="Width" options={GARAGE_WIDTHS} value={widthFt} onChange={setWidthFt} fmt={v => `${v} ft`} />
             <Seg label="Length" options={GARAGE_LENGTHS} value={lengthFt} onChange={setLengthFt} fmt={v => `${v} ft`} />
             <Seg label="Leg height" options={GARAGE_LEGS} value={legHeightFt} onChange={setLegHeightFt} fmt={v => `${v} ft`} />
-            <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))] sm:col-span-3">
-              Lengths run in 5-ft bays from the 21-ft base rail — the industry's ladder. Leg height is
-              side clearance, not peak height; a roll-up door wants legs a foot taller than the door.
+            <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))]">
+              Legs are side clearance, not peak — pick legs a foot taller than your tallest roll-up.
             </p>
           </div>
         )}
         {step === 1 && (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4">
             <Seg label="Roof style" options={GARAGE_ROOFS} value={roofStyle} onChange={setRoofStyle}
               fmt={v => ROOF_NAMES[v]} />
             <Seg label="Frame gauge" options={[14, 12] as const} value={frameGauge} onChange={setFrameGauge}
               fmt={v => (v === 14 ? "14-ga standard" : "12-ga upgrade")} />
             <Seg label="Panel gauge" options={[29, 26] as const} value={panelGauge} onChange={setPanelGauge}
               fmt={v => (v === 29 ? "29-ga standard" : "26-ga upgrade")} />
-            <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))] sm:col-span-3">
-              {roofStyle === "regular" && "Regular — the economy roof: rounded eaves, panels run the length of the building."}
-              {roofStyle === "boxedEave" && "Boxed eave — the house-style A-frame silhouette; panels still run horizontal."}
-              {roofStyle === "vertical" && "Vertical — panels run eave-to-ridge over hat channel with a ridge cap, so snow and leaves slide off. Recommended past 36 ft."}
+            <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))]">
+              {roofStyle === "regular" && "Regular — the economy roof; panels run the length of the building."}
+              {roofStyle === "boxedEave" && "Boxed eave — the house-style A-frame silhouette, horizontal panels."}
+              {roofStyle === "vertical" && "Vertical — panels run eave-to-ridge so snow slides off; recommended past 36 ft."}
             </p>
           </div>
         )}
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Left side" options={GARAGE_SIDE_STATES} value={leftSide} onChange={setLeftSide} fmt={v => SIDE_NAMES[v]} />
             <Seg label="Right side" options={GARAGE_SIDE_STATES} value={rightSide} onChange={setRightSide} fmt={v => SIDE_NAMES[v]} />
             <Seg label="Front end" options={GARAGE_END_STATES} value={frontEnd} onChange={setFrontEnd} fmt={v => END_NAMES[v]} />
             <Seg label="Back end" options={GARAGE_END_STATES} value={backEnd} onChange={setBackEnd} fmt={v => END_NAMES[v]} />
-            <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))] sm:col-span-2">
-              Walk it one wall at a time: partial sides hang a rain panel from the eave; a gable end
-              fills the peak only. Two closed sides + two closed ends = a fully enclosed garage.
+            <p className="text-[12px] leading-[1.5] text-[hsl(var(--ink-3))]">
+              Two closed sides + two closed ends = a fully enclosed garage.
             </p>
           </div>
         )}
@@ -228,17 +233,17 @@ export default function Garage({ initial }: { initial?: Partial<GarageParams> })
             <Swatches label="Trim color" value={trimColor} onChange={setTrimColor} />
             <Swatches label="Side color" value={sideColor} onChange={setSideColor} />
             <p className="text-[11px] text-[hsl(var(--ink-3))]">
-              Roof, trim and sides pick separately — color is confirmed at order, no price change.
+              Confirmed at order — no price change.
             </p>
           </div>
         )}
         {step === 5 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Anchors — matched to your surface" options={GARAGE_ANCHORS} value={anchors}
               onChange={setAnchors} fmt={v => ANCHOR_NAMES[v]} />
             <Seg label="Lean-to — 6-ft wing, per side" options={GARAGE_LEANTO} value={leanTo}
               onChange={setLeanTo} fmt={v => LEAN_NAMES[v]} />
-            <div className="sm:col-span-2">
+            <div>
               <Lab className="mb-1.5">Wind / snow rating</Lab>
               <div className="flex flex-wrap gap-1.5">
                 <button type="button" aria-pressed={!certified} onClick={() => setCertified(false)}
@@ -267,25 +272,12 @@ export default function Garage({ initial }: { initial?: Partial<GarageParams> })
         {step === 6 && (
           <div>
             <p className="mb-3 text-[13px] font-semibold">
-              A dealer-sheet quote, line for line — the same option tree every metal-building
-              dealer prices, from one model.
+              A dealer-sheet quote, line for line, from one model.
             </p>
             <QuoteGate tool="garage" params={{ ...params }} total={total} />
           </div>
         )}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="garage" params={{ ...params }} label={`${kind} ${widthFt}×${lengthFt}`} />
-            <SpecButton toolLabel="Garages & Carports" designName={`${kind} ${widthFt} × ${lengthFt} × ${legHeightFt}`}
-              paramRows={specRows} lines={elements} total={total} building />
-          </div>
-          {step < 6 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 5 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }

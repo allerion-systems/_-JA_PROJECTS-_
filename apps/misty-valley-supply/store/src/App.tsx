@@ -509,15 +509,15 @@ function Inner() {
           {(view === "screen" || view === "shed" || view === "deck" || view === "container" || view === "dock" || view === "barndo" || view === "warehouse" || view === "program" || view === "garage") && (
             <>
               {/* in a tool: a quiet way back + sibling tools */}
-              <div className="-mx-3 mb-4 flex items-center gap-1.5 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
+              <div className="-mx-3 mb-2 flex items-center gap-1.5 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:mb-4 sm:flex-wrap sm:px-0">
                 <button onClick={() => go("design")}
-                  className="min-h-[44px] rounded-[6px] px-3 text-[14px] font-semibold text-[hsl(var(--marine))] hover:bg-[hsl(var(--marine-soft))]">
+                  className="min-h-[38px] shrink-0 whitespace-nowrap rounded-[6px] px-3 text-[14px] font-semibold text-[hsl(var(--marine))] hover:bg-[hsl(var(--marine-soft))] sm:min-h-[44px]">
                   ‹ Design Center
                 </button>
                 {DESIGN_TOOLS.map(t => (
                   <button key={t.view} onClick={() => go(t.view)}
                     aria-current={view === t.view}
-                    className={cx("min-h-[44px] shrink-0 whitespace-nowrap rounded-[6px] border px-4 text-[14px] font-semibold transition-colors",
+                    className={cx("min-h-[38px] shrink-0 whitespace-nowrap rounded-[6px] border px-4 text-[14px] font-semibold transition-colors sm:min-h-[44px]",
                       view === t.view
                         ? "border-[hsl(var(--marine))] bg-[hsl(var(--marine))] text-white"
                         : "border-[hsl(var(--rule))] bg-[hsl(var(--panel))] text-[hsl(var(--ink-2))] hover:border-[hsl(var(--ink))]")}>

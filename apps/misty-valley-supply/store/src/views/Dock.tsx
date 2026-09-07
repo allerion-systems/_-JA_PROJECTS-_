@@ -2,8 +2,8 @@ import * as React from "react";
 import { rollup } from "@/bim";
 import { DOCK_WALKWAYS, dockTakeoff, type DockParams } from "@/bimDock";
 import { pickBool, pickOne } from "@/designStore";
-import { BomTable, PriceBar, QuoteGate, SaveShare, Seg, SpecButton, Steps } from "@/views/Shed";
-import { Btn, Lab, Panel, cx } from "@/ui";
+import { BomTable, QuoteGate, SaveShare, Seg, SpecButton, ToolShell } from "@/views/Shed";
+import { Btn, Lab, cx } from "@/ui";
 
 // three.js stays in its own lazy chunk — loaded only when the dock renders
 const DockScene = React.lazy(() => import("@/views/DockScene"));
@@ -76,27 +76,34 @@ export default function Dock({ initial }: { initial?: Partial<DockParams> }) {
   ];
 
   return (
-    <div>
-      <PriceBar label={`Lake dock — ${shapeLabel} · ${walkwayFt} ft walkway${platLabel}`} total={total} />
-
-      <Panel pad={false} className="card-hi mb-4">
-        <div className="h-[260px] sm:h-[480px]">
-          <React.Suspense fallback={
-            <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
-              Loading 3D preview…
-            </div>
-          }>
-            <DockScene {...params} />
-          </React.Suspense>
-        </div>
-      </Panel>
-
-      <Steps steps={STEPS} step={step} onStep={setStep} />
-
-      <Panel className="mb-4">
+    <ToolShell
+      price={{ label: `Lake dock — ${shapeLabel} · ${walkwayFt} ft walkway${platLabel}`, total }}
+      steps={STEPS} step={step} onStep={setStep}
+      scene={
+        <React.Suspense fallback={
+          <div className="flex h-full items-center justify-center text-[13px] text-[hsl(var(--ink-3))]">
+            Loading 3D preview…
+          </div>
+        }>
+          <DockScene {...params} />
+        </React.Suspense>
+      }
+      toolbar={
+        <>
+          <SaveShare chip tool="dock" params={{ ...params }} label={`Dock — ${shapeLabel} ${walkwayFt} ft`} />
+          <SpecButton chip toolLabel="Lake Docks" designName={`Dock — ${shapeLabel} ${walkwayFt} ft`}
+            paramRows={specRows} lines={elements} total={total} />
+        </>
+      }
+      details={<BomTable elements={elements} />}
+      footer={step < 3
+        ? <Btn size="sm" className="w-full" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
+        : undefined}
+    >
+      <div>
         {step === 0 && <ShapeSeg value={shape} onChange={setShape} />}
         {step === 1 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Walkway length" options={DOCK_WALKWAYS} value={walkwayFt as (typeof DOCK_WALKWAYS)[number]}
               onChange={setWalkwayFt} fmt={v => `${v} ft`} />
             <Seg label="Platform" options={["none", "8x10", "double"] as const} value={platform} onChange={setPlatform}
@@ -104,7 +111,7 @@ export default function Dock({ initial }: { initial?: Partial<DockParams> }) {
           </div>
         )}
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4">
             <Seg label="Decking" options={["wood", "composite"] as const} value={decking} onChange={setDecking}
               fmt={v => (v === "wood" ? "PT wood" : "Composite")} />
             <div>
@@ -133,19 +140,7 @@ export default function Dock({ initial }: { initial?: Partial<DockParams> }) {
             <QuoteGate tool="dock" params={{ ...params }} total={total} />
           </div>
         )}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <SaveShare tool="dock" params={{ ...params }} label={`Dock — ${shapeLabel} ${walkwayFt} ft`} />
-            <SpecButton toolLabel="Lake Docks" designName={`Dock — ${shapeLabel} ${walkwayFt} ft`}
-              paramRows={specRows} lines={elements} total={total} />
-          </div>
-          {step < 3 && (
-            <Btn size="sm" onClick={() => setStep(step + 1)}>{step === 2 ? "Get my quote" : "Next"}</Btn>
-          )}
-        </div>
-      </Panel>
-
-      <BomTable elements={elements} />
-    </div>
+      </div>
+    </ToolShell>
   );
 }
