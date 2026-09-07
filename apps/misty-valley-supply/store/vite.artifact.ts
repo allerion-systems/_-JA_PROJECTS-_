@@ -6,7 +6,16 @@ import { defineConfig } from "vite";
 // asset inlined, so the whole store travels as one HTML file.
 export default defineConfig({
   plugins: [react()],
-  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+  resolve: {
+    // array form: exact wasm match must win before the bare-module alias
+    alias: [
+      { find: "web-ifc/web-ifc.wasm", replacement: path.resolve(__dirname, "./src/webIfcStub.wasm") },
+      // the artifact sandbox can't load the wasm; swap web-ifc for a stub
+      // whose Init throws into ShedScene's honest toast (saves ~3.7 MB)
+      { find: /^web-ifc$/, replacement: path.resolve(__dirname, "./src/webIfcStub.ts") },
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+    ],
+  },
   build: {
     outDir: "dist-artifact",
     assetsInlineLimit: 100_000_000,
